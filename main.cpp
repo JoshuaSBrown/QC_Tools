@@ -19,6 +19,8 @@ int main(int argc, char *argv[]){
 	int flag;
 	int temp;
 	int indent;
+	int inc;
+	int inc2;
 	int i;
 	int j;
 	double temp_d;
@@ -56,9 +58,13 @@ int main(int argc, char *argv[]){
 	PunFile.close();
 	printf("\nMolecular Orbitals %d \n",MO);
 
-	//Create a matrix to store the coefficients and orbital energies
+	//Create a matrix to store:
+	//Coefficients
+	//Orbital energies
+	//Overlap matrix
 	Matrix mat_Coef(MO,MO);
 	Matrix mat_OE(MO);
+	Matrix mat_S(MO,MO);
 
 	PunFile.open(const_cast<char*>(pun.c_str()),std::ifstream::in);
 	if(PunFile.is_open()){
@@ -83,7 +89,7 @@ int main(int argc, char *argv[]){
 				indent = 0;
 				while (temp<6 && j<MO){
 					j++;
-					str = line.substr(0+indent,11);
+					str = line.substr(0+indent,10);
 					str = trimmed(str);
 					temp_d = atof(str.c_str());
 					str = line.substr(12+indent,3);
@@ -99,7 +105,57 @@ int main(int argc, char *argv[]){
 			}
 		}
 	}
-	//mat_OE.print();
-	//mat_Coef.print();
+	
+
+	std::ifstream LogFile;
+
+	LogFile.open(const_cast<char*>(log.c_str()),std::ifstream::in);
+	if(LogFile.is_open()){
+		
+		inc = 0;
+		inc2 = 0;
+		flag = 0;
+
+		while(std::getline(LogFile,line) && j<MO){
+			
+			i = inc2+1;
+		
+			if(((int)(found=line.find("*** Overlap ***")))!=-1){
+				flag = 1;
+				std::getline(LogFile,line);
+			}
+			if(flag == 1){
+				//Skip line containing column numbers
+				while(i<=MO){
+				
+					std::getline(LogFile,line);
+					j = inc;
+					//printf("indent\n");
+					indent = 0;
+					while (j<(i) && j<(inc+5)){
+						//printf("While\n");
+						j++;
+						str = line.substr(8+indent,9);
+						str = trimmed(str);
+						temp_d = atof(str.c_str());
+						str = line.substr(8+10+indent,3);
+						str = trimmed(str);
+						temp_d2 = atof(str.c_str());
+						mat_S.set_elem(temp_d*pow(10,temp_d2),i,j);
+						if(i!=j){
+							mat_S.set_elem(temp_d*pow(10,temp_d2),j,i);
+						}
+						indent += 14;
+					}
+					i++;
+				}
+				inc += 5;
+				inc2 += 5;
+			}
+		}
+	}
+
+	mat_S.print();
+
 	return 0;
 }
