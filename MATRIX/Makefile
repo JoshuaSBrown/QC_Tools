@@ -8,4 +8,4 @@ matrix.o: matrix.cpp matrix.hpp
 	g++ -Wall -c matrix.cpp	
 
 clean:
-	rm *.o
+	rm *.o test test.exe

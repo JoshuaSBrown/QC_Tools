@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include <cstdlib>
 #include <exception>
 #include "matrix.hpp"
@@ -75,33 +76,98 @@ Matrix::Matrix(int r, int c, int s) {
 	}
 }
 
+int Matrix::resize( int r, int c ){
+
+	if(r<1){
+		printf("ERROR must resize row to a value of 1 or greater\n");
+		exit(1);
+	}
+	if(c<1){
+		printf("ERROR must resize column to a value of 1 or greater\n");
+		exit(1);
+	}
+	
+	double * temp;
+	temp = new double[ r*c ];
+
+	//adding values from old matrix to new
+	int i;
+	int j;
+	if(r<=rows){
+		for( i=1; i<=r;i++){
+			if(c<=cols){
+				for( j=1; j<=c;j++){
+					temp[(i-1)*c*1+(j-1)*1+1-1] = elem[index(i,j,1)];
+				}
+			}else{
+				for( j=1; j<=c;j++){
+					if(j<=cols){
+						temp[(i-1)*c*1+(j-1)*1+1-1] = elem[index(i,j,1)];
+					}else{
+						temp[(i-1)*c*1+(j-1)*1+1-1] = 0;
+					}
+				}
+			}
+		}
+	}else{
+		for( i=1; i<=r;i++){
+			if(c<=cols){
+				for( j=1; j<=c;j++){
+					if(i<=rows){
+						temp[(i-1)*c*1+(j-1)*1+1-1] = elem[index(i,j,1)];
+					}else{
+						temp[(i-1)*c*1+(j-1)*1+1-1] = 0;
+					}
+				}
+			}else{
+				for( j=1; j<=c;j++){
+					if(i<=rows && j<=cols){
+						temp[(i-1)*c*1+(j-1)*1+1-1] = elem[index(i,j,1)];
+					}else{
+						temp[(i-1)*c*1+(j-1)*1+1-1] = 0;
+					}
+				}
+			}
+		}
+	}
+
+  delete elem;
+	rows = r;
+	cols = c;
+	shel = 1;
+	elem = temp;
+
+	return 0;
+}
+
 int Matrix::index(int r,int c,int s){
 	return (r-1)*cols*shel+(c-1)*shel+s-1;
 }
 
-void Matrix::print(){
-	printf("\nMatrix Attributes\n");
-	printf("rows %d\n",rows);
-	printf("cols %d\n",cols);
-	printf("shel %d\n",shel);
+std::ostream &operator<<(std::ostream &out, Matrix &mat){
+	out << "Matrix Attributes\n";
+	out << "rows " << mat.get_rows();
+	out << "\ncols " << mat.get_cols();
+	out << "\nshel " << mat.get_shel();
 	int i;
 	int j;
 	int k;
-	for(k=1;k<=shel;k++){
-		printf("\nShelf %d\n",k);
-		printf("\t");
-		for(j=1;j<=cols;j++){
-			printf("Col %d\t",j);
+	for(k=1;k<=mat.get_shel();k++){
+		out << "\nShelf " << k << "\n\t";
+
+		for(j=1;j<=mat.get_cols();j++){
+			out << "Col " << j << "\t";
 		}
-			printf("\n");
-		for(i=1;i<=rows;i++){
-			printf("Row %d\t",i);
-			for(j=1;j<=cols;j++){
-				printf("%g\t",elem[index(i,j,k)]);
+			out << "\n";
+		for(i=1;i<=mat.get_rows();i++){
+			out << "Row " << i << "\t";
+			for(j=1;j<=mat.get_cols();j++){
+				out << mat.get_elem(i,j) << "\t";
 			}
-			printf("\n");
+			out << "\n";
 		}
 	}
+	return out;
 }
 
 void Matrix::set_rows(int r){
@@ -368,3 +434,296 @@ double Matrix::get_elem(int r, int c, int s){
 	return elem[index(r,c,s)];
 }
 
+Matrix Matrix_Multiply( Matrix mat1, Matrix mat2){
+
+	if(mat1.get_shel() != 1 || mat2.get_shel() !=1){
+		printf("ERROR Matrix_Multiply only allowed for 2d nxm matrix not 3d nxmxl\n");
+		exit(1);
+	}
+	if(mat1.get_cols() != mat2.get_rows()){
+		printf("ERROR Matrix_Multiply only allowed for nxm by lxn matrices\n");
+		printf("      second matrix must have same number of colums as first\n");
+		printf("      matrix has number of rows\n");
+		exit(1);
+	}
+
+	Matrix mat3(mat1.get_rows(), mat2.get_cols());
+
+	int i;
+	int j;
+	int k;
+	double sum;
+
+	for(i=1;i<=mat1.get_rows();i++){
+		for(j=1;j<=mat2.get_cols();j++){
+			sum = 0;
+			for(k=1;k<=mat1.get_cols();k++){
+				sum += mat1.get_elem(i,k)*mat2.get_elem(k,j);
+			}
+			mat3.set_elem(sum,i,j);
+		}
+	}
+	return mat3;
+}
+
+Matrix &operator* (Matrix &mat1, Matrix &mat2){
+
+	if(mat1.get_shel() != 1 || mat2.get_shel() !=1){
+		printf("ERROR Matrix_Multiply only allowed for 2d nxm matrix not 3d nxmxl\n");
+		exit(1);
+	}
+	if(mat1.get_cols() != mat2.get_rows()){
+		printf("ERROR Matrix_Multiply only allowed for nxm by lxn matrices\n");
+		printf("      second matrix must have same number of colums as first\n");
+		printf("      matrix has number of rows\n");
+		exit(1);
+	}
+
+	Matrix *mat3 = new Matrix(mat1.get_rows(), mat2.get_cols());
+
+	int i;
+	int j;
+	int k;
+	double sum;
+
+	for(i=1;i<=mat1.get_rows();i++){
+		for(j=1;j<=mat2.get_cols();j++){
+			sum = 0;
+			for(k=1;k<=mat1.get_cols();k++){
+				sum += (mat1.get_elem(i,k))*(mat2.get_elem(k,j));
+			}
+			(*mat3).set_elem(sum,i,j);
+		}
+	}
+	return *mat3;
+
+}
+
+Matrix Matrix_Invert( Matrix &mat){
+	
+	if(mat.get_shel() != 1){
+		printf("ERROR Matrix_Invert only allowed for 1d and 2d arrays not 3d\n");
+		exit(1);
+	}
+
+	Matrix * mat2 = new Matrix(mat.get_cols(), mat.get_rows());
+
+	int i;
+	int j;
+	double val;
+
+	for(i=1;i<=mat.get_rows();i++){
+		for(j=1;j<=mat.get_cols();j++){
+			val = mat.get_elem(i,j);
+			(*mat2).set_elem(val,j,i);	
+		}
+	}
+	return *mat2;
+}
+
+Matrix Matrix_getRow( Matrix mat, int R){
+
+	if(mat.get_rows()<R){
+		printf("ERROR Matrix_getRow cannot return R %d",R);
+		printf(" because mat has only %d rows\n.",mat.get_rows());
+		exit(1);
+	}
+
+	Matrix mat2( 1, mat.get_cols(), mat.get_shel());
+
+	int j;
+	int k;
+	double val;
+
+	for(j=1;j<=mat.get_cols();j++){
+		for(k=1;k<=mat.get_shel();k++){
+			val = mat.get_elem(R,j,k);
+			mat2.set_elem(val,1,j,k);	
+		}
+	}
+	return mat2;
+}
+
+Matrix Matrix_getCol( Matrix mat, int C){
+	
+	if(mat.get_cols()<C){
+		printf("ERROR Matrix_getCol cannot return C %d",C);
+		printf(" because mat has only %d cols\n.",mat.get_cols());
+		exit(1);
+	}
+	Matrix mat2( mat.get_cols(),1, mat.get_shel());
+
+	int i;
+	int k;
+	double val;
+
+	for(i=1;i<=mat.get_rows();i++){
+		for(k=1;k<=mat.get_shel();k++){
+			val = mat.get_elem(i,C,k);
+			mat2.set_elem(val,i,1,k);	
+		}
+	}
+	return mat2;
+}
+
+Matrix Matrix_diag(Matrix mat){
+
+	if(mat.get_cols()>1 && mat.get_rows()>1){
+		printf("ERROR Matrix_diag can only create a diagonal matrix\n");
+		printf("from a vector.\n");
+		exit(1);
+	}
+
+	if(mat.get_shel()>1){
+		printf("ERROR Matrix_diag cannot create diagonal matrix from\n");
+		printf("a 3d matrix must be passed a vector.\n");
+		exit(1);
+	}
+
+	int i;
+	int len;
+	double val;
+
+	if(mat.get_cols()>mat.get_rows()){
+		len = mat.get_cols();
+		Matrix mat2(len,len);
+		for(i=1;i<=len;i++){
+			val = mat.get_elem(1,i);
+			mat2.set_elem(val,i,i);
+		}
+ 		return mat2;
+	}else{
+		len = mat.get_rows();
+		Matrix mat2(len,len);
+		for(i=1;i<=len;i++){
+			val = mat.get_elem(i,1);
+			mat2.set_elem(val,i,i);
+		}
+ 		return mat2;
+	}
+
+
+}
+
+Matrix Matrix_copy( Matrix mat){
+
+	Matrix mat2(mat.get_rows(),mat.get_cols(),mat.get_shel());
+
+	int i;
+	int j;
+	int k;
+	double val;
+
+	for( i=1;i<=mat.get_rows();i++){
+		for(j=1;j<=mat.get_cols();j++){
+			for(k=1;k<=mat.get_shel();k++){
+				val = mat.get_elem(i,j,k);
+				mat2.set_elem(val,i,j,k);
+			}
+		}
+	}
+
+	return mat2;
+}
+
+Matrix Matrix_concatenate_rows( Matrix mat1, Matrix mat2 ){
+
+	//For this function to work both mat1 and mat2 must have
+	//the same number of columns and shelves
+
+	if(mat1.get_cols()!=mat2.get_cols()){
+		std::cerr << "ERROR to concatenate the rows mat1 and mat2 must\n";
+		std::cerr << " 			have the same number of cols!\n";
+		Matrix m;
+		return m;
+	}
+	
+	if(mat1.get_shel()!=mat2.get_shel()){
+		std::cerr << "ERROR to concatenate the rows mat1 and mat2 must\n";
+		std::cerr << " 			have the same number of shelves!\n";
+		Matrix m;
+		return m;
+	}
+
+	int totalrows;
+	int rowsMat1 = mat1.get_rows();
+	totalrows = rowsMat1+mat2.get_rows();
+	Matrix mat3(totalrows,mat1.get_cols(),mat1.get_shel());
+
+	int i;
+	int j;
+	int k;
+	double val;
+
+	for(i=1;i<=mat1.get_rows();i++){
+		for(j=1;j<=mat1.get_cols();j++){
+			for(k=1;k<=mat1.get_shel();k++){
+				val = mat1.get_elem(i,j,k);
+				mat3.set_elem(val,i,j,k);
+			}
+		}
+	}
+
+	for(i=1;i<=mat2.get_rows();i++){
+		for(j=1;j<=mat2.get_cols();j++){
+			for(k=1;k<=mat2.get_shel();k++){
+				val = mat2.get_elem(i,j,k);
+				mat3.set_elem(val,i+rowsMat1,j,k);
+			}
+		}
+	}
+
+	return mat3;
+
+}
+
+Matrix Matrix_concatenate_cols( Matrix mat1, Matrix mat2 ){
+
+	//For this function to work both mat1 and mat2 must have
+	//the same number of columns and shelves
+
+	if(mat1.get_rows()!=mat2.get_rows()){
+		std::cerr << "ERROR to concatenate the cols mat1 and mat2 must\n";
+		std::cerr << " 			have the same number of rows!\n";
+		Matrix m;
+		return m;
+	}
+	
+	if(mat1.get_shel()!=mat2.get_shel()){
+		std::cerr << "ERROR to concatenate the rows mat1 and mat2 must\n";
+		std::cerr << " 			have the same number of shelves!\n";
+		Matrix m;
+		return m;
+	}
+
+	int totalcols;
+	int colsMat1 = mat1.get_cols();
+	totalcols = colsMat1+mat2.get_cols();
+	Matrix mat3(mat1.get_rows(),totalcols,mat1.get_shel());
+
+	int i;
+	int j;
+	int k;
+	double val;
+
+	for(i=1;i<=mat1.get_rows();i++){
+		for(j=1;j<=mat1.get_cols();j++){
+			for(k=1;k<=mat1.get_shel();k++){
+				val = mat1.get_elem(i,j,k);
+				mat3.set_elem(val,i,j,k);
+			}
+		}
+	}
+
+	for(i=1;i<=mat2.get_rows();i++){
+		for(j=1;j<=mat2.get_cols();j++){
+			for(k=1;k<=mat2.get_shel();k++){
+				val = mat2.get_elem(i,j,k);
+				mat3.set_elem(val,i,j+colsMat1,k);
+			}
+		}
+	}
+
+	return mat3;
+
+}
