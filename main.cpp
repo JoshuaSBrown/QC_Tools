@@ -11,151 +11,132 @@
 #include <vector>
 #include <sys/stat.h>
 #include <math.h>
+
 #include "MATRIX/matrix.hpp"
 #include "IO/io.hpp"
+#include "QC_FUNCTIONS/qc_functions.hpp"
 
 int main(int argc, char *argv[]){
 
-	int flag;
-	int temp;
-	int indent;
-	int inc;
-	int inc2;
-	int i;
-	int j;
-	double temp_d;
-	double temp_d2;
-	int MO;
+	int rv;
+	int MO1;
+	int MO2;
+	int MOP;
+	int HOMO1;
+	int HOMO2;
+	
+	double hartreeToeV = 27.2114;
+
 	std::string log;
-	std::string pun;
+	std::string pun1;
+	std::string pun2;
+	std::string punP;
 	std::string line;
 	std::string str;
-	std::size_t found;
-	check_arguments(argv, argc, &log, &pun);
 
-	std::cout << "log file is: "+log+"\n";
-	std::cout << "pun file is: "+pun+"\n";
+	Matrix mat_S;
+	Matrix mat_P_Coef;
+	Matrix mat_P_OE;
+
+	Matrix mat_1_Coef;
+	Matrix mat_1_OE;
+	Matrix mat_1_HOMO_Coef;
+
+	Matrix mat_2_Coef;
+	Matrix mat_2_OE;
+	Matrix mat_2_HOMO_Coef;
+
+	Matrix zetaAinv;
+	Matrix zetaBinv;
+
+	Matrix Inter;
+
+	Matrix gammaA;
+	Matrix gammaB;
+
+	Matrix gammaA_inv;
+	Matrix gammaB_inv;
+
+	HOMO1 = 0;
+	HOMO2 = 0;
+
+	rv = check_arguments(argv, argc, &log, &pun1, &pun2, &punP, &HOMO1, &HOMO2);
+
+	std::cout << "log file is: " << log << "\n";
+	std::cout << "pun file for the first monomer is: "+pun1+"\n";
+	std::cout << "pun file for the second monomer is: "+pun2+"\n";
+	std::cout << "pun file for the dimer is: " << punP << "\n";
+	
+	if(rv==-1){
+		exit(1);
+	}
+
+	std::cout << "HOMO for monomer 1 is: " << HOMO1 << "\n";
+	std::cout << "HOMO for monomer 2 is: " << HOMO2 << "\n";
 
 	//Open the .pun file find the total number of molecular orbitals
-	std::ifstream PunFile;
-	char output[100];
 
-	//Determining the number of Molecular Orbitals
-	PunFile.open(const_cast<char*>(pun.c_str()),std::ifstream::in);
-	if(PunFile.is_open()){
-		temp = 0;
-		MO = 0;
-		while(std::getline(PunFile,line)){
-			if(((int)(found=line.find("Alpha")))!=-1){
-				str = trimmed(firstN(line,(int)found));
-				temp = atoi(str.c_str());
-				if(temp>MO){
-					MO=temp;
-				}
-			}
-		}
-	}
-	PunFile.close();
-	printf("\nMolecular Orbitals %d \n",MO);
+	MOP = log_countMO(&log);
 
-	//Create a matrix to store:
-	//Coefficients
-	//Orbital energies
-	//Overlap matrix
-	Matrix mat_Coef(MO,MO);
-	Matrix mat_OE(MO);
-	Matrix mat_S(MO,MO);
-
-	PunFile.open(const_cast<char*>(pun.c_str()),std::ifstream::in);
-	if(PunFile.is_open()){
-		i = 0;
-		j = 0;
-		//Skip the first line
-		std::getline(PunFile,line);
-
-		while(std::getline(PunFile,line)){
-			flag = (int)(found=line.find("OE"));
-			if(flag!=-1){
-				i++;
-				str = line.substr(found+3,11);
-				str = trimmed(str);
-				temp_d = atof(str.c_str());
-				str = line.substr(found+15,4);
-				str = trimmed(str);
-				temp_d2 = atof(str.c_str());
-				mat_OE.set_elem(temp_d*pow(10,temp_d2),i);
-			}else{
-				temp = 1;
-				indent = 0;
-				while (temp<6 && j<MO){
-					j++;
-					str = line.substr(0+indent,10);
-					str = trimmed(str);
-					temp_d = atof(str.c_str());
-					str = line.substr(12+indent,3);
-					str = trimmed(str);
-					temp_d2 = atof(str.c_str());
-					mat_Coef.set_elem(temp_d*pow(10,temp_d2),i,j);
-					indent += 15;
-					temp++;
-				}
-				if(j>=MO){
-					j=0;
-				}
-			}
-		}
-	}
+	printf("Number of MO %d\n",MOP);
 	
+	log_getS(&log,&mat_S,MOP);
+	pun_getMO(&punP,&mat_P_Coef,&mat_P_OE);
+	pun_getMO(&pun1,&mat_1_Coef,&mat_1_OE);
+	pun_getMO(&pun2,&mat_2_Coef,&mat_2_OE);
 
-	std::ifstream LogFile;
+	std::cout << "mat_S\n";
 
-	LogFile.open(const_cast<char*>(log.c_str()),std::ifstream::in);
-	if(LogFile.is_open()){
-		
-		inc = 0;
-		inc2 = 0;
-		flag = 0;
+	MO1 = mat_1_OE.get_rows();
+	MO2 = mat_2_OE.get_rows();
 
-		while(std::getline(LogFile,line) && j<MO){
-			
-			i = inc2+1;
-		
-			if(((int)(found=line.find("*** Overlap ***")))!=-1){
-				flag = 1;
-				std::getline(LogFile,line);
-			}
-			if(flag == 1){
-				//Skip line containing column numbers
-				while(i<=MO){
-				
-					std::getline(LogFile,line);
-					j = inc;
-					//printf("indent\n");
-					indent = 0;
-					while (j<(i) && j<(inc+5)){
-						//printf("While\n");
-						j++;
-						str = line.substr(8+indent,9);
-						str = trimmed(str);
-						temp_d = atof(str.c_str());
-						str = line.substr(8+10+indent,3);
-						str = trimmed(str);
-						temp_d2 = atof(str.c_str());
-						mat_S.set_elem(temp_d*pow(10,temp_d2),i,j);
-						if(i!=j){
-							mat_S.set_elem(temp_d*pow(10,temp_d2),j,i);
-						}
-						indent += 14;
-					}
-					i++;
-				}
-				inc += 5;
-				inc2 += 5;
-			}
-		}
-	}
+	mat_1_HOMO_Coef = Matrix_getRow( mat_1_Coef, HOMO1);
+	mat_2_HOMO_Coef = Matrix_getRow( mat_2_Coef, HOMO2);
 
-	mat_S.print();
+	std::cout << "mat_1_HOMO_Coef\n";
+	std::cout << "mat_2_HOMO_Coef\n";
+	
+	Matrix mat_1_HOMO_Coefinv = Matrix_Invert( mat_1_HOMO_Coef);
+	Matrix mat_2_HOMO_Coefinv = Matrix_Invert( mat_2_HOMO_Coef);
+	Matrix mat_P_Coefinv = Matrix_Invert( mat_P_Coef);
 
+	Matrix zerosA(MO2,mat_1_HOMO_Coefinv.get_cols(),mat_1_HOMO_Coefinv.get_shel());
+	Matrix zerosB(MO1,mat_2_HOMO_Coefinv.get_cols(),mat_2_HOMO_Coefinv.get_shel());
+
+	Matrix zetaA = Matrix_concatenate_rows( mat_1_HOMO_Coefinv, zerosA );
+	Matrix zetaB = Matrix_concatenate_rows( zerosB, mat_2_HOMO_Coefinv );
+
+	zetaAinv = Matrix_Invert(zetaA);
+	zetaBinv = Matrix_Invert(zetaB);
+	
+	Inter = mat_S * mat_P_Coefinv;
+
+	gammaA = zetaAinv * Inter ;
+	gammaB = zetaBinv * Inter ;
+	
+	gammaA_inv = Matrix_Invert(gammaA);
+	gammaB_inv = Matrix_Invert(gammaB);
+
+	Matrix S_AB = gammaB * gammaA_inv;
+
+	Matrix Energy = Matrix_diag( mat_P_OE );
+	Matrix J_AB = gammaB * (Energy * gammaA_inv);
+
+	Matrix e_B = gammaB * (Energy * gammaB_inv );
+	Matrix e_A = gammaA * (Energy * gammaA_inv );
+
+	double J_ab = J_AB.get_elem(1,1);
+	double e_b = e_B.get_elem(1,1);
+	double e_a = e_A.get_elem(1,1);
+	double S_ab = S_AB.get_elem(1,1);
+
+	double J_eff = (J_ab-1/((double)2)*(e_b+e_a)*S_ab);
+	J_eff = J_eff/((double)(1-pow(S_ab,2)));
+
+	std::cout << "J_ab " << J_ab*hartreeToeV << " eV\n";
+	std::cout << "e_a " << e_b*hartreeToeV << " eV\n";
+	std::cout << "e_b " << e_a*hartreeToeV << " eV\n";
+	std::cout << "S_ab " << S_ab << "\n";
+	std::cout << "J_eff " << J_eff*hartreeToeV << " eV\n";
 	return 0;
 }
