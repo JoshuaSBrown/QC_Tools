@@ -482,6 +482,8 @@ int pun_getMO(std::string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 	std::ifstream PunFile;
 
 	MO = pun_countMO(pun);
+		
+	std::cout << "\n MO " << MO << "\n";
 
 	(*mat_Coef).resize(MO,MO);
 	(*mat_OE).resize(MO,1);
@@ -495,6 +497,11 @@ int pun_getMO(std::string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 
 		while(std::getline(PunFile,line)){
 			flag = (int)(found=line.find("OE"));
+
+			if(i==174){
+				break;
+			}
+
 			if(flag!=-1){
 				i++;
 				str = line.substr(found+3,11);
@@ -509,6 +516,7 @@ int pun_getMO(std::string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 				indent = 0;
 				while (temp<6 && j<MO){
 					j++;
+					//std::cout << "j " << j << " i " << i <<"\n";
 					str = line.substr(0+indent,11);
 					str = trimmed(str);
 					temp_d = atof(str.c_str());
@@ -552,6 +560,10 @@ int log_countMO(std::string *log){
 	int flag1;
 	int flag2;
 	
+	/* If there is more than one set of coefficients will read
+     * only from the first one */
+	int hint;
+
 	std::size_t index; 
 	std::size_t found1;
 	std::size_t found2;
@@ -564,6 +576,7 @@ int log_countMO(std::string *log){
 	if(LogFile.is_open()){
 
 		MO = 0;
+		hint = 0;
 
 		while(std::getline(LogFile,line)){
 			flag1 = (int)(found1=line.find("Alpha  occ. eigenvalues -- "));
@@ -571,6 +584,13 @@ int log_countMO(std::string *log){
 			
 			index = 28;
 			if(flag1!=-1){
+
+				// This means this means we have found a 
+                // second set of coefficents we only need
+                // a single set to count the MOs
+				if(hint==1){
+					break;
+				}
 				found1 = found1+27;
 				str = line.substr(found1,10);
 				str = trimmed(str);
@@ -585,6 +605,8 @@ int log_countMO(std::string *log){
 				}
 			}
 			if(flag2!=-1){
+
+				hint = 1;
 				found2 = found2+27;
 				str = line.substr(found2,10);
 				str = trimmed(str);
@@ -641,6 +663,10 @@ int log_getS(std::string *log, Matrix *mat_S, int MO){
 	int index;
 	double val;
 
+	/* Only need to read the first overlap matrix
+     * I am not sure what the others are for */
+	int hint;
+
 	std::size_t found1;
 	
 	std::string str1;
@@ -654,14 +680,19 @@ int log_getS(std::string *log, Matrix *mat_S, int MO){
 	if(LogFile.is_open()){
 
 		flag2 = 0;
-		MatrixColInit = 1;
-		count2Correction = 0;
+		hint = 0;
 
 		while(std::getline(LogFile,line)){
 			flag1 = (int)(found1=line.find(" *** Overlap ***"));
-			
+
 			if(flag1!=-1){
 				
+				if(hint==1){
+					break;
+				}
+				MatrixColInit = 1;
+				count2Correction = 0;
+				hint = 1;			
 				flag2 = 1;
 				//Skip first line
 				std::getline(LogFile,line);

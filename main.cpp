@@ -81,9 +81,13 @@ int main(int argc, char *argv[]){
 	printf("Number of MO %d\n",MOP);
 	
 	log_getS(&log,&mat_S,MOP);
+    std::cout << "Read in Overlap matrix\n";
 	pun_getMO(&punP,&mat_P_Coef,&mat_P_OE);
+	std::cout << "Read in Overlap Coefficients and Energies for dimer\n";
 	pun_getMO(&pun1,&mat_1_Coef,&mat_1_OE);
+	std::cout << "Read in Overlap Coefficients and Energies for monomer A\n";
 	pun_getMO(&pun2,&mat_2_Coef,&mat_2_OE);
+	std::cout << "Read in Overlap Coefficients and Energies for monomer B\n";
 
 	std::cout << "mat_S\n";
 
