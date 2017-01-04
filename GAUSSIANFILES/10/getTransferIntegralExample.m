@@ -1841,3 +1841,15 @@ J_eff=(J_AB-1/2*(e_B+e_A)*S_AB)/(1-S_AB^2);
 fprintf('Orthogonalized transfer integral J_eff\t\t %g eV\n',J_eff);
 
 fprintf('|J_eff*2| \t\t\t\t\t\t\t\t\t %g eV\n',abs(J_eff*2));
+
+%Based on the paper here is another approach matrix S
+S = [ 1 S_AB ; S_AB 1 ];
+S_root = sqrtm(S);
+S_root_inv = inv(S_root);
+
+H = [ e_B J_AB; J_AB e_A ];
+H_eff = S_root_inv*H*S_root_inv;
+
+fprintf('Elements of H_eff\n');
+fprintf('| %f %f |\n',H_eff(1,1),H_eff(1,2));
+fprintf('| %f %f |\n',H_eff(2,1),H_eff(2,2)); 
