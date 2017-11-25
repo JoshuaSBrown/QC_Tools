@@ -16,6 +16,8 @@
 #include "IO/io.hpp"
 #include "QC_FUNCTIONS/qc_functions.hpp"
 
+using namespace std;
+
 int main(int argc, char *argv[]){
 
 	int rv;
@@ -27,12 +29,12 @@ int main(int argc, char *argv[]){
 	
 	double hartreeToeV = 27.2114;
 
-	std::string log;
-	std::string pun1;
-	std::string pun2;
-	std::string punP;
-	std::string line;
-	std::string str;
+	string log;
+	string pun1;
+	string pun2;
+	string punP;
+	string line;
+	string str;
 
 	Matrix mat_S;
 	Matrix mat_P_Coef;
@@ -62,17 +64,17 @@ int main(int argc, char *argv[]){
 
 	rv = check_arguments(argv, argc, &log, &pun1, &pun2, &punP, &HOMO1, &HOMO2);
 
-	std::cout << "log file is: " << log << "\n";
-	std::cout << "pun file for the first monomer is: "+pun1+"\n";
-	std::cout << "pun file for the second monomer is: "+pun2+"\n";
-	std::cout << "pun file for the dimer is: " << punP << "\n";
+	cout << "log file is: " << log << "\n";
+	cout << "pun file for the first monomer is: "+pun1+"\n";
+	cout << "pun file for the second monomer is: "+pun2+"\n";
+	cout << "pun file for the dimer is: " << punP << "\n";
 	
 	if(rv==-1){
 		exit(1);
 	}
 
-	std::cout << "HOMO for monomer 1 is: " << HOMO1 << "\n";
-	std::cout << "HOMO for monomer 2 is: " << HOMO2 << "\n";
+	cout << "HOMO for monomer 1 is: " << HOMO1 << "\n";
+	cout << "HOMO for monomer 2 is: " << HOMO2 << "\n";
 
 	//Open the .pun file find the total number of molecular orbitals
 
@@ -81,15 +83,15 @@ int main(int argc, char *argv[]){
 	printf("Number of MO %d\n",MOP);
 	
 	log_getS(&log,&mat_S,MOP);
-    std::cout << "Read in Overlap matrix\n";
+    cout << "Read in Overlap matrix\n";
 	pun_getMO(&punP,&mat_P_Coef,&mat_P_OE);
-	std::cout << "Read in Overlap Coefficients and Energies for dimer\n";
+	cout << "Read in Overlap Coefficients and Energies for dimer\n";
 	pun_getMO(&pun1,&mat_1_Coef,&mat_1_OE);
-	std::cout << "Read in Overlap Coefficients and Energies for monomer A\n";
+	cout << "Read in Overlap Coefficients and Energies for monomer A\n";
 	pun_getMO(&pun2,&mat_2_Coef,&mat_2_OE);
-	std::cout << "Read in Overlap Coefficients and Energies for monomer B\n";
+	cout << "Read in Overlap Coefficients and Energies for monomer B\n";
 
-	std::cout << "mat_S\n";
+	cout << "mat_S\n";
 
 	MO1 = mat_1_OE.get_rows();
 	MO2 = mat_2_OE.get_rows();
@@ -97,8 +99,8 @@ int main(int argc, char *argv[]){
 	mat_1_HOMO_Coef = Matrix_getRow( mat_1_Coef, HOMO1);
 	mat_2_HOMO_Coef = Matrix_getRow( mat_2_Coef, HOMO2);
 
-	std::cout << "mat_1_HOMO_Coef\n";
-	std::cout << "mat_2_HOMO_Coef\n";
+	cout << "mat_1_HOMO_Coef\n";
+	cout << "mat_2_HOMO_Coef\n";
 	
 	Matrix mat_1_HOMO_Coefinv = Matrix_Invert( mat_1_HOMO_Coef);
 	Matrix mat_2_HOMO_Coefinv = Matrix_Invert( mat_2_HOMO_Coef);
@@ -137,10 +139,10 @@ int main(int argc, char *argv[]){
 	double J_eff = (J_ab-1/((double)2)*(e_b+e_a)*S_ab);
 	J_eff = J_eff/((double)(1-pow(S_ab,2)));
 
-	std::cout << "J_ab " << J_ab*hartreeToeV << " eV\n";
-	std::cout << "e_a " << e_b*hartreeToeV << " eV\n";
-	std::cout << "e_b " << e_a*hartreeToeV << " eV\n";
-	std::cout << "S_ab " << S_ab << "\n";
-	std::cout << "J_eff " << J_eff*hartreeToeV << " eV\n";
+	cout << "J_ab " << J_ab*hartreeToeV << " eV\n";
+	cout << "e_a " << e_b*hartreeToeV << " eV\n";
+	cout << "e_b " << e_a*hartreeToeV << " eV\n";
+	cout << "S_ab " << S_ab << "\n";
+	cout << "J_eff " << J_eff*hartreeToeV << " eV\n";
 	return 0;
 }
