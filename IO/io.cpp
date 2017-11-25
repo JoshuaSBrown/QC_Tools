@@ -17,9 +17,11 @@
 #include "io.hpp"
 #include "../MATRIX/matrix.hpp"
 
-void show_usage(std::string name) {
+using namespace std;
+
+void show_usage(string name) {
 	
-	std::cerr << "Usage: " << name << " <options(s)> SOURCES"
+	cerr << "Usage: " << name << " <options(s)> SOURCES"
 						<< '\n'
 						<< "Options:\n"
 						<< "\t-h,      --help             \tShow this help message\n"
@@ -42,12 +44,12 @@ void show_usage(std::string name) {
 						<< "\t                            \tshould be an interger value\n"
 						<< "\t-ho_2,   --homo2 #           \tSpecify the homo MO for monomer 2\n"
 						<< "\t                            \tshould be an interger value\n"
-						<< std::endl;
+						<< endl;
 }
 
-std::string lastStringInPath(std::string input){
-	std::size_t found;
-	std::string line;
+string lastStringInPath(string input){
+	size_t found;
+	string line;
 	line = input;
 	while ((int)(found=line.find("/"))!=-1){
 		line = line.substr(found+1,line.size());
@@ -55,53 +57,53 @@ std::string lastStringInPath(std::string input){
 	return line;
 }
 
-std::string lastN(std::string input, int n) {
+string lastN(string input, int n) {
 	return input.substr(input.size()-n);
 }
 
-std::string cut_end(std::string input, int n) {
+string cut_end(string input, int n) {
 	return input.substr(0,input.size()-n);
 }
 
-std::string firstN(std::string input, int n) {
+string firstN(string input, int n) {
 	return input.substr(0,n);
 }
 
-std::string cut_beg(std::string input, int n) {
+string cut_beg(string input, int n) {
 	return input.substr(n,input.size());
 }
 
 // trim from start (in place)
-void ltrim(std::string &s) {
-	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+void ltrim(string &s) {
+	s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
 }
 
 // trim from end (in place)
-void rtrim(std::string &s) {
-	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+void rtrim(string &s) {
+	s.erase(find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
 }
 
 // trim from both ends (in place)
-void trim(std::string &s) {
+void trim(string &s) {
 	ltrim(s);
 	rtrim(s);
 }
 
 // trim from start (copying)
-std::string ltrimmed(std::string s) {
+string ltrimmed(string s) {
 	ltrim(s);
 	return s;
 }
 
 // trim from end (copying)
-std::string rtrimmed(std::string s) {
+string rtrimmed(string s) {
 	rtrim(s);
 	return s;
 }
 
 
 // trim from both ends (copying)
-std::string trimmed(std::string s) {
+string trimmed(string s) {
 	trim(s);
 	return s;
 }
@@ -119,7 +121,7 @@ void removeSpace(char* s) {
 	} while (*s2++);
 }
 
-int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1, std::string *pun2, std::string *punP, int * H1, int * H2){
+int check_arguments(char * argv[], int argc, string *log, string *pun1, string *pun2, string *punP, int * H1, int * H2){
 		
 	if(argc <= 1) {
 		show_usage(argv[0]);
@@ -143,12 +145,12 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 	HOMO2_flag = 0;
 	err_exit_flag = 0;
 
-	std::string temp;
-	std::string HOMO1log;
-	std::string HOMO2log;
-	std::string P_log;
-	std::string arg;
-	std::string ext;
+	string temp;
+	string HOMO1log;
+	string HOMO2log;
+	string P_log;
+	string arg;
+	string ext;
 
 	for ( int i=1;i<argc;++i){
 		arg=argv[i];
@@ -162,7 +164,7 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 					ext = lastN(temp,4);
 					if(ext==".log"){
 						if(file_exist(const_cast<char*>((temp).c_str()))==0){
-							std::cerr << "ERROR The file "+(temp)+" does not exist!" << std::endl;
+							cerr << "ERROR The file "+(temp)+" does not exist!" << endl;
 							err_exit_flag = -1;
 						}else{
 							log1_flag = 1;
@@ -170,14 +172,14 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 						}
 						i++;
 					}else{
-						std::cerr << "WARNING --log1 option has no file specified!" << std::endl;
+						cerr << "WARNING --log1 option has no file specified!" << endl;
 					}
 				}else{
-					std::cerr << "ERROR --log1 option requires *.log file!" << std::endl;
+					cerr << "ERROR --log1 option requires *.log file!" << endl;
 					err_exit_flag = -1;
 				}
 			}else{
-				std::cerr << "ERROR --log1 option requires one argument!" << std::endl;
+				cerr << "ERROR --log1 option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
 		}else if ((arg=="-l_2")||(arg=="--log2")){
@@ -187,7 +189,7 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 					ext = lastN(temp,4);
 					if(ext==".log"){
 						if(file_exist(const_cast<char*>((temp).c_str()))==0){
-							std::cerr << "ERROR The file "+(temp)+" does not existi!" << std::endl;
+							cerr << "ERROR The file "+(temp)+" does not existi!" << endl;
 							err_exit_flag = -1;
 						}else{
 							log2_flag = 1;
@@ -195,14 +197,14 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 						}
 						i++;
 					}else{
-						std::cerr << "WARNING --log2 option has no file specified!" << std::endl;
+						cerr << "WARNING --log2 option has no file specified!" << endl;
 					}
 				}else{
-					std::cerr << "ERROR --log2 option requires *.log file!" << std::endl;
+					cerr << "ERROR --log2 option requires *.log file!" << endl;
 					err_exit_flag = -1;
 				}
 			}else{
-				std::cerr << "ERROR --log2 option requires one argument!" << std::endl;
+				cerr << "ERROR --log2 option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
 		}else if ((arg=="-l_P")||(arg=="--logP")){
@@ -212,21 +214,21 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 					ext = lastN(*log,4);
 					if(ext==".log"){
 						if(file_exist(const_cast<char*>((*log).c_str()))==0){
-							std::cerr << "ERROR The file "+(*log)+" does not exist!" << std::endl;
+							cerr << "ERROR The file "+(*log)+" does not exist!" << endl;
 							err_exit_flag = -1;
 						}else{
 							logP_flag = 1;
 						}
 						i++;
 					}else{
-						std::cerr << "WARNING --logP option has no file specified!" << std::endl;
+						cerr << "WARNING --logP option has no file specified!" << endl;
 					}
 				}else{
-					std::cerr << "ERROR --logP option requires *.log file!" << std::endl;
+					cerr << "ERROR --logP option requires *.log file!" << endl;
 					err_exit_flag = -1;
 				}
 			}else{
-				std::cerr << "ERROR --logP option requires one argument!" << std::endl;
+				cerr << "ERROR --logP option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
 		}else if ((arg=="-p_1")||(arg=="--pun1")){
@@ -236,7 +238,7 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 					ext = lastN(*pun1,4);
 					if(ext==".pun"){
 						if(file_exist(const_cast<char*>((*pun1).c_str()))==0){
-							std::cerr << "ERROR The file "+(*pun1)+" does not exist!" << std::endl;
+							cerr << "ERROR The file "+(*pun1)+" does not exist!" << endl;
 							err_exit_flag = -1;
 						}
 						//Check if log file exist with same name as pun1 file
@@ -250,14 +252,14 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 						}
 						i++;
 					}else{
-						std::cerr << "WARNING --pun1 option has no file specified!" << std::endl;
+						cerr << "WARNING --pun1 option has no file specified!" << endl;
 					}
 				}else{
-					std::cerr << "ERROR --pun1 option requires *.pun file!" << std::endl;
+					cerr << "ERROR --pun1 option requires *.pun file!" << endl;
 					err_exit_flag = -1;
 				}
 			}else{
-				std::cerr << "ERROR --pun1 option requires one argument!" << std::endl;
+				cerr << "ERROR --pun1 option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
 		}else if ((arg=="-p_2")||(arg=="--pun2")){
@@ -267,7 +269,7 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 					ext = lastN(*pun2,4);
 					if(ext==".pun"){
 						if(file_exist(const_cast<char*>((*pun2).c_str()))==0){
-							std::cerr << "ERROR The file "+(*pun2)+" does not exist!" << std::endl;
+							cerr << "ERROR The file "+(*pun2)+" does not exist!" << endl;
 							err_exit_flag = -1;
 						}
 						//Check if log file exist with same name as pun2 file
@@ -281,14 +283,14 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 						}
 						i++;
 					}else{
-						std::cerr << "WARNING --pun2 option has no file specified!" << std::endl;
+						cerr << "WARNING --pun2 option has no file specified!" << endl;
 					}
 				}else{
-					std::cerr << "ERROR --pun2 option requires *.pun file!" << std::endl;
+					cerr << "ERROR --pun2 option requires *.pun file!" << endl;
 					err_exit_flag = -1;
 				}
 			}else{
-				std::cerr << "ERROR --pun2 option requires one argument!" << std::endl;
+				cerr << "ERROR --pun2 option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
 	
@@ -299,7 +301,7 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 					ext = lastN(*punP,4);
 					if(ext==".pun"){
 						if(file_exist(const_cast<char*>((*punP).c_str()))==0){
-							std::cerr << "ERROR: The file "+(*punP)+" does not exist!" << std::endl;
+							cerr << "ERROR: The file "+(*punP)+" does not exist!" << endl;
 							err_exit_flag = -1;
 						}
 						//Check if log file exist with same name as pun1 file
@@ -312,14 +314,14 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 						}
 						i++;
 					}else{
-						std::cerr << "WARNING --punP option has no file specified!" << std::endl;
+						cerr << "WARNING --punP option has no file specified!" << endl;
 					}
 				}else{
-					std::cerr << "ERROR --punP option requires *.pun file!" << std::endl;
+					cerr << "ERROR --punP option requires *.pun file!" << endl;
 					err_exit_flag = -1;
 				}
 			}else{
-				std::cerr << "ERROR --punP option requires one argument!" << std::endl;
+				cerr << "ERROR --punP option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
 		}else if ((arg=="-ho_1")||(arg=="--homo1")){
@@ -327,7 +329,7 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 				if(check_string_input(argv[i+1])==-1){
 					HOMO1 = atoi(argv[i+1]);
 					if(HOMO1 < 1){
-						std::cerr << "HOMO for monomer 1 must be greater than 0." << std::endl;
+						cerr << "HOMO for monomer 1 must be greater than 0." << endl;
 					}else{
 						*H1 = HOMO1;
 						HOMO1_flag = 1;
@@ -335,10 +337,10 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 					}
 					i++;
 				}else{
-						std::cerr << "WARNING --homo1 option has no interger value specified!" << std::endl;
+						cerr << "WARNING --homo1 option has no interger value specified!" << endl;
 					}
 			}else{
-				std::cerr << "ERROR --homo1 option requires one argument!" << std::endl;
+				cerr << "ERROR --homo1 option requires one argument!" << endl;
 				err_exit_flag = -1;
 		  }
 		}else if ((arg=="-ho_2")||(arg=="--homo2")){
@@ -346,7 +348,7 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 				if(check_string_input(argv[i+1])==-1){
 					HOMO2 = atoi(argv[i+1]);
 					if(HOMO2 < 1){
-						std::cerr << "HOMO for monomer 2 must be greater than 0." << std::endl;
+						cerr << "HOMO for monomer 2 must be greater than 0." << endl;
 					}else{
 						*H2 = HOMO2;
 						HOMO2_flag = 1;
@@ -354,26 +356,26 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 					}
 					i++;
 				}else{
-						std::cerr << "WARNING --homo2 option has no interger value specified!" << std::endl;
+						cerr << "WARNING --homo2 option has no interger value specified!" << endl;
 					}
 			}else{
-				std::cerr << "ERROR --homo2 option requires one argument!" << std::endl;
+				cerr << "ERROR --homo2 option requires one argument!" << endl;
 				err_exit_flag = -1;
 		  }
 
 		}else {
 
-			std::cerr << "WARNING the following is not an option " << arg << "\n";
+			cerr << "WARNING the following is not an option " << arg << "\n";
 		}
 	}
 
 	if(HOMO1_flag==0 && log1_flag==1 && err_exit_flag!=-1){
-		std::cerr << "Will determine HOMO1 value from the "<< HOMO1log <<" file." << std::endl;
+		cerr << "Will determine HOMO1 value from the "<< HOMO1log <<" file." << endl;
 		*H1 = log_getHOMO(&HOMO1log);
 	}
 
 	if(HOMO2_flag==0 && log2_flag==1 && err_exit_flag!=-1){
-		std::cerr << "Will determine HOMO2 value from the "<< HOMO2log << " file." << std::endl;
+		cerr << "Will determine HOMO2 value from the "<< HOMO2log << " file." << endl;
 		*H2 = log_getHOMO(&HOMO2log);
 	}
 		
@@ -382,10 +384,10 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 	}
 
 	if(argc<7){
-		std::cerr << "ERROR Must have a *.pun file for each monomer and the dimer,\n";
-		std::cerr << "and a *.log file for the dimer containing the overlap matrix,\n";
-		std::cerr << "to execute. By default the program will check to see if the\n";
-		std::cerr << "log file has the same name as the pun files" << std::endl;
+		cerr << "ERROR Must have a *.pun file for each monomer and the dimer,\n";
+		cerr << "and a *.log file for the dimer containing the overlap matrix,\n";
+		cerr << "to execute. By default the program will check to see if the\n";
+		cerr << "log file has the same name as the pun files" << endl;
 		show_usage(argv[0]);
 		err_exit_flag = -1;
 	}
@@ -397,7 +399,7 @@ int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1
 	return 0;
 }
 
-int check_string_input(std::string str){
+int check_string_input(string str){
 
 	if(str=="--log1" || str=="-l_1"){
 		return 0;
@@ -422,34 +424,34 @@ int check_string_input(std::string str){
 	}
 }
 
-int pun_countMO(std::string *pun){
+int pun_countMO(string *pun){
 
-	std::string ext;
+	string ext;
 	ext = lastN(*pun,4);
 	if(ext==".pun"){
 		if(file_exist(const_cast<char*>((*pun).c_str()))==0){
-			std::cerr << "The file "+(*pun)+" does not exist." << std::endl;
+			cerr << "The file "+(*pun)+" does not exist." << endl;
 			return -1;
 		}
 	}else{
-		std::cerr << "The file "+(*pun)+" does not have the correct extension." << std::endl;
-		std::cerr << "The file must be a .pun file, it should have the same" << std::endl;
-		std::cerr << "format as the Gaussian fort.7 file" << std::endl;
+		cerr << "The file "+(*pun)+" does not have the correct extension." << endl;
+		cerr << "The file must be a .pun file, it should have the same" << endl;
+		cerr << "format as the Gaussian fort.7 file" << endl;
 		return -1;
 	}
 
 	int temp;
 	int MO;
-	std::size_t found;
-	std::ifstream PunFile;
-	std::string line;
-	std::string str;
+	size_t found;
+	ifstream PunFile;
+	string line;
+	string str;
 
-	PunFile.open(const_cast<char*>((*pun).c_str()),std::ifstream::in);
+	PunFile.open(const_cast<char*>((*pun).c_str()),ifstream::in);
 	if(PunFile.is_open()){
 		temp = 0;
 		MO = 0;
-		while(std::getline(PunFile,line)){
+		while(getline(PunFile,line)){
 			if(((int)(found=line.find("Alpha")))!=-1){
 				str = trimmed(firstN(line,(int)found));
 				temp = atoi(str.c_str());
@@ -463,7 +465,7 @@ int pun_countMO(std::string *pun){
 	return MO;
 }
 
-int pun_getMO(std::string *pun, Matrix *mat_Coef, Matrix *mat_OE){
+int pun_getMO(string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 
 	int i;
 	int j;
@@ -475,30 +477,30 @@ int pun_getMO(std::string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 	double temp_d;
 	double temp_d2;
 
-	std::size_t found;
+	size_t found;
 
-	std::string str;
-	std::string line;
-	std::ifstream PunFile;
+	string str;
+	string line;
+	ifstream PunFile;
 
 	MO = pun_countMO(pun);
 		
-	std::cout << "\n MO " << MO << "\n";
+	cout << "\n MO " << MO << "\n";
 
 	(*mat_Coef).resize(MO,MO);
 	(*mat_OE).resize(MO,1);
 	
-	PunFile.open(const_cast<char*>((*pun).c_str()),std::ifstream::in);
+	PunFile.open(const_cast<char*>((*pun).c_str()),ifstream::in);
 	if(PunFile.is_open()){
 		i = 0;
 		j = 0;
 		//Skip the first line
-		std::getline(PunFile,line);
+		getline(PunFile,line);
 
-		while(std::getline(PunFile,line)){
+		while(getline(PunFile,line)){
 			flag = (int)(found=line.find("OE"));
-
-			if(i==174){
+  
+			if(i==MO){
 				break;
 			}
 
@@ -516,7 +518,7 @@ int pun_getMO(std::string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 				indent = 0;
 				while (temp<6 && j<MO){
 					j++;
-					//std::cout << "j " << j << " i " << i <<"\n";
+					//cout << "j " << j << " i " << i <<"\n";
 					str = line.substr(0+indent,11);
 					str = trimmed(str);
 					temp_d = atof(str.c_str());
@@ -538,21 +540,21 @@ int pun_getMO(std::string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 	return 0;
 }
 
-int log_countMO(std::string *log){
+int log_countMO(string *log){
 
-	std::string ext;
+	string ext;
 	ext = lastN(*log,4);
 	if(ext==".log"){
 		if(file_exist(const_cast<char*>((*log).c_str()))==0){
-			std::cerr << "The file "+(*log)+" does not exist." << std::endl;
-			std::cerr << "Cannot execute log_countMO function." << std::endl;
+			cerr << "The file "+(*log)+" does not exist." << endl;
+			cerr << "Cannot execute log_countMO function." << endl;
 			return -1;
 		}
 	}else{
-		std::cerr << "The file "+(*log)+" does not have the correct extension." << std::endl;
-		std::cerr << "The file must be a .log file, it should have the same" << std::endl;
-		std::cerr << "format as the Gaussian .log file, cannot execute " << std::endl;
-		std::cerr << "log_countMO function." << std::endl;
+		cerr << "The file "+(*log)+" does not have the correct extension." << endl;
+		cerr << "The file must be a .log file, it should have the same" << endl;
+		cerr << "format as the Gaussian .log file, cannot execute " << endl;
+		cerr << "log_countMO function." << endl;
 		return -1;
 	}
 
@@ -564,21 +566,21 @@ int log_countMO(std::string *log){
      * only from the first one */
 	int hint;
 
-	std::size_t index; 
-	std::size_t found1;
-	std::size_t found2;
+	size_t index; 
+	size_t found1;
+	size_t found2;
 
-	std::string str;
-	std::string line;
-	std::ifstream LogFile;
+	string str;
+	string line;
+	ifstream LogFile;
 
-	LogFile.open(const_cast<char*>((*log).c_str()),std::ifstream::in);
+	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
 
 		MO = 0;
 		hint = 0;
 
-		while(std::getline(LogFile,line)){
+		while(getline(LogFile,line)){
 			flag1 = (int)(found1=line.find("Alpha  occ. eigenvalues -- "));
 			flag2 = (int)(found2=line.find("Alpha virt. eigenvalues -- "));
 			
@@ -625,28 +627,28 @@ int log_countMO(std::string *log){
 	return MO;
 }
 
-int log_getS(std::string *log, Matrix *mat_S, int MO){
+int log_getS(string *log, Matrix *mat_S, int MO){
 
-	std::string ext;
+	string ext;
 	ext = lastN(*log,4);
 	if(ext==".log"){
 		if(file_exist(const_cast<char*>((*log).c_str()))==0){
-			std::cerr << "The file "+(*log)+" does not exist." << std::endl;
-			std::cerr << "Cannot execute log_getS function." << std::endl;
+			cerr << "The file "+(*log)+" does not exist." << endl;
+			cerr << "Cannot execute log_getS function." << endl;
 			return -1;
 		}
 	}else{
-		std::cerr << "The file "+(*log)+" does not have the correct extension." << std::endl;
-		std::cerr << "The file must be a .log file, it should have the same" << std::endl;
-		std::cerr << "format as the Gaussian .log file, cannot execute " << std::endl;
-		std::cerr << "log_getS function." << std::endl;
+		cerr << "The file "+(*log)+" does not have the correct extension." << endl;
+		cerr << "The file must be a .log file, it should have the same" << endl;
+		cerr << "format as the Gaussian .log file, cannot execute " << endl;
+		cerr << "log_getS function." << endl;
 		return -1;
 	}
 	
 	if(MO<=0){
-		std::cerr << "The total number of Molecular orbitals" << std::endl;
-		std::cerr << "submitted to the log_getS function must" << std::endl;
-		std::cerr << "be greater than 0." << std::endl;
+		cerr << "The total number of Molecular orbitals" << endl;
+		cerr << "submitted to the log_getS function must" << endl;
+		cerr << "be greater than 0." << endl;
 		return -1;
 	}
 
@@ -667,22 +669,22 @@ int log_getS(std::string *log, Matrix *mat_S, int MO){
      * I am not sure what the others are for */
 	int hint;
 
-	std::size_t found1;
+	size_t found1;
 	
-	std::string str1;
-	std::string str2;
-	std::string line;
-	std::ifstream LogFile;
+	string str1;
+	string str2;
+	string line;
+	ifstream LogFile;
 
 	(*mat_S).resize(MO,MO);
 
-	LogFile.open(const_cast<char*>((*log).c_str()),std::ifstream::in);
+	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
 
 		flag2 = 0;
 		hint = 0;
 
-		while(std::getline(LogFile,line)){
+		while(getline(LogFile,line)){
 			flag1 = (int)(found1=line.find(" *** Overlap ***"));
 
 			if(flag1!=-1){
@@ -695,7 +697,7 @@ int log_getS(std::string *log, Matrix *mat_S, int MO){
 				hint = 1;			
 				flag2 = 1;
 				//Skip first line
-				std::getline(LogFile,line);
+				getline(LogFile,line);
 				str1 = line.substr(8,10);
 				str1 = trimmed(str1);
 				count1 = 1;
@@ -704,7 +706,7 @@ int log_getS(std::string *log, Matrix *mat_S, int MO){
 					count2 = 1;
 					Column = 1;
 					while (count2<=Total){
-						std::getline(LogFile,line);
+						getline(LogFile,line);
 						count3 = 1;
 						index = 8;
 						MatrixCol = MatrixColInit;
@@ -714,7 +716,7 @@ int log_getS(std::string *log, Matrix *mat_S, int MO){
 							str1 = trimmed(str1);
 							str2 = line.substr(index+10,3);
 							str2 = trimmed(str2);
-							val = std::stod(str1)*pow(10,std::stod(str2));
+							val = stod(str1)*pow(10,stod(str2));
 							index = index+14;
 							(*mat_S).set_elem(val,count2+count2Correction,MatrixCol);
 							if((count2+count2Correction)!=MatrixCol){
@@ -729,7 +731,7 @@ int log_getS(std::string *log, Matrix *mat_S, int MO){
 						count2++;
 					}	
 					count2Correction = count2Correction+5;
-					std::getline(LogFile,line);
+					getline(LogFile,line);
 					MatrixColInit = MatrixColInit+5;
 					Total = Total-5;
 					count1++;
@@ -739,18 +741,18 @@ int log_getS(std::string *log, Matrix *mat_S, int MO){
 	}
 
 	if(flag2==0){
-		std::cerr << "The file "+(*log)+" does not appear to contain the" << std::endl;
-		std::cerr << "overlap matrix, cannot execute log_getS function, be" << std::endl;
-		std::cerr << "sure to include the following keywords in your gaussian" << std::endl;
-		std::cerr << "run file." << std::endl;
-		std::cerr << "iop(3/33=4) pop=full" << std::endl;
+		cerr << "The file "+(*log)+" does not appear to contain the" << endl;
+		cerr << "overlap matrix, cannot execute log_getS function, be" << endl;
+		cerr << "sure to include the following keywords in your gaussian" << endl;
+		cerr << "run file." << endl;
+		cerr << "iop(3/33=4) pop=full" << endl;
 		return -1;
 	}
 
 	return 0;
 }
 
-int log_getHOMO(std::string *log){
+int log_getHOMO(string *log){
 
 	int j;
 	int k;
@@ -759,27 +761,27 @@ int log_getHOMO(std::string *log){
 	int indent;
 	int MO;
 
-	std::ifstream LogFile;
+	ifstream LogFile;
 
-	std::size_t found;
+	size_t found;
 
-	std::string str;
-	std::string line;
+	string str;
+	string line;
 
 	MO = log_countMO(log);
 
-	LogFile.open(const_cast<char*>((*log).c_str()),std::ifstream::in);
+	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
 
 		flag = 0;
 		HOMO = 0;
 		j = 0;
 
-		while(std::getline(LogFile,line) && j<MO && flag < 3){
+		while(getline(LogFile,line) && j<MO && flag < 3){
 
 			if(((int)(found=line.find("*** Overlap ***")))!=-1){
 				flag = 1;
-				std::getline(LogFile,line);
+				getline(LogFile,line);
 			}
 			if(((int)(found=line.find("occ")))!=-1){
 				flag = 2;
@@ -804,7 +806,7 @@ int log_getHOMO(std::string *log){
 }
 
 
-int log_getLUMO(std::string *log){
+int log_getLUMO(string *log){
 	
 	int j;
 	int k;
@@ -814,16 +816,16 @@ int log_getLUMO(std::string *log){
 	int HOMO;
 	int MO;
 
-	std::ifstream LogFile;
+	ifstream LogFile;
 
-	std::size_t found;
+	size_t found;
 
-	std::string str;
-	std::string line;
+	string str;
+	string line;
 
 	MO = log_countMO(log);
 
-	LogFile.open(const_cast<char*>((*log).c_str()),std::ifstream::in);
+	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
 
 		HOMO = 0;
@@ -831,11 +833,11 @@ int log_getLUMO(std::string *log){
 		flag = 0;
 		j = 0;
 
-		while(std::getline(LogFile,line) && j<MO && flag < 3){
+		while(getline(LogFile,line) && j<MO && flag < 3){
 
 			if(((int)(found=line.find("*** Overlap ***")))!=-1){
 				flag = 1;
-				std::getline(LogFile,line);
+				getline(LogFile,line);
 			}
 			if(((int)(found=line.find("occ")))!=-1){
 				flag = 2;
