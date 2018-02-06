@@ -44,6 +44,8 @@ int main(int argc, char *argv[]){
 	Matrix mat_P_OE;
 	Matrix mat_1_HOMO_Coef;
 	Matrix mat_2_HOMO_Coef;
+	Matrix mat_1_LUMO_Coef;
+	Matrix mat_2_LUMO_Coef;
 
 	Matrix mat_P_Coef;
 	Matrix mat_P_OE_Alpha;
@@ -100,9 +102,6 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 
-	cout << "HOMO for monomer 1 is: " << HOMO1 << "\n";
-	cout << "HOMO for monomer 2 is: " << HOMO2 << "\n";
-
 	//Open the .pun file find the total number of molecular orbitals
 
 	MOPAlpha = log_countMOAlpha(&log);
@@ -149,19 +148,17 @@ int main(int argc, char *argv[]){
   auto rank_2 = findRank(mat_2_OE_Alpha, mat_2_OE_Beta);
   auto rank_P = findRank(mat_P_OE_Alpha, mat_P_OE_Beta);
 
-  auto pr = rank_P[MOPAlpha+MOPBeta];
   // Choosing the state with the highest filled state looking at both
   // Beta and alpha orbitals
+  // HOMO 
+  auto pr = rank_P[MOPAlpha+MOPBeta];
   auto pr1 = rank_1[HOMO1_Alpha+HOMO1_Beta];
   auto pr2 = rank_2[HOMO2_Alpha+HOMO2_Beta];
-
-  //cerr << "Priting States" << endl;
-  //cerr << "MO: " << MOPAlpha << " " << MOPBeta << endl;
-  //cerr << pr.first << endl;
-  //cerr << "MO: " << HOMO1_Alpha << " " << HOMO1_Beta << endl;
-  //cerr << pr1.first << endl;
-  //cerr << "MO: " << HOMO1_Alpha << " " << HOMO1_Beta << endl;
-  //cerr << pr2.first << endl;
+  
+  // LUMO
+  auto LUMO_pr = rank_P[MOPAlpha+MOPBeta+1];
+  auto LUMO_pr1 = rank_1[HOMO1_Alpha+HOMO1_Beta+1];
+  auto LUMO_pr2 = rank_2[HOMO2_Alpha+HOMO2_Beta+1];
 
   if( pr.second.compare("Alpha")==0){
     // Use Alpha for dimer
@@ -194,8 +191,6 @@ int main(int argc, char *argv[]){
 
   }
 
-	cout << "mat_S\n";
-
 	MO1 = mat_1_OE.get_rows();
 	MO2 = mat_2_OE.get_rows();
 
@@ -203,50 +198,141 @@ int main(int argc, char *argv[]){
 	mat_1_HOMO_Coef = Matrix_getRow( mat_1_Coef, HOMO1);
 	mat_2_HOMO_Coef = Matrix_getRow( mat_2_Coef, HOMO2);
 
-	cout << "mat_1_HOMO_Coef\n";
-	cout << "mat_2_HOMO_Coef\n";
-	
-	Matrix mat_1_HOMO_Coefinv = Matrix_Invert( mat_1_HOMO_Coef);
-	Matrix mat_2_HOMO_Coefinv = Matrix_Invert( mat_2_HOMO_Coef);
-	Matrix mat_P_Coefinv = Matrix_Invert( mat_P_Coef);
+  cout << "HOMO" << endl;
+	cout << "MO for monomer 1 is: " << HOMO1 << "\n";
+	cout << "MO for monomer 2 is: " << HOMO2 << "\n";
 
-	Matrix zerosA(MO2,mat_1_HOMO_Coefinv.get_cols(),mat_1_HOMO_Coefinv.get_shel());
-	Matrix zerosB(MO1,mat_2_HOMO_Coefinv.get_cols(),mat_2_HOMO_Coefinv.get_shel());
+  {	
+    Matrix mat_1_HOMO_Coefinv = Matrix_Invert( mat_1_HOMO_Coef);
+    Matrix mat_2_HOMO_Coefinv = Matrix_Invert( mat_2_HOMO_Coef);
+    Matrix mat_P_Coefinv = Matrix_Invert( mat_P_Coef);
 
-	Matrix zetaA = Matrix_concatenate_rows( mat_1_HOMO_Coefinv, zerosA );
-	Matrix zetaB = Matrix_concatenate_rows( zerosB, mat_2_HOMO_Coefinv );
+    Matrix zerosA(MO2,mat_1_HOMO_Coefinv.get_cols(),mat_1_HOMO_Coefinv.get_shel());
+    Matrix zerosB(MO1,mat_2_HOMO_Coefinv.get_cols(),mat_2_HOMO_Coefinv.get_shel());
 
-	zetaAinv = Matrix_Invert(zetaA);
-	zetaBinv = Matrix_Invert(zetaB);
-	
-	Inter = mat_S * mat_P_Coefinv;
+    Matrix zetaA = Matrix_concatenate_rows( mat_1_HOMO_Coefinv, zerosA );
+    Matrix zetaB = Matrix_concatenate_rows( zerosB, mat_2_HOMO_Coefinv );
 
-	gammaA = zetaAinv * Inter ;
-	gammaB = zetaBinv * Inter ;
-	
-	gammaA_inv = Matrix_Invert(gammaA);
-	gammaB_inv = Matrix_Invert(gammaB);
+    zetaAinv = Matrix_Invert(zetaA);
+    zetaBinv = Matrix_Invert(zetaB);
 
-	Matrix S_AB = gammaB * gammaA_inv;
+    Inter = mat_S * mat_P_Coefinv;
 
-	Matrix Energy = Matrix_diag( mat_P_OE );
-	Matrix J_AB = gammaB * (Energy * gammaA_inv);
+    gammaA = zetaAinv * Inter ;
+    gammaB = zetaBinv * Inter ;
 
-	Matrix e_B = gammaB * (Energy * gammaB_inv );
-	Matrix e_A = gammaA * (Energy * gammaA_inv );
+    gammaA_inv = Matrix_Invert(gammaA);
+    gammaB_inv = Matrix_Invert(gammaB);
 
-	double J_ab = J_AB.get_elem(1,1);
-	double e_b = e_B.get_elem(1,1);
-	double e_a = e_A.get_elem(1,1);
-	double S_ab = S_AB.get_elem(1,1);
+    Matrix S_AB = gammaB * gammaA_inv;
 
-	double J_eff = (J_ab-1/((double)2)*(e_b+e_a)*S_ab);
-	J_eff = J_eff/((double)(1-pow(S_ab,2)));
+    Matrix Energy = Matrix_diag( mat_P_OE );
+    Matrix J_AB = gammaB * (Energy * gammaA_inv);
 
-	cout << "J_ab " << J_ab*hartreeToeV << " eV\n";
-	cout << "e_a " << e_b*hartreeToeV << " eV\n";
-	cout << "e_b " << e_a*hartreeToeV << " eV\n";
-	cout << "S_ab " << S_ab << "\n";
-	cout << "J_eff " << J_eff*hartreeToeV << " eV\n";
+    Matrix e_B = gammaB * (Energy * gammaB_inv );
+    Matrix e_A = gammaA * (Energy * gammaA_inv );
+
+    double J_ab = J_AB.get_elem(1,1);
+    double e_b = e_B.get_elem(1,1);
+    double e_a = e_A.get_elem(1,1);
+    double S_ab = S_AB.get_elem(1,1);
+
+    double J_eff = (J_ab-1/((double)2)*(e_b+e_a)*S_ab);
+    J_eff = J_eff/((double)(1-pow(S_ab,2)));
+
+    cout << "J_ab " << J_ab*hartreeToeV << " eV\n";
+    cout << "e_a " << e_b*hartreeToeV << " eV\n";
+    cout << "e_b " << e_a*hartreeToeV << " eV\n";
+    cout << "S_ab " << S_ab << "\n";
+    cout << "J_eff " << J_eff*hartreeToeV << " eV\n";
+  }
+////////////////////LUMO 
+
+  if( LUMO_pr.second.compare("Alpha")==0){
+    // Use Alpha for dimer
+    mat_P_Coef = mat_P_Coef_Alpha;
+    mat_P_OE   = mat_P_OE_Alpha;
+  }else{
+    // Use Beta for dimer
+    mat_P_Coef = mat_P_Coef_Beta;
+    mat_P_OE   = mat_P_OE_Beta;
+  }
+
+  if(LUMO_pr1.second.compare("Alpha")==0){
+    mat_1_Coef = mat_1_Coef_Alpha;
+    HOMO1 = HOMO1_Alpha;
+    mat_1_OE = mat_1_OE_Alpha;
+  }else{
+    mat_1_Coef = mat_1_Coef_Beta;
+    HOMO1 = HOMO1_Beta;
+    mat_1_OE = mat_1_OE_Beta;
+  }
+
+  if(LUMO_pr2.second.compare("Alpha")==0){
+    mat_2_Coef = mat_2_Coef_Alpha;
+    HOMO2 = HOMO2_Alpha;
+    mat_2_OE = mat_2_OE_Alpha;
+  }else{
+    mat_2_Coef = mat_2_Coef_Beta;
+    HOMO2 = HOMO2_Beta;
+    mat_2_OE = mat_2_OE_Beta;
+
+  }
+
+	MO1 = mat_1_OE.get_rows();
+	MO2 = mat_2_OE.get_rows();
+
+  // This is where we specify which orbitals we are grabbing
+	mat_1_LUMO_Coef = Matrix_getRow( mat_1_Coef, HOMO1+1);
+	mat_2_LUMO_Coef = Matrix_getRow( mat_2_Coef, HOMO2+1);
+
+  cout << "LUMO" << endl;
+	cout << "MO for monomer 1 is: " << HOMO1+1 << "\n";
+	cout << "MO for monomer 2 is: " << HOMO2+1 << "\n";
+  {	
+    Matrix mat_1_LUMO_Coefinv = Matrix_Invert( mat_1_LUMO_Coef);
+    Matrix mat_2_LUMO_Coefinv = Matrix_Invert( mat_2_LUMO_Coef);
+    Matrix mat_P_Coefinv = Matrix_Invert( mat_P_Coef);
+
+    Matrix zerosA(MO2,mat_1_LUMO_Coefinv.get_cols(),mat_1_LUMO_Coefinv.get_shel());
+    Matrix zerosB(MO1,mat_2_LUMO_Coefinv.get_cols(),mat_2_LUMO_Coefinv.get_shel());
+
+    Matrix zetaA = Matrix_concatenate_rows( mat_1_LUMO_Coefinv, zerosA );
+    Matrix zetaB = Matrix_concatenate_rows( zerosB, mat_2_LUMO_Coefinv );
+
+    zetaAinv = Matrix_Invert(zetaA);
+    zetaBinv = Matrix_Invert(zetaB);
+
+    Inter = mat_S * mat_P_Coefinv;
+
+    gammaA = zetaAinv * Inter ;
+    gammaB = zetaBinv * Inter ;
+
+    gammaA_inv = Matrix_Invert(gammaA);
+    gammaB_inv = Matrix_Invert(gammaB);
+
+    Matrix S_AB = gammaB * gammaA_inv;
+
+    Matrix Energy = Matrix_diag( mat_P_OE );
+    Matrix J_AB = gammaB * (Energy * gammaA_inv);
+
+    Matrix e_B = gammaB * (Energy * gammaB_inv );
+    Matrix e_A = gammaA * (Energy * gammaA_inv );
+
+    double J_ab = J_AB.get_elem(1,1);
+    double e_b = e_B.get_elem(1,1);
+    double e_a = e_A.get_elem(1,1);
+    double S_ab = S_AB.get_elem(1,1);
+
+    double J_eff = (J_ab-1/((double)2)*(e_b+e_a)*S_ab);
+    J_eff = J_eff/((double)(1-pow(S_ab,2)));
+
+    cout << "J_ab " << J_ab*hartreeToeV << " eV\n";
+    cout << "e_a " << e_b*hartreeToeV << " eV\n";
+    cout << "e_b " << e_a*hartreeToeV << " eV\n";
+    cout << "S_ab " << S_ab << "\n";
+    cout << "J_eff " << J_eff*hartreeToeV << " eV\n";
+  }
+
 	return 0;
 }
