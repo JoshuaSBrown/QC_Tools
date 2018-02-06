@@ -1,6 +1,6 @@
 #ifndef _Matrix_HPP
 #define _Matrix_HPP
-
+#include <vector>
 #include <stdlib.h>
 #include <iostream>
 
@@ -35,6 +35,8 @@ class Matrix {
 		double get_elem(int r);
 		double get_elem(int r, int c);
 		double get_elem(int r, int c, int s);
+    std::vector<double> getCol(int c);
+    std::vector<double> getRow(int r);
 };	
 
 std::ostream &operator<<(std::ostream &out, Matrix &mat); 

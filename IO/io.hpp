@@ -56,16 +56,18 @@ int file_exist(char *name);
 
 void removeSpace(char* s);
 
-int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1, std::string *pun2, std::string *punP, int * HOMO1, int * HOMO2);
+int check_arguments(char * argv[], int argc, std::string *log, std::string *pun1, std::string *pun2, std::string *punP, int * HOMO1_Alpha, int * HOMO1_Beta, int * HOMO2_Alpha, int *  HOMO2_Beta);
 
 //Count the total number of molecular orbitals in the .pun file
-int pun_countMO(std::string *pun);
+int pun_countMOAlpha(std::string *pun);
+int pun_countMOBeta(std::string *pun);
 
 //Grab the MO information from the .pun file and store them in
 //the mat_Coef and mat_OE. Coefficients for the atomic orbitals
 //are stored in mat_Coef, and the Molecular orbital energies are
 //stored in the mat_OE file.
-int pun_getMO(std::string *pun, Matrix *mat_Coef, Matrix *mat_OE);
+int pun_getMOAlpha(std::string *pun, Matrix *mat_Coef, Matrix *mat_OE);
+int pun_getMOBeta(std::string *pun, Matrix *mat_Coef, Matrix *mat_OE);
 
 //Get the overlap matrix from the .log file and store in the
 //mat_S matrix.
@@ -73,12 +75,15 @@ int log_getS(std::string *log, Matrix *mat_S, int MO);
 
 //Open the .log file and determine which molecular orbital is the
 //highest occupied molecular orbital (HOMO) and return
-int log_getHOMO(std::string *log);
+int log_getHOMOAlpha(std::string *log);
+int log_getHOMOBeta(std::string *log);
 
 //Open the .log file and determine which molecular orbital is the
 //lowest unoccupied molecular orbital (LUMO) and return
-int log_getHOMO(std::string *log);
+int log_getLUMOAlpha(std::string *log);
+int log_getLUMOBeta(std::string *log);
 
-//Count the total number of molecular orbitals in the .log file
-int log_countMO(std::string *log);
+//Count the total number of Alpha molecular orbitals in the .log file
+int log_countMOAlpha(std::string *log);
+int log_countMOBeta(std::string *log);
 #endif

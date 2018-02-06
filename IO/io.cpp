@@ -39,10 +39,10 @@ void show_usage(string name) {
 						<< "\t-p_2,    --pun2  PATH/PUNFILE\tSpecify the Guassian .pun file\n"
 						<< "\t                            \tfor the second monomer\n"
 						<< "\t-p_P,    --punP  PATH/PUNFILE\tSpecify the Gaussian .pun file\n"
-						<< "\t                            \tfor the dimer pair\n"
-						<< "\t-ho_1,   --homo1 #           \tSpecify the homo MO for monomer 1\n"
-						<< "\t                            \tshould be an interger value\n"
-						<< "\t-ho_2,   --homo2 #           \tSpecify the homo MO for monomer 2\n"
+//						<< "\t                            \tfor the dimer pair\n"
+//						<< "\t-ho_1,   --homo1 #           \tSpecify the homo MO for monomer 1\n"
+//						<< "\t                            \tshould be an interger value\n"
+//						<< "\t-ho_2,   --homo2 #           \tSpecify the homo MO for monomer 2\n"
 						<< "\t                            \tshould be an interger value\n"
 						<< endl;
 }
@@ -121,7 +121,7 @@ void removeSpace(char* s) {
 	} while (*s2++);
 }
 
-int check_arguments(char * argv[], int argc, string *log, string *pun1, string *pun2, string *punP, int * H1, int * H2){
+int check_arguments(char * argv[], int argc, string *log, string *pun1, string *pun2, string *punP, int * H1_A, int * H1_B, int * H2_A, int * H2_B){
 		
 	if(argc <= 1) {
 		show_usage(argv[0]);
@@ -131,18 +131,18 @@ int check_arguments(char * argv[], int argc, string *log, string *pun1, string *
 	int logP_flag;
 	int log1_flag;
 	int log2_flag;
-	int HOMO1_flag;
-	int HOMO2_flag;
+//	int HOMO1_flag;
+//	int HOMO2_flag;
 	int err_exit_flag;
 
-	int HOMO1;
-	int HOMO2;
+//	int HOMO1;
+//	int HOMO2;
 
 	logP_flag = 0;
 	log1_flag = 0;
 	log2_flag = 0;
-	HOMO1_flag = 0;
-	HOMO2_flag = 0;
+//	HOMO1_flag = 0;
+//	HOMO2_flag = 0;
 	err_exit_flag = 0;
 
 	string temp;
@@ -324,7 +324,7 @@ int check_arguments(char * argv[], int argc, string *log, string *pun1, string *
 				cerr << "ERROR --punP option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
-		}else if ((arg=="-ho_1")||(arg=="--homo1")){
+/*		}else if ((arg=="-ho_1")||(arg=="--homo1")){
 			if(i+1<argc){
 				if(check_string_input(argv[i+1])==-1){
 					HOMO1 = atoi(argv[i+1]);
@@ -362,6 +362,7 @@ int check_arguments(char * argv[], int argc, string *log, string *pun1, string *
 				cerr << "ERROR --homo2 option requires one argument!" << endl;
 				err_exit_flag = -1;
 		  }
+*/
 
 		}else {
 
@@ -369,15 +370,17 @@ int check_arguments(char * argv[], int argc, string *log, string *pun1, string *
 		}
 	}
 
-	if(HOMO1_flag==0 && log1_flag==1 && err_exit_flag!=-1){
-		cerr << "Will determine HOMO1 value from the "<< HOMO1log <<" file." << endl;
-		*H1 = log_getHOMO(&HOMO1log);
-	}
+//	if(HOMO1_flag==0 && log1_flag==1 && err_exit_flag!=-1){
+//		cerr << "Will determine HOMO1 value from the "<< HOMO1log <<" file." << endl;
+		*H1_A = log_getHOMOAlpha(&HOMO1log);
+		*H1_B = log_getHOMOBeta(&HOMO1log);
+//	}
 
-	if(HOMO2_flag==0 && log2_flag==1 && err_exit_flag!=-1){
-		cerr << "Will determine HOMO2 value from the "<< HOMO2log << " file." << endl;
-		*H2 = log_getHOMO(&HOMO2log);
-	}
+//	if(HOMO2_flag==0 && log2_flag==1 && err_exit_flag!=-1){
+//		cerr << "Will determine HOMO2 value from the "<< HOMO2log << " file." << endl;
+		*H2_A = log_getHOMOAlpha(&HOMO2log);
+		*H2_B = log_getHOMOBeta(&HOMO2log);
+//	}
 		
 	if(logP_flag ==2 && err_exit_flag!=-1){
 		*log = P_log;	
@@ -424,7 +427,7 @@ int check_string_input(string str){
 	}
 }
 
-int pun_countMO(string *pun){
+int pun_countMOAlpha(string *pun){
 
 	string ext;
 	ext = lastN(*pun,4);
@@ -465,7 +468,49 @@ int pun_countMO(string *pun){
 	return MO;
 }
 
-int pun_getMO(string *pun, Matrix *mat_Coef, Matrix *mat_OE){
+int pun_countMOBeta(string *pun){
+
+	string ext;
+	ext = lastN(*pun,4);
+	if(ext==".pun"){
+		if(file_exist(const_cast<char*>((*pun).c_str()))==0){
+			cerr << "The file "+(*pun)+" does not exist." << endl;
+			return -1;
+		}
+	}else{
+		cerr << "The file "+(*pun)+" does not have the correct extension." << endl;
+		cerr << "The file must be a .pun file, it should have the same" << endl;
+		cerr << "format as the Gaussian fort.7 file" << endl;
+		return -1;
+	}
+
+	int temp;
+	int MO;
+	size_t found;
+	ifstream PunFile;
+	string line;
+	string str;
+
+	PunFile.open(const_cast<char*>((*pun).c_str()),ifstream::in);
+	if(PunFile.is_open()){
+		temp = 0;
+		MO = 0;
+		while(getline(PunFile,line)){
+      if( PunFile.peek()==EOF) break;
+			if(((int)(found=line.find("Beta")))!=-1){
+				str = trimmed(firstN(line,(int)found));
+				temp = atoi(str.c_str());
+				if(temp>MO){
+					MO=temp;
+				}
+			}
+		}
+	}
+	PunFile.close();
+	return MO;
+}
+
+int pun_getMOAlpha(string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 
 	int i;
 	int j;
@@ -483,9 +528,9 @@ int pun_getMO(string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 	string line;
 	ifstream PunFile;
 
-	MO = pun_countMO(pun);
+	MO = pun_countMOAlpha(pun);
 		
-	cout << "\n MO " << MO << "\n";
+	//cout << "\n MO " << MO << "\n";
 
 	(*mat_Coef).resize(MO,MO);
 	(*mat_OE).resize(MO,1);
@@ -498,7 +543,7 @@ int pun_getMO(string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 		getline(PunFile,line);
 
 		while(getline(PunFile,line)){
-			flag = (int)(found=line.find("OE"));
+			flag = (int)(found=line.find("Alpha MO OE"));
   
 			if(i==MO){
 				break;
@@ -506,10 +551,10 @@ int pun_getMO(string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 
 			if(flag!=-1){
 				i++;
-				str = line.substr(found+3,11);
+				str = line.substr(found+12,11);
 				str = trimmed(str);
 				temp_d = atof(str.c_str());
-				str = line.substr(found+15,4);
+				str = line.substr(found+24,4);
 				str = trimmed(str);
 				temp_d2 = atof(str.c_str());
 				(*mat_OE).set_elem(temp_d*pow(10,temp_d2),i);
@@ -518,7 +563,6 @@ int pun_getMO(string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 				indent = 0;
 				while (temp<6 && j<MO){
 					j++;
-					//cout << "j " << j << " i " << i <<"\n";
 					str = line.substr(0+indent,11);
 					str = trimmed(str);
 					temp_d = atof(str.c_str());
@@ -540,7 +584,83 @@ int pun_getMO(string *pun, Matrix *mat_Coef, Matrix *mat_OE){
 	return 0;
 }
 
-int log_countMO(string *log){
+int pun_getMOBeta(string *pun, Matrix *mat_Coef, Matrix *mat_OE){
+
+	int i;
+	int j;
+	int temp;
+	int flag;
+	int indent;
+	int MO;
+
+	double temp_d;
+	double temp_d2;
+
+	size_t found;
+  bool begin_read = false;
+	string str;
+	string line;
+	ifstream PunFile;
+//  cerr << "calling count function " << endl;
+
+	MO = pun_countMOBeta(pun);
+	if(MO!=0){	
+    //cout << "\n MO " << MO << "\n";
+
+    (*mat_Coef).resize(MO,MO);
+    (*mat_OE).resize(MO,1);
+    
+    PunFile.open(const_cast<char*>((*pun).c_str()),ifstream::in);
+    if(PunFile.is_open()){
+      i = 0;
+      j = 0;
+      //Skip the first line
+      getline(PunFile,line);
+
+      while(getline(PunFile,line)){
+        flag = (int)(found=line.find("Beta MO OE"));
+    
+        if(i==MO){
+          break;
+        }
+        if(flag!=-1){
+          i++;
+				  str = line.substr(found+11,11);
+          str = trimmed(str);
+          temp_d = atof(str.c_str());
+				  str = line.substr(found+23,4);
+          str = trimmed(str);
+          temp_d2 = atof(str.c_str());
+          (*mat_OE).set_elem(temp_d*pow(10,temp_d2),i);
+          begin_read = true;
+        }else if (begin_read) {
+          temp = 1;
+          indent = 0;
+          while (temp<6 && j<MO){
+            j++;
+            //cout << "j " << j << " i " << i <<"\n";
+            str = line.substr(0+indent,11);
+            str = trimmed(str);
+            temp_d = atof(str.c_str());
+            str = line.substr(12+indent,3);
+            str = trimmed(str);
+            temp_d2 = atof(str.c_str());
+            (*mat_Coef).set_elem(temp_d*pow(10,temp_d2),i,j);
+            indent += 15;
+            temp++;
+          }
+
+          if(j>=MO){
+            j=0;
+          }
+        }
+      }
+    }
+  }
+	return 0;
+}
+
+int log_countMOAlpha(string *log){
 
 	string ext;
 	ext = lastN(*log,4);
@@ -627,6 +747,98 @@ int log_countMO(string *log){
 	return MO;
 }
 
+int log_countMOBeta(string *log){
+
+	string ext;
+	ext = lastN(*log,4);
+	if(ext==".log"){
+		if(file_exist(const_cast<char*>((*log).c_str()))==0){
+			cerr << "The file "+(*log)+" does not exist." << endl;
+			cerr << "Cannot execute log_countMO function." << endl;
+			return -1;
+		}
+	}else{
+		cerr << "The file "+(*log)+" does not have the correct extension." << endl;
+		cerr << "The file must be a .log file, it should have the same" << endl;
+		cerr << "format as the Gaussian .log file, cannot execute " << endl;
+		cerr << "log_countMO function." << endl;
+		return -1;
+	}
+
+	int MO;
+	int flag1;
+	int flag2;
+	
+	/* If there is more than one set of coefficients will read
+     * only from the first one */
+	int hint;
+
+	size_t index; 
+	size_t found1;
+	size_t found2;
+
+	string str;
+	string line;
+	ifstream LogFile;
+
+//  cerr << "Counting Beta MO " << endl;
+	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
+	if(LogFile.is_open()){
+
+		MO = 0;
+		hint = 0;
+		while(getline(LogFile,line)){
+			flag1 = (int)(found1=line.find(" Beta  occ. eigenvalues -- "));
+			flag2 = (int)(found2=line.find(" Beta virt. eigenvalues -- "));
+			
+
+			index = 28;
+			if(flag1!=-1){
+
+				// This means this means we have found a 
+                // second set of coefficents we only need
+                // a single set to count the MOs
+				if(hint==1){
+					break;
+				}
+				found1 = found1+27;
+				str = line.substr(found1,10);
+        //cout << str << endl;
+				str = trimmed(str);
+				while(!str.empty()){
+					MO++;
+					index = index+10;
+					if(index<=line.length()){
+						found1 = found1+10;
+						str = line.substr(found1,10);
+//            cout << "Line length " << line.length() << " " << str << endl;
+						str = trimmed(str);
+					}
+				}
+			}
+			if(flag2!=-1){
+
+				hint = 1;
+				found2 = found2+27;
+				str = line.substr(found2,10);
+				str = trimmed(str);
+				while(!str.empty()){
+					MO++;
+					index = index+10;
+					if(index<=line.length()){
+						found2 = found2+10;
+						str = line.substr(found2,10);
+						str = trimmed(str);
+					}
+				}
+			}
+      if( LogFile.peek()==EOF) break;
+		}
+      
+	}
+	return MO;
+}
+
 int log_getS(string *log, Matrix *mat_S, int MO){
 
 	string ext;
@@ -686,6 +898,8 @@ int log_getS(string *log, Matrix *mat_S, int MO){
 
 		while(getline(LogFile,line)){
 			flag1 = (int)(found1=line.find(" *** Overlap ***"));
+
+      if( LogFile.peek()==EOF) break;
 
 			if(flag1!=-1){
 				
@@ -752,7 +966,7 @@ int log_getS(string *log, Matrix *mat_S, int MO){
 	return 0;
 }
 
-int log_getHOMO(string *log){
+int log_getHOMOAlpha(string *log){
 
 	int j;
 	int k;
@@ -768,7 +982,7 @@ int log_getHOMO(string *log){
 	string str;
 	string line;
 
-	MO = log_countMO(log);
+	MO = log_countMOAlpha(log);
 
 	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
@@ -783,10 +997,63 @@ int log_getHOMO(string *log){
 				flag = 1;
 				getline(LogFile,line);
 			}
-			if(((int)(found=line.find("occ")))!=-1){
+			if(((int)(found=line.find("Alpha  occ")))!=-1){
 				flag = 2;
 			}
-			if(((int)(found=line.find("virt")))!=-1){
+			if(((int)(found=line.find("Alpha virt")))!=-1){
+				flag = 3;
+			}
+			if(flag==2){
+				indent = 0;
+				k = 1;
+				while(k<=5 && ((int)line.length())>=(29+indent+9) ){
+					indent += 10;
+					k++;
+					j++;
+					HOMO++;
+				}
+			}
+		}
+	}
+
+	return HOMO;
+}
+
+int log_getHOMOBeta(string *log){
+
+	int j;
+	int k;
+	int flag;
+	int HOMO;
+	int indent;
+	int MO;
+
+	ifstream LogFile;
+
+	size_t found;
+
+	string str;
+	string line;
+
+	MO = log_countMOBeta(log);
+
+	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
+	if(LogFile.is_open()){
+
+		flag = 0;
+		HOMO = 0;
+		j = 0;
+
+		while(getline(LogFile,line) && j<MO && flag < 3){
+
+			if(((int)(found=line.find("*** Overlap ***")))!=-1){
+				flag = 1;
+				getline(LogFile,line);
+			}
+			if(((int)(found=line.find(" Beta  occ")))!=-1){
+				flag = 2;
+			}
+			if(((int)(found=line.find(" Beta virt")))!=-1){
 				flag = 3;
 			}
 			if(flag==2){
@@ -806,7 +1073,7 @@ int log_getHOMO(string *log){
 }
 
 
-int log_getLUMO(string *log){
+int log_getLUMOAlpha(string *log){
 	
 	int j;
 	int k;
@@ -823,7 +1090,7 @@ int log_getLUMO(string *log){
 	string str;
 	string line;
 
-	MO = log_countMO(log);
+	MO = log_countMOAlpha(log);
 
 	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
@@ -839,10 +1106,10 @@ int log_getLUMO(string *log){
 				flag = 1;
 				getline(LogFile,line);
 			}
-			if(((int)(found=line.find("occ")))!=-1){
+			if(((int)(found=line.find("Alpha  occ")))!=-1){
 				flag = 2;
 			}
-			if(((int)(found=line.find("virt")))!=-1){
+			if(((int)(found=line.find("Alpha virt")))!=-1){
 				flag = 3;
 			}
 			if(flag==2){
@@ -863,6 +1130,67 @@ int log_getLUMO(string *log){
 
 	return LUMO;
 }
+
+int log_getLUMOBeta(string *log){
+	
+	int j;
+	int k;
+	int flag;
+	int indent;
+	int LUMO;
+	int HOMO;
+	int MO;
+
+	ifstream LogFile;
+
+	size_t found;
+
+	string str;
+	string line;
+
+	MO = log_countMOBeta(log);
+
+	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
+	if(LogFile.is_open()){
+
+		HOMO = 0;
+		LUMO = 1;
+		flag = 0;
+		j = 0;
+
+		while(getline(LogFile,line) && j<MO && flag < 3){
+
+      if( LogFile.peek()==EOF) break;
+
+			if(((int)(found=line.find("*** Overlap ***")))!=-1){
+				flag = 1;
+				getline(LogFile,line);
+			}
+			if(((int)(found=line.find(" Beta  occ")))!=-1){
+				flag = 2;
+			}
+			if(((int)(found=line.find(" Beta virt")))!=-1){
+				flag = 3;
+			}
+			if(flag==2){
+				indent = 0;
+				k = 1;
+				str = "Init";
+				while(k<=5 && ((int)line.length())>=(29+indent+9) ){
+					indent += 10;
+					k++;
+					j++;
+					HOMO++;
+				}
+
+				LUMO=HOMO+1;
+			}
+		}
+	}
+
+	return LUMO;
+}
+
 
 
 
