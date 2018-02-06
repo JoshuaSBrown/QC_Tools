@@ -3,6 +3,9 @@
 #include <cstdlib>
 #include <exception>
 #include "matrix.hpp"
+#include <vector>
+
+using namespace std; 
 
 Matrix::Matrix() {
 	rows = 1;
@@ -212,6 +215,26 @@ void Matrix::set_rows(int r){
 		rows = r;
 		elem = temp;
 	}
+}
+
+vector<double> Matrix::getCol(int c){
+//  cerr << "Calling getCol" << endl;
+  vector<double> col_data;
+  for(int i=1;i<=rows;i++){
+    col_data.push_back(elem[index(i,c,1)]);    
+  }
+//  cerr << "Returning From getCol" << endl;
+  return col_data;
+}
+
+vector<double> Matrix::getRow(int r){
+//  cerr << "Calling getRow" << endl;
+  vector<double> row_data;
+  for(int i=1;i<=cols;i++){
+    row_data.push_back(elem[index(r,i,1)]);    
+  }
+//  cerr << "Returning From getRow" << endl;
+  return row_data;
 }
 
 void Matrix::set_cols(int c){

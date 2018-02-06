@@ -24,8 +24,8 @@ int main(int argc, char *argv[]){
 	int MO1;
 	int MO2;
 	int MOP;
-	int HOMO1;
-	int HOMO2;
+  int MOPAlpha;
+  int MOPBeta;
 	
 	double hartreeToeV = 27.2114;
 
@@ -37,16 +37,38 @@ int main(int argc, char *argv[]){
 	string str;
 
 	Matrix mat_S;
-	Matrix mat_P_Coef;
-	Matrix mat_P_OE;
 
+	Matrix mat_P_Coef_Alpha;
 	Matrix mat_1_Coef;
-	Matrix mat_1_OE;
-	Matrix mat_1_HOMO_Coef;
-
 	Matrix mat_2_Coef;
-	Matrix mat_2_OE;
+	Matrix mat_P_OE;
+	Matrix mat_1_HOMO_Coef;
 	Matrix mat_2_HOMO_Coef;
+
+	Matrix mat_P_Coef;
+	Matrix mat_P_OE_Alpha;
+
+	Matrix mat_1_OE;
+	Matrix mat_1_Coef_Alpha;
+	Matrix mat_1_OE_Alpha;
+	Matrix mat_1_HOMO_Coef_Alpha;
+
+	Matrix mat_2_OE;
+	Matrix mat_2_Coef_Alpha;
+	Matrix mat_2_OE_Alpha;
+	Matrix mat_2_HOMO_Coef_Alpha;
+
+	Matrix mat_P_Coef_Beta;
+	Matrix mat_P_OE_Beta;
+
+	Matrix mat_1_Coef_Beta;
+	Matrix mat_1_OE_Beta;
+	Matrix mat_1_HOMO_Coef_Beta;
+
+	Matrix mat_2_Coef_Beta;
+	Matrix mat_2_OE_Beta;
+	Matrix mat_2_HOMO_Coef_Beta;
+
 
 	Matrix zetaAinv;
 	Matrix zetaBinv;
@@ -59,10 +81,15 @@ int main(int argc, char *argv[]){
 	Matrix gammaA_inv;
 	Matrix gammaB_inv;
 
-	HOMO1 = 0;
-	HOMO2 = 0;
+	int HOMO1 = 0;
+	int HOMO2 = 0;
 
-	rv = check_arguments(argv, argc, &log, &pun1, &pun2, &punP, &HOMO1, &HOMO2);
+  int HOMO1_Alpha = 0;
+  int HOMO1_Beta  = 0;
+  int HOMO2_Alpha = 0;
+  int HOMO2_Beta  = 0;
+
+	rv = check_arguments(argv, argc, &log, &pun1, &pun2, &punP, &HOMO1_Alpha,&HOMO1_Beta,&HOMO2_Alpha, &HOMO2_Beta);
 
 	cout << "log file is: " << log << "\n";
 	cout << "pun file for the first monomer is: "+pun1+"\n";
@@ -78,24 +105,101 @@ int main(int argc, char *argv[]){
 
 	//Open the .pun file find the total number of molecular orbitals
 
-	MOP = log_countMO(&log);
+	MOPAlpha = log_countMOAlpha(&log);
+	MOPBeta  = log_countMOBeta(&log);
 
-	printf("Number of MO %d\n",MOP);
+  // If there are only alpha orbitals then we can assume that restricted HF was used
+  if(MOPBeta==0){
+    printf("Assuming Restricted HF\n");
+	  printf("Number of Alpha MO %d\n",MOPAlpha);
+  }else{
+    printf("Assuming Unrestricted HF\n");
+	  printf("Number of Alpha MO %d\n",MOPAlpha);
+	  printf("Number of Beta  MO %d\n",MOPBeta);
+  }
+
+  MOP = MOPAlpha;
+  if(MOPBeta>MOPAlpha){
+    MOP = MOPBeta;
+  } 
+  // Determine which spin has more orbitals use this to count the orbitals
 	
 	log_getS(&log,&mat_S,MOP);
-    cout << "Read in Overlap matrix\n";
-	pun_getMO(&punP,&mat_P_Coef,&mat_P_OE);
-	cout << "Read in Overlap Coefficients and Energies for dimer\n";
-	pun_getMO(&pun1,&mat_1_Coef,&mat_1_OE);
-	cout << "Read in Overlap Coefficients and Energies for monomer A\n";
-	pun_getMO(&pun2,&mat_2_Coef,&mat_2_OE);
-	cout << "Read in Overlap Coefficients and Energies for monomer B\n";
+
+  cout << "Read in Alpha Overlap matrix\n";
+	pun_getMOAlpha(&punP,&mat_P_Coef_Alpha,&mat_P_OE_Alpha);
+	cout << "Read in Alpha Overlap Coefficients and Energies for dimer\n";
+	pun_getMOAlpha(&pun1,&mat_1_Coef_Alpha,&mat_1_OE_Alpha);
+	cout << "Read in Alpha Overlap Coefficients and Energies for monomer A\n";
+	pun_getMOAlpha(&pun2,&mat_2_Coef_Alpha,&mat_2_OE_Alpha);
+	cout << "Read in Alpha Overlap Coefficients and Energies for monomer B\n";
+
+  cout << "Read in Beta Overlap matrix\n";
+	pun_getMOBeta(&punP,&mat_P_Coef_Beta,&mat_P_OE_Beta);
+	cout << "Read in Beta Overlap Coefficients and Energies for dimer\n";
+	pun_getMOBeta(&pun1,&mat_1_Coef_Beta,&mat_1_OE_Beta);
+	cout << "Read in Beta Overlap Coefficients and Energies for monomer A\n";
+	pun_getMOBeta(&pun2,&mat_2_Coef_Beta,&mat_2_OE_Beta);
+	cout << "Read in Beta Overlap Coefficients and Energies for monomer B\n";
+
+  // Returns an unordered map with the rank as the key stores a pair where the first
+  // value is the energy and the second is a string indicating if it is in the alpha
+  // or beta orbitals
+  auto rank_1 = findRank(mat_1_OE_Alpha, mat_1_OE_Beta);
+  auto rank_2 = findRank(mat_2_OE_Alpha, mat_2_OE_Beta);
+  auto rank_P = findRank(mat_P_OE_Alpha, mat_P_OE_Beta);
+
+  auto pr = rank_P[MOPAlpha+MOPBeta];
+  // Choosing the state with the highest filled state looking at both
+  // Beta and alpha orbitals
+  auto pr1 = rank_1[HOMO1_Alpha+HOMO1_Beta];
+  auto pr2 = rank_2[HOMO2_Alpha+HOMO2_Beta];
+
+  //cerr << "Priting States" << endl;
+  //cerr << "MO: " << MOPAlpha << " " << MOPBeta << endl;
+  //cerr << pr.first << endl;
+  //cerr << "MO: " << HOMO1_Alpha << " " << HOMO1_Beta << endl;
+  //cerr << pr1.first << endl;
+  //cerr << "MO: " << HOMO1_Alpha << " " << HOMO1_Beta << endl;
+  //cerr << pr2.first << endl;
+
+  if( pr.second.compare("Alpha")==0){
+    // Use Alpha for dimer
+    mat_P_Coef = mat_P_Coef_Alpha;
+    mat_P_OE   = mat_P_OE_Alpha;
+  }else{
+    // Use Beta for dimer
+    mat_P_Coef = mat_P_Coef_Beta;
+    mat_P_OE   = mat_P_OE_Beta;
+  }
+
+  if(pr1.second.compare("Alpha")==0){
+    mat_1_Coef = mat_1_Coef_Alpha;
+    HOMO1 = HOMO1_Alpha;
+    mat_1_OE = mat_1_OE_Alpha;
+  }else{
+    mat_1_Coef = mat_1_Coef_Beta;
+    HOMO1 = HOMO1_Beta;
+    mat_1_OE = mat_1_OE_Beta;
+  }
+
+  if(pr2.second.compare("Alpha")==0){
+    mat_2_Coef = mat_2_Coef_Alpha;
+    HOMO2 = HOMO2_Alpha;
+    mat_2_OE = mat_2_OE_Alpha;
+  }else{
+    mat_2_Coef = mat_2_Coef_Beta;
+    HOMO2 = HOMO2_Beta;
+    mat_2_OE = mat_2_OE_Beta;
+
+  }
 
 	cout << "mat_S\n";
 
 	MO1 = mat_1_OE.get_rows();
 	MO2 = mat_2_OE.get_rows();
 
+  // This is where we specify which orbitals we are grabbing
 	mat_1_HOMO_Coef = Matrix_getRow( mat_1_Coef, HOMO1);
 	mat_2_HOMO_Coef = Matrix_getRow( mat_2_Coef, HOMO2);
 
