@@ -231,7 +231,7 @@ int check_arguments(char * argv[], int argc, string *log, string *pun1, string *
 				cerr << "ERROR --logP option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
-		}else if ((arg=="-p_1")||(arg=="--pun1")){
+		}else if ((arg=="-p_2")||(arg=="--pun2")){
 			if(i+1<argc){
 				if(check_string_input(argv[i+1])==-1){
 					*pun1 = argv[i+1];
@@ -262,7 +262,7 @@ int check_arguments(char * argv[], int argc, string *log, string *pun1, string *
 				cerr << "ERROR --pun1 option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
-		}else if ((arg=="-p_2")||(arg=="--pun2")){
+		}else if ((arg=="-p_1")||(arg=="--pun1")){
 			if(i+1<argc){
 				if(check_string_input(argv[i+1])==-1){
 					*pun2 = argv[i+1];
