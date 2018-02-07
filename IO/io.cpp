@@ -157,7 +157,7 @@ int check_arguments(char * argv[], int argc, string *log, string *pun1, string *
 		if((arg=="-h")||(arg=="--help")){
 			show_usage(argv[0]);
 			return -1;
-		}else if ((arg=="-l_1")||(arg=="--log1")){
+		}else if ((arg=="-l_2")||(arg=="--log2")){
 			if(i+1<argc){
 				if(check_string_input(argv[i+1])==-1){
 					temp = argv[i+1];
@@ -172,17 +172,17 @@ int check_arguments(char * argv[], int argc, string *log, string *pun1, string *
 						}
 						i++;
 					}else{
-						cerr << "WARNING --log1 option has no file specified!" << endl;
+						cerr << "WARNING --log2 option has no file specified!" << endl;
 					}
 				}else{
-					cerr << "ERROR --log1 option requires *.log file!" << endl;
+					cerr << "ERROR --log2 option requires *.log file!" << endl;
 					err_exit_flag = -1;
 				}
 			}else{
-				cerr << "ERROR --log1 option requires one argument!" << endl;
+				cerr << "ERROR --log2 option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
-		}else if ((arg=="-l_2")||(arg=="--log2")){
+		}else if ((arg=="-l_1")||(arg=="--log1")){
 			if(i+1<argc){
 				if(check_string_input(argv[i+1])==-1){
 					temp = argv[i+1];
@@ -197,14 +197,14 @@ int check_arguments(char * argv[], int argc, string *log, string *pun1, string *
 						}
 						i++;
 					}else{
-						cerr << "WARNING --log2 option has no file specified!" << endl;
+						cerr << "WARNING --log1 option has no file specified!" << endl;
 					}
 				}else{
-					cerr << "ERROR --log2 option requires *.log file!" << endl;
+					cerr << "ERROR --log1 option requires *.log file!" << endl;
 					err_exit_flag = -1;
 				}
 			}else{
-				cerr << "ERROR --log2 option requires one argument!" << endl;
+				cerr << "ERROR --log1 option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
 		}else if ((arg=="-l_P")||(arg=="--logP")){
