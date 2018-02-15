@@ -94,8 +94,8 @@ int main(int argc, char *argv[]){
 	rv = check_arguments(argv, argc, &log, &pun1, &pun2, &punP, &HOMO1_Alpha,&HOMO1_Beta,&HOMO2_Alpha, &HOMO2_Beta);
 
 	cout << "log file is: " << log << "\n";
-	cout << "pun file for the first monomer is: "+pun1+"\n";
-	cout << "pun file for the second monomer is: "+pun2+"\n";
+	cout << "pun file for the first monomer is: "+pun2+"\n";
+	cout << "pun file for the second monomer is: "+pun1+"\n";
 	cout << "pun file for the dimer is: " << punP << "\n";
 	
 	if(rv==-1){
@@ -126,7 +126,9 @@ int main(int argc, char *argv[]){
 	log_getS(&log,&mat_S,MOP);
 
   cout << "Read in Alpha Overlap matrix\n";
+  // Orbital Energies from the .pun file are questionable
 	pun_getMOAlpha(&punP,&mat_P_Coef_Alpha,&mat_P_OE_Alpha);
+  log_getMOEnergiesAlpha(&log);
 	cout << "Read in Alpha Overlap Coefficients and Energies for dimer\n";
 	pun_getMOAlpha(&pun1,&mat_1_Coef_Alpha,&mat_1_OE_Alpha);
 	cout << "Read in Alpha Overlap Coefficients and Energies for monomer A\n";
@@ -134,6 +136,7 @@ int main(int argc, char *argv[]){
 	cout << "Read in Alpha Overlap Coefficients and Energies for monomer B\n";
 
   cout << "Read in Beta Overlap matrix\n";
+  // Orbital Energies from the .pun file are questionable
 	pun_getMOBeta(&punP,&mat_P_Coef_Beta,&mat_P_OE_Beta);
 	cout << "Read in Beta Overlap Coefficients and Energies for dimer\n";
 	pun_getMOBeta(&pun1,&mat_1_Coef_Beta,&mat_1_OE_Beta);

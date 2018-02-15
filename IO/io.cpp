@@ -1,18 +1,18 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <cctype>
 #include <locale>
 #include <functional>
+#include <exception>
 #include <algorithm>
-#include <cstring>
 #include <sstream>
 #include <cstdlib>
 #include <vector>
 #include <sys/stat.h>
+#include <iterator>
 #include <math.h>
+#include <list>
 
 #include "io.hpp"
 #include "../MATRIX/matrix.hpp"
@@ -45,6 +45,21 @@ void show_usage(string name) {
 //						<< "\t-ho_2,   --homo2 #           \tSpecify the homo MO for monomer 2\n"
 						<< "\t                            \tshould be an interger value\n"
 						<< endl;
+}
+
+// Split a string up by spaces
+vector<string> splitSt(string input){
+  istringstream iss(input);
+  list<string> tokens;
+  copy(istream_iterator<string>(iss),
+       istream_iterator<string>(),
+       back_inserter(tokens));
+  
+  vector<string> values;
+  for( std::string item : tokens) {
+    if(!item.empty()) values.push_back(item);
+  }
+  return values;
 }
 
 string lastStringInPath(string input){
@@ -1192,5 +1207,120 @@ int log_getLUMOBeta(string *log){
 }
 
 
+vector<double> log_getMOEnergiesAlpha(string *log){
 
+	string ext;
+	ext = lastN(*log,4);
+	if(ext==".log"){
+		if(file_exist(const_cast<char*>((*log).c_str()))==0){
+      throw invalid_argument("Log file does not exist");
+		}
+	}else{
+    throw invalid_argument("Wrong file extension log file must be .log");
+	}
 
+  vector<double> EnergiesAlpha;
+
+	int flag1;
+	int flag2;
+	
+	/* If there is more than one set of coefficients will read
+     * only from the first one */
+	int hint;
+
+	size_t found1;
+	size_t found2;
+
+	string str;
+	string line;
+	ifstream LogFile;
+
+	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
+	if(LogFile.is_open()){
+
+		hint = 0;
+		while(getline(LogFile,line)){
+			flag1 = (int)(found1=line.find(" Alpha  occ. eigenvalues -- "));
+			flag2 = (int)(found2=line.find(" Alpha virt. eigenvalues -- "));
+			
+
+			if(flag1!=-1 || flag2!=-1){
+
+				// This means this means we have found a 
+        // second set of coefficents the second set
+        // is likely to be the more up to date one 
+        // so we will use it instead
+				if(hint==1){
+          EnergiesAlpha.clear(); 
+				}
+
+        auto vec_str = splitSt(line);
+        for( size_t inc=4 ;inc<vec_str.size();inc++ ){
+          EnergiesAlpha.push_back((double)atof(vec_str.at(inc).c_str()));
+        }
+			}
+
+      if( LogFile.peek()==EOF) break;
+		}
+	}
+	return EnergiesAlpha;
+}
+
+vector<double> log_getMOEnergiesBeta(string *log){
+
+	string ext;
+	ext = lastN(*log,4);
+	if(ext==".log"){
+		if(file_exist(const_cast<char*>((*log).c_str()))==0){
+      throw invalid_argument("Log file does not exist");
+		}
+	}else{
+    throw invalid_argument("Wrong file extension log file must be .log");
+	}
+
+  vector<double> EnergiesBeta;
+
+	int flag1;
+	int flag2;
+	
+	/* If there is more than one set of coefficients will read
+     * only from the first one */
+	int hint;
+
+	size_t found1;
+	size_t found2;
+
+	string str;
+	string line;
+	ifstream LogFile;
+
+	LogFile.open(const_cast<char*>((*log).c_str()),ifstream::in);
+	if(LogFile.is_open()){
+
+		hint = 0;
+		while(getline(LogFile,line)){
+			flag1 = (int)(found1=line.find(" Beta  occ. eigenvalues -- "));
+			flag2 = (int)(found2=line.find(" Beta virt. eigenvalues -- "));
+			
+
+			if(flag1!=-1 || flag2!=-1){
+
+				// This means this means we have found a 
+        // second set of coefficents the second set
+        // is likely to be the more up to date one 
+        // so we will use it instead
+				if(hint==1){
+          EnergiesBeta.clear(); 
+				}
+
+        auto vec_str = splitSt(line);
+        for( size_t inc=4 ;inc<vec_str.size();inc++ ){
+          EnergiesBeta.push_back((double)atof(vec_str.at(inc).c_str()));
+        }
+			}
+
+      if( LogFile.peek()==EOF) break;
+		}
+	}
+	return EnergiesBeta;
+}

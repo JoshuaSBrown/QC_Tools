@@ -1,11 +1,14 @@
 
-all: test
+all: test_io
 
-test: test.cpp io.o io.hpp
-	g++ -Wall test.cpp io.o -o test
+test_io: test_io.cpp io.o 
+	g++ -Wall -std=c++11 test_io.cpp io.o matrix.o -o test_io
 
-io.o: io.cpp io.hpp
-	g++ -Wall -c io.cpp
+io.o: io.cpp
+	g++ -Wall -std=c++11 matrix.o -c io.cpp
+
+matrix.o: ../MATRIX/matrix.cpp
+	g++ -Wall -std=c++11 -c ../MATRIX/matrix.cpp
 
 clean:
 	rm *.o
