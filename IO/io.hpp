@@ -17,6 +17,8 @@
 
 void show_usage(std::string name); 
 
+std::vector<std::string> splitSt(std::string input);
+
 //Checks if the arguments provided by the user
 //match with arguments avaiable. If they match
 //returns 0 if not -1
@@ -86,4 +88,7 @@ int log_getLUMOBeta(std::string *log);
 //Count the total number of Alpha molecular orbitals in the .log file
 int log_countMOAlpha(std::string *log);
 int log_countMOBeta(std::string *log);
+
+std::vector<double> log_getMOEnergiesAlpha(std::string *log);
+std::vector<double> log_getMOEnergiesBeta(std::string *log);
 #endif
