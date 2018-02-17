@@ -27,7 +27,20 @@ int main(void){
     string var = lastN(str,3);
     assert(var.compare("re!")==0);
   }
-  
+
+  cerr << "Testing: lastStringInPath" << endl;
+  {
+    string str = "Path/To/Important/File.cc";
+    string fileName = lastStringInPath(str);
+    assert(fileName.compare("File.cc")==0);
+  }  
+
+  cerr << "Testing: cut_end" << endl;
+  {
+    string str = "Important words";
+    string var = cut_end(str,3);
+    assert(var.compare("Important wo")==0);
+  }
 
   return 0;
 }
