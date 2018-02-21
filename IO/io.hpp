@@ -52,4 +52,8 @@ std::vector<double> log_getMOEnergies(std::string log,std::string orb_type);
 
 //Used to determine if the orbital file is restricted or not
 bool restricted(int MOPAlpha, int MOPBeta);
+
+std::vector<std::vector<double>> log_getCoord(std::string log);
+
+std::vector<int> log_countAtomBasisFunc(std::string LogFile);
 #endif

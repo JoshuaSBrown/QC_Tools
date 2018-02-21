@@ -720,6 +720,128 @@ vector<double> log_getMOEnergies(string log,string orb_type){
 	return Energies;
 }
 
+vector<vector<double>> log_getCoord(string log){
+
+  vector<vector<double>> Coord;
+  vector<double> X;
+  vector<double> Y;
+  vector<double> Z;
+
+  if(!fileValid(log,".log")) return Coord;
+
+	string str;
+	string line;
+	ifstream LogFile;
+
+	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
+	if(LogFile.is_open()){
+
+    // If there is more than one set of coefficients will read
+    // only from the first one 
+
+		int hint = 0;
+		while(getline(LogFile,line)){
+
+	    size_t found1;
+			int flag1 = (int)(found1=line.find("Center     Atomic      Atomic             Coordinates (Angstroms)"));
+			
+
+			if(flag1!=-1){
+
+				// This means we have found a 
+        // second set of coefficents the second set
+        // is likely to be the more up to date one 
+        // so we will use it instead
+				if(hint==1){
+          Coord.clear(); 
+				}
+
+        // Skip the 2nd and third line 
+        getline(LogFile,line);
+        getline(LogFile,line);
+        getline(LogFile,line);
+
+        // While the line does not match the end of the table read in the coordinates
+        while((((int)(found1=line.find("---------------------------------------------------------------------")))==-1)){
+          auto vec_str = splitSt(line);
+          X.push_back((double)atof(vec_str.at(3).c_str()));
+          Y.push_back((double)atof(vec_str.at(4).c_str()));
+          Z.push_back((double)atof(vec_str.at(5).c_str()));
+          getline(LogFile,line);
+        }
+			}
+
+      if( LogFile.peek()==EOF) break;
+		}
+	}
+  Coord.push_back(X);
+  Coord.push_back(Y);
+  Coord.push_back(Z);
+	return Coord;
+}
+
+vector<int> log_countAtomBasisFunc(string log){
+  vector<int> OrbBasisCount;
+
+  if(!fileValid(log,".log")) return OrbBasisCount;
+
+	string str;
+	string line;
+	ifstream LogFile;
+
+	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
+	if(LogFile.is_open()){
+
+    // If there is more than one set of coefficients will read
+    // only from the first one 
+
+		int hint = 0;
+		while(getline(LogFile,line)){
+
+	    size_t found1;
+			int flag1 = (int)(found1=line.find("     Gross orbital populations:"));
+			
+
+			if(flag1!=-1){
+
+				// This means we have found a 
+        // second set of coefficents the second set
+        // is likely to be the more up to date one 
+        // so we will use it instead
+				if(hint==1){
+          OrbBasisCount.clear(); 
+				}
+
+        // Skip the 2nd line 
+        getline(LogFile,line);
+        getline(LogFile,line);
+  
+        // Count the number of rows that are in the line when a new atom is 
+        // found
+        auto vec_str = splitSt(line);
+        int rowCountAtmLine = static_cast<int>(vec_str.size());
+        // While the line does not match the end of this orbital populations part of the graph
+        int BasisCount = 1;
+        getline(LogFile,line);
+        while((((int)(found1=line.find("        Condensed to atoms (all electrons):")))==-1)){
+          vec_str = splitSt(line);
+          if(static_cast<int>(vec_str.size())==rowCountAtmLine){
+            OrbBasisCount.push_back(BasisCount);
+            BasisCount = 1;
+          }else{
+            ++BasisCount;
+          }
+          getline(LogFile,line);
+        }
+        OrbBasisCount.push_back(BasisCount);
+			}
+
+      if( LogFile.peek()==EOF) break;
+		}
+  }
+  return OrbBasisCount;
+}
+
 bool restricted(int MOPAlpha, int MOPBeta){
   if(MOPBeta==0){
     cout <<"Assuming Restricted HF" << endl;
