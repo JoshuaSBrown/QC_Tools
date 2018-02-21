@@ -7,7 +7,6 @@
 #include <sstream>
 #include <istream>
 #include <iterator>
-#include <sys/stat.h>
 
 using namespace std;
 /////////////////////////////////////
@@ -88,11 +87,6 @@ string rtrimmed(string s) {
 string trimmed(string s) {
   trim(s);
   return s;
-}
-
-int file_exist(char *name) {
-  struct stat buffer;
-  return (stat (name, &buffer) == 0);
 }
 
 void removeSpace(char* s) {
