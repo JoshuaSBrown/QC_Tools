@@ -87,5 +87,29 @@ int main(void){
     assert(static_cast<int>(energies.at(HOMO)*10000)==-124);
     assert(static_cast<int>(energies.at(MO-1)*100)==427);
   }
+
+  cerr << "Testing: log_getCoord" << endl;
+  {
+    string path = "../GAUSSIANFILES/90_u/90_pair.log";
+    auto coord = log_getCoord(path);
+    assert(static_cast<int>(coord.at(0).at(0)*1000)==672);
+    assert(static_cast<int>(coord.at(1).at(0)*1000)==0);
+    assert(static_cast<int>(coord.at(2).at(0)*1000)==0);
+
+    int countAtms = static_cast<int>(coord.at(0).size());
+    assert(static_cast<int>(coord.at(0).at(countAtms-1)*1000)==-1242);
+    assert(static_cast<int>(coord.at(1).at(countAtms-1)*1000)==0);
+    assert(static_cast<int>(coord.at(2).at(countAtms-1)*1000)==4065);
+  }
+
+  cerr << "Testing: log_countAtomBasisFunc" << endl;
+  {
+    string path = "../GAUSSIANFILES/90_u/90_pair.log";
+    auto basisCount = log_countAtomBasisFunc(path);
+    auto num_atoms = basisCount.size();
+    assert(num_atoms==12);
+    assert(basisCount.at(0)==19);
+    assert(basisCount.at(11)==2);
+  }
   return 0;
 }
