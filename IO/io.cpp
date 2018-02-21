@@ -306,10 +306,10 @@ Parameters check_arguments(char * argv[], int argc  ){
 		}
 	}
 
-  par.setHOMO_MO1Alpha(log_getHOMOAlpha(HOMO1log));
-  par.setHOMO_MO1Beta(log_getHOMOBeta(HOMO1log));
-  par.setHOMO_MO2Alpha(log_getHOMOAlpha(HOMO2log));
-  par.setHOMO_MO2Beta(log_getHOMOBeta(HOMO2log));
+  par.setHOMO_MO1Alpha(log_getHOMO(HOMO1log,"Alpha"));
+  par.setHOMO_MO1Beta(log_getHOMO(HOMO1log,"Beta"));
+  par.setHOMO_MO2Alpha(log_getHOMO(HOMO2log,"Alpha"));
+  par.setHOMO_MO2Beta(log_getHOMO(HOMO2log,"Beta"));
 
 	if(logP_flag ==2 && err_exit_flag!=-1){
     par.setLogP(P_log);
@@ -488,99 +488,7 @@ int log_countMO(string log, string orb_type){
 	}
 	return MO;
 }
-/*
-int log_countMOBeta(string log){
 
-	string ext;
-	ext = lastN(log,4);
-	if(ext==".log"){
-		if(file_exist(const_cast<char*>((log).c_str()))==0){
-			cerr << "The file "+(log)+" does not exist." << endl;
-			cerr << "Cannot execute log_countMO function." << endl;
-			return -1;
-		}
-	}else{
-		cerr << "The file "+(log)+" does not have the correct extension." << endl;
-		cerr << "The file must be a .log file, it should have the same" << endl;
-		cerr << "format as the Gaussian .log file, cannot execute " << endl;
-		cerr << "log_countMO function." << endl;
-		return -1;
-	}
-
-	int MO;
-	int flag1;
-	int flag2;
-	
-	// If there is more than one set of coefficients will read
-  // only from the first one 
-	int hint;
-
-	size_t index; 
-	size_t found1;
-	size_t found2;
-
-	string str;
-	string line;
-	ifstream LogFile;
-
-//  cerr << "Counting Beta MO " << endl;
-	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
-	if(LogFile.is_open()){
-
-		MO = 0;
-		hint = 0;
-		while(getline(LogFile,line)){
-			flag1 = (int)(found1=line.find(" Beta  occ. eigenvalues -- "));
-			flag2 = (int)(found2=line.find(" Beta virt. eigenvalues -- "));
-			
-
-			index = 28;
-			if(flag1!=-1){
-
-				// This means this means we have found a 
-                // second set of coefficents we only need
-                // a single set to count the MOs
-				if(hint==1){
-					break;
-				}
-				found1 = found1+27;
-				str = line.substr(found1,10);
-        //cout << str << endl;
-				str = trimmed(str);
-				while(!str.empty()){
-					MO++;
-					index = index+10;
-					if(index<=line.length()){
-						found1 = found1+10;
-						str = line.substr(found1,10);
-//            cout << "Line length " << line.length() << " " << str << endl;
-						str = trimmed(str);
-					}
-				}
-			}
-			if(flag2!=-1){
-
-				hint = 1;
-				found2 = found2+27;
-				str = line.substr(found2,10);
-				str = trimmed(str);
-				while(!str.empty()){
-					MO++;
-					index = index+10;
-					if(index<=line.length()){
-						found2 = found2+10;
-						str = line.substr(found2,10);
-						str = trimmed(str);
-					}
-				}
-			}
-      if( LogFile.peek()==EOF) break;
-		}
-      
-	}
-	return MO;
-}
-*/
 int log_getS(string log, Matrix *mat_S, int MO){
 
 	string ext;
@@ -708,46 +616,45 @@ int log_getS(string log, Matrix *mat_S, int MO){
 	return 0;
 }
 
-int log_getHOMOAlpha(string log){
+int log_getHOMO(string log, string orb_type){
 
-	int j;
-	int k;
-	int flag;
+  if(!fileValid(log,".log")) return -1;
+  if(!orb_type.compare("Alpha")==0 && 
+     !orb_type.compare("Beta")==0){
+     cerr << "Unrecognized orbital type" << endl;
+     return -1;
+  }
+
 	int HOMO;
-	int indent;
-	int MO;
 
 	ifstream LogFile;
 
 	size_t found;
 
-	string str;
-	string line;
-
-	MO = log_countMO(log,"Alpha");
+	int MO = log_countMO(log,orb_type);
 
 	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
 
-		flag = 0;
+		int flag = 0;
 		HOMO = 0;
-		j = 0;
-
+		int j = 0;
+    string line;
 		while(getline(LogFile,line) && j<MO && flag < 3){
 
 			if(((int)(found=line.find("*** Overlap ***")))!=-1){
 				flag = 1;
 				getline(LogFile,line);
 			}
-			if(((int)(found=line.find("Alpha  occ")))!=-1){
+			if(((int)(found=line.find(orb_type+"  occ")))!=-1){
 				flag = 2;
 			}
-			if(((int)(found=line.find("Alpha virt")))!=-1){
+			if(((int)(found=line.find(orb_type+" virt")))!=-1){
 				flag = 3;
 			}
 			if(flag==2){
-				indent = 0;
-				k = 1;
+				int indent = 0;
+				int k = 1;
 				while(k<=5 && ((int)line.length())>=(29+indent+9) ){
 					indent += 10;
 					k++;
@@ -761,202 +668,16 @@ int log_getHOMOAlpha(string log){
 	return HOMO;
 }
 
-int log_getHOMOBeta(string log){
+vector<double> log_getMOEnergies(string log,string orb_type){
 
-	int j;
-	int k;
-	int flag;
-	int HOMO;
-	int indent;
-	int MO;
+  vector<double> Energies;
 
-	ifstream LogFile;
-
-	size_t found;
-
-	string str;
-	string line;
-
-	MO = log_countMO(log,"Beta");
-
-	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
-	if(LogFile.is_open()){
-
-		flag = 0;
-		HOMO = 0;
-		j = 0;
-
-		while(getline(LogFile,line) && j<MO && flag < 3){
-
-			if(((int)(found=line.find("*** Overlap ***")))!=-1){
-				flag = 1;
-				getline(LogFile,line);
-			}
-			if(((int)(found=line.find(" Beta  occ")))!=-1){
-				flag = 2;
-			}
-			if(((int)(found=line.find(" Beta virt")))!=-1){
-				flag = 3;
-			}
-			if(flag==2){
-				indent = 0;
-				k = 1;
-				while(k<=5 && ((int)line.length())>=(29+indent+9) ){
-					indent += 10;
-					k++;
-					j++;
-					HOMO++;
-				}
-			}
-		}
-	}
-
-	return HOMO;
-}
-
-
-int log_getLUMOAlpha(string log){
-	
-	int j;
-	int k;
-	int flag;
-	int indent;
-	int LUMO;
-	int HOMO;
-	int MO;
-
-	ifstream LogFile;
-
-	size_t found;
-
-	string str;
-	string line;
-
-	MO = log_countMO(log,"Alpha");
-
-	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
-	if(LogFile.is_open()){
-
-		HOMO = 0;
-		LUMO = 1;
-		flag = 0;
-		j = 0;
-
-		while(getline(LogFile,line) && j<MO && flag < 3){
-
-			if(((int)(found=line.find("*** Overlap ***")))!=-1){
-				flag = 1;
-				getline(LogFile,line);
-			}
-			if(((int)(found=line.find("Alpha  occ")))!=-1){
-				flag = 2;
-			}
-			if(((int)(found=line.find("Alpha virt")))!=-1){
-				flag = 3;
-			}
-			if(flag==2){
-				indent = 0;
-				k = 1;
-				str = "Init";
-				while(k<=5 && ((int)line.length())>=(29+indent+9) ){
-					indent += 10;
-					k++;
-					j++;
-					HOMO++;
-				}
-
-				LUMO=HOMO+1;
-			}
-		}
-	}
-
-	return LUMO;
-}
-
-int log_getLUMOBeta(string log){
-	
-	int j;
-	int k;
-	int flag;
-	int indent;
-	int LUMO;
-	int HOMO;
-	int MO;
-
-	ifstream LogFile;
-
-	size_t found;
-
-	string str;
-	string line;
-
-	MO = log_countMO(log,"Beta");
-
-	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
-	if(LogFile.is_open()){
-
-		HOMO = 0;
-		LUMO = 1;
-		flag = 0;
-		j = 0;
-
-		while(getline(LogFile,line) && j<MO && flag < 3){
-
-      if( LogFile.peek()==EOF) break;
-
-			if(((int)(found=line.find("*** Overlap ***")))!=-1){
-				flag = 1;
-				getline(LogFile,line);
-			}
-			if(((int)(found=line.find(" Beta  occ")))!=-1){
-				flag = 2;
-			}
-			if(((int)(found=line.find(" Beta virt")))!=-1){
-				flag = 3;
-			}
-			if(flag==2){
-				indent = 0;
-				k = 1;
-				str = "Init";
-				while(k<=5 && ((int)line.length())>=(29+indent+9) ){
-					indent += 10;
-					k++;
-					j++;
-					HOMO++;
-				}
-
-				LUMO=HOMO+1;
-			}
-		}
-	}
-
-	return LUMO;
-}
-
-
-vector<double> log_getMOEnergiesAlpha(string log){
-
-	string ext;
-	ext = lastN(log,4);
-	if(ext==".log"){
-		if(file_exist(const_cast<char*>((log).c_str()))==0){
-      throw invalid_argument("Log file does not exist");
-		}
-	}else{
-    throw invalid_argument("Wrong file extension log file must be .log");
-	}
-
-  vector<double> EnergiesAlpha;
-
-	int flag1;
-	int flag2;
-	
-	/* If there is more than one set of coefficients will read
-     * only from the first one */
-	int hint;
-
-	size_t found1;
-	size_t found2;
+  if(!fileValid(log,".log")) return Energies;
+  if(!orb_type.compare("Alpha")==0 && 
+     !orb_type.compare("Beta")==0){
+     cerr << "Unrecognized orbital type" << endl;
+     return Energies;
+  }
 
 	string str;
 	string line;
@@ -965,91 +686,38 @@ vector<double> log_getMOEnergiesAlpha(string log){
 	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
 
-		hint = 0;
+    // If there is more than one set of coefficients will read
+    // only from the first one 
+
+		int hint = 0;
 		while(getline(LogFile,line)){
-			flag1 = (int)(found1=line.find(" Alpha  occ. eigenvalues -- "));
-			flag2 = (int)(found2=line.find(" Alpha virt. eigenvalues -- "));
+
+	    size_t found1;
+	    size_t found2;
+			int flag1 = (int)(found1=line.find(" "+orb_type+"  occ. eigenvalues -- "));
+			int flag2 = (int)(found2=line.find(" "+orb_type+" virt. eigenvalues -- "));
 			
 
 			if(flag1!=-1 || flag2!=-1){
 
-				// This means this means we have found a 
+				// This means we have found a 
         // second set of coefficents the second set
         // is likely to be the more up to date one 
         // so we will use it instead
 				if(hint==1){
-          EnergiesAlpha.clear(); 
+          Energies.clear(); 
 				}
 
         auto vec_str = splitSt(line);
         for( size_t inc=4 ;inc<vec_str.size();inc++ ){
-          EnergiesAlpha.push_back((double)atof(vec_str.at(inc).c_str()));
+          Energies.push_back((double)atof(vec_str.at(inc).c_str()));
         }
 			}
 
       if( LogFile.peek()==EOF) break;
 		}
 	}
-	return EnergiesAlpha;
-}
-
-vector<double> log_getMOEnergiesBeta(string log){
-
-	string ext;
-	ext = lastN(log,4);
-	if(ext==".log"){
-		if(file_exist(const_cast<char*>((log).c_str()))==0){
-      throw invalid_argument("Log file does not exist");
-		}
-	}else{
-    throw invalid_argument("Wrong file extension log file must be .log");
-	}
-
-  vector<double> EnergiesBeta;
-
-	int flag1;
-	int flag2;
-	
-	/* If there is more than one set of coefficients will read
-     * only from the first one */
-	int hint;
-
-	size_t found1;
-	size_t found2;
-
-	string str;
-	string line;
-	ifstream LogFile;
-
-	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
-	if(LogFile.is_open()){
-
-		hint = 0;
-		while(getline(LogFile,line)){
-			flag1 = (int)(found1=line.find(" Beta  occ. eigenvalues -- "));
-			flag2 = (int)(found2=line.find(" Beta virt. eigenvalues -- "));
-			
-
-			if(flag1!=-1 || flag2!=-1){
-
-				// This means this means we have found a 
-        // second set of coefficents the second set
-        // is likely to be the more up to date one 
-        // so we will use it instead
-				if(hint==1){
-          EnergiesBeta.clear(); 
-				}
-
-        auto vec_str = splitSt(line);
-        for( size_t inc=4 ;inc<vec_str.size();inc++ ){
-          EnergiesBeta.push_back((double)atof(vec_str.at(inc).c_str()));
-        }
-			}
-
-      if( LogFile.peek()==EOF) break;
-		}
-	}
-	return EnergiesBeta;
+	return Energies;
 }
 
 bool restricted(int MOPAlpha, int MOPBeta){
