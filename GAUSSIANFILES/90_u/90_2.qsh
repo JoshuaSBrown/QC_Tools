@@ -1,0 +1,11 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=12:gb -l walltime=2000:00:00
+#PBS -k eo -m n -e /home/sim_jobr9774/ -o /home/sim_jobr9774/
+cd $PBS_O_WORKDIR
+export g09root=/home/apps/gaussian_6_9/
+export GAUSS_SCRDIR=/scratch
+export GAUSS_EXEDIR=/home/apps/gaussian_6_9/g09
+/home/apps/gaussian_6_9/g09/g09 < 90_2.gjf > 90_2.log
+mv fort.7 90_2.pun
+rm -r /scratch/*
+exit 0

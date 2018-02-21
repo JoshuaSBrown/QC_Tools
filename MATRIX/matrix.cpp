@@ -1,11 +1,22 @@
 #include <iostream>
-#include <stdio.h>
 #include <cstdlib>
+#include <stdio.h>
 #include <exception>
+#include <stdexcept>
 #include "matrix.hpp"
+#include <cmath>
 #include <vector>
+#include <string>
+#include <sstream>
 
 using namespace std; 
+
+string double_tos(double f, int nd) {
+   ostringstream ostr;
+   int tens = stod("1" + string(nd, '0'));
+   ostr << round(f*tens)/tens;
+   return ostr.str();
+}
 
 Matrix::Matrix() {
 	rows = 1;
@@ -173,6 +184,35 @@ std::ostream &operator<<(std::ostream &out, Matrix &mat){
 	return out;
 }
 
+void Matrix::set_row(vector<double> row, int r){
+  
+  if(get_cols()!=static_cast<int>(row.size())){
+    throw invalid_argument("vector is not the same size as matrix");
+  }
+
+  for(int j=1;j<=get_cols();j++){
+    if(r<=rows){
+      elem[index(r,j,1)] = row.at(j-1);
+    } else {
+      elem[index(r,j,1)] = 0;
+    }
+  }
+}
+
+void Matrix::set_col(vector<double> col, int c){
+
+  if(get_cols()!=static_cast<int>(col.size())){
+    throw invalid_argument("vector is not the same size as matrix");
+  }
+  for(int i=1;i<=get_rows();++i){
+    if(c<=cols){
+      elem[index(i,c,1)] = col.at(i-1);
+    } else {
+      elem[index(i,c,1)] = 0;
+    }
+  }
+}
+
 void Matrix::set_rows(int r){
 	if(r<0){
 		printf("ERROR negative number submitted to set_rows\n");
@@ -217,23 +257,19 @@ void Matrix::set_rows(int r){
 	}
 }
 
-vector<double> Matrix::getCol(int c){
-//  cerr << "Calling getCol" << endl;
+vector<double> Matrix::get_col(int c){
   vector<double> col_data;
   for(int i=1;i<=rows;i++){
     col_data.push_back(elem[index(i,c,1)]);    
   }
-//  cerr << "Returning From getCol" << endl;
   return col_data;
 }
 
-vector<double> Matrix::getRow(int r){
-//  cerr << "Calling getRow" << endl;
+vector<double> Matrix::get_row(int r){
   vector<double> row_data;
   for(int i=1;i<=cols;i++){
     row_data.push_back(elem[index(r,i,1)]);    
   }
-//  cerr << "Returning From getRow" << endl;
   return row_data;
 }
 
@@ -457,6 +493,73 @@ double Matrix::get_elem(int r, int c, int s){
 	return elem[index(r,c,s)];
 }
 
+void Matrix::swap_row(int r_from, int r_to){
+  if(r_from==r_to) return;
+  
+  vector<double> row_f = get_row(r_from);
+  vector<double> row_t = get_row(r_to);
+  set_row(row_f,r_to);
+  set_row(row_t,r_from);
+}
+
+void Matrix::swap_col(int c_from, int c_to){
+  if(c_from==c_to) return;
+  
+  vector<double> col_f = get_col(c_from);
+  vector<double> col_t = get_col(c_to);
+  set_col(col_f,c_to);
+  set_col(col_t,c_from);
+}
+
+
+void Matrix::move_row(int r_from, int r_to){
+
+  if(r_from==r_to) return;
+
+  // Shift all rows down 
+  vector<double> row = get_row(r_from);
+  // Shift all values down
+  if(r_from<r_to){
+    for(int r=r_from;r<r_to;r++){
+      for(int c=1;c<=get_cols();c++){
+        set_elem(get_elem(r+1,c),r,c);
+      }
+    }
+  }else{
+    for(int r=r_from;r>=(r_to+1);r--){
+      for(int c=1;c<=get_cols();c++){
+        set_elem(get_elem(r-1,c),r,c);
+      }
+    }
+  }
+  // Insert the row we took out 
+  this->set_row(row,r_to);
+}
+
+void Matrix::move_col(int c_from, int c_to){
+
+  if(c_from==c_to) return;
+
+  // Shift all rows down 
+  vector<double> col = get_col(c_from);
+  // Shift all values down
+  if(c_from<c_to){
+    for(int c=c_from;c<c_to;c++){
+      for(int r=1;r<=get_rows();r++){
+        set_elem(get_elem(r,c+1),r,c);
+      }
+    }
+  }else{
+    for(int c=c_from;c>=(c_to+1);c--){
+      for(int r=1;r<=get_rows();r++){
+        set_elem(get_elem(r,c-1),r,c);
+      }
+    }
+  }
+  // Insert the row we took out 
+  set_col(col,c_to);
+}
+
 Matrix Matrix_Multiply( Matrix mat1, Matrix mat2){
 
 	if(mat1.get_shel() != 1 || mat2.get_shel() !=1){
@@ -487,6 +590,33 @@ Matrix Matrix_Multiply( Matrix mat1, Matrix mat2){
 		}
 	}
 	return mat3;
+}
+
+vector<int> Matrix::matchRow(Matrix mat, int sf){
+  if(mat.get_shel()!=1 || this->get_shel()!=1){
+    cerr << "ERROR shel should be 1" << endl;
+    exit(1);
+  }
+  if(mat.get_cols()!=this->get_cols()){
+    throw invalid_argument("match function only works when matrices have same number of columns");
+  }
+  vector<int> m_vec(mat.get_rows(),-1);
+ 
+  for(int i=1;i<=get_rows();++i){
+    for(int ii=1;ii<=mat.get_rows();++ii){
+      bool match = true;
+      for(int j=1;j<=get_cols();++j){
+        string val1 = double_tos(get_elem(i,j),sf); 
+        string val2 = double_tos(mat.get_elem(ii,j),sf);
+        if(val1.compare(val2)!=0){
+          match=false;
+          break;
+        }
+      }
+      if(match) m_vec.at(i-1)=ii;
+    }
+  }
+  return m_vec;
 }
 
 Matrix &operator* (Matrix &mat1, Matrix &mat2){

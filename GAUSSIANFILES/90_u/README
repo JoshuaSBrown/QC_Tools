@@ -1,0 +1,5 @@
+This calculation is the same as what is in the 90 folder with the exception
+that it is done with an unrestricted basis set. It provides a means to test the
+calculation of the transfer integrals when both alpha and beta orbitals are 
+present.
+This file also makes use of the pop=full keyword command. This ensures the basis functions mapped to each atom can be discerned and means that if provided the user does not have to ensure the atom numbering is the same in the dimer as it is in the monomers. 

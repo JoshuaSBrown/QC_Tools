@@ -20,6 +20,8 @@ class Matrix {
 		void set_rows(int r);
 		void set_cols(int c);
 		void set_shel(int s);
+    void set_row(std::vector<double> row,int r);
+    void set_col(std::vector<double> col,int c);
 		int resize( int r, int c );
 		void set_elem(double val);
 		void set_elem(double val, int r);
@@ -35,9 +37,27 @@ class Matrix {
 		double get_elem(int r);
 		double get_elem(int r, int c);
 		double get_elem(int r, int c, int s);
-    std::vector<double> getCol(int c);
-    std::vector<double> getRow(int r);
+    std::vector<double> get_col(int c);
+    std::vector<double> get_row(int r);
+
+    // All rows are shifted to make way 
+    // for the new row/col
+    void move_row(int r_from, int r_to);
+    void move_col(int c_from, int c_to);
+
+    // The intial and final row/col simply change places
+    // none of the rows and cols other than the ones swapped
+    // are affected
+    void swap_row(int r_from, int r_to);
+    void swap_col(int c_from, int c_to);
+
+    // Responsible for matching the rows between two matrices they do not need
+    // Returns which row in the current matrix matches which row in the one passed
+    // in, -1 means there is no match
+    // sf is the number of sf will be checked to ensure the same value
+    std::vector<int> matchRow(Matrix mat,int sf);
 };	
+
 
 std::ostream &operator<<(std::ostream &out, Matrix &mat); 
 

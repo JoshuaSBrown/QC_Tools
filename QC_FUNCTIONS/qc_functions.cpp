@@ -53,6 +53,137 @@ unordered_map<int,pair<double,string>> findRank(Matrix & Orb_E_Alpha, Matrix & O
   }
   return rank_map;
 }
+
+// Essentially calculates the transfer integral
+double calculate_transfer_integral(
+  Matrix mat_1_Coef,
+  Matrix mat_2_Coef,
+  Matrix mat_P_Coef,
+  int MO1,
+  int MO2,
+  Matrix mat_S,
+  Matrix mat_P_OE){
+
+  Matrix mat_1_Coefinv = Matrix_Invert( mat_1_Coef);
+  Matrix mat_2_Coefinv = Matrix_Invert( mat_2_Coef);
+  Matrix mat_P_Coefinv = Matrix_Invert( mat_P_Coef);
+
+  Matrix zerosA(MO2,mat_1_Coefinv.get_cols(),mat_1_Coefinv.get_shel());
+  Matrix zerosB(MO1,mat_2_Coefinv.get_cols(),mat_2_Coefinv.get_shel());
+
+  Matrix zetaA = Matrix_concatenate_rows( mat_1_Coefinv, zerosA );
+  Matrix zetaB = Matrix_concatenate_rows( zerosB, mat_2_Coefinv );
+
+  Matrix zetaAinv = Matrix_Invert(zetaA);
+  Matrix zetaBinv = Matrix_Invert(zetaB);
+
+  Matrix Inter = mat_S * mat_P_Coefinv;
+
+  Matrix gammaA = zetaAinv * Inter ;
+  Matrix gammaB = zetaBinv * Inter ;
+
+  Matrix gammaA_inv = Matrix_Invert(gammaA);
+  Matrix gammaB_inv = Matrix_Invert(gammaB);
+
+  Matrix S_AB = gammaB * gammaA_inv;
+
+  Matrix Energy = Matrix_diag( mat_P_OE );
+  Matrix J_AB = gammaB * (Energy * gammaA_inv);
+
+  Matrix e_B = gammaB * (Energy * gammaB_inv );
+  Matrix e_A = gammaA * (Energy * gammaA_inv );
+
+  double J_ab = J_AB.get_elem(1,1);
+  double e_b = e_B.get_elem(1,1);
+  double e_a = e_A.get_elem(1,1);
+  double S_ab = S_AB.get_elem(1,1);
+
+  double J_eff = (J_ab-1/((double)2)*(e_b+e_a)*S_ab);
+  J_eff = J_eff/((double)(1-pow(S_ab,2)));
+
+  cout << "J_ab " << J_ab*hartreeToeV << " eV\n";
+  cout << "e_a " << e_b*hartreeToeV << " eV\n";
+  cout << "e_b " << e_a*hartreeToeV << " eV\n";
+  cout << "S_ab " << S_ab << "\n";
+  cout << "J_eff " << J_eff*hartreeToeV << " eV\n";
+
+  return J_eff;
+}
+
+Matrix organize_P_Coef(std::vector<int> matchDimerA,
+                       std::vector<int> matchDimerB,
+                       std::vector<int> basisFuncA,
+                       std::vector<int> basisFuncB,
+                       std::vector<int> basisFuncDimer,
+                       Matrix dimerCoef){
+
+
+  Matrix dimerCoef_new(dimerCoef.get_rows(),dimerCoef.get_cols());
+  
+  // Determine the starting row/col of the basis function associated
+  // with a particular atom
+  vector<int> matchToBasisA;
+  matchToBasisA.push_back(1);
+  int row = 1;
+  for( auto d : basisFuncA ){
+    row+=d;
+    matchToBasisA.push_back(row);
+  }
+
+  // For A we will move all the coefficents in the dimer associated 
+  // with A monomer to the top of the matrix and match with the correct
+  // atom
+  int dimer_row = 1;
+  for( auto r : matchDimerA ){
+    // match dimer onto A but within the dimer matrix
+    // Have to make sure we grab all the atomic orbitals assocaited with the
+    // atom
+    if(r!=-1){
+      for( int ao=0;ao<basisFuncA.at(dimer_row-1);ao++ ){
+        dimerCoef_new.set_row(matchToBasisA.at(r-1+ao),dimerCoef.getRow(dimer_row+ao));
+      } 
+    }
+    dimer_row++;
+  }
+
+  // Determine the starting row/col of the basis function associated
+  // with a particular atom
+  vector<int> matchToBasisB;
+  matchToBasisB.push_back(1);
+  int row = 1;
+  for( auto d : basisFuncB ){
+    row+=d;
+    matchToBasisB.push_back(row);
+  }
+
+  // For B we will move all the coefficients in the dimer associated
+  // with B monomer to the bottome of the matrix and match with the
+  // correct atom
+  int dimer_row = 1;
+  for( auto r : matchDimerB ){
+    // match dimer onto A but within the dimer matrix
+    if(r!=-1){
+      for( int ao=0;ao<basisFuncB.at(dimer_row-1);ao++ ){
+        dimerCoef_new.set_row(matchToBasisB.at(r-1+ao),dimerCoef.getRow(dimer_row+ao));
+      }
+    } 
+    dimer_row++;
+  }
+  return dimerCoef_new;
+}
+
+Matrix organize_S(std::vector<int> matchDimerA,
+                  std::vector<int> matchDimerB,
+                  std::vector<int> basisFuncA,
+                  std::vector<int> basisFuncB,
+                  std::vector<int> basisFuncDimer,
+                  Matrix S){
+
+  // If A move S columns horizontally 
+
+  // If B move S rows vertically
+}
+
 /*
 Matrix calculate_zeta1( Matrix Mon1, int MO ){
 
