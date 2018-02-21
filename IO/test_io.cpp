@@ -54,5 +54,38 @@ int main(void){
     MO = log_countMO(path,"Beta");
     assert(MO==92);
   }
+
+  cerr << "Testing: log_getHOMO" << endl;
+  {
+    string path = "../GAUSSIANFILES/90_u/90_pair.log";
+    int HOMO = log_getHOMO(path,"Alpha");
+    assert(HOMO==16);
+    HOMO = log_getHOMO(path,"Beta");
+    assert(HOMO==16);
+  }
+
+  cerr << "Testing: log_getMOEnergies" << endl;
+  {
+    string orb_t = "Alpha";
+    string path = "../GAUSSIANFILES/90_u/90_pair.log";
+    auto energies = log_getMOEnergies(path,orb_t);
+    int HOMO = log_getHOMO(path,orb_t);
+    int MO = log_countMO(path,orb_t);
+ 
+    assert(static_cast<int>(energies.at(0)*10)==-102);
+    assert(static_cast<int>(energies.at(HOMO-1)*1000)==-273);
+    assert(static_cast<int>(energies.at(HOMO)*10000)==-124);
+    assert(static_cast<int>(energies.at(MO-1)*100)==427);
+    
+    orb_t = "Beta";
+    energies = log_getMOEnergies(path,orb_t);
+    HOMO = log_getHOMO(path,orb_t);
+    MO = log_countMO(path,orb_t);
+    
+    assert(static_cast<int>(energies.at(0)*10)==-102);
+    assert(static_cast<int>(energies.at(HOMO-1)*1000)==-273);
+    assert(static_cast<int>(energies.at(HOMO)*10000)==-124);
+    assert(static_cast<int>(energies.at(MO-1)*100)==427);
+  }
   return 0;
 }

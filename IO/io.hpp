@@ -42,19 +42,13 @@ int log_getS(std::string log, Matrix *mat_S, int MO);
 
 //Open the .log file and determine which molecular orbital is the
 //highest occupied molecular orbital (HOMO) and return
-int log_getHOMOAlpha(std::string log);
-int log_getHOMOBeta(std::string log);
-
-//Open the .log file and determine which molecular orbital is the
-//lowest unoccupied molecular orbital (LUMO) and return
-int log_getLUMOAlpha(std::string log);
-int log_getLUMOBeta(std::string log);
+int log_getHOMO(std::string log,std::string orb_type);
 
 //Count the total number of Alpha molecular orbitals in the .log file
 int log_countMO(std::string log, std::string orb_type);
 
-std::vector<double> log_getMOEnergiesAlpha(std::string log);
-std::vector<double> log_getMOEnergiesBeta(std::string log);
+std::vector<double> log_getMOEnergies(std::string log,std::string orb_type);
+//std::vector<double> log_getMOEnergiesBeta(std::string log);
 
 //Used to determine if the orbital file is restricted or not
 bool restricted(int MOPAlpha, int MOPBeta);
