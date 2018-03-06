@@ -66,12 +66,6 @@ std::ostream &operator<<(std::ostream &out, Matrix &mat);
 
 Matrix &operator*(Matrix &mat1, Matrix &mat2); 
 
-//Matrix Matrix_Invert( Matrix &mat );
-
-//Matrix Matrix_getRow( Matrix mat, int R );
-
-//Matrix Matrix_getCol( Matrix mat, int C );
-
 //Takes a vector and diagonalized the 
 //vector in a 2 dimensional matrix where
 //everything but the diagonal is assigned
