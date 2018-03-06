@@ -51,6 +51,9 @@ class Matrix {
     void swap_row(int r_from, int r_to);
     void swap_col(int c_from, int c_to);
 
+    Matrix getCol(int c);
+    Matrix getRow(int r);
+    Matrix invert(void);
     // Responsible for matching the rows between two matrices they do not need
     // Returns which row in the current matrix matches which row in the one passed
     // in, -1 means there is no match
@@ -63,11 +66,11 @@ std::ostream &operator<<(std::ostream &out, Matrix &mat);
 
 Matrix &operator*(Matrix &mat1, Matrix &mat2); 
 
-Matrix Matrix_Invert( Matrix &mat );
+//Matrix Matrix_Invert( Matrix &mat );
 
-Matrix Matrix_getRow( Matrix mat, int R );
+//Matrix Matrix_getRow( Matrix mat, int R );
 
-Matrix Matrix_getCol( Matrix mat, int C );
+//Matrix Matrix_getCol( Matrix mat, int C );
 
 //Takes a vector and diagonalized the 
 //vector in a 2 dimensional matrix where
