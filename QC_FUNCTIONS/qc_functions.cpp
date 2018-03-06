@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include "../IO/io.hpp"
 #include "../MATRIX/matrix.hpp"
+#include "../CONSTANTS/constants.hpp"
 
 using namespace std;
 
@@ -16,12 +17,8 @@ unordered_map<int,pair<double,string>> findRank(Matrix & Orb_E_Alpha, Matrix & O
   
   auto m_a = Orb_E_Alpha.getCol(1);
 
-//  for(int i=1;i<=Orb_E_Alpha.get_rows();i++){
-//    cerr << "Value " << Orb_E_Alpha.get_elem(i) << endl;
-//  }
- 
-  for( auto val : m_a ){
-//    cerr << "Value in m_a " << val << endl;
+  for(int ind = 1;ind<=m_a.get_rows();ind++){
+    auto val = m_a.get_elem(ind);
     pair<double,string> pr(val, "Alpha");
     all.push_back(pr);
   }
@@ -29,13 +26,14 @@ unordered_map<int,pair<double,string>> findRank(Matrix & Orb_E_Alpha, Matrix & O
   if(Orb_E_Beta.get_cols()>0){
     auto m_b = Orb_E_Beta.getCol(1);
 
-    for( auto val : m_b ){
+    for(int ind = 1;ind<=m_b.get_rows();ind++){
+      auto val = m_b.get_elem(ind);
       pair<double,string> pr(val,"Beta");
       all.push_back(pr);
     }
   }
   // Sort the vectors
-//  cerr << "Sorting pairs " << endl;
+  cerr << "Sorting pairs " << endl;
   sort(all.begin(),all.end(),[](const pair<double,string>& P1, const pair<double,string>& P2) -> bool 
   {
     return P1.first < P2.first;
@@ -54,6 +52,7 @@ unordered_map<int,pair<double,string>> findRank(Matrix & Orb_E_Alpha, Matrix & O
   return rank_map;
 }
 
+
 // Essentially calculates the transfer integral
 double calculate_transfer_integral(
   Matrix mat_1_Coef,
@@ -64,9 +63,9 @@ double calculate_transfer_integral(
   Matrix mat_S,
   Matrix mat_P_OE){
 
-  Matrix mat_1_Coefinv = Matrix_Invert( mat_1_Coef);
-  Matrix mat_2_Coefinv = Matrix_Invert( mat_2_Coef);
-  Matrix mat_P_Coefinv = Matrix_Invert( mat_P_Coef);
+  Matrix mat_1_Coefinv = mat_1_Coef.invert();
+  Matrix mat_2_Coefinv = mat_2_Coef.invert();
+  Matrix mat_P_Coefinv = mat_P_Coef.invert();
 
   Matrix zerosA(MO2,mat_1_Coefinv.get_cols(),mat_1_Coefinv.get_shel());
   Matrix zerosB(MO1,mat_2_Coefinv.get_cols(),mat_2_Coefinv.get_shel());
@@ -74,16 +73,16 @@ double calculate_transfer_integral(
   Matrix zetaA = Matrix_concatenate_rows( mat_1_Coefinv, zerosA );
   Matrix zetaB = Matrix_concatenate_rows( zerosB, mat_2_Coefinv );
 
-  Matrix zetaAinv = Matrix_Invert(zetaA);
-  Matrix zetaBinv = Matrix_Invert(zetaB);
+  Matrix zetaAinv = zetaA.invert();
+  Matrix zetaBinv = zetaB.invert();
 
   Matrix Inter = mat_S * mat_P_Coefinv;
 
   Matrix gammaA = zetaAinv * Inter ;
   Matrix gammaB = zetaBinv * Inter ;
 
-  Matrix gammaA_inv = Matrix_Invert(gammaA);
-  Matrix gammaB_inv = Matrix_Invert(gammaB);
+  Matrix gammaA_inv = gammaA.invert();
+  Matrix gammaB_inv = gammaB.invert();
 
   Matrix S_AB = gammaB * gammaA_inv;
 
@@ -110,6 +109,7 @@ double calculate_transfer_integral(
   return J_eff;
 }
 
+/*
 Matrix organize_P_Coef(std::vector<int> matchDimerA,
                        std::vector<int> matchDimerB,
                        std::vector<int> basisFuncA,
@@ -140,7 +140,7 @@ Matrix organize_P_Coef(std::vector<int> matchDimerA,
     // atom
     if(r!=-1){
       for( int ao=0;ao<basisFuncA.at(dimer_row-1);ao++ ){
-        dimerCoef_new.set_row(matchToBasisA.at(r-1+ao),dimerCoef.getRow(dimer_row+ao));
+        dimerCoef_new.set_row(matchToBasisA.at(r-1+ao),dimerCoef.get_row(dimer_row+ao));
       } 
     }
     dimer_row++;
@@ -150,7 +150,7 @@ Matrix organize_P_Coef(std::vector<int> matchDimerA,
   // with a particular atom
   vector<int> matchToBasisB;
   matchToBasisB.push_back(1);
-  int row = 1;
+  row = 1;
   for( auto d : basisFuncB ){
     row+=d;
     matchToBasisB.push_back(row);
@@ -159,19 +159,21 @@ Matrix organize_P_Coef(std::vector<int> matchDimerA,
   // For B we will move all the coefficients in the dimer associated
   // with B monomer to the bottome of the matrix and match with the
   // correct atom
-  int dimer_row = 1;
+  dimer_row = 1;
   for( auto r : matchDimerB ){
     // match dimer onto A but within the dimer matrix
     if(r!=-1){
       for( int ao=0;ao<basisFuncB.at(dimer_row-1);ao++ ){
-        dimerCoef_new.set_row(matchToBasisB.at(r-1+ao),dimerCoef.getRow(dimer_row+ao));
+        dimerCoef_new.set_row(matchToBasisB.at(r-1+ao),dimerCoef.get_row(dimer_row+ao));
       }
     } 
     dimer_row++;
   }
   return dimerCoef_new;
 }
+*/
 
+/*
 Matrix organize_S(std::vector<int> matchDimerA,
                   std::vector<int> matchDimerB,
                   std::vector<int> basisFuncA,
@@ -182,7 +184,7 @@ Matrix organize_S(std::vector<int> matchDimerA,
   // If A move S columns horizontally 
 
   // If B move S rows vertically
-}
+}*/
 
 /*
 Matrix calculate_zeta1( Matrix Mon1, int MO ){

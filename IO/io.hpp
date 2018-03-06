@@ -56,4 +56,9 @@ bool restricted(int MOPAlpha, int MOPBeta);
 std::vector<std::vector<double>> log_getCoord(std::string log);
 
 std::vector<int> log_countAtomBasisFunc(std::string LogFile);
+
+std::vector<Matrix*> readFilesCoef(Parameters par, std::string orb_type);
+
+std::vector<Matrix*> readFilesEnergies(Parameters par, std::string orb_type);
+
 #endif

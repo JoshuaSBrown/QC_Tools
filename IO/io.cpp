@@ -100,18 +100,11 @@ Parameters check_arguments(char * argv[], int argc  ){
 	int logP_flag;
 	int log1_flag;
 	int log2_flag;
-//	int HOMO1_flag;
-//	int HOMO2_flag;
 	int err_exit_flag;
-
-//	int HOMO1;
-//	int HOMO2;
 
 	logP_flag = 0;
 	log1_flag = 0;
 	log2_flag = 0;
-//	HOMO1_flag = 0;
-//	HOMO2_flag = 0;
 	err_exit_flag = 0;
 
 	string temp;
@@ -121,7 +114,7 @@ Parameters check_arguments(char * argv[], int argc  ){
 	string arg;
 	string ext;
 
-	for ( int i=1;i<argc;++i){
+	for( int i=1;i<argc;i++){
 		arg=argv[i];
 		if((arg=="-h")||(arg=="--help")){
 			show_usage(argv[0]);
@@ -248,6 +241,7 @@ Parameters check_arguments(char * argv[], int argc  ){
 							err_exit_flag = -1;
 						}
 						//Check if log file exist with same name as pun2 file
+            par.setPun2(pun2);
 						temp = cut_end(pun2,4);
 						temp = temp + ".log";
 						if(file_exist(const_cast<char*>((temp).c_str()))!=0){
@@ -307,10 +301,12 @@ Parameters check_arguments(char * argv[], int argc  ){
 	}
 
   par.setHOMO_MO1Alpha(log_getHOMO(HOMO1log,"Alpha"));
+  cout << "getting beta" << endl;
   par.setHOMO_MO1Beta(log_getHOMO(HOMO1log,"Beta"));
   par.setHOMO_MO2Alpha(log_getHOMO(HOMO2log,"Alpha"));
   par.setHOMO_MO2Beta(log_getHOMO(HOMO2log,"Beta"));
 
+  
 	if(logP_flag ==2 && err_exit_flag!=-1){
     par.setLogP(P_log);
 	}
@@ -327,7 +323,7 @@ Parameters check_arguments(char * argv[], int argc  ){
 	if(err_exit_flag==-1){
 		throw invalid_argument("problem with executable arguments");
 	}
-
+  cerr << "Return"<< endl;
 	return par;
 }
 
@@ -474,7 +470,9 @@ int log_countMO(string log, string orb_type){
 	  string line;
     int flag1 = 0;
     int flag2 = 0;
-		while(getline(LogFile,line) || hint==0 || (flag1!=-1 || flag2!=-1)){
+		while(getline(LogFile,line) && ( hint==0 || (flag1!=-1 || flag2!=-1))){
+
+
       size_t found1, found2;
 			flag1 = (int)(found1=line.find(orb_type+"  occ. eigenvalues -- "));
 			flag2 = (int)(found2=line.find(orb_type+" virt. eigenvalues -- "));
@@ -640,7 +638,7 @@ int log_getHOMO(string log, string orb_type){
 		HOMO = 0;
 		int j = 0;
     string line;
-		while(getline(LogFile,line) && j<MO && flag < 3){
+		while(std::getline(LogFile,line) && j<MO && flag < 3){
 
 			if(((int)(found=line.find("*** Overlap ***")))!=-1){
 				flag = 1;
@@ -664,7 +662,8 @@ int log_getHOMO(string log, string orb_type){
 			}
 		}
 	}
-
+  
+  cout << "HOMO found " << HOMO << endl;
 	return HOMO;
 }
 
@@ -682,7 +681,7 @@ vector<double> log_getMOEnergies(string log,string orb_type){
 	string str;
 	string line;
 	ifstream LogFile;
-
+  cout << "Reading from " << log << endl;
 	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
 
@@ -852,4 +851,58 @@ bool restricted(int MOPAlpha, int MOPBeta){
     cout <<"Number of Alpha MO " << MOPAlpha << endl;
     cout <<"Number of Beta  MO " << MOPBeta  << endl;
   return false;
+}
+
+vector<Matrix *> readFilesCoef(Parameters par, string orb_type ){
+
+  vector<Matrix *> MatCo;
+
+  Matrix * mat_P_Coef = new Matrix;
+  Matrix * mat_1_Coef = new Matrix;
+  Matrix * mat_2_Coef = new Matrix;
+  pun_getMO(par.getPunP(),mat_P_Coef,orb_type);
+  pun_getMO(par.getPun1(),mat_1_Coef,orb_type);
+  pun_getMO(par.getPun2(),mat_2_Coef,orb_type);
+
+  MatCo.push_back(mat_P_Coef);
+  MatCo.push_back(mat_1_Coef);
+  MatCo.push_back(mat_2_Coef);
+  
+  return MatCo;
+}
+
+vector<Matrix *> readFilesEnergies(Parameters par, string orb_type ){
+
+  vector<Matrix *> MatCo;
+
+  vector<double> vecP_MO_Energy; 
+  vector<double> vec2_MO_Energy; 
+  vector<double> vec1_MO_Energy; 
+  vecP_MO_Energy = log_getMOEnergies(par.getLogP(),orb_type);
+  vec2_MO_Energy = log_getMOEnergies(par.getLog2(),orb_type);
+  vec1_MO_Energy = log_getMOEnergies(par.getLog1(),orb_type);
+  // Convert vectors to matrices
+  Matrix * mat_P_OE = new Matrix(vecP_MO_Energy.size());
+  Matrix * mat_1_OE = new Matrix(vec1_MO_Energy.size());
+  Matrix * mat_2_OE = new Matrix(vec2_MO_Energy.size());
+
+  int index = 1;
+  for( auto it : vecP_MO_Energy){
+    mat_P_OE->set_elem(it,index);
+    index++;
+  }
+  index = 1;
+  for( auto it : vec1_MO_Energy){
+    mat_1_OE->set_elem(it,index);
+  }
+  index = 1;
+  for( auto it : vec2_MO_Energy){
+    mat_2_OE->set_elem(it,index);
+  }
+  
+  MatCo.push_back(mat_P_OE);
+  MatCo.push_back(mat_1_OE);
+  MatCo.push_back(mat_2_OE);
+
+  return MatCo;
 }

@@ -27,11 +27,11 @@ Matrix organize_P_Coef(std::vector<int> matchDimerA,
 
 // Reorganize the dimer overlap matrix to line up with the monomer
 // coefficients. 
-Matrix organize_S(std::vector<int> matchDimerA,
+/*Matrix organize_S(std::vector<int> matchDimerA,
     std::vector<int> matchDimerB,
     std::vector<int> basisFuncA,
     std::vector<int> basisFuncB,
     std::vector<int> basisFuncDimer,
     Matrix S);
-
+*/
 #endif

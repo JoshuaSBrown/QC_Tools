@@ -27,19 +27,27 @@ Matrix::Matrix() {
 }
 
 Matrix::Matrix(int r) {
-	if(r<1){
-		printf("ERROR negative number of rows submitted to Matrix\n");
+	if(r<0){
+		cerr << "ERROR rows of matrix must be greater than or equal to 0" << endl;
+    cerr << " you have r " << r << endl;
 		exit(1);
 	}
 	int i;
-	rows = r;
-	cols = 1;
-	shel = 1;
-	
-	elem = new double[rows];
-	for(i=1;i<=rows;i++){
-		elem[i-1] = 0;
-	}
+  if( r==0){
+    rows = 0;
+    cols = 0;
+    shel = 0;
+    elem = nullptr;
+  }else{
+    rows = r;
+    cols = 1;
+    shel = 1;
+
+    elem = new double[rows];
+    for(i=1;i<=rows;i++){
+      elem[i-1] = 0;
+    }
+  }
 }
 
 Matrix::Matrix(int r, int c) {
@@ -652,67 +660,67 @@ Matrix &operator* (Matrix &mat1, Matrix &mat2){
 
 }
 
-Matrix Matrix_Invert( Matrix &mat){
+Matrix Matrix::invert(){
 	
-	if(mat.get_shel() != 1){
+	if(this->get_shel() != 1){
 		printf("ERROR Matrix_Invert only allowed for 1d and 2d arrays not 3d\n");
 		exit(1);
 	}
 
-	Matrix * mat2 = new Matrix(mat.get_cols(), mat.get_rows());
+	Matrix * mat2 = new Matrix(this->get_cols(), this->get_rows());
 
 	int i;
 	int j;
 	double val;
 
-	for(i=1;i<=mat.get_rows();i++){
-		for(j=1;j<=mat.get_cols();j++){
-			val = mat.get_elem(i,j);
+	for(i=1;i<=this->get_rows();i++){
+		for(j=1;j<=this->get_cols();j++){
+			val = this->get_elem(i,j);
 			(*mat2).set_elem(val,j,i);	
 		}
 	}
 	return *mat2;
 }
 
-Matrix Matrix_getRow( Matrix mat, int R){
+Matrix Matrix::getRow( int R){
 
-	if(mat.get_rows()<R){
+	if(this->get_rows()<R){
 		printf("ERROR Matrix_getRow cannot return R %d",R);
-		printf(" because mat has only %d rows\n.",mat.get_rows());
+		printf(" because mat has only %d rows\n.",this->get_rows());
 		exit(1);
 	}
 
-	Matrix mat2( 1, mat.get_cols(), mat.get_shel());
+	Matrix mat2( 1, this->get_cols(), this->get_shel());
 
 	int j;
 	int k;
 	double val;
 
-	for(j=1;j<=mat.get_cols();j++){
-		for(k=1;k<=mat.get_shel();k++){
-			val = mat.get_elem(R,j,k);
+	for(j=1;j<=this->get_cols();j++){
+		for(k=1;k<=this->get_shel();k++){
+			val = this->get_elem(R,j,k);
 			mat2.set_elem(val,1,j,k);	
 		}
 	}
 	return mat2;
 }
 
-Matrix Matrix_getCol( Matrix mat, int C){
+Matrix Matrix::getCol( int C){
 	
-	if(mat.get_cols()<C){
+	if(this->get_cols()<C){
 		printf("ERROR Matrix_getCol cannot return C %d",C);
-		printf(" because mat has only %d cols\n.",mat.get_cols());
+		printf(" because mat has only %d cols\n.",this->get_cols());
 		exit(1);
 	}
-	Matrix mat2( mat.get_cols(),1, mat.get_shel());
+	Matrix mat2( this->get_cols(),1, this->get_shel());
 
 	int i;
 	int k;
 	double val;
 
-	for(i=1;i<=mat.get_rows();i++){
-		for(k=1;k<=mat.get_shel();k++){
-			val = mat.get_elem(i,C,k);
+	for(i=1;i<=this->get_rows();i++){
+		for(k=1;k<=this->get_shel();k++){
+			val = this->get_elem(i,C,k);
 			mat2.set_elem(val,i,1,k);	
 		}
 	}
