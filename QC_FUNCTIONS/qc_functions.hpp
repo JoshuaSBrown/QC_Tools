@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "../MATRIX/matrix.hpp"
 
@@ -25,13 +26,16 @@ Matrix organize_P_Coef(std::vector<int> matchDimerA,
     std::vector<int> basisFuncDimer,
     Matrix dimerCoef);
 
+// Unscramble the coefficients of the dimer matrix
+// Assumes that the match vectors describe swaps looking at a single
+// instance of the dimerCoef matrix
+Matrix * unscramble_P_Coef(std::vector<int> matchDimerA, std::vector<int> matchDimerB, std::vector<int> basisFuncDimer, Matrix * dimerCoef);
+
 // Reorganize the dimer overlap matrix to line up with the monomer
 // coefficients. 
-/*Matrix organize_S(std::vector<int> matchDimerA,
+Matrix * unscramble_S(std::vector<int> matchDimerA,
     std::vector<int> matchDimerB,
-    std::vector<int> basisFuncA,
-    std::vector<int> basisFuncB,
     std::vector<int> basisFuncDimer,
-    Matrix S);
-*/
+    Matrix * S);
+
 #endif
