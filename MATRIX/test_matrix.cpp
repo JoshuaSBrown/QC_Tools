@@ -28,7 +28,13 @@ int main() {
     Matrix mat3(3,1, 2);
     cout <<  mat3 << endl;
   }
-  
+ 
+  cout << "Testing: Matrix::Matrix(vector<double> v_data)\n" << endl;
+  {
+    vector<double> v = { 1.2, 324.4, 23};
+    Matrix mat3(v);
+  }
+ 
   cout << "Testing: Matrix::Matrix(vector<vector<double>> vv_data)\n" << endl;
   {
     vector<vector<double>> vv_data;
