@@ -13,6 +13,7 @@ class Matrix {
 	public :
 		//constructors
 		Matrix(void);
+    Matrix(std::vector<double>);
     Matrix(std::vector<std::vector<double>>);
 		Matrix(int r);
 		Matrix(int r, int c);

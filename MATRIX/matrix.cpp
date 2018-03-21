@@ -26,6 +26,19 @@ Matrix::Matrix() {
 	elem[0] = 0;
 }
 
+Matrix::Matrix(vector<double> v_data){
+  rows = v_data.size();
+  cols = 1;
+  elem = new double[rows*cols];
+  
+  int r = 1;
+  int c = 1;
+	for( auto val : v_data){
+    elem[(r-1)*cols+c-1] = val;
+    ++r;
+	}
+}
+
 Matrix::Matrix(vector<vector<double>> vv_data){
   rows = vv_data.size();
   cols = vv_data.at(0).size();
