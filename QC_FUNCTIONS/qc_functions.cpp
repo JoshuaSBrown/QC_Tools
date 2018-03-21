@@ -632,6 +632,154 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
   return S_new;
 }
 
+Matrix * unscramble_OE(std::vector<int> matchDimerA,
+    std::vector<int> matchDimerB,
+    std::vector<int> basisFuncP,
+    Matrix * OE){
+
+  Matrix * OE_new = new Matrix(OE->get_rows(),1);
+
+    list<Matrix *> p_atom_mat_OE;
+    int num_atoms = basisFuncP.size();
+    int coef_row = 0;
+    cerr << "Number of atoms " << num_atoms << endl;
+    for(auto i=1; i<=num_atoms;++i){
+      cerr << "Creating matrix r " << basisFuncP.at(i-1) << " c " << OE->get_cols() << endl;
+      Matrix * mat = new Matrix(basisFuncP.at(i-1),OE->get_cols());
+      cerr << "New Matrix " << endl;
+      for(auto k=1; k<=basisFuncP.at(i-1);++k){
+        for(auto j=1; j<=OE->get_cols();++j){
+          cerr << "j " << j << " k " << k << endl;
+          mat->set_elem(OE->get_elem(k+coef_row,j),k,j);
+        }
+      }
+
+      coef_row+=basisFuncP.at(i-1);
+      p_atom_mat_OE.push_back(mat);
+    }
+
+    cerr << "Matching monomerA" << endl;
+    vector<pair<int,int>> monAmatch;
+    for(unsigned i=1;i<=matchDimerA.size();++i){
+      pair<int,int> pr(i,matchDimerA.at(i-1));
+      monAmatch.push_back(pr);
+    }
+    vector<pair<int,int>> monBmatch;
+    for(unsigned i=1;i<=matchDimerB.size();++i){
+      pair<int,int> pr(i+monAmatch.size(),matchDimerB.at(i-1));
+      monBmatch.push_back(pr);
+    }
+
+    cerr << "monAmatch" << endl;
+    for(auto it : monAmatch ) cerr << it.first << " " << it.second << endl;
+
+    cerr << "Determining swap order sorting A " << endl; 
+    for( auto pr_ptr=monAmatch.begin(); pr_ptr!=monAmatch.end(); ++pr_ptr ){
+      auto pr = *pr_ptr;
+      int col1was = pr.first;
+      int col1is  = pr.second;
+      // Find if "row1was" is moved later if it is the reference needs to be
+      // changed to "row1is"
+      cerr << "first " << col1was << " second " << col1is << endl;
+
+      // Fixing the values in MonomerA
+      auto pr_ptr_temp = pr_ptr;
+      pr_ptr_temp++;
+      while(pr_ptr_temp!=monAmatch.end()){
+        pr_ptr_temp = find_if(pr_ptr_temp,monAmatch.end(),[col1was](const pair<int,int>& p){
+            return col1was==p.second;});
+        if(pr_ptr_temp!=monAmatch.end()){
+          pr_ptr_temp->second = col1is;
+        }
+      } 
+      // Fixing the values in MonomerB
+      pr_ptr_temp = monBmatch.begin();
+      while(pr_ptr_temp!=monBmatch.end()){
+        pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[col1was](const pair<int,int>& p){
+            return col1was==p.second;});
+        if(pr_ptr_temp!=monBmatch.end()){
+          pr_ptr_temp->second = col1is;
+        }
+      }
+
+    } 
+
+    cerr << "Sorting through monomer B " << endl;
+
+    for( auto pr_ptr=monBmatch.begin(); pr_ptr!=monBmatch.end(); ++pr_ptr ){
+      auto pr = *pr_ptr;
+      int col1was = pr.first;
+      int col1is  = pr.second;
+      cerr << "first " << col1was << " second " << col1is << endl;
+
+      // Fixing the values in MonomerB
+      auto pr_ptr_temp = pr_ptr;
+      pr_ptr_temp++;
+      while(pr_ptr_temp!=monBmatch.end()){
+        pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[col1was](const pair<int,int>& p){
+            return col1was==p.second;});
+        if(pr_ptr_temp!=monBmatch.end()){
+          pr_ptr_temp->second = col1is;
+        }
+      }
+    } 
+
+    // Now we know that if we swap sequentially we will not be moving the wrong
+    // columns
+    for( auto p : monAmatch ){
+      if(p.first!=p.second){
+        cerr << "Swapping " << p.first << " with " << p.second << endl;
+        auto it = p_atom_mat_OE.begin();  
+        cerr << "Elements in matrix " << p.first << " Elements in matrix " << p.second << endl;
+        Matrix * temp = *(next(it, p.first-1));
+        Matrix * temp2 = *(next(it,p.second-1));
+        for(int j=1;j<=temp->get_cols();++j){
+          for(int i=1;i<=temp->get_rows();++i){
+            cerr << temp->get_elem(i,j) << " ";
+          }
+          cerr << "     ";
+          for(int i=1;i<=temp2->get_rows();++i){
+            cerr << temp2->get_elem(i,j) << " ";
+          }
+          cerr << endl;
+        }
+        *(next(it,p.first-1)) = *(next(it,p.second-1));
+        *(next(it,p.second-1)) = temp;
+      } 
+    }
+    cerr << "B" << endl;
+    for( auto p : monBmatch ){
+      if(p.first!=p.second){
+        cerr << "Swapping " << p.first << " with " << p.second << endl;
+        auto it = p_atom_mat_OE.begin();  
+        Matrix * temp = *(next(it, p.first-1));
+        *(next(it,p.first-1)) = *(next(it,p.second-1));
+        *(next(it,p.second-1)) = temp;
+      } 
+    }
+
+    cerr << "New matrix r " << OE->get_rows() << " c " << OE->get_cols() << endl;
+
+    // Now we want to load the elements in the correct order into the matrix
+    int row = 0;
+    for( auto it=p_atom_mat_OE.begin();it!=p_atom_mat_OE.end();++it){
+      Matrix * mat_ptr = *it;
+      int col = 1;
+      for( auto j=1;j<=mat_ptr->get_cols();++j){
+        for( auto i=1;i<=mat_ptr->get_rows();++i){
+          //cerr << i << " " << j << " " << row << " " << j+col << " ";
+          cerr << mat_ptr->get_elem(i,j) << " " ;
+          OE_new->set_elem(mat_ptr->get_elem(i,j),i+row,col);
+        }
+        cerr << endl;
+        ++col;
+      }
+      row+=mat_ptr->get_rows();
+      cerr << "next set of coefficients" << endl;
+    } 
+
+  return OE_new;
+}
 /*
 Matrix calculate_zeta1( Matrix Mon1, int MO ){
 
