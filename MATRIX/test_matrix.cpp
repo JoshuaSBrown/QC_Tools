@@ -3,42 +3,98 @@
 #include <cassert>
 using namespace std;
 int main() {
-  {
-    std::cout << "Testing Constructors\n" << std::endl;
-    std::cout << "Testing: Matrix::Matrix()\n" << std::endl;
-    Matrix mat0;
-    std::cout <<  mat0 << std::endl;
-    std::cout << "Testing: Matrix::Matrix(int r)\n" << std::endl; 
-    Matrix mat1(3);
-    std::cout <<  mat1 << std::endl;
-    std::cout << "Testing: Matrix::Matrix(int r, int c)\n" << std::endl;
-    Matrix mat2(2,3);
-    std::cout <<  mat2 << std::endl;
-    std::cout << "Testing: Matrix::Matrix(int r, int c, int s)\n" << std::endl;
-    Matrix mat3(3,1, 2);
-    std::cout <<  mat3 << std::endl;
-    std::cout << "\nTesting: Matrix::set_rows(int r)\n" << std::endl;
-    mat0.set_rows(3);
-    std::cout <<  mat0 << std::endl;
-    std::cout << "\nTesting: Matrix::set_cols(int c)\n" << std::endl;
-    mat0.set_cols(4);
-    std::cout <<  mat0 << std::endl;
-    std::cout << "\nTesting: Matrix::set_shel(int s)\n" << std::endl;
-    mat0.set_shel(2);
-    std::cout <<  mat0 << std::endl;
-    std::cout << "\nTesting: Matrix::set_elem(double val)\n" << std::endl;
-    mat0.set_elem(5.4);
-    std::cout <<  mat0 << std::endl;
-    std::cout << "\nTesting: Matrix::set_elem(double val, int r)\n" << std::endl;
-    mat0.set_elem(4.4, 3);
-    std::cout <<  mat0 << std::endl;
-    std::cout << "\nTesting: Matrix::set_elem(double val, int r, int c)\n" << std::endl;
-    mat0.set_elem(4.2, 3, 4);
-    std::cout <<  mat0 << std::endl;
-    std::cout <<  "\nTesting: Matrix::set_elem(double val, int r, int c)\n" << std::endl;
-    mat0.set_elem(0.3, 3, 4, 2);
-    std::cout <<  mat0 << std::endl;
+  cout << "Testing Constructors\n" << endl;
 
+  cout << "Testing: Matrix::Matrix()\n" << endl;
+  {
+    Matrix mat0;
+    cout <<  mat0 << endl;
+  }
+
+  cout << "Testing: Matrix::Matrix(int r)\n" << endl; 
+  {
+    Matrix mat1(3);
+    cout <<  mat1 << endl;
+  }
+
+  cout << "Testing: Matrix::Matrix(int r, int c)\n" << endl;
+  {
+    Matrix mat2(2,3);
+    cout <<  mat2 << endl;
+  }
+
+  cout << "Testing: Matrix::Matrix(int r, int c, int s)\n" << endl;
+  {
+    Matrix mat3(3,1, 2);
+    cout <<  mat3 << endl;
+  }
+  
+  cout << "Testing: Matrix::Matrix(vector<vector<double>> vv_data)\n" << endl;
+  {
+    vector<vector<double>> vv_data;
+    vector<double> v = { 1.2, 324.4, 23};
+    vv_data.push_back(v);
+    v.at(1) = -12.5;
+    vv_data.push_back(v);
+    Matrix mat3(vv_data);
+  }
+
+  cout << "\nTesting: Matrix::set_rows(int r)\n" << endl;
+  {
+    Matrix mat0;
+    mat0.set_rows(3);
+    cout <<  mat0 << endl;
+  }
+
+  cout << "\nTesting: Matrix::set_cols(int c)\n" << endl;
+  {
+    Matrix mat0;
+    mat0.set_cols(4);
+    cout <<  mat0 << endl;
+  }
+
+  cout << "\nTesting: Matrix::set_shel(int s)\n" << endl;
+  {
+    Matrix mat0;
+    mat0.set_shel(2);
+    cout <<  mat0 << endl;
+  }
+
+  cout << "\nTesting: Matrix::set_elem(double val)\n" << endl;
+  {
+    Matrix mat0;
+    mat0.set_elem(5.4);
+    cout <<  mat0 << endl;
+  }
+
+  cout << "\nTesting: Matrix::set_elem(double val, int r)\n" << endl;
+  {
+    Matrix mat0;
+    mat0.set_rows(3);
+    mat0.set_elem(4.4, 3);
+    cout <<  mat0 << endl;
+  }
+
+  cout << "\nTesting: Matrix::set_elem(double val, int r, int c)\n" << endl;
+  {
+    Matrix mat0;
+    mat0.set_rows(3);
+    mat0.set_cols(4);
+    mat0.set_elem(4.2, 3, 4);
+    cout <<  mat0 << endl;
+  }
+
+  cout <<  "\nTesting: Matrix::set_elem(double val, int r, int c)\n" << endl;
+  {
+    Matrix mat0;
+    mat0.set_rows(3);
+    mat0.set_cols(4);
+    mat0.set_shel(2);
+    mat0.set_elem(0.3, 3, 4, 2);
+    cout <<  mat0 << endl;
+  }
+
+  {
     Matrix mat4(2,3);
     Matrix mat5(3,2);
 
@@ -54,15 +110,15 @@ int main() {
     mat5.set_elem(3,3,1);
     mat5.set_elem(4,3,2);
 
-    std::cout <<  mat4 << std::endl;
-    std::cout <<  mat5 << std::endl;
+    cout <<  mat4 << endl;
+    cout <<  mat5 << endl;
 
     Matrix mat6 = mat4 * mat5;
-    std::cout <<  mat6 << std::endl;
+    cout <<  mat6 << endl;
 
-    std::cout <<  "\nResizing matrix 6" << std::endl; 
+    cout <<  "\nResizing matrix 6" << endl; 
     mat6.resize(3,3);
-    std::cout << mat6 << std::endl;
+    cout << mat6 << endl;
   }
 
   cerr << "Testing: matchRow" << endl;
@@ -93,8 +149,6 @@ int main() {
     
     auto m_vec = mat4.matchRow(mat5,4);
     assert(m_vec.at(0)==3);
-    assert(m_vec.at(1)==-1);
-    assert(m_vec.at(2)==-1);
   }
 
   cerr << "Testing: set_row & set_col" << endl;

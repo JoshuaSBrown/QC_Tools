@@ -13,6 +13,7 @@ class Matrix {
 	public :
 		//constructors
 		Matrix(void);
+    Matrix(std::vector<std::vector<double>>);
 		Matrix(int r);
 		Matrix(int r, int c);
 		Matrix(int r, int c, int s);
@@ -37,11 +38,14 @@ class Matrix {
 		double get_elem(int r);
 		double get_elem(int r, int c);
 		double get_elem(int r, int c, int s);
+    double * get_elem_ptr(int r, int c);
     std::vector<double> get_col(int c);
     std::vector<double> get_row(int r);
 
+    // WARNING This is not a swap row operation 
     // All rows are shifted to make way 
-    // for the new row/col
+    // for the new row/col. 'r_from' is moved to 'r_to' while 
+    // all rows are appropriately shifted to make this happen. 
     void move_row(int r_from, int r_to);
     void move_col(int c_from, int c_to);
 
@@ -55,9 +59,10 @@ class Matrix {
     Matrix getRow(int r);
     Matrix invert(void);
     // Responsible for matching the rows between two matrices they do not need
-    // Returns which row in the current matrix matches which row in the one passed
-    // in, -1 means there is no match
-    // sf is the number of sf will be checked to ensure the same value
+    // Returns which row in the current matrix matches which row in the one 
+    // passed in, -1 means there is no match
+    // sf is the number of significant figures that will be checked to ensure 
+    // the same value
     std::vector<int> matchRow(Matrix mat,int sf);
 };	
 
