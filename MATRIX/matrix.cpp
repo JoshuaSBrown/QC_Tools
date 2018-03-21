@@ -26,6 +26,26 @@ Matrix::Matrix() {
 	elem[0] = 0;
 }
 
+Matrix::Matrix(vector<vector<double>> vv_data){
+  rows = vv_data.size();
+  cols = vv_data.at(0).size();
+  elem = new double[rows*cols];
+  
+  int r = 1;
+	for( auto v : vv_data){
+    int c = 1;
+    if(static_cast<int>(v.size())!=cols){
+      throw invalid_argument("vector<vector<double>> not consistent "
+                             "in matrix constructor ");
+    }
+		for(auto val : v){
+			elem[(r-1)*cols+c-1] = val;
+      ++c;
+		}
+    ++r;
+	}
+}
+
 Matrix::Matrix(int r) {
 	if(r<0){
 		cerr << "ERROR rows of matrix must be greater than or equal to 0" << endl;
@@ -478,6 +498,10 @@ double Matrix::get_elem(int r, int c){
 	return elem[index(r,c,1)];
 }
 
+double * Matrix::get_elem_ptr(int r, int c){
+  return &elem[index(r,c,1)];
+}
+
 double Matrix::get_elem(int r, int c, int s){
 	if(r<1){
 		printf("ERROR get_elem(int r, int c, int s): 0 or negative row submitted\n");
@@ -608,7 +632,7 @@ vector<int> Matrix::matchRow(Matrix mat, int sf){
   if(mat.get_cols()!=this->get_cols()){
     throw invalid_argument("match function only works when matrices have same number of columns");
   }
-  vector<int> m_vec(mat.get_rows(),-1);
+  vector<int> m_vec(this->get_rows(),-1);
  
   for(int i=1;i<=get_rows();++i){
     for(int ii=1;ii<=mat.get_rows();++ii){
