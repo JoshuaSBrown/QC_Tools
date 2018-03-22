@@ -199,40 +199,6 @@ Parameters check_arguments(char * argv[], int argc  ){
 		}else if ((arg=="-p_2")||(arg=="--pun2")){
 			if(i+1<argc){
 				if(check_string_input(argv[i+1])==-1){
-					string pun1 = argv[i+1];
-					ext = lastN(pun1,4);
-					if(ext==".pun"){
-						if(file_exist(const_cast<char*>((pun1).c_str()))==0){
-							cerr << "ERROR The file "+(pun1)+" does not exist!" << endl;
-							err_exit_flag = -1;
-						}
-            par.setPun1(pun1);
-						//Check if log file exist with same name as pun1 file
-            par.setPun1(pun1);
-						temp = cut_end(pun1,4);
-						temp = temp + ".log";
-						if(file_exist(const_cast<char*>((temp).c_str()))!=0){
-							if(log1_flag==0){
-								log1_flag = 1;
-								HOMO1log = temp;
-                par.setLog1(temp);
-							}
-						}
-						i++;
-					}else{
-						cerr << "WARNING --pun1 option has no file specified!" << endl;
-					}
-				}else{
-					cerr << "ERROR --pun1 option requires *.pun file!" << endl;
-					err_exit_flag = -1;
-				}
-			}else{
-				cerr << "ERROR --pun1 option requires one argument!" << endl;
-				err_exit_flag = -1;
-			}
-		}else if ((arg=="-p_1")||(arg=="--pun1")){
-			if(i+1<argc){
-				if(check_string_input(argv[i+1])==-1){
 					string pun2 = argv[i+1];
 					ext = lastN(pun2,4);
 					if(ext==".pun"){
@@ -240,15 +206,15 @@ Parameters check_arguments(char * argv[], int argc  ){
 							cerr << "ERROR The file "+(pun2)+" does not exist!" << endl;
 							err_exit_flag = -1;
 						}
-						//Check if log file exist with same name as pun2 file
             par.setPun2(pun2);
+						//Check if log file exist with same name as pun2 file
 						temp = cut_end(pun2,4);
 						temp = temp + ".log";
 						if(file_exist(const_cast<char*>((temp).c_str()))!=0){
-							if(log2_flag==0){
-								log2_flag = 1;
-								HOMO2log = temp;
-                par.setLog2(temp);
+							if(log1_flag==0){
+								log1_flag = 1;
+								HOMO1log = temp;
+                par.setLog1(temp);
 							}
 						}
 						i++;
@@ -261,6 +227,39 @@ Parameters check_arguments(char * argv[], int argc  ){
 				}
 			}else{
 				cerr << "ERROR --pun2 option requires one argument!" << endl;
+				err_exit_flag = -1;
+			}
+		}else if ((arg=="-p_1")||(arg=="--pun1")){
+			if(i+1<argc){
+				if(check_string_input(argv[i+1])==-1){
+					string pun1 = argv[i+1];
+					ext = lastN(pun1,4);
+					if(ext==".pun"){
+						if(file_exist(const_cast<char*>((pun1).c_str()))==0){
+							cerr << "ERROR The file "+(pun1)+" does not exist!" << endl;
+							err_exit_flag = -1;
+						}
+						//Check if log file exist with same name as pun1 file
+            par.setPun1(pun1);
+						temp = cut_end(pun1,4);
+						temp = temp + ".log";
+						if(file_exist(const_cast<char*>((temp).c_str()))!=0){
+							if(log2_flag==0){
+								log2_flag = 1;
+								HOMO2log = temp;
+                par.setLog2(temp);
+							}
+						}
+						i++;
+					}else{
+						cerr << "WARNING --pun1 option has no file specified!" << endl;
+					}
+				}else{
+					cerr << "ERROR --pun1 option requires *.pun file!" << endl;
+					err_exit_flag = -1;
+				}
+			}else{
+				cerr << "ERROR --pun1 option requires one argument!" << endl;
 				err_exit_flag = -1;
 			}
 	
@@ -725,12 +724,14 @@ vector<vector<double>> log_getCoord(string log){
   vector<double> X;
   vector<double> Y;
   vector<double> Z;
+  cerr << "in getCoord" << endl;
 
   if(!fileValid(log,".log")) return Coord;
 
 	string str;
 	string line;
 	ifstream LogFile;
+  cerr << "File is valid" << endl;
 
 	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
@@ -741,18 +742,31 @@ vector<vector<double>> log_getCoord(string log){
 		int hint = 0;
 		while(getline(LogFile,line)){
 
-	    size_t found1;
-			int flag1 = (int)(found1=line.find("Center     Atomic      Atomic             Coordinates (Angstroms)"));
-			
 
+	    size_t found1;
+      size_t found2;
+
+			int flag1 = (int)(found1=line.find("Center     Atomic      Atomic             Coordinates (Angstroms)"));
+			int flag2 = (int)(found2=line.find("Center     Atomic     Atomic              Coordinates (Angstroms)"));
+
+      if(flag2!=-1) {
+        flag1 = flag2;
+        found1 = found2;
+      }
+  
 			if(flag1!=-1){
 
+        cerr << "Hint value " << hint << endl;
 				// This means we have found a 
         // second set of coefficents the second set
         // is likely to be the more up to date one 
         // so we will use it instead
 				if(hint==1){
+          cerr << "Clearing values" << endl;
           Coord.clear(); 
+          X.clear();
+          Y.clear();
+          Z.clear();
 				}
 
         // Skip the 2nd and third line 
@@ -768,11 +782,15 @@ vector<vector<double>> log_getCoord(string log){
           Z.push_back((double)atof(vec_str.at(5).c_str()));
           getline(LogFile,line);
         }
+        hint=1;
 			}
 
       if( LogFile.peek()==EOF) break;
 		}
-	}
+	}else{
+    cerr << "ERROR unable to open log file" << endl;
+    exit(1);
+  }
   Coord.push_back(X);
   Coord.push_back(Y);
   Coord.push_back(Z);

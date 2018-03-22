@@ -29,6 +29,7 @@ Matrix::Matrix() {
 Matrix::Matrix(vector<double> v_data){
   rows = v_data.size();
   cols = 1;
+  shel = 1;
   elem = new double[rows*cols];
   
   int r = 1;
@@ -39,9 +40,25 @@ Matrix::Matrix(vector<double> v_data){
 	}
 }
 
+Matrix::Matrix(vector<int> v_data){
+  rows = v_data.size();
+  cols = 1;
+  shel = 1;
+  elem = new double[rows*cols];
+  
+  int r = 1;
+  int c = 1;
+	for( auto val : v_data){
+    elem[(r-1)*cols+c-1] = static_cast<double>(val);
+    ++r;
+	}
+}
+
 Matrix::Matrix(vector<vector<double>> vv_data){
   rows = vv_data.size();
   cols = vv_data.at(0).size();
+  shel = 1;
+  elem = new double[rows*cols];
   elem = new double[rows*cols];
   
   int r = 1;
@@ -653,6 +670,33 @@ vector<int> Matrix::matchRow(Matrix mat, int sf){
       for(int j=1;j<=get_cols();++j){
         string val1 = double_tos(get_elem(i,j),sf); 
         string val2 = double_tos(mat.get_elem(ii,j),sf);
+        if(val1.compare(val2)!=0){
+          match=false;
+          break;
+        }
+      }
+      if(match) m_vec.at(i-1)=ii;
+    }
+  }
+  return m_vec;
+}
+
+vector<int> Matrix::matchCol(Matrix mat, int sf){
+  if(mat.get_shel()!=1 || this->get_shel()!=1){
+    cerr << "ERROR shel should be 1" << endl;
+    exit(1);
+  }
+  if(mat.get_rows()!=this->get_rows()){
+    throw invalid_argument("match function only works when matrices have same number of rows");
+  }
+  vector<int> m_vec(this->get_cols(),-1);
+ 
+  for(int i=1;i<=get_cols();++i){
+    for(int ii=1;ii<=mat.get_cols();++ii){
+      bool match = true;
+      for(int j=1;j<=get_rows();++j){
+        string val1 = double_tos(get_elem(j,i),sf); 
+        string val2 = double_tos(mat.get_elem(j,ii),sf);
         if(val1.compare(val2)!=0){
           match=false;
           break;

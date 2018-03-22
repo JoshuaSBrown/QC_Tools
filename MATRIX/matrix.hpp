@@ -14,6 +14,7 @@ class Matrix {
 		//constructors
 		Matrix(void);
     Matrix(std::vector<double>);
+    Matrix(std::vector<int>);
     Matrix(std::vector<std::vector<double>>);
 		Matrix(int r);
 		Matrix(int r, int c);
@@ -58,6 +59,7 @@ class Matrix {
 
     Matrix getCol(int c);
     Matrix getRow(int r);
+    // Basically switches the rows and columns
     Matrix invert(void);
     // Responsible for matching the rows between two matrices they do not need
     // Returns which row in the current matrix matches which row in the one 
@@ -65,6 +67,7 @@ class Matrix {
     // sf is the number of significant figures that will be checked to ensure 
     // the same value
     std::vector<int> matchRow(Matrix mat,int sf);
+    std::vector<int> matchCol(Matrix mat,int sf);
 };	
 
 

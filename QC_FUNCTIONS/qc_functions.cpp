@@ -112,13 +112,19 @@ double calculate_transfer_integral(
 }
 
 // unscramble the coefficients
-Matrix * unscramble_P_Coef(std::vector<int> matchDimerA, std::vector<int> matchDimerB,std::vector<int> basisFuncP,Matrix * dimerCoef){
+Matrix * unscramble_P_Coef(
+std::vector<int> matchDimerA, 
+std::vector<int> matchDimerB,
+std::vector<int> basisFuncP,
+Matrix * dimerCoef){
 
   // Let's reduce the complexity of the problem by instead of working
   // with the basis functions lets just work with the atoms. We can do
   // this by treating all the basis functions associated with a single
   // atom as a block. 
 
+  cerr << "Unscrambling P Coefs" << endl;
+  cerr << endl;
   
   list<Matrix *> p_atom_mat_coef;
   int num_atoms = basisFuncP.size();
@@ -144,16 +150,19 @@ Matrix * unscramble_P_Coef(std::vector<int> matchDimerA, std::vector<int> matchD
   // of the dimer matrix
   // First int is the col in the dimer the atom should be at
   // Second int is the col in the dimer the atom is presently at
+  cerr << "Matching monomerB" << endl;
+  vector<pair<int,int>> monBmatch;
+  for(unsigned i=1;i<=matchDimerB.size();++i){
+    pair<int,int> pr(i,matchDimerB.at(i-1));
+    cerr << "Match " << i << " with " << matchDimerB.at(i-1) << endl;
+    monBmatch.push_back(pr);
+  }
   cerr << "Matching monomerA" << endl;
   vector<pair<int,int>> monAmatch;
   for(unsigned i=1;i<=matchDimerA.size();++i){
-    pair<int,int> pr(i,matchDimerA.at(i-1));
+    pair<int,int> pr(i+monBmatch.size(),matchDimerA.at(i-1));
+    cerr << "Match " << pr.first << " with " << pr.second << endl;
     monAmatch.push_back(pr);
-  }
-  vector<pair<int,int>> monBmatch;
-  for(unsigned i=1;i<=matchDimerB.size();++i){
-    pair<int,int> pr(i+monAmatch.size(),matchDimerB.at(i-1));
-    monBmatch.push_back(pr);
   }
 
   // Now if we use the match vectors we need to organize them so that if
@@ -210,58 +219,61 @@ Matrix * unscramble_P_Coef(std::vector<int> matchDimerA, std::vector<int> matchD
   // Swap row 4 with row 3
   // Swap row 2 with row 2 - no swap
   // Swap row 3 with row 3 - no swap
-  cerr << "monAmatch" << endl;
-  for(auto it : monAmatch ) cerr << it.first << " " << it.second << endl;
+  cerr << "monBmatch" << endl;
+  for(auto it : monBmatch ) cerr << it.first << " " << it.second << endl;
  
-  cerr << "Determining swap order sorting A " << endl; 
-  for( auto pr_ptr=monAmatch.begin(); pr_ptr!=monAmatch.end(); ++pr_ptr ){
+  cerr << "Determining swap order sorting B " << endl; 
+  for( auto pr_ptr=monBmatch.begin(); pr_ptr!=monBmatch.end(); ++pr_ptr ){
     auto pr = *pr_ptr;
+
     int row1was = pr.first;
     int row1is  = pr.second;
     // Find if "row1was" is moved later if it is the reference needs to be
     // changed to "row1is"
     cerr << "first " << row1was << " second " << row1is << endl;
 
-    // Fixing the values in MonomerA
+    // Fixing the values in MonomerB
     auto pr_ptr_temp = pr_ptr;
     pr_ptr_temp++;
-    while(pr_ptr_temp!=monAmatch.end()){
-      pr_ptr_temp = find_if(pr_ptr_temp,monAmatch.end(),[row1was](const pair<int,int>& p){
-        return row1was==p.second;});
-      if(pr_ptr_temp!=monAmatch.end()){
+    while(pr_ptr_temp!=monBmatch.end()){
+      pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[row1was](const pair<int,int>& p){
+          return row1was==p.second;});
+      if(pr_ptr_temp!=monBmatch.end()){
         pr_ptr_temp->second = row1is;
       }
     } 
 
-    // Fixing the values in MonomerB
-    pr_ptr_temp = monBmatch.begin();
-    while(pr_ptr_temp!=monBmatch.end()){
-      pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[row1was](const pair<int,int>& p){
-        return row1was==p.second;});
-      if(pr_ptr_temp!=monBmatch.end()){
+    // Fixing the values in MonomerA
+    pr_ptr_temp = monAmatch.begin();
+    while(pr_ptr_temp!=monAmatch.end()){
+      pr_ptr_temp = find_if(pr_ptr_temp,monAmatch.end(),[row1was](const pair<int,int>& p){
+          return row1was==p.second;});
+      if(pr_ptr_temp!=monAmatch.end()){
         pr_ptr_temp->second = row1is;
       }
     }
   } 
 
-  cerr << "Sorting through monomer B " << endl;
+  cerr << "Sorting through monomer A " << endl;
 
-  for( auto pr_ptr=monBmatch.begin(); pr_ptr!=monBmatch.end(); ++pr_ptr ){
+  for( auto pr_ptr=monAmatch.begin(); pr_ptr!=monAmatch.end(); ++pr_ptr ){
     auto pr = *pr_ptr;
     int row1was = pr.first;
     int row1is  = pr.second;
-    // Find if "row1was" is moved later if it is the reference needs to be
-    // changed to "row1is"
-    cerr << "first " << row1was << " second " << row1is << endl;
+    if(row1was!=row1is){
+      // Find if "row1was" is moved later if it is the reference needs to be
+      // changed to "row1is"
+      cerr << "first " << row1was << " second " << row1is << endl;
 
-    // Fixing the values in MonomerB
-    auto pr_ptr_temp = pr_ptr;
-    pr_ptr_temp++;
-    while(pr_ptr_temp!=monBmatch.end()){
-      pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[row1was](const pair<int,int>& p){
-        return row1was==p.second;});
-      if(pr_ptr_temp!=monBmatch.end()){
-        pr_ptr_temp->second = row1is;
+      // Fixing the values in MonomerA
+      auto pr_ptr_temp = pr_ptr;
+      pr_ptr_temp++;
+      while(pr_ptr_temp!=monAmatch.end()){
+        pr_ptr_temp = find_if(pr_ptr_temp,monAmatch.end(),[row1was](const pair<int,int>& p){
+            return row1was==p.second;});
+        if(pr_ptr_temp!=monAmatch.end()){
+          pr_ptr_temp->second = row1is;
+        }
       }
     }
   } 
@@ -269,14 +281,15 @@ Matrix * unscramble_P_Coef(std::vector<int> matchDimerA, std::vector<int> matchD
 
   // Now we know that if we swap sequentially we will not be moving the wrong
   // columns
-  for( auto p : monAmatch ){
+  cerr << "Swapping B " << endl;
+  for( auto p : monBmatch ){
     if(p.first!=p.second){
       cerr << "Swapping " << p.first << " with " << p.second << endl;
       auto it = p_atom_mat_coef.begin();  
       cerr << "Elements in matrix " << p.first << " Elements in matrix " << p.second << endl;
       Matrix * temp = *(next(it, p.first-1));
       Matrix * temp2 = *(next(it,p.second-1));
-      for(int i=1;i<=temp->get_rows();++i){
+      /*for(int i=1;i<=temp->get_rows();++i){
         for(int j=1;j<=temp->get_cols();++j){
           cerr << temp->get_elem(i,j) << " ";
         }
@@ -285,13 +298,13 @@ Matrix * unscramble_P_Coef(std::vector<int> matchDimerA, std::vector<int> matchD
           cerr << temp2->get_elem(i,j) << " ";
         }
         cerr << endl;
-      }
+      }*/
       *(next(it,p.first-1)) = *(next(it,p.second-1));
       *(next(it,p.second-1)) = temp;
     } 
   }
-  cerr << "B" << endl;
-  for( auto p : monBmatch ){
+  cerr << "A" << endl;
+  for( auto p : monAmatch ){
     if(p.first!=p.second){
       cerr << "Swapping " << p.first << " with " << p.second << endl;
       auto it = p_atom_mat_coef.begin();  
@@ -334,6 +347,9 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
                   std::vector<int> basisFuncP,
                   Matrix * S){
 
+  cerr << "Unscrambling S" << endl;
+  cerr << endl;
+
   Matrix * S_new = new Matrix(S->get_rows(),S->get_cols());
   {  
     list<Matrix *> p_atom_mat_S;
@@ -360,23 +376,23 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
     // of the dimer matrix
     // First int is the col in the dimer the atom should be at
     // Second int is the col in the dimer the atom is presently at
-    cerr << "Matching monomerA" << endl;
-    vector<pair<int,int>> monAmatch;
-    for(unsigned i=1;i<=matchDimerA.size();++i){
-      pair<int,int> pr(i,matchDimerA.at(i-1));
-      monAmatch.push_back(pr);
-    }
+    cerr << "Matching monomerB" << endl;
     vector<pair<int,int>> monBmatch;
     for(unsigned i=1;i<=matchDimerB.size();++i){
-      pair<int,int> pr(i+monAmatch.size(),matchDimerB.at(i-1));
+      pair<int,int> pr(i,matchDimerB.at(i-1));
       monBmatch.push_back(pr);
     }
+    vector<pair<int,int>> monAmatch;
+    for(unsigned i=1;i<=matchDimerA.size();++i){
+      pair<int,int> pr(i+monBmatch.size(),matchDimerA.at(i-1));
+      monAmatch.push_back(pr);
+    }
 
-    cerr << "monAmatch" << endl;
-    for(auto it : monAmatch ) cerr << it.first << " " << it.second << endl;
+    cerr << "monBmatch" << endl;
+    for(auto it : monBmatch ) cerr << it.first << " " << it.second << endl;
 
-    cerr << "Determining swap order sorting A " << endl; 
-    for( auto pr_ptr=monAmatch.begin(); pr_ptr!=monAmatch.end(); ++pr_ptr ){
+    cerr << "Determining swap order sorting B " << endl; 
+    for( auto pr_ptr=monBmatch.begin(); pr_ptr!=monBmatch.end(); ++pr_ptr ){
       auto pr = *pr_ptr;
       int row1was = pr.first;
       int row1is  = pr.second;
@@ -387,57 +403,60 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
       // Fixing the values in MonomerA
       auto pr_ptr_temp = pr_ptr;
       pr_ptr_temp++;
+      while(pr_ptr_temp!=monBmatch.end()){
+        pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[row1was](const pair<int,int>& p){
+            return row1was==p.second;});
+        if(pr_ptr_temp!=monBmatch.end()){
+          pr_ptr_temp->second = row1is;
+        }
+      } 
+      // Fixing the values in MonomerA
+      pr_ptr_temp = monAmatch.begin();
       while(pr_ptr_temp!=monAmatch.end()){
         pr_ptr_temp = find_if(pr_ptr_temp,monAmatch.end(),[row1was](const pair<int,int>& p){
             return row1was==p.second;});
         if(pr_ptr_temp!=monAmatch.end()){
           pr_ptr_temp->second = row1is;
         }
-      } 
-      // Fixing the values in MonomerB
-      pr_ptr_temp = monBmatch.begin();
-      while(pr_ptr_temp!=monBmatch.end()){
-        pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[row1was](const pair<int,int>& p){
-            return row1was==p.second;});
-        if(pr_ptr_temp!=monBmatch.end()){
-          pr_ptr_temp->second = row1is;
-        }
       }
 
     } 
 
-    cerr << "Sorting through monomer B " << endl;
+    cerr << "Sorting through monomer A " << endl;
 
-    for( auto pr_ptr=monBmatch.begin(); pr_ptr!=monBmatch.end(); ++pr_ptr ){
+    for( auto pr_ptr=monAmatch.begin(); pr_ptr!=monAmatch.end(); ++pr_ptr ){
       auto pr = *pr_ptr;
       int row1was = pr.first;
       int row1is  = pr.second;
-      // Find if "row1was" is moved later if it is the reference needs to be
-      // changed to "row1is"
-      cerr << "first " << row1was << " second " << row1is << endl;
+      if(row1was!=row1is){
 
-      // Fixing the values in MonomerB
-      auto pr_ptr_temp = pr_ptr;
-      pr_ptr_temp++;
-      while(pr_ptr_temp!=monBmatch.end()){
-        pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[row1was](const pair<int,int>& p){
-            return row1was==p.second;});
-        if(pr_ptr_temp!=monBmatch.end()){
-          pr_ptr_temp->second = row1is;
+        // Find if "row1was" is moved later if it is the reference needs to be
+        // changed to "row1is"
+        cerr << "first " << row1was << " second " << row1is << endl;
+
+        // Fixing the values in MonomerB
+        auto pr_ptr_temp = pr_ptr;
+        pr_ptr_temp++;
+        while(pr_ptr_temp!=monAmatch.end()){
+          pr_ptr_temp = find_if(pr_ptr_temp,monAmatch.end(),[row1was](const pair<int,int>& p){
+              return row1was==p.second;});
+          if(pr_ptr_temp!=monAmatch.end()){
+            pr_ptr_temp->second = row1is;
+          }
         }
       }
     } 
 
     // Now we know that if we swap sequentially we will not be moving the wrong
     // columns
-    for( auto p : monAmatch ){
+    for( auto p : monBmatch ){
       if(p.first!=p.second){
         cerr << "Swapping " << p.first << " with " << p.second << endl;
         auto it = p_atom_mat_S.begin();  
         cerr << "Elements in matrix " << p.first << " Elements in matrix " << p.second << endl;
         Matrix * temp = *(next(it, p.first-1));
         Matrix * temp2 = *(next(it,p.second-1));
-        for(int i=1;i<=temp->get_rows();++i){
+        /*for(int i=1;i<=temp->get_rows();++i){
           for(int j=1;j<=temp->get_cols();++j){
             cerr << temp->get_elem(i,j) << " ";
           }
@@ -446,13 +465,13 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
             cerr << temp2->get_elem(i,j) << " ";
           }
           cerr << endl;
-        }
+        }*/
         *(next(it,p.first-1)) = *(next(it,p.second-1));
         *(next(it,p.second-1)) = temp;
       } 
     }
-    cerr << "B" << endl;
-    for( auto p : monBmatch ){
+    cerr << "A" << endl;
+    for( auto p : monAmatch ){
       if(p.first!=p.second){
         cerr << "Swapping " << p.first << " with " << p.second << endl;
         auto it = p_atom_mat_S.begin();  
@@ -507,23 +526,23 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
       p_atom_mat_S.push_back(mat);
     }
 
-    cerr << "Matching monomerA" << endl;
-    vector<pair<int,int>> monAmatch;
-    for(unsigned i=1;i<=matchDimerA.size();++i){
-      pair<int,int> pr(i,matchDimerA.at(i-1));
-      monAmatch.push_back(pr);
-    }
+    cerr << "Matching monomerB" << endl;
     vector<pair<int,int>> monBmatch;
     for(unsigned i=1;i<=matchDimerB.size();++i){
-      pair<int,int> pr(i+monAmatch.size(),matchDimerB.at(i-1));
+      pair<int,int> pr(i,matchDimerB.at(i-1));
       monBmatch.push_back(pr);
     }
+    vector<pair<int,int>> monAmatch;
+    for(unsigned i=1;i<=matchDimerA.size();++i){
+      pair<int,int> pr(i+monBmatch.size(),matchDimerA.at(i-1));
+      monAmatch.push_back(pr);
+    }
 
-    cerr << "monAmatch" << endl;
-    for(auto it : monAmatch ) cerr << it.first << " " << it.second << endl;
+    cerr << "monBmatch" << endl;
+    for(auto it : monBmatch ) cerr << it.first << " " << it.second << endl;
 
     cerr << "Determining swap order sorting A " << endl; 
-    for( auto pr_ptr=monAmatch.begin(); pr_ptr!=monAmatch.end(); ++pr_ptr ){
+    for( auto pr_ptr=monBmatch.begin(); pr_ptr!=monBmatch.end(); ++pr_ptr ){
       auto pr = *pr_ptr;
       int col1was = pr.first;
       int col1is  = pr.second;
@@ -531,58 +550,60 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
       // changed to "row1is"
       cerr << "first " << col1was << " second " << col1is << endl;
 
-      // Fixing the values in MonomerA
+      // Fixing the values in MonomerB
       auto pr_ptr_temp = pr_ptr;
       pr_ptr_temp++;
+      while(pr_ptr_temp!=monBmatch.end()){
+        pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[col1was](const pair<int,int>& p){
+            return col1was==p.second;});
+        if(pr_ptr_temp!=monBmatch.end()){
+          pr_ptr_temp->second = col1is;
+        }
+      } 
+      // Fixing the values in MonomerA
+      pr_ptr_temp = monAmatch.begin();
       while(pr_ptr_temp!=monAmatch.end()){
         pr_ptr_temp = find_if(pr_ptr_temp,monAmatch.end(),[col1was](const pair<int,int>& p){
             return col1was==p.second;});
         if(pr_ptr_temp!=monAmatch.end()){
           pr_ptr_temp->second = col1is;
         }
-      } 
-      // Fixing the values in MonomerB
-      pr_ptr_temp = monBmatch.begin();
-      while(pr_ptr_temp!=monBmatch.end()){
-        pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[col1was](const pair<int,int>& p){
-            return col1was==p.second;});
-        if(pr_ptr_temp!=monBmatch.end()){
-          pr_ptr_temp->second = col1is;
-        }
       }
 
     } 
 
-    cerr << "Sorting through monomer B " << endl;
+    cerr << "Sorting through monomer A " << endl;
 
-    for( auto pr_ptr=monBmatch.begin(); pr_ptr!=monBmatch.end(); ++pr_ptr ){
+    for( auto pr_ptr=monAmatch.begin(); pr_ptr!=monAmatch.end(); ++pr_ptr ){
       auto pr = *pr_ptr;
       int col1was = pr.first;
       int col1is  = pr.second;
-      cerr << "first " << col1was << " second " << col1is << endl;
+      if(col1was!=col1is){
+        cerr << "first " << col1was << " second " << col1is << endl;
 
-      // Fixing the values in MonomerB
-      auto pr_ptr_temp = pr_ptr;
-      pr_ptr_temp++;
-      while(pr_ptr_temp!=monBmatch.end()){
-        pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[col1was](const pair<int,int>& p){
-            return col1was==p.second;});
-        if(pr_ptr_temp!=monBmatch.end()){
-          pr_ptr_temp->second = col1is;
+        // Fixing the values in MonomerA
+        auto pr_ptr_temp = pr_ptr;
+        pr_ptr_temp++;
+        while(pr_ptr_temp!=monAmatch.end()){
+          pr_ptr_temp = find_if(pr_ptr_temp,monAmatch.end(),[col1was](const pair<int,int>& p){
+              return col1was==p.second;});
+          if(pr_ptr_temp!=monAmatch.end()){
+            pr_ptr_temp->second = col1is;
+          }
         }
       }
     } 
 
     // Now we know that if we swap sequentially we will not be moving the wrong
     // columns
-    for( auto p : monAmatch ){
+    for( auto p : monBmatch ){
       if(p.first!=p.second){
         cerr << "Swapping " << p.first << " with " << p.second << endl;
         auto it = p_atom_mat_S.begin();  
         cerr << "Elements in matrix " << p.first << " Elements in matrix " << p.second << endl;
         Matrix * temp = *(next(it, p.first-1));
         Matrix * temp2 = *(next(it,p.second-1));
-        for(int j=1;j<=temp->get_cols();++j){
+        /*for(int j=1;j<=temp->get_cols();++j){
           for(int i=1;i<=temp->get_rows();++i){
             cerr << temp->get_elem(i,j) << " ";
           }
@@ -591,13 +612,13 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
             cerr << temp2->get_elem(i,j) << " ";
           }
           cerr << endl;
-        }
+        }*/
         *(next(it,p.first-1)) = *(next(it,p.second-1));
         *(next(it,p.second-1)) = temp;
       } 
     }
-    cerr << "B" << endl;
-    for( auto p : monBmatch ){
+    cerr << "A" << endl;
+    for( auto p : monAmatch ){
       if(p.first!=p.second){
         cerr << "Swapping " << p.first << " with " << p.second << endl;
         auto it = p_atom_mat_S.begin();  
@@ -636,6 +657,9 @@ Matrix * unscramble_OE(std::vector<int> matchDimerA,
     std::vector<int> matchDimerB,
     std::vector<int> basisFuncP,
     Matrix * OE){
+
+  cerr << "Unscramble OE" << endl;
+  cerr << endl;
 
   Matrix * OE_new = new Matrix(OE->get_rows(),1);
 
@@ -710,16 +734,18 @@ Matrix * unscramble_OE(std::vector<int> matchDimerA,
       auto pr = *pr_ptr;
       int col1was = pr.first;
       int col1is  = pr.second;
-      cerr << "first " << col1was << " second " << col1is << endl;
+      if(col1was!=col1is){
+        cerr << "first " << col1was << " second " << col1is << endl;
 
-      // Fixing the values in MonomerB
-      auto pr_ptr_temp = pr_ptr;
-      pr_ptr_temp++;
-      while(pr_ptr_temp!=monBmatch.end()){
-        pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[col1was](const pair<int,int>& p){
-            return col1was==p.second;});
-        if(pr_ptr_temp!=monBmatch.end()){
-          pr_ptr_temp->second = col1is;
+        // Fixing the values in MonomerB
+        auto pr_ptr_temp = pr_ptr;
+        pr_ptr_temp++;
+        while(pr_ptr_temp!=monBmatch.end()){
+          pr_ptr_temp = find_if(pr_ptr_temp,monBmatch.end(),[col1was](const pair<int,int>& p){
+              return col1was==p.second;});
+          if(pr_ptr_temp!=monBmatch.end()){
+            pr_ptr_temp->second = col1is;
+          }
         }
       }
     } 
@@ -733,7 +759,7 @@ Matrix * unscramble_OE(std::vector<int> matchDimerA,
         cerr << "Elements in matrix " << p.first << " Elements in matrix " << p.second << endl;
         Matrix * temp = *(next(it, p.first-1));
         Matrix * temp2 = *(next(it,p.second-1));
-        for(int j=1;j<=temp->get_cols();++j){
+        /*for(int j=1;j<=temp->get_cols();++j){
           for(int i=1;i<=temp->get_rows();++i){
             cerr << temp->get_elem(i,j) << " ";
           }
@@ -742,7 +768,7 @@ Matrix * unscramble_OE(std::vector<int> matchDimerA,
             cerr << temp2->get_elem(i,j) << " ";
           }
           cerr << endl;
-        }
+        }*/
         *(next(it,p.first-1)) = *(next(it,p.second-1));
         *(next(it,p.second-1)) = temp;
       } 
