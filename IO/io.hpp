@@ -48,7 +48,6 @@ int log_getHOMO(std::string log,std::string orb_type);
 int log_countMO(std::string log, std::string orb_type);
 
 std::vector<double> log_getMOEnergies(std::string log,std::string orb_type);
-//std::vector<double> log_getMOEnergiesBeta(std::string log);
 
 //Used to determine if the orbital file is restricted or not
 bool restricted(int MOPAlpha, int MOPBeta);
