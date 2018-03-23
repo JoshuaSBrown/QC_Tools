@@ -118,7 +118,7 @@ Parameters check_arguments(char * argv[], int argc  ){
 		arg=argv[i];
 		if((arg=="-h")||(arg=="--help")){
 			show_usage(argv[0]);
-			throw invalid_argument("No parameters were passed");
+      exit(0);
 		}else if ((arg=="-l_2")||(arg=="--log2")){
 			if(i+1<argc){
 				if(check_string_input(argv[i+1])==-1){

@@ -93,7 +93,8 @@ double TransferComplex::calcJ(string HOMO_OR_LUMO, int MO){
       " line up or run the calculations again with the correct "
       "flag" << endl;
   }
- 
+
+  cout << HOMO_OR_LUMO << " " << MO << endl; 
   return calculate_transfer_integral(
           mat1coef,
           mat2coef,
