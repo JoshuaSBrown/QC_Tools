@@ -9,8 +9,101 @@
 #include "../IO/io.hpp"
 #include "../MATRIX/matrix.hpp"
 #include "../CONSTANTS/constants.hpp"
+#include "qc_functions.hpp"
 
 using namespace std;
+
+TransferComplex::TransferComplex(
+    Matrix * mat1Coef,
+    Matrix * mat2Coef,
+    Matrix * matPCoef,
+    std::pair<int,int> MOs1,
+    std::pair<int,int> MOs2,
+    Matrix * matS,
+    Matrix * matPOE){
+
+  unscrambled = false;
+  mat_1_Coef = mat1Coef;
+  mat_2_Coef = mat2Coef;
+  mat_P_Coef = matPCoef;
+  Orbs1 = MOs1;
+  Orbs2 = MOs2;
+  mat_S = matS;
+  mat_P_OE = matPOE;
+}
+
+void TransferComplex::unscramble(
+    Matrix coord_1_mat,
+    Matrix coord_2_mat,
+    Matrix coord_P_mat,
+    std::vector<int> basisP){
+
+  unscrambled = true;
+
+  int sig_fig = 4;
+  // Stores the rows in P that match 1
+  auto match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
+
+  // Stores the rows in P that match 2
+  auto match_2_P = coord_2_mat.matchCol(coord_P_mat,sig_fig);
+
+  auto unscrambled_P_Coef = unscramble_P_Coef(
+      match_1_P,
+      match_2_P,
+      basisP,
+      mat_P_Coef);
+
+  this->mat_P_Coef = unscrambled_P_Coef;
+
+  auto unscrambled_S = unscramble_S(
+      match_1_P,
+      match_2_P,
+      basisP,
+      mat_S);
+
+  this->mat_S = unscrambled_S;
+}
+
+double TransferComplex::calcJ(string HOMO_OR_LUMO, int MO){
+
+  Matrix mat1coef;
+  Matrix mat2coef;
+
+  if(HOMO_OR_LUMO.compare("HOMO")==0){
+    if(MO>0) {
+      throw invalid_argument("Having specified HOMO the MO"
+      " value is in reference to the HOMO and must be a negative number");
+    }
+    mat1coef = mat_1_Coef->getRow( Orbs1.second+MO );
+    mat2coef = mat_2_Coef->getRow( Orbs2.second+MO );
+  }else if(HOMO_OR_LUMO.compare("LUMO")==0){
+    if(MO<0){
+      throw invalid_argument("Having specified LUMO the MO"
+      " value is in reference to the LUMO and must be a positive number");
+    }
+    mat1coef = mat_1_Coef->getRow( Orbs1.second+MO+1 );
+    mat2coef = mat_2_Coef->getRow( Orbs2.second+MO+1 );
+  }else{
+    throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
+  }
+ 
+  if(unscrambled==false){
+    cerr << "WARNING unable to automatically line up basis functions of"
+      " monomers with dimers, you better make sure they correctly"
+      " line up or run the calculations again with the correct "
+      "flag" << endl;
+  }
+ 
+  return calculate_transfer_integral(
+          mat1coef,
+          mat2coef,
+          *mat_P_Coef,
+          Orbs1.first,
+          Orbs2.first,
+          *mat_S,
+          *mat_P_OE);
+
+}
 
 unordered_map<int,pair<double,string>> findRank(Matrix & Orb_E_Alpha, Matrix & Orb_E_Beta){
 
