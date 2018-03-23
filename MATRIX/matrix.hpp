@@ -16,9 +16,9 @@ class Matrix {
     Matrix(std::vector<double>);
     Matrix(std::vector<int>);
     Matrix(std::vector<std::vector<double>>);
-		Matrix(int r);
-		Matrix(int r, int c);
-		Matrix(int r, int c, int s);
+		Matrix(const int r);
+		Matrix(const int r, const int c);
+		Matrix(const int r, const int c, const int s);
 		//manipulators
 		void set_rows(int r);
 		void set_cols(int c);
@@ -31,16 +31,16 @@ class Matrix {
 		void set_elem(double val, int r, int c);
 		void set_elem(double val, int r, int c, int s);
 		//accessors
-		int index(int r, int c, int s);
-		int get_rows();
-		int get_cols();
-		int get_shel();
+		int index(const int r, const int c, const int s) const;
+		int get_rows() const;
+		int get_cols() const;
+		int get_shel() const;
 		int total_elem();
-		double get_elem();
-		double get_elem(int r);
-		double get_elem(int r, int c);
-		double get_elem(int r, int c, int s);
-    double * get_elem_ptr(int r, int c);
+		double get_elem() const;
+		double get_elem(const int r) const;
+		double get_elem(const int r, const int c) const;
+		double get_elem(const int r, const int c, const int s) const;
+    double * get_elem_ptr(const int r, const int c) const;
     std::vector<double> get_col(int c);
     std::vector<double> get_row(int r);
 
