@@ -76,7 +76,7 @@ Matrix::Matrix(vector<vector<double>> vv_data){
 	}
 }
 
-Matrix::Matrix(int r) {
+Matrix::Matrix(const int r) {
 	if(r<0){
 		cerr << "ERROR rows of matrix must be greater than or equal to 0" << endl;
     cerr << " you have r " << r << endl;
@@ -100,7 +100,7 @@ Matrix::Matrix(int r) {
   }
 }
 
-Matrix::Matrix(int r, int c) {
+Matrix::Matrix(const int r,const int c) {
 	if(r<1){
 		printf("ERROR negative number of rows submitted to Matrix\n");
 		exit(1);
@@ -121,7 +121,7 @@ Matrix::Matrix(int r, int c) {
 	}
 }
 
-Matrix::Matrix(int r, int c, int s) {
+Matrix::Matrix(const int r, const int c, const int s) {
 	if(r<1){
 		printf("ERROR negative number of rows submitted to Matrix\n");
 		exit(1);
@@ -212,7 +212,7 @@ int Matrix::resize( int r, int c ){
 	return 0;
 }
 
-int Matrix::index(int r,int c,int s){
+int Matrix::index(const int r,const int c,const int s) const{
 	return (r-1)*cols*shel+(c-1)*shel+s-1;
 }
 
@@ -480,15 +480,15 @@ void Matrix::set_elem(double val, int r, int c, int s){
 	elem[index(r,c,s)]=val;
 }
 
-int Matrix::get_rows(){
+int Matrix::get_rows() const{
 	return rows;
 }
 
-int Matrix::get_cols(){
+int Matrix::get_cols() const{
 	return cols;
 }
 
-int Matrix::get_shel(){
+int Matrix::get_shel() const{
 	return shel;
 }
 
@@ -496,11 +496,11 @@ int Matrix::total_elem () {
 	return rows*cols*shel;
 }
 
-double Matrix::get_elem(){
+double Matrix::get_elem() const{
 	return elem[0];
 }
 
-double Matrix::get_elem(int r){
+double Matrix::get_elem(const int r) const{
 	if(r<1){
 		printf("ERROR get_elem(int r): 0 or negative row submitted\n");
 		exit(1);
@@ -511,7 +511,7 @@ double Matrix::get_elem(int r){
 	return elem[index(r,1,1)];
 }
 
-double Matrix::get_elem(int r, int c){
+double Matrix::get_elem(const int r, const int c) const{
 	if(r<1){
 		printf("ERROR get_elem(int r, int c): 0 or negative row submitted\n");
 		exit(1);
@@ -528,11 +528,11 @@ double Matrix::get_elem(int r, int c){
 	return elem[index(r,c,1)];
 }
 
-double * Matrix::get_elem_ptr(int r, int c){
+double * Matrix::get_elem_ptr(const int r, const int c) const {
   return &elem[index(r,c,1)];
 }
 
-double Matrix::get_elem(int r, int c, int s){
+double Matrix::get_elem(const int r, const int c,const int s) const{
 	if(r<1){
 		printf("ERROR get_elem(int r, int c, int s): 0 or negative row submitted\n");
 		exit(1);
