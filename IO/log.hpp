@@ -1,16 +1,21 @@
 
+#ifndef _LogReader_HPP_
+#define _LogReader_HPP_
+
 #include <vector>
 #include <string>
 #include <map>
+
+#include "filereader.hpp"
 // Gaussian log file reader
 
-class logReader{
+class LogReader : FileReader {
   public:
-    logReader(std::string fileName) : fileName_(fileName); 
-    std::map<std::string,map<std::string,std::vector<double>>> getOrb(void);
-    
+     
   private:
-    std::string fileName_;
+    void registerSections();
+    void validFileName();
+    static void AOFunctionSectionReader(void);
     // Contains the information as so:
     // each element in the map refers to an atom type C, H, N etc
     // The first element of the second map contains the orbital type
@@ -20,3 +25,5 @@ class logReader{
     std::map<std::string,map<std::string,std::vector<double>>> orb_;
 
 };
+
+#endif
