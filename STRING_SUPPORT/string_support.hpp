@@ -38,4 +38,7 @@ std::string trimmed(std::string s);
 
 void removeSpace(std::string s);
 
+// Determine if the sub string exists within the string
+bool foundSubStrInStr(std::string s,std::string sub_s);
+
 #endif
