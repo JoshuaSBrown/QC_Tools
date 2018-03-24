@@ -98,5 +98,5 @@ void removeSpace(char* s) {
 }
 
 bool foundSubStrInStr(string s, string sub_s){
-  return s.find(sub_s)!=-1;
+  return s.find(sub_s)!=string::npos;
 }
