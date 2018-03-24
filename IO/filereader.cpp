@@ -1,6 +1,6 @@
-
-#include <sets>
-
+#include <sys/stat.h>
+#include <set>
+#include <iostream>
 #include "../STRING_SUPPORT/string_support.hpp"
 #include "filereader.hpp"
 
@@ -10,8 +10,6 @@ using namespace std;
 
 FileReader::FileReader(string fileName){
   fileName_ = fileName;
-  validFileName();
-  registerSectionReaders();
 }
 
 string FileReader::getExt(){
@@ -21,37 +19,41 @@ string FileReader::getExt(){
 void FileReader::read(){
   open();
   string line;
-  while(getline(fid,line)){
-    string tag = triggerMatch(line);
-    readSection(tag);
+  while(getline(fid_,line)){
+    string tag = startSection_(line);
+    if(!tag.empty()){
+      cout << "Tag is " << tag << endl;
+      readSection_(tag);
+    }
   }
   close();
 }
 
 // Private member functions
 
-ifstream FileReader::open(){
-  if(file_exist(const_cast<char*>(fileName.c_str()))!=0){
+void FileReader::open(){
+  if(!fileExist_()){
     throw invalid_argument("File "+fileName_+" does not exist.");
   }
-  fid_.open(fileName);
+  fid_.open(fileName_);
   fileOpen_ = true;
 }
 
 void FileReader::close(){
-  fid.close();
+  fid_.close();
   fileOpen_ = false;
 }
 
-void FileReader::registerSections(){
-  checkSections();
+void FileReader::registerSections_(){
+  cout << "Base class registerSections " << endl;
+  checkSections_();
 }
 
 // Basically check that for a given tag both a section reader
 // as well as a section header pair exist
-void FileReader::checkSections(){
+void FileReader::checkSections_(){
   set<std::string> tags;
-  for( auto pr : sectionsHeaders_){
+  for( auto pr : sectionHeaders_){
     tags.insert(pr.first);
   }
   for( auto pr : sectionReaders_){
@@ -59,10 +61,10 @@ void FileReader::checkSections(){
   }
   for( auto t : tags ){
     if(sectionReaders_.count(t)==0){
-      throw runtime_error("SectionReader function is missing for tag "+tag);
+      throw runtime_error("SectionReader function is missing for tag "+t);
     }
     if(sectionHeaders_.count(t)==0){
-      throw runtime_error("SectionHeader pattern is missing for tag "+tag);
+      throw runtime_error("SectionHeader pattern is missing for tag "+t);
     }
   }
 }
@@ -70,24 +72,25 @@ void FileReader::checkSections(){
 string FileReader::fileExt_(){
   string path = lastStringInPath(fileName_);
   path = trimmed(path);
-  return path.substr(path.find("."));
+  cout << "Path " << path << endl;
+  auto index = path.find(".");
+  if(index==string::npos) throw invalid_argument("File has no extension");
+  return path.substr(index);
 }
 
-string FileReader::triggerMatch(string line){
-  size_t found;
-  int flag = 0;
-  string tag;
-  for(auto sec : sections_ ){
-    flag = static_cast<int>(found=line.find(sec.second));
-    if(flag!=-1){
-      tag = seg.first;
-    }
-  } 
-  return tag;
+bool FileReader::fileExist_(){
+  struct stat buffer;
+  return (stat (fileName_.c_str(),&buffer)==0);
 }
 
-void FileReader::readSection(string tag){
-  sectionReaders_[tag].(); 
+void FileReader::readSection_(string tag){
+  void * ptr = static_cast<void *>(this);
+  sectionReaders_[tag](ptr); 
 }
 
-
+string FileReader::startSection_(string line){
+  for( auto pr : sectionHeaders_ ){
+    if(foundSubStrInStr(line,pr.second)) return pr.first;
+  }
+  return "";
+}
