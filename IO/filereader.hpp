@@ -39,6 +39,7 @@ class FileReader{
 
     std::string fileName_;
     std::ifstream fid_;
+    std::streampos pos_;
     bool fileOpen_;
 };
 #endif
