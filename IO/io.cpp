@@ -300,7 +300,6 @@ Parameters check_arguments(char * argv[], int argc  ){
 	}
 
   par.setHOMO_MO1Alpha(log_getHOMO(HOMO1log,"Alpha"));
-  cout << "getting beta" << endl;
   par.setHOMO_MO1Beta(log_getHOMO(HOMO1log,"Beta"));
   par.setHOMO_MO2Alpha(log_getHOMO(HOMO2log,"Alpha"));
   par.setHOMO_MO2Beta(log_getHOMO(HOMO2log,"Beta"));
@@ -662,7 +661,6 @@ int log_getHOMO(string log, string orb_type){
 		}
 	}
   
-  cout << "HOMO found " << HOMO << endl;
 	return HOMO;
 }
 
@@ -680,7 +678,6 @@ vector<double> log_getMOEnergies(string log,string orb_type){
 	string str;
 	string line;
 	ifstream LogFile;
-  cout << "Reading from " << log << endl;
 	LogFile.open(const_cast<char*>((log).c_str()),ifstream::in);
 	if(LogFile.is_open()){
 

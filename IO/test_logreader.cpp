@@ -38,7 +38,11 @@ int main(void){
     auto Soverlap = lr.getOverlapMatrix();
   //  cout << *Soverlap << endl;
     auto Alpha = lr.getOE("Alpha");
-    
+   
+    auto basisFuncCount = lr.getBasisFuncCount(); 
+    for( auto c : basisFuncCount ){
+      cout << c << endl;
+    }
 //    for( auto en : Alpha ) {
 //      cout << en << endl;
 //    }

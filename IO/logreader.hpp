@@ -17,6 +17,7 @@ class LogReader : public FileReader {
     Matrix * getOverlapMatrix() { return S_; }
     std::vector<double> getOE(std::string orb_type) { return OREnergies[orb_type];}
     int getHOMOLevel(std::string orb_type) { return homoLevel[orb_type]; }
+    std::vector<int> getBasisFuncCount();
     std::vector<std::vector<double>> getCoords() { return xyz; }
   private:
     virtual void registerSections_();

@@ -40,6 +40,14 @@ void LogReader::validFileName_(){
   }
 }
 
+vector<int> LogReader::getBasisFuncCount(){
+  vector<int> basisFuncCount;
+  for(auto values : orb_) {
+    basisFuncCount.push_back(values.second.size());
+  }
+  return basisFuncCount;
+}
+
 void LogReader::AOFunctionSectionReader(void * ptr){
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
 

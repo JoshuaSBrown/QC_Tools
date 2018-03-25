@@ -22,7 +22,6 @@ void FileReader::read(){
   while(getline(fid_,line)){
     string tag = startSection_(line);
     if(!tag.empty()){
-      cout << "Tag is " << tag << endl;
       readSection_(tag);
     }
     pos_ = fid_.tellg();
@@ -46,7 +45,6 @@ void FileReader::close(){
 }
 
 void FileReader::registerSections_(){
-  cout << "Base class registerSections " << endl;
   checkSections_();
 }
 
@@ -73,7 +71,6 @@ void FileReader::checkSections_(){
 string FileReader::fileExt_(){
   string path = lastStringInPath(fileName_);
   path = trimmed(path);
-  cout << "Path " << path << endl;
   auto index = path.find(".");
   if(index==string::npos) throw invalid_argument("File has no extension");
   return path.substr(index);
