@@ -7,17 +7,17 @@ all: calc_J
 calc_J: main.cpp io.o matrix.o punreader.o logreader.o filereader.o qc_functions.o string_support.o parameters.o
 	$(CC) $(CFLAGS) main.cpp io.o matrix.o punreader.o logreader.o filereader.o qc_functions.o string_support.o parameters.o -o calc_J
 
-io.o: IO/io.cpp string_support.o
-	$(CC) $(CFLAGS) -c IO/io.cpp string_support.o
+io.o: IO/io.cpp 
+	$(CC) $(CFLAGS) -c IO/io.cpp 
 
-logreader.o: IO/logreader.cpp filereader.o matrix.o string_support.o
-	$(CC) $(CFLAGS) matrix.o string_support.o filereader.o -c IO/logreader.cpp
+logreader.o: IO/logreader.cpp 
+	$(CC) $(CFLAGS) -c IO/logreader.cpp
 
-punreader.o: IO/punreader.cpp filereader.o matrix.o string_support.o
-	$(CC) $(CFLAGS) matrix.o string_support.o filereader.o -c IO/punreader.cpp
+punreader.o: IO/punreader.cpp 
+	$(CC) $(CFLAGS)  -c IO/punreader.cpp
 
-filereader.o: IO/filereader.cpp matrix.o string_support.o
-	$(CC) $(CFLAGS) matrix.o string_support.o -c IO/filereader.cpp
+filereader.o: IO/filereader.cpp 
+	$(CC) $(CFLAGS)  -c IO/filereader.cpp
 
 string_support.o: STRING_SUPPORT/string_support.cpp 
 	$(CC) $(CFLAGS) -c STRING_SUPPORT/string_support.cpp
