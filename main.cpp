@@ -61,7 +61,6 @@ int main(int argc, char *argv[]){
 
   {
     Matrix * mat_S = lr_P.getOverlapMatrix();
-    auto EnergiesAlpha = readFilesEnergies(par,orb_type);
 
     Matrix * mat_P_Coef = pr_P.getCoefsMatrix(orb_type);
     auto vec_P_OE = lr_P.getOE(orb_type);
@@ -123,6 +122,7 @@ int main(int argc, char *argv[]){
           basis_P);
     }
 
+    cout << endl;
     cout << "Values calculated for " << orb_type << " orbitals" << endl;
     TC.calcJ("HOMO",0);
     TC.calcJ("LUMO",0);
@@ -131,7 +131,6 @@ int main(int argc, char *argv[]){
   orb_type = "Beta";
   if(!pr_P.restrictedShell()){
     Matrix * mat_S = lr_P.getOverlapMatrix();
-    auto EnergiesAlpha = readFilesEnergies(par,orb_type);
 
     Matrix * mat_P_Coef = pr_P.getCoefsMatrix(orb_type);
     auto vec_P_OE = lr_P.getOE(orb_type);
@@ -192,11 +191,11 @@ int main(int argc, char *argv[]){
           coord_P_mat,
           basis_P);
     }
-
+    
+    cout << endl;
     cout << "Values calculated for " << orb_type << " orbitals" << endl;
     TC.calcJ("HOMO",0);
     TC.calcJ("LUMO",0);
-
 
   }
 
