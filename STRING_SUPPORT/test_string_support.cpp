@@ -48,6 +48,8 @@ int main(void){
     assert(foundSubStrInStr(str,"my"));
     assert(!foundSubStrInStr(str,"nothing"));
 
+    string str2 = " Alpha  occ. eigenvalues --  -10.20023 -10.19942 -10.19578 -10.19497  -0.76368";
+    assert(foundSubStrInStr(str2," Alpha  occ. eigenvalues --"));
   }
 
   cerr << "Testing: isAlphabetical" << endl;

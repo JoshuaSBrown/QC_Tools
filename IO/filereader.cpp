@@ -25,6 +25,7 @@ void FileReader::read(){
       cout << "Tag is " << tag << endl;
       readSection_(tag);
     }
+    pos_ = fid_.tellg();
   }
   close();
 }

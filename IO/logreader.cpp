@@ -19,9 +19,15 @@ LogReader::LogReader(string fileName) : FileReader(fileName){
 
 void LogReader::registerSections_(){
   sectionHeaders_["AOFunction"] = "     Gross orbital populations:";
-  sectionReaders_["AOFunction"] = &LogReader::AOFunctionSectionReader;
   sectionHeaders_["Overlap"] = " *** Overlap ***";
+  sectionHeaders_["OEAlpha"] = " Alpha  occ. eigenvalues --";
+  sectionHeaders_["OEBeta"] = "  Beta  occ. eigenvalues --";
+
+  sectionReaders_["AOFunction"] = &LogReader::AOFunctionSectionReader;
   sectionReaders_["Overlap"] = &LogReader::OverlapSectionReader;
+  sectionReaders_["OEAlpha"] = &LogReader::OrbitalEnergiesAlpha;
+  sectionReaders_["OEBeta"] = &LogReader::OrbitalEnergiesBeta;
+
   FileReader::registerSections_();
 }
 
@@ -192,4 +198,44 @@ void LogReader::OverlapSectionReader(void * ptr){
   }
   LR_ptr->S_ = mat_S;
   return;
+}
+
+void LogReader::ReadOrbEnergies(string orb_type){
+
+  string line;
+  homoLevel[orb_type] = 0;
+  while(getline(fid_,line)){
+
+    bool occFound;
+    bool virtFound;
+    
+    occFound  = foundSubStrInStr(line," "+orb_type+"  occ. eigenvalues -- ");
+    virtFound = foundSubStrInStr(line," "+orb_type+" virt. eigenvalues -- ");
+
+    if(occFound || virtFound){
+
+      auto vec_str = splitSt(line);
+      for( size_t inc=4 ;inc<vec_str.size();inc++ ){
+        OREnergies[orb_type].push_back((double)atof(vec_str.at(inc).c_str()));
+        if(occFound) homoLevel[orb_type]++;
+      }
+    }else{
+      break;
+    }
+  }
+
+}
+
+void LogReader::OrbitalEnergiesAlpha(void * ptr){
+  LogReader * LR_ptr = static_cast<LogReader *>(ptr);
+  string line;
+  LR_ptr->fid_.seekg(LR_ptr->pos_);
+  LR_ptr->ReadOrbEnergies("Alpha");
+}
+
+void LogReader::OrbitalEnergiesBeta(void * ptr){
+  LogReader * LR_ptr = static_cast<LogReader *>(ptr);
+  string line;
+  LR_ptr->fid_.seekg(LR_ptr->pos_);
+  LR_ptr->ReadOrbEnergies("Beta");
 }
