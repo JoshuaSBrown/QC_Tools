@@ -38,7 +38,15 @@ std::string trimmed(std::string s);
 
 void removeSpace(std::string s);
 
+// Grab everything after the first occurance of a string. 
+std::string grabStrAfterFirstOccurance(std::string s, std::string occ);
+
+// Grab everything before first occurance of a string
+std::string grabStrBeforeFirstOccurance(std::string s, std::string occ);
+
 // Determine if the sub string exists within the string
 bool foundSubStrInStr(std::string s,std::string sub_s);
 
+// Determine if whole string is alphabetical characters
+bool isAlphabetical(std::string s);
 #endif
