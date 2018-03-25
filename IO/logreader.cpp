@@ -22,11 +22,13 @@ void LogReader::registerSections_(){
   sectionHeaders_["Overlap"] = " *** Overlap ***";
   sectionHeaders_["OEAlpha"] = " Alpha  occ. eigenvalues --";
   sectionHeaders_["OEBeta"] = "  Beta  occ. eigenvalues --";
+  sectionHeaders_["Coord"] = "Center     Atomic";
 
   sectionReaders_["AOFunction"] = &LogReader::AOFunctionSectionReader;
   sectionReaders_["Overlap"] = &LogReader::OverlapSectionReader;
-  sectionReaders_["OEAlpha"] = &LogReader::OrbitalEnergiesAlpha;
-  sectionReaders_["OEBeta"] = &LogReader::OrbitalEnergiesBeta;
+  sectionReaders_["OEAlpha"] = &LogReader::OrbitalEnergiesAlphaSectionReader;
+  sectionReaders_["OEBeta"] = &LogReader::OrbitalEnergiesBetaSectionReader;
+  sectionReaders_["Coord"] = &LogReader::CoordSectionReader;
 
   FileReader::registerSections_();
 }
@@ -204,6 +206,8 @@ void LogReader::ReadOrbEnergies(string orb_type){
 
   string line;
   homoLevel[orb_type] = 0;
+  // May be multiple energy sections we only wanted the latest one
+  OREnergies[orb_type].clear();
   while(getline(fid_,line)){
 
     bool occFound;
@@ -222,20 +226,53 @@ void LogReader::ReadOrbEnergies(string orb_type){
     }else{
       break;
     }
+    pos_ = fid_.tellg();
   }
-
+  // Reset the fid because Beta will come right after alpha
+  fid_.seekg(pos_);
 }
 
-void LogReader::OrbitalEnergiesAlpha(void * ptr){
+void LogReader::OrbitalEnergiesAlphaSectionReader(void * ptr){
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
   string line;
   LR_ptr->fid_.seekg(LR_ptr->pos_);
   LR_ptr->ReadOrbEnergies("Alpha");
 }
 
-void LogReader::OrbitalEnergiesBeta(void * ptr){
+void LogReader::OrbitalEnergiesBetaSectionReader(void * ptr){
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
   string line;
   LR_ptr->fid_.seekg(LR_ptr->pos_);
   LR_ptr->ReadOrbEnergies("Beta");
+}
+
+void LogReader::CoordSectionReader(void * ptr){
+  LogReader * LR_ptr = static_cast<LogReader *>(ptr);
+
+  // Clear contents only want the most uptodate coordinates
+  LR_ptr->xyz.clear();
+  vector<double> X;
+  vector<double> Y;
+  vector<double> Z;
+
+  string end_pattern = "-----------------------------------"
+                       "----------------------------------";
+  string line;
+  // Skip the 2nd and third line
+  getline(LR_ptr->fid_,line);
+  getline(LR_ptr->fid_,line);
+  getline(LR_ptr->fid_,line);
+ 
+  // While the line does not match the end of the table read in the coordinates
+  while(!foundSubStrInStr(line,end_pattern)){
+    auto vec_str = splitSt(line);
+    X.push_back(stod(vec_str.at(3)));
+    Y.push_back(stod(vec_str.at(4)));
+    Z.push_back(stod(vec_str.at(5)));
+    getline(LR_ptr->fid_,line);
+  }
+  LR_ptr->xyz.push_back(X);
+  LR_ptr->xyz.push_back(Y);
+  LR_ptr->xyz.push_back(Z);
+  
 }
