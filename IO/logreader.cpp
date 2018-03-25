@@ -1,6 +1,7 @@
 
 #include <string>
 #include <map>
+#include <cmath>
 #include <exception>
 #include <iostream>
 #include <fstream>
@@ -12,18 +13,16 @@
 using namespace std;
 
 LogReader::LogReader(string fileName) : FileReader(fileName){
-  cout << "Checking File Name " << fileName_ << endl;
   validFileName_();
-  cout << "Registering Sections" << endl;
   registerSections_();
 }
 
 void LogReader::registerSections_(){
-  cout << "Derived Class registerSections functions" << endl;
   sectionHeaders_["AOFunction"] = "     Gross orbital populations:";
   sectionReaders_["AOFunction"] = &LogReader::AOFunctionSectionReader;
+  sectionHeaders_["Overlap"] = " *** Overlap ***";
+  sectionReaders_["Overlap"] = &LogReader::OverlapSectionReader;
   FileReader::registerSections_();
-  cout << "Size of sectionHeaders " << sectionHeaders_.size() << endl;
 }
 
 void LogReader::validFileName_(){  
@@ -36,48 +35,42 @@ void LogReader::validFileName_(){
 void LogReader::AOFunctionSectionReader(void * ptr){
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
 
-  cout << "Rreading AOFunction " << endl;
   int atom_num = 1;
   string end_pattern = "         Condensed to atoms";
   string line;
   getline(LR_ptr->fid_,line);
-  while(getline(LR_ptr->fid_,line))
+  getline(LR_ptr->fid_,line);
+  bool sectionEnd = false;
+  while(sectionEnd==false)
   {
     istringstream iss(line);
     string AOnum;
     iss >> AOnum;
     string elemType; 
     iss >> elemType;
-    
+    iss >> elemType;
+ 
     string orbType;
     iss >> orbType; 
-
     vector<double> orbVals;
-
-    // The atom line size is a different size from the other lines
-    // because it contains the element type at the begginning of the line
-    // All the lines that follow after this line are are the atomic 
-    // orbitals belonging to this element, until another line with the
-    // element is introduced. 
     while(!iss.eof()){
       string Tot_Alpha_Beta_Spin;
       iss >> Tot_Alpha_Beta_Spin;
       orbVals.push_back(stod(Tot_Alpha_Beta_Spin));
     }
-    map<string,vector<double>> orbMap;
-    orbMap[orbType] = orbVals;
-    LR_ptr->orb_[make_pair(atom_num,elemType)]  = orbMap;
-    ++atom_num;
+    LR_ptr->orb_[make_pair(atom_num,elemType)][orbType]  = orbVals;
   
     getline(LR_ptr->fid_,line);
-    elemType = line.at(9)+line.at(10);
-    trim(elemType);
-
-    while(elemType.empty()){
+    string elemType2 = "";
+    elemType2.append(string(1,line.at(9)));
+    elemType2.append(string(1,line.at(10)));
+    trim(elemType2);
+   
+    while(!isAlphabetical(elemType2)){
       istringstream iss2(line);
       iss2 >> AOnum;
       iss2 >> orbType;
-
+    
       orbVals.clear();
       while(!iss2.eof()){
         string Tot_Alpha_Beta_Spin;
@@ -85,20 +78,118 @@ void LogReader::AOFunctionSectionReader(void * ptr){
         orbVals.push_back(stod(Tot_Alpha_Beta_Spin));
       }
 
-      map<std::string,std::vector<double>> orbMap;
-      orbMap[orbType] = orbVals;
-      LR_ptr->orb_[make_pair(atom_num,elemType)] = orbMap;
-      ++atom_num;
+      LR_ptr->orb_[make_pair(atom_num,elemType)][orbType] = orbVals;
 
       getline(LR_ptr->fid_,line);
-      elemType = line.at(9)+line.at(10);
-      trim(elemType);
 
-      if(foundSubStrInStr(line,end_pattern)) break;
+      elemType2 = "";
+      elemType2.append(string(1,line.at(9)));
+      elemType2.append(string(1,line.at(10)));
+      trim(elemType2);
+
+      if(foundSubStrInStr(line,end_pattern)){
+        sectionEnd = true;
+        break;
+      }
     }
 
-    if(foundSubStrInStr(line,end_pattern)) break;
+    ++atom_num;
+    //getline(LR_ptr->fid_,line);
+    if(foundSubStrInStr(line,end_pattern)){
+      sectionEnd = true;
+    }
   }
 
+  return;
+}
+
+void LogReader::OverlapSectionReader(void * ptr){
+  LogReader * LR_ptr = static_cast<LogReader *>(ptr);
+
+  // Phase one read in the first group of coordinates and count
+  // to determien the number of AO coefficients there are
+  int countCoef = 0;
+  bool endFirstSection = false;
+  // Skip first line simply has column numbers
+  string line;
+  getline(LR_ptr->fid_,line);
+  string countC;
+
+  // First group of coordinates will be stored in vector<vector<double>> 
+  vector<vector<double>>  first_coefs;
+  while(!endFirstSection){
+    getline(LR_ptr->fid_,line);
+    istringstream iss(line);
+    iss >> countC;
+    int countCint = stoi(countC);
+    if(countCint!=(countCoef+1)){
+      endFirstSection=true;
+    }else{
+      ++countCoef;
+      vector<double> row;
+       
+      // Safe to read in coordinates of first couple of columns
+      while(!iss.eof()){
+        string s_coef;
+        iss >> s_coef;
+        string val = grabStrBeforeFirstOccurance(s_coef,"D");
+        string exp = grabStrAfterFirstOccurance(s_coef,"D");
+        row.push_back(stod(val)*pow(10.0,stod(exp)));
+      }
+      first_coefs.push_back(row);
+    }
+  }
+
+  // Create a matrix and place all the current values in there
+  Matrix * mat_S = new Matrix(countCoef,countCoef);
+  for(size_t row_ind=0; row_ind<first_coefs.size();++row_ind){
+    vector<double> row = first_coefs.at(row_ind);
+    size_t col_ind = 1;
+    for( auto val : row ){
+      mat_S->set_elem(val,row_ind+1,col_ind);
+      // Because diagonally symetric
+      if(row_ind+1!=col_ind){
+        mat_S->set_elem(val,col_ind,row_ind+1);
+      }
+      ++col_ind;
+    }
+  }
+
+  int sectionReads = countCoef/5;
+  if(countCoef%5>0){
+    ++sectionReads;
+  }
+ 
+  int section = 2;
+  int currentSectionStart= 5;
+  while(section<=sectionReads){
+    
+    int sectionCoef = currentSectionStart;
+    while(sectionCoef<countCoef){
+      getline(LR_ptr->fid_,line);
+      istringstream iss(line);
+      string dummy;
+      iss >> dummy;
+      int localCoefCount = 1;
+      while(!iss.eof()){
+        string s_coef;
+        iss >> s_coef;
+        string val = grabStrBeforeFirstOccurance(s_coef,"D");
+        string expon = grabStrAfterFirstOccurance(s_coef,"D");
+        double value = stod(val)*pow(10.0,stod(expon));
+        mat_S->set_elem(value,sectionCoef+1,currentSectionStart+localCoefCount);
+        if((sectionCoef+1)!=(currentSectionStart+localCoefCount)){
+        
+          mat_S->set_elem(value,currentSectionStart+localCoefCount,sectionCoef+1);
+        }
+        ++localCoefCount;
+      }
+      ++sectionCoef;
+    }
+    ++section;
+    currentSectionStart+=5;
+    getline(LR_ptr->fid_,line);
+  }
+  LR_ptr->S_ = mat_S;
   return;
 }

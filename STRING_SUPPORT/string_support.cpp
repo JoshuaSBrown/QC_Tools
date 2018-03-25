@@ -97,6 +97,27 @@ void removeSpace(char* s) {
   } while (*s2++);
 }
 
+string grabStrAfterFirstOccurance(string s, string occ){
+  size_t str_len = occ.length();
+  size_t pos = s.find(occ);
+  if(pos==string::npos){
+    return "";
+  }
+  return s.substr(pos+str_len);
+} 
+
+string grabStrBeforeFirstOccurance(string s, string occ){
+  size_t pos = s.find(occ);
+  if(pos==string::npos){
+    return s;
+  }
+  return s.substr(0,pos);
+} 
+
 bool foundSubStrInStr(string s, string sub_s){
   return s.find(sub_s)!=string::npos;
+}
+
+bool isAlphabetical(std::string s){
+  return find_if(s.begin(), s.end(),not1(ptr_fun((int(*)(int))isalpha))) == s.end() && !s.empty();
 }

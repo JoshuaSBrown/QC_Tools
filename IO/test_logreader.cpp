@@ -22,7 +22,22 @@ int main(void){
     lr.read(); 
     auto orb_info = lr.getOrbitalInfo();
 
-    cout << "Size " << orb_info.size() << endl;
+    for(auto pr : orb_info ){
+      cout << "Num " << pr.first.first << " Elem " << pr.first.second << endl; 
+      map<string,vector<double>> next = pr.second;
+      
+      for(auto obs : next ){
+        cout << "Orb " << obs.first << " ";
+        for( auto item : obs.second ){
+          cout << item << " ";
+        }
+        cout << endl;
+      }
+    }
+
+    auto Soverlap = lr.getOverlapMatrix();
+    cout << *Soverlap << endl;
+
   }
   return 0;
 }
