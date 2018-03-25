@@ -1,5 +1,5 @@
 
-all: test_io test_logreader
+all: test_io test_logreader test_punreader
 
 test_io: test_io.cpp io.o matrix.o string_support.o parameters.o 
 	g++ -Wall -std=c++11 test_io.cpp io.o matrix.o string_support.o parameters.o -o test_io
@@ -7,8 +7,14 @@ test_io: test_io.cpp io.o matrix.o string_support.o parameters.o
 test_logreader: test_logreader.cpp filereader.o logreader.o matrix.o string_support.o parameters.o 
 	g++ -Wall -std=c++11 test_logreader.cpp filereader.o logreader.o matrix.o string_support.o parameters.o -o test_logreader
 
+test_punreader: test_punreader.cpp filereader.o punreader.o matrix.o string_support.o parameters.o 
+	g++ -Wall -std=c++11 test_punreader.cpp filereader.o punreader.o matrix.o string_support.o parameters.o -o test_punreader
+
 logreader.o: logreader.cpp filereader.o matrix.o string_support.o
 	g++ -Wall -std=c++11 matrix.o string_support.o filereader.o -c logreader.cpp
+
+punreader.o: punreader.cpp filereader.o matrix.o string_support.o
+	g++ -Wall -std=c++11 matrix.o string_support.o filereader.o -c punreader.cpp
 
 filereader.o: filereader.cpp matrix.o string_support.o
 	g++ -Wall -std=c++11 matrix.o string_support.o -c filereader.cpp
