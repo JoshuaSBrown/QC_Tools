@@ -39,11 +39,19 @@ int main(void){
   //  cout << *Soverlap << endl;
     auto Alpha = lr.getOE("Alpha");
     
-    for( auto en : Alpha ) {
-      cout << en << endl;
-    }
+//    for( auto en : Alpha ) {
+//      cout << en << endl;
+//    }
 
-    cout << "Alpha HOMO " << lr.getHOMOLevel("Alpha") << endl;
+//    cout << "Alpha HOMO " << lr.getHOMOLevel("Alpha") << endl;
+
+    auto xyz = lr.getCoords();
+    auto x = xyz.at(0);
+    auto y = xyz.at(1);
+    auto z = xyz.at(2);
+    for(size_t ind = 0;ind<x.size();++ind){
+      cout << x.at(ind) << " " << y.at(ind) << " " << z.at(ind) << endl;
+    }
   }
   return 0;
 }

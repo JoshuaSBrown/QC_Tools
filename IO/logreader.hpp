@@ -17,14 +17,18 @@ class LogReader : public FileReader {
     Matrix * getOverlapMatrix() { return S_; }
     std::vector<double> getOE(std::string orb_type) { return OREnergies[orb_type];}
     int getHOMOLevel(std::string orb_type) { return homoLevel[orb_type]; }
+    std::vector<std::vector<double>> getCoords() { return xyz; }
   private:
     virtual void registerSections_();
     virtual void validFileName_();
+
     static void AOFunctionSectionReader(void *);
     static void OverlapSectionReader(void *);
+    static void OrbitalEnergiesAlphaSectionReader(void *);
+    static void OrbitalEnergiesBetaSectionReader(void *);
+    static void CoordSectionReader(void *);
+
     void ReadOrbEnergies(std::string orb_type);
-    static void OrbitalEnergiesAlpha(void *);
-    static void OrbitalEnergiesBeta(void *);
     // Contains the information as so:
     // each element in the map refers to an atom and its type C, H, N etc
     // The first element of the second map contains the orbital type
@@ -36,6 +40,8 @@ class LogReader : public FileReader {
     // Overlap matrix
     Matrix * S_;
     std::map<std::string,std::vector<double>> OREnergies;
+
+    std::vector<std::vector<double>> xyz;
 };
 
 #endif
