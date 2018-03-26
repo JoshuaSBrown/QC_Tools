@@ -94,7 +94,13 @@ double TransferComplex::calcJ(string HOMO_OR_LUMO, int MO){
       "flag" << endl;
   }
 
-  cout << HOMO_OR_LUMO << " " << MO << endl; 
+  if(MO==0){
+    cout << HOMO_OR_LUMO << endl;
+  }else if(HOMO_OR_LUMO.compare("HOMO")==0){
+    cout << HOMO_OR_LUMO << MO << endl;
+  }else if(HOMO_OR_LUMO.compare("LUMO")==0){
+    cout << HOMO_OR_LUMO << "+" << MO << endl;
+  }
   return calculate_transfer_integral(
           mat1coef,
           mat2coef,
