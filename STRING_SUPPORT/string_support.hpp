@@ -41,8 +41,14 @@ void removeSpace(std::string s);
 // Grab everything after the first occurance of a string. 
 std::string grabStrAfterFirstOccurance(std::string s, std::string occ);
 
+std::string grabStrAfterLastOccurance(std::string s, std::string occ);
+
+std::string grabStrAfterLastOccuranceInclusive(std::string s, std::string occ);
+
 // Grab everything before first occurance of a string
 std::string grabStrBeforeFirstOccurance(std::string s, std::string occ);
+
+std::string grabStrBeforeLastOccurance(std::string s, std::string occ);
 
 // Determine if the sub string exists within the string
 bool foundSubStrInStr(std::string s,std::string sub_s);

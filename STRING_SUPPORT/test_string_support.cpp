@@ -71,6 +71,16 @@ int main(void){
     assert(str3.compare("")==0);
   }
 
+  cerr << "Testing: grabStrAfterLastOccurance" << endl;
+  {
+    string str = "This.is.a.file.name";
+    string str2 = grabStrAfterLastOccurance(str,".");
+    assert(str2.compare("name")==0);
+    string str3 = "NoExtfilename";
+    string str4 = grabStrAfterLastOccurance(str3,".");
+    assert(str4.compare("")==0);
+  }
+
   cerr << "Testing: grabStrBeforeFisrtOccurance" << endl;
   {
     string str = "Words and Numbers 023D-23 blah";

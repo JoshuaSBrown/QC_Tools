@@ -7,6 +7,7 @@
 #include <sstream>
 #include <istream>
 #include <iterator>
+#include <iostream>
 
 using namespace std;
 /////////////////////////////////////
@@ -106,14 +107,30 @@ string grabStrAfterFirstOccurance(string s, string occ){
   return s.substr(pos+str_len);
 } 
 
+string grabStrAfterLastOccurance(string s, string occ){
+  auto pos = s.find_last_of(occ);
+  if(pos==string::npos) return "";
+  return s.substr(pos+1);
+} 
+
+string grabStrAfterLastOccuranceInclusive(string s, string occ){
+  auto pos = s.find_last_of(occ);
+  if(pos==string::npos) return "";
+  return s.substr(pos);
+} 
+
 string grabStrBeforeFirstOccurance(string s, string occ){
   size_t pos = s.find(occ);
-  if(pos==string::npos){
-    return s;
-  }
+  if(pos==string::npos) return s;
   return s.substr(0,pos);
 } 
 
+string grabStrBeforeLastOccurance(string s, string occ){
+  auto pos = s.find_last_of(occ);
+  if(pos==string::npos) return s;
+  return s.substr(0,pos);
+}
+ 
 bool foundSubStrInStr(string s, string sub_s){
   return s.find(sub_s)!=string::npos;
 }
