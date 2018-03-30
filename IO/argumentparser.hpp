@@ -12,11 +12,6 @@
 #include "argumentstring.hpp"
 #include "argumentfileexist.hpp"
 #include "argumentfileext.hpp"
-//class ArgumentString;
-//class ArgumentInt;
-//class ArgumentDouble;
-//class ArgumentFileExist;
-//class ArgumentFileExt;
 
 class ArgumentParser{
   private:
@@ -26,8 +21,9 @@ class ArgumentParser{
     std::map<std::string,ArgumentString> str_rule_;
     std::map<std::string,ArgumentInt> int_rule_;
     std::map<std::string,ArgumentDouble> double_rule_;
-    std::map<std::string,ArgumentFileExist> fileExist_rule_;
-    std::map<std::string,ArgumentFileExt> fileExt_rule_;
+    std::map<std::string,ArgumentFile> file_rule_;
+//    std::map<std::string,ArgumentFileExist> fileExist_rule_;
+//    std::map<std::string,ArgumentFileExt> fileExt_rule_;
     
     // Known rules
     std::set<std::string> rules_; 

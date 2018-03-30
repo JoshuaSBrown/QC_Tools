@@ -12,7 +12,7 @@ class PropertyFileExt : public PropertyObject<std::string,std::set< std::string 
     std::string getName_(void) { return "PROPERTY_FILE_EXT"; }
     std::vector<std::string> getOpts_(void);
   public:
-    PropertyFileExt(void){};
+    PropertyFileExt(void);
     PropertyFileExt(std::string ext);
     PropertyFileExt(std::set<std::string> exts);
     bool propValid(std::string fileNamePath);
