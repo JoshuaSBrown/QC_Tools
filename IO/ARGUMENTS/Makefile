@@ -1,7 +1,16 @@
 CC=g++
 CFLAGS= -Wall -Wextra -pedantic -std=c++11
 
-all: test_argumentfile test_argumentint test_argumentdouble
+all: test_argumentfile test_argumentint test_argumentdouble test_argumentstring
+
+test_argumentstring: test_argumentstring.cpp argumentstring.o string_support.o propertystring.o
+	$(CC) $(CFLAGS) test_argumentstring.cpp argumentstring.o propertystring.o string_support.o -o test_argumentstring
+
+argumentstring.o : argumentstring.cpp
+	$(CC) $(CFLAGS) -c argumentstring.cpp
+
+propertystring.o : PROPERTIES/propertystring.cpp
+	$(CC) $(CFLAGS) -c PROPERTIES/propertystring.cpp
 
 test_argumentdouble: test_argumentdouble.cpp argumentdouble.o string_support.o propertydouble.o
 	$(CC) $(CFLAGS) test_argumentdouble.cpp argumentdouble.o propertydouble.o string_support.o -o test_argumentdouble
