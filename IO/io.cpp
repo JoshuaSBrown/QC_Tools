@@ -11,6 +11,157 @@
 
 using namespace std;
 
+ArgumentParser::ArgumentParser(set<vector<string>> flags){
+
+  maxShortFlagSize = 0;
+  maxFullFlagSize = 0;
+  maxDescriptionSize = 0;   
+  for( auto flag : flags ){
+    
+    if(flag.size()>3){
+      throw invalid_argument("Flags may only be passed with a max of three "
+        "values: full flag name, abbreviated name, and flag description");
+    }
+
+    string full_flag = "";
+    string short_flag = "";
+    string desc = "";
+ 
+    bool description=false;
+    bool abbreviation = false;
+    bool flag_name = false;
+    for(auto item : flag){
+      trim(item);
+      string full_flag_name = firstN(item,2);
+      string short_flag_name = firstN(item,1);
+      if(full_flag_name.compare("--")==0){
+        if(flag_name){
+          string err = "A flag name has already been suppied:\n";
+          err.append(full_flag);
+          err.append("\nNow you are supplying a second one:\n");
+          err.append(item);
+          throw invalid_argument(err);
+        }
+        full_flag = item;
+        flag_name = true;
+        if(full_flag.size()>maxFullFlagSize){
+          maxFullFlagSize = full_flag.size();
+        }
+      }else if(short_flag_name.compare("-")==0){
+        if(abbreviation){
+          string err = "A flag name has already been suppied:\n";
+          err.append(short_flag);
+          err.append("\nNow you are supplying a second one:\n");
+          err.append(item);
+          throw invalid_argument(err);
+        }
+        short_flag = item;
+        abbreviation = true;
+        if(short_flag.size()>maxShortFlagSize){
+          maxShortFlagSize = short_flag.size();
+        }
+      }else{
+        if(description){
+          string err = "A description has already been suppied:\n";
+          err.append(desc);
+          err.append("\nNow you are supplying a second one:\n");
+          err.append(item);
+          throw invalid_argument(err);
+        }
+        desc = item;
+        description = true;
+        if(desc.size()>maxDescriptionSize){
+          maxDescriptionSize = desc.size();
+        }
+      } 
+    }
+    if(!flag_name){
+      throw invalid_argument("You have failed to provide the full flag name");
+    }
+    flags_[make_pair(full_flag,short_flag)] = desc;
+  } 
+}
+
+void ArgumentParser::showUsage(void){
+  cout << endl;
+  cout << "Options:" << endl;
+  cout << endl;
+
+  for(auto item : flags_ ){
+    string full_flag = item.first.first;
+    size_t diff = maxFullFlagSize-full_flag.size();
+    cout << full_flag;
+    for(size_t i=0;i<=diff;++i){
+      cout << " ";
+    }
+    string short_flag = item.first.second;
+    diff = maxShortFlagSize-short_flag.size();
+    cout << short_flag;
+    for(size_t i=0;i<=diff;++i){
+      cout << " ";
+    }
+
+    size_t space = maxFullFlagSize+maxShortFlagSize+2;
+    size_t allowed = maxLineLength-space;
+    string space_block = "";
+    for(size_t sp=0;sp<space;sp++){
+      space_block.append(" ");
+    }
+
+    string desc = item.second;
+    vector<string> vec_string = splitSt(desc);
+    size_t words_size = 0;
+    for( auto word : vec_string ){
+      words_size+=word.size()+1;
+      if(words_size<allowed){
+        cout << word << " ";
+      }else{
+        cout << endl;
+        cout << space_block;
+        cout << word << " ";
+        words_size = 0;
+      }
+    }
+    cout << endl;
+  }
+  cout << endl;
+}
+
+void setFlagType(pair<string,string> flag_type, map<string,string> rules){
+  if(flag_type.second.compare("FILE")==0){
+  
+  }else if(flag_type.second.compare("DOUBLE")==0){
+
+  }else if(flag_type.second.compare("INT")==0){
+
+  }else if(flag_type.second.compare("STRING")==0){
+
+  }else{
+    throw runtime_error("Unrecognized flag type "+flag_type.second);
+  }
+}
+
+void ArgumentParser::flagTypeCheck(){
+
+}
+
+void ArgumentParser::parseArg(int & index, char *argv[], const int argc){
+
+}
+
+void ArgumentParser::parse(char * argv[], int argc){
+
+  if(argc <= 1){
+	  cout << "Usage: " << argv[0] << " <options(s)> SOURCES"
+    showUsage();
+    throw runtime_error("Must provide arguments");
+  }
+
+  for( int index=1; index<argc;++index){
+    parseArg(index,argv,argc);    
+  }
+}
+
 void show_usage(string name) {
 	
 	cerr << "Usage: " << name << " <options(s)> SOURCES"
@@ -34,6 +185,7 @@ void show_usage(string name) {
 						<< "\t                            \tshould be an interger value\n"
 						<< endl;
 }
+
 int file_exist(char * name){
   struct stat buffer;
   return (stat (name, &buffer) == 0);
