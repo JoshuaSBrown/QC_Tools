@@ -46,4 +46,4 @@ string_support.o: ../../STRING_SUPPORT/string_support.cpp
 	$(CC) $(CFLAGS) -c ../../STRING_SUPPORT/string_support.cpp
 
 clean:
-	rm *.o test_argumentfile test_argumentint
+	rm *.o test_argumentfile test_argumentint test_argumentdouble test_argumentstring
