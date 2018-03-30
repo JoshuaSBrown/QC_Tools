@@ -39,6 +39,15 @@ class PropertyObject{
     
     
   public:
+    virtual ~PropertyObject(void) {
+      auto itr = options_.begin();
+      while( itr != options_.end()){
+        T * opt = static_cast<T *>(itr->second);
+        delete opt;
+        itr = options_.erase(itr);
+      }
+    }
+    
     virtual bool propValid(S value) {
       std::ostringstream err;
       err << "propValid has been called from base class with value: ";

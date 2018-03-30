@@ -6,6 +6,12 @@
 
 using namespace std;
 
+PropertyFileExt::PropertyFileExt(void){
+  set<string> exts_;
+  exts_.insert("*");
+  setPropOption_("ALLOWED_FILE_EXT",exts_);
+}
+
 PropertyFileExt::PropertyFileExt(string ext){
   checkExt(ext);
   set<string> exts_;
@@ -31,7 +37,7 @@ void PropertyFileExt::extSupported(string ext){
   checkExt(ext);
   auto exts_ = getPropOption("ALLOWED_FILE_EXT"); 
   for(auto ext_ : exts_ ){
-    if(ext_.compare("*")==0){
+    if(ext_[0]=='*'){
       return;
     }else if(ext_.compare(ext)==0){
       return;
@@ -44,7 +50,7 @@ void PropertyFileExt::extSupported(string ext){
 void PropertyFileExt::checkExt(string ext){
   if(ext.compare("")==0){
     return;
-  }else if(ext.compare("*")==0){
+  }else if(ext[0]=='*'){
     return;
   }else{
     string excess = grabStrBeforeLastOccurance(ext,".");

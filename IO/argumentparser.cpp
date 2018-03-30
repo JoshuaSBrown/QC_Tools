@@ -7,14 +7,7 @@
 
 #include "argumentparser.hpp"
 
-//#include "argumentdouble.hpp"
-//#include "argumentint.hpp"
-//#include "argumentstring.hpp"
-//#include "argumentfileexist.hpp"
-//#include "argumentfileext.hpp"
-
 #include "../STRING_SUPPORT/string_support.hpp"
-#include "../PARAMETERS/parameters.hpp"
 
 using namespace std;
 
@@ -235,56 +228,52 @@ void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
   string flag = arguments.at(index); 
   bool unrecognized = true;
   if(str_rule_.count(flag)!=0){
-    ++index;
-    if(index>=arguments.size()){
+    if((index+1)>=arguments.size()){
       string err = ""+flag+" Missing arguments";
       throw runtime_error(err);
     }
-    string argument = arguments.at(index);
+    string argument = arguments.at(index+1);
     str_rule_[flag].argValid(argument);
     unrecognized = false;
     string_values_[flag]=argument;
   }
   if(int_rule_.count(flag)!=0){
-    ++index;
-    if(index>=arguments.size()){
+    if((index+1)>=arguments.size()){
       string err = ""+flag+" Missing arguments";
       throw runtime_error(err);
     }
-    string argument = arguments.at(index);
+    string argument = arguments.at(index+1);
     int_rule_[flag].argValid(stoi(argument));
     unrecognized = false;
     int_values_[flag]=stoi(argument);
   }
   if(double_rule_.count(flag)!=0){
-    ++index;
-    if(index>=arguments.size()){
+    if((index+1)>=arguments.size()){
       string err = ""+flag+" Missing arguments";
       throw runtime_error(err);
     }
-    string argument = arguments.at(index);
+    string argument = arguments.at(index+1);
     double_rule_[flag].argValid(stod(argument));
     unrecognized = false;
     double_values_[flag]=stod(argument);
   }
   if(fileExist_rule_.count(flag)!=0){
-    ++index;
-    if(index>=arguments.size()){
+    if((index+1)>=arguments.size()){
       string err = ""+flag+" Missing arguments";
       throw runtime_error(err);
     }
-    string argument = arguments.at(index);
+    string argument = arguments.at(index+1);
     fileExist_rule_[flag].argValid(argument);
     unrecognized = false;
     string_values_[flag]=argument;
   }
   if(fileExt_rule_.count(flag)!=0){
-    ++index;
-    if(index>=arguments.size()){
+    if((index+1)>=arguments.size()){
       string err = ""+flag+" Missing arguments";
       throw runtime_error(err);
     }
-    string argument = arguments.at(index);
+    string argument = arguments.at(index+1);
+    cerr << "File to be checked with exts " << argument << endl;
     fileExt_rule_[flag].argValid(argument);
     unrecognized = false;
     string_values_[flag]=argument;
@@ -293,6 +282,7 @@ void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
     string err = "Flag is unregocongized "+flag;
     throw invalid_argument(err);
   }
+  ++index;
 }
 
 int ArgumentParser::getInt(string flag){
@@ -351,7 +341,9 @@ void ArgumentParser::parse(char * argv[], int argc){
   }
 
   for( size_t index=1; index<arguments.size();++index){
+    cerr << "Parsing arg " << arguments.at(index) << endl;
     parseArg_(index,arguments);    
   }
+
 }
 
