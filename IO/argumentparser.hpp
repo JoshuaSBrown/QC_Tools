@@ -69,14 +69,7 @@ class ArgumentParser{
       std::string property,
       std::string option,
       double val);
-/*
-    void setFlagArgOpt(
-      std::string flag,
-      std::string argname,
-      std::string property,
-      std::string option,
-      size_t val);
-*/
+
     void setFlagArgOpt(
       std::string flag,
       std::string argname,
@@ -97,7 +90,6 @@ class ArgumentParser{
       std::string property,
       std::string option,
       bool val);
-
 
     double getDouble(std::string flag);
     int getInt(std::string flag);
