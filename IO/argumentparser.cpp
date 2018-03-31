@@ -81,22 +81,8 @@ ArgumentParser::ArgumentParser(set<vector<string>> flags){
     flags_[make_pair(full_flag,short_flag)] = desc;
   }
 
-//  registerRules_(); 
 }
-/*
-void ArgumentParser::registerRules_(void){
-  ArgumentString ArSt;
-  rules_.insert(ArSt.getRule());
-  ArgumentInt ArInt;
-  rules_.insert(ArInt.getRule());
-  ArgumentDouble ArDouble;
-  rules_.insert(ArDouble.getRule());
-  ArgumentFileExist ArFileExist;
-  rules_.insert(ArFileExist.getRule());
-  ArgumentFileExist ArFileExt;
-  rules_.insert(ArFileExt.getRule());
-}
-*/
+
 void ArgumentParser::showUsage(void){
   cout << endl;
   cout << "Options:" << endl;
@@ -142,145 +128,197 @@ void ArgumentParser::showUsage(void){
   cout << endl;
 }
 
-void ArgumentParser::setFlagRule(string flag, string rule,string arg, int val){
-  if(rule.compare("INT")==0){
-    if(int_rule_.count(flag)!=0){
-      ArgumentInt ArInt;
-      ArInt.setArgOption(arg,val);
-      int_rule_[flag]=ArInt;
+void ArgumentParser::setFlagArgOpt(
+  string flag, 
+  string argname,
+  string property,
+  string option, 
+  int val){
+
+  if(argname.compare("ARGUMENT_INT")==0){
+    if(int_arg_.count(flag)!=0){
+      ArgumentInt * ArInt = new ArgumentInt;
+      ArInt->setArgPropertyOpt(property,option,val);
+      int_arg_[flag]=ArInt;
     }else{
-      int_rule_[flag].setArgOption(arg,val);
+      int_arg_[flag]->setArgPropertyOpt(property,option,val);
+    }
+  }else if(argname.compare("ARGUMENT_STRING")==0){
+    if(str_arg_.count(flag)==0){
+      ArgumentString * ArString = new ArgumentString;
+      ArString->setArgPropertyOpt(property,option,val);
+      str_arg_[flag]=ArString;
+    }else{
+      str_arg_[flag]->setArgPropertyOpt(property,option,val);
     }
   }else{
-    throw invalid_argument("Unrecognized int rule");
+    throw invalid_argument("Unrecognized int arg");
   }
 }
 
-void ArgumentParser::setFlagRule(string flag, string rule,string arg, double val){
-  if(rule.compare("DOUBLE")==0){
-    if(double_rule_.count(flag)==0){
-      ArgumentDouble ArDouble;  
-      ArDouble.setArgOption(arg,val);
-      double_rule_[flag]=ArDouble;
+void ArgumentParser::setFlagArgOpt(
+  string flag, 
+  string argname,
+  string property,
+  string option, 
+  double val){
+
+  if(argname.compare("ARGUMENT_DOUBLE")==0){
+    if(double_arg_.count(flag)==0){
+      ArgumentDouble * ArDouble = new ArgumentDouble;  
+      ArDouble->setArgPropertyOpt(property,option,val);
+      double_arg_[flag]=ArDouble;
     }else{
-      double_rule_[flag].setArgOption(arg,val);
+      double_arg_[flag]->setArgPropertyOpt(property,option,val);
+    }
+  }else if(argname.compare("ARGUMENT_STRING")==0){
+    if(str_arg_.count(flag)==0){
+      ArgumentString * ArString = new ArgumentString;
+      ArString->setArgPropertyOpt(property,option,val);
+      str_arg_[flag]=ArString;
+    }else{
+      str_arg_[flag]->setArgPropertyOpt(property,option,val);
     }
   }else{
-    throw invalid_argument("Unrecognized double rule");
+    throw invalid_argument("Unrecognized double arg");
+  }
+}
+/*
+void ArgumentParser::setFlagArgOpt(
+  string flag, 
+  string argname,
+  string property,
+  string option, 
+  size_t val){
+
+  }else if(argname.compare("ARGUMENT_STRING")==0){
+    if(str_arg_.count(flag)==0){
+      ArgumentString * ArString = new ArgumentString;
+      ArString->setArgPropertyOpt(property,option,val);
+      str_arg_[flag]=ArString;
+    }else{
+      str_arg_[flag]->setArgPropertyOpt(property,option,val);
+    }
+  }else{
+    throw invalid_argument("Unrecognized size_t arg");
+  }
+}
+*/
+void ArgumentParser::setFlagArgOpt(
+  string flag, 
+  string argname,
+  string property,
+  string option, 
+  string val){
+
+  if(argname.compare("ARGUMENT_FILE")==0){
+    if(file_arg_.count(flag)==0){
+      set<string> temp{val};    
+      ArgumentFile * ArFile = new ArgumentFile;
+      ArFile->setArgPropertyOpt(property,option,temp);
+      file_arg_[flag] = ArFile;
+    }else{
+      set<string> temp{val};    
+      file_arg_[flag]->setArgPropertyOpt(property,option,temp);
+    }
+  }else{
+    throw invalid_argument("Unrecognized string arg");
   }
 }
 
-void ArgumentParser::setFlagRule(string flag, string rule,string arg, size_t val){
-  if(rule.compare("STRING")==0){
-    if(str_rule_.count(flag)==0){
-      ArgumentString ArString;
-      ArString.setArgOption(arg,val);
-      str_rule_[flag]=ArString;
+void ArgumentParser::setFlagArgOpt(
+  string flag, 
+  string argname,
+  string property,
+  string option, 
+  set<string> vals){
+
+  if(argname.compare("ARGUMENT_FILE")==0){
+    if(file_arg_.count(flag)==0){
+      ArgumentFile * ArFile = new ArgumentFile;
+      ArFile->setArgPropertyOpt(property,option,vals);
+      file_arg_[flag] = ArFile;
     }else{
-      str_rule_[flag].setArgOption(arg,val);
+      file_arg_[flag]->setArgPropertyOpt(property,option,vals);
     }
   }else{
-    throw invalid_argument("Unrecognized size_t rule");
+    throw invalid_argument("Unrecognized string arg");
   }
 }
 
-void ArgumentParser::setFlagRule(string flag, string rule,string arg, string val){
-  if(rule.compare("FILE_EXT")==0){
-    if(fileExt_rule_.count(flag)==0){
-      ArgumentFileExt ArFileExt(val);
-      fileExt_rule_[flag] = ArFileExt;
-    }else{
-      fileExt_rule_[flag].setArgOption(arg,val);
-    }
-  }else{
-    throw invalid_argument("Unrecognized string rule");
-  }
-}
+void ArgumentParser::setFlagArgOpt(
+  string flag, 
+  string argname,
+  string property,
+  string option, 
+  bool val){
 
-void ArgumentParser::setFlagRule(string flag, string rule,string arg, set<string> vals){
-  if(rule.compare("FILE_EXT")==0){
-    if(fileExt_rule_.count(flag)==0){
-      ArgumentFileExt ArFileExt(vals);
-      fileExt_rule_[flag] = ArFileExt;
+  if(argname.compare("ARGUMENT_FILE")==0){
+    if(file_arg_.count(flag)==0){
+      ArgumentFile * ArFile = new ArgumentFile;
+      ArFile->setArgPropertyOpt(property,option,val);
+      file_arg_[flag]=ArFile;
     }else{
-      fileExt_rule_[flag].setArgOption(arg,vals);
+      file_arg_[flag]->setArgPropertyOpt(property,option,val);
+    }
+  }else if(argname.compare("ARGUMENT_STRING")==0){
+    if(str_arg_.count(flag)==0){
+      ArgumentString * ArString = new ArgumentString;
+      ArString->setArgPropertyOpt(property,option,val);
+      str_arg_[flag]=ArString;
+    }else{
+      str_arg_[flag]->setArgPropertyOpt(property,option,val);
     }
   }else{
-    throw invalid_argument("Unrecognized string rule");
-  }
-}
-
-void ArgumentParser::setFlagRule(string flag, string rule,string arg, bool val){
-  if(rule.compare("FILE_EXIST")==0){
-    if(fileExist_rule_.count(flag)==0){
-      ArgumentFileExist ArFileExist;
-      ArFileExist.setArgOption(arg,val);
-      fileExist_rule_[flag]=ArFileExist;
-    }else{
-      fileExist_rule_[flag].setArgOption(arg,val);
-    }
-  }else{
-    throw invalid_argument("Unrecognized bool rule");
+    throw invalid_argument("Unrecognized bool arg");
   }
 }
 
 void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
   string flag = arguments.at(index); 
   bool unrecognized = true;
-  if(str_rule_.count(flag)!=0){
+  if(str_arg_.count(flag)!=0){
     if((index+1)>=arguments.size()){
       string err = ""+flag+" Missing arguments";
       throw runtime_error(err);
     }
     string argument = arguments.at(index+1);
-    str_rule_[flag].argValid(argument);
+    str_arg_[flag]->argValid(argument);
     unrecognized = false;
     string_values_[flag]=argument;
   }
-  if(int_rule_.count(flag)!=0){
+  if(int_arg_.count(flag)!=0){
     if((index+1)>=arguments.size()){
       string err = ""+flag+" Missing arguments";
       throw runtime_error(err);
     }
     string argument = arguments.at(index+1);
-    int_rule_[flag].argValid(stoi(argument));
+    int_arg_[flag]->argValid(stoi(argument));
     unrecognized = false;
     int_values_[flag]=stoi(argument);
   }
-  if(double_rule_.count(flag)!=0){
+  if(double_arg_.count(flag)!=0){
     if((index+1)>=arguments.size()){
       string err = ""+flag+" Missing arguments";
       throw runtime_error(err);
     }
     string argument = arguments.at(index+1);
-    double_rule_[flag].argValid(stod(argument));
+    double_arg_[flag]->argValid(stod(argument));
     unrecognized = false;
     double_values_[flag]=stod(argument);
   }
-  if(fileExist_rule_.count(flag)!=0){
+  if(file_arg_.count(flag)!=0){
     if((index+1)>=arguments.size()){
       string err = ""+flag+" Missing arguments";
       throw runtime_error(err);
     }
     string argument = arguments.at(index+1);
-    fileExist_rule_[flag].argValid(argument);
-    unrecognized = false;
-    string_values_[flag]=argument;
-  }
-  if(fileExt_rule_.count(flag)!=0){
-    if((index+1)>=arguments.size()){
-      string err = ""+flag+" Missing arguments";
-      throw runtime_error(err);
-    }
-    string argument = arguments.at(index+1);
-    cerr << "File to be checked with exts " << argument << endl;
-    fileExt_rule_[flag].argValid(argument);
+    file_arg_[flag]->argValid(argument);
     unrecognized = false;
     string_values_[flag]=argument;
   }
   if(unrecognized){
-    string err = "Flag is unregocongized "+flag;
-    throw invalid_argument(err);
+    throw invalid_argument("The flag "+flag+" was unrecognized");
   }
   ++index;
 }
@@ -326,13 +364,10 @@ size_t ArgumentParser::getSize_t(string flag){
 }
 
 
-void ArgumentParser::parse(char * argv[], int argc){
+void ArgumentParser::parse(const char * argv[], int argc){
 
   // Convert to vector of strings
   vector<string> arguments(argv,argv+argc);
-  for(auto ve : arguments ){
-    cerr << ve << endl;
-  }
 
   if(argc <= 1){
 	  cout << "Usage: " << arguments.at(0) << " <options(s)> SOURCES";
@@ -341,9 +376,7 @@ void ArgumentParser::parse(char * argv[], int argc){
   }
 
   for( size_t index=1; index<arguments.size();++index){
-    cerr << "Parsing arg " << arguments.at(index) << endl;
     parseArg_(index,arguments);    
   }
 
 }
-

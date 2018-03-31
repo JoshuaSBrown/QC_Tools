@@ -37,7 +37,7 @@ int main(void){
     ArgPars.showUsage();
   }  
 
-  cerr << "Testing: setFlagRule" << endl;
+  cerr << "Testing: setFlagArgOpt" << endl;
   {
     vector<string> flag1 = {"-p_P","--punfile-pair","File containing dimer of two "
       "monomers. This file should have the .pun extension."};
@@ -52,11 +52,11 @@ int main(void){
     ArgumentParser ArgPars(flags);
    
     string val = ".pun";
-    ArgPars.setFlagRule("--punfile-pair","FILE_EXT","ALLOWED_FILE_TYPE",val);
+    ArgPars.setFlagArgOpt("--punfile-pair","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",val);
     string val2 = ".7";
-    ArgPars.setFlagRule("--punfile-pair","FILE_EXT","ALLOWED_FILE_TYPE",val2);
+    ArgPars.setFlagArgOpt("--punfile-pair","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",val2);
     string val3 = ".orb";
-    ArgPars.setFlagRule("--punfile-pair","FILE_EXT","ALLOWED_FILE_TYPE",val3);
+    ArgPars.setFlagArgOpt("--punfile-pair","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",val3);
   }
 
   cerr << "Testing: parse" << endl;
@@ -77,12 +77,42 @@ int main(void){
     string val2 = ".7";
     string val3 = ".orb";
     set<string> exts = {val,val2,val3};
-    ArgPars.setFlagRule("--punfile-pair","FILE_EXT","ALLOWED_FILE_TYPE",exts);
-    ArgPars.setFlagRule("--punfile-mon1","FILE_EXT","ALLOWED_FILE_TYPE",exts);
+    ArgPars.setFlagArgOpt("--punfile-pair","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts);
+    ArgPars.setFlagArgOpt("--punfile-mon1","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts);
+    ArgPars.setFlagArgOpt("--punfile-mon2","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts);
 
-    char * argv[] = {"calc_J","--punfile-pair", "file.pun", "--punfile-mon1","file.orb"};
+    ArgPars.setFlagArgOpt("--punfile-pair","ARGUMENT_FILE","PROPERTY_FILE_EXIST","FILE_MUST_EXIST",true);
+    ArgPars.setFlagArgOpt("--punfile-mon1","ARGUMENT_FILE","PROPERTY_FILE_EXIST","FILE_MUST_EXIST",false);
+    ArgPars.setFlagArgOpt("--punfile-mon2","ARGUMENT_FILE","PROPERTY_FILE_EXIST","FILE_MUST_EXIST",true);
+
+
+
     int argc = 5;
+    const char * argv[argc];// = {"calc_J","--punfile-pair", "testfile.pun", "--punfile-mon1","file.orb"};
+    argv[0] = "calc_J";
+    argv[1] = "--punfile-pair";
+    argv[2] = "testfile.pun";
+    argv[3] = "--punfile-mon1";
+    argv[4] = "file.orb";
     ArgPars.parse(argv,argc); 
+
+    argc = 7;
+    const char * argv2[argc];
+    argv2[0] = "calc_J";
+    argv2[1] = "--punfile-pair";
+    argv2[2] = "testfile.pun";
+    argv2[3] = "--punfile-mon1";
+    argv2[4] = "file.orb";
+    argv2[5] = "--punfile-mon2";
+    argv2[6] = "fort.7";
+    
+    bool excep = false;
+    try{
+      ArgPars.parse(argv2,argc); 
+    }catch(...){
+      excep = true;
+    }
+    assert(excep);
   }
 
   cerr << "Testing: get" << endl;
@@ -103,11 +133,16 @@ int main(void){
     string val2 = ".7";
     string val3 = ".orb";
     set<string> exts = {val,val2,val3};
-    ArgPars.setFlagRule("--punfile-pair","FILE_EXT","ALLOWED_FILE_TYPE",exts);
-    ArgPars.setFlagRule("--punfile-mon1","FILE_EXT","ALLOWED_FILE_TYPE",exts);
+    ArgPars.setFlagArgOpt("--punfile-pair","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts);
+    ArgPars.setFlagArgOpt("--punfile-mon1","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts);
 
-    char * argv[] = {"calc_J","--punfile-pair", "file.pun", "--punfile-mon1","file.orb"};
     int argc = 5;
+    const char * argv[argc];
+    argv[0] = "calc_J";
+    argv[1] = "--punfile-pair";
+    argv[2] = "file.pun";
+    argv[3] = "--punfile-mon1";
+    argv[4] = "file.orb";
     ArgPars.parse(argv,argc); 
   
     string fileName = ArgPars.getStr("--punfile-pair");
@@ -116,7 +151,6 @@ int main(void){
     assert(fileName2.compare("file.orb")==0);
 
   }
-
 
   return 0;
 }
