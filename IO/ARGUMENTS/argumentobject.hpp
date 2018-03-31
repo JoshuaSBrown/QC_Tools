@@ -26,22 +26,22 @@ class ArgumentObject{
 
     void checkValid_(S val){
       for(auto prop : int_propobjs_){
-        prop->isValid(val);
+        prop->propValid(val);
       }
       for(auto prop : double_propobjs_){
-        prop->isValid(val);
+        prop->propValid(val);
       }
       for(auto prop : bool_propobjs_){
-        prop->isValid(val);
+        prop->propValid(val);
       }
       for(auto prop : size_t_propobjs_){
-        prop->isValid(val);
+        prop->propValid(val);
       }
       for(auto prop : string_propobjs_){
-        prop->isValid(val);
+        prop->propValid(val);
       }
       for(auto prop : string_set_propobjs_){
-        prop->isValid(val);
+        prop->propValid(val);
       }
     }
 
@@ -77,9 +77,9 @@ class ArgumentObject{
         string_propobjs_.pop_back();
       }
       while(!string_set_propobjs_.empty()){
-        auto prop = string_set_propobjs_.back();
+        auto prop = string_propobjs_.back();
         delete prop;
-        string_set_propobjs_.pop_back();
+        string_propobjs_.pop_back();
       }
     }
 
@@ -200,7 +200,7 @@ class ArgumentObject{
     void setArgPropertyOpt(std::string property, std::string option, double val){
       bool setval = false;
       for(auto prop : double_propobjs_){
-        if(property.compare(prop->getPropertyName)==0){
+        if(property.compare(prop->getPropertyName())==0){
           prop->setPropOption(option,val);
           setval = true;
         }
@@ -215,7 +215,7 @@ class ArgumentObject{
     void setArgPropertyOpt(std::string property,std::string option, std::set<std::string> val){
       bool setval = false;
       for(auto prop : string_set_propobjs_){
-        if(property.compare(prop->getPropertyName)==0){
+        if(property.compare(prop->getPropertyName())==0){
           prop->setPropOption(option,val);
           setval = true;
         }
@@ -231,7 +231,10 @@ class ArgumentObject{
     void setArgPropertyOpt(std::string property,std::string option, std::string val){
       bool setval = false;
       for(auto prop : string_propobjs_){
-        if(property.compare(prop->getPropertyName)==0){
+        std::cerr << "property " << property << " option " << option << " string " << val << std::endl;
+        std::cerr << "Prop.name " << prop->getPropertyName() << std::endl;
+        std::cerr << "compare " << property.compare(prop->getPropertyName()) << std::endl;
+        if(property.compare(prop->getPropertyName())==0){
           prop->setPropOption(option,val);
           setval = true;
         }
@@ -246,7 +249,7 @@ class ArgumentObject{
     void setArgPropertyOpt(std::string property,std::string option, int val){
       bool setval = false;
       for(auto prop : int_propobjs_){
-        if(property.compare(prop->getPropertyName)==0){
+        if(property.compare(prop->getPropertyName())==0){
           prop->setPropOption(option,val);
           setval = true;
         }
@@ -261,7 +264,7 @@ class ArgumentObject{
     void setArgPropertyOpt(std::string property,std::string option, bool val){
       bool setval = false;
       for(auto prop : bool_propobjs_){
-        if(property.compare(prop->getPropertyName)==0){
+        if(property.compare(prop->getPropertyName())==0){
           prop->setPropOption(option,val);
           setval = true;
         }

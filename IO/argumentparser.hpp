@@ -7,26 +7,23 @@
 #include "../MATRIX/matrix.hpp"
 #include "../PARAMETERS/parameters.hpp"
 
-#include "argumentdouble.hpp"
-#include "argumentint.hpp"
-#include "argumentstring.hpp"
-#include "argumentfileexist.hpp"
-#include "argumentfileext.hpp"
+#include "ARGUMENTS/argumentdouble.hpp"
+#include "ARGUMENTS/argumentint.hpp"
+#include "ARGUMENTS/argumentstring.hpp"
+#include "ARGUMENTS/argumentfile.hpp"
 
 class ArgumentParser{
   private:
 
     // 1 - flag name
     // 2 - type
-    std::map<std::string,ArgumentString> str_rule_;
-    std::map<std::string,ArgumentInt> int_rule_;
-    std::map<std::string,ArgumentDouble> double_rule_;
-    std::map<std::string,ArgumentFile> file_rule_;
-//    std::map<std::string,ArgumentFileExist> fileExist_rule_;
-//    std::map<std::string,ArgumentFileExt> fileExt_rule_;
+    std::map<std::string,ArgumentString*> str_arg_;
+    std::map<std::string,ArgumentInt*> int_arg_;
+    std::map<std::string,ArgumentDouble*> double_arg_;
+    std::map<std::string,ArgumentFile*> file_arg_;
     
     // Known rules
-    std::set<std::string> rules_; 
+    std::set<std::string> argument_types_; 
 
     // Known flags and their description 
     std::map<std::pair<std::string,std::string>,std::string> flags_;
@@ -59,41 +56,48 @@ class ArgumentParser{
     // "INT"
     // "STRING"
     // The rules are dependent on the type
-    void setFlagRule(
+    void setFlagArgOpt(
       std::string flag,
-      std::string rule,
-      std::string arg,
+      std::string argname,
+      std::string property,
+      std::string option,
       int val);
 
-    void setFlagRule(
+    void setFlagArgOpt(
       std::string flag,
-      std::string rule,
-      std::string arg,
+      std::string argname,
+      std::string property,
+      std::string option,
       double val);
-
-    void setFlagRule(
+/*
+    void setFlagArgOpt(
       std::string flag,
-      std::string rule,
-      std::string arg,
+      std::string argname,
+      std::string property,
+      std::string option,
       size_t val);
-
-    void setFlagRule(
+*/
+    void setFlagArgOpt(
       std::string flag,
-      std::string rule,
-      std::string arg,
+      std::string argname,
+      std::string property,
+      std::string option,
       std::string val);
 
-    void setFlagRule(
+    void setFlagArgOpt(
       std::string flag,
-      std::string rule,
-      std::string arg,
+      std::string argname,
+      std::string property,
+      std::string option,
       std::set<std::string> vals);
 
-    void setFlagRule(
+    void setFlagArgOpt(
       std::string flag,
-      std::string rule,
-      std::string arg,
+      std::string argname,
+      std::string property,
+      std::string option,
       bool val);
+
 
     double getDouble(std::string flag);
     int getInt(std::string flag);
@@ -101,7 +105,7 @@ class ArgumentParser{
     bool getBool(std::string flag);
     size_t getSize_t(std::string flag);
 
-    void parse(char * argv[], int argc);
+    void parse( const char * argv[], int argc);
     void showUsage();
 };
 

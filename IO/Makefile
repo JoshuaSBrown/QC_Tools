@@ -1,53 +1,49 @@
+CC=g++
+CFLAGS=-Wall -Wextra -std=c++11 -pedantic
 
-all: test_argumentint test_argumentdouble test_argumentstring test_argumentfileext test_argumentfileexist test_argumentparser 
+all: test_argumentparser 
 
-test_argumentparser: test_argumentparser.cpp argumentparser.o matrix.o string_support.o parameters.o argumentstring.o argumentdouble.o argumentint.o argumentfileext.o argumentfileexist.o
-	g++ -Wall -std=c++11 test_argumentparser.cpp argumentparser.o matrix.o string_support.o parameters.o argumentstring.o argumentdouble.o argumentint.o argumentfileext.o argumentfileexist.o -o test_argumentparser
-
-test_argumentfileexist: test_argumentfileexist.cpp string_support.o argumentfileexist.o
-	g++ -Wall -std=c++11 test_argumentfileexist.cpp argumentfileexist.o string_support.o -o test_argumentfileexist
-
-argumentfileexist.o : argumentfileexist.cpp
-	g++ -Wall -std=c++11 -c argumentfileexist.cpp
-
-test_argumentfileext: test_argumentfileext.cpp string_support.o argumentfileext.o
-	g++ -Wall -std=c++11 test_argumentfileext.cpp argumentfileext.o string_support.o -o test_argumentfileext
-
-argumentfileext.o : argumentfileext.cpp
-	g++ -Wall -std=c++11 -c argumentfileext.cpp
+test_argumentparser: test_argumentparser.cpp argumentparser.o matrix.o string_support.o parameters.o argumentstring.o argumentdouble.o argumentint.o argumentfile.o propertystring.o propertydouble.o propertyint.o propertyfileext.o propertyfileexist.o
+	g++ -Wall -std=c++11 test_argumentparser.cpp argumentparser.o matrix.o string_support.o parameters.o argumentstring.o argumentdouble.o argumentint.o argumentfile.o propertystring.o propertydouble.o propertyint.o propertyfileext.o propertyfileexist.o -o test_argumentparser
 
 argumentparser.o : argumentparser.cpp
-	g++ -Wall -std=c++11 -c argumentparser.cpp
+	$(CC) $(CFLAGS) -c argumentparser.cpp
 
-test_argumentstring: test_argumentstring.cpp string_support.o argumentstring.o
-	g++ -Wall -std=c++11 test_argumentstring.cpp argumentstring.o string_support.o -o test_argumentstring
+argumentfile.o : ARGUMENTS/argumentfile.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/argumentfile.cpp
 
-argumentstring.o : argumentstring.cpp
-	g++ -Wall -std=c++11 -c argumentstring.cpp
+argumentstring.o : ARGUMENTS/argumentstring.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/argumentstring.cpp
 
-test_argumentdouble: test_argumentdouble.cpp string_support.o argumentdouble.o
-	g++ -Wall -std=c++11 test_argumentdouble.cpp argumentdouble.o string_support.o -o test_argumentdouble
+argumentdouble.o : ARGUMENTS/argumentdouble.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/argumentdouble.cpp
 
-argumentdouble.o : argumentdouble.cpp
-	g++ -Wall -std=c++11 -c argumentdouble.cpp
+argumentint.o : ARGUMENTS/argumentint.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/argumentint.cpp
 
-test_argumentint: test_argumentint.cpp string_support.o argumentint.o
-	g++ -Wall -std=c++11 test_argumentint.cpp argumentint.o string_support.o -o test_argumentint
+propertyfileext.o : ARGUMENTS/PROPERTIES/propertyfileext.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/PROPERTIES/propertyfileext.cpp
 
-argumentint.o : argumentint.cpp
-	g++ -Wall -std=c++11 -c argumentint.cpp
+propertyfileexist.o : ARGUMENTS/PROPERTIES/propertyfileexist.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/PROPERTIES/propertyfileexist.cpp
 
-io.o: io.cpp matrix.o string_support.o
-	g++ -Wall -std=c++11 matrix.o string_support.o -c io.cpp
+propertystring.o : ARGUMENTS/PROPERTIES/propertystring.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/PROPERTIES/propertystring.cpp
+
+propertydouble.o : ARGUMENTS/PROPERTIES/propertydouble.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/PROPERTIES/propertydouble.cpp
+
+propertyint.o : ARGUMENTS/PROPERTIES/propertyint.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/PROPERTIES/propertyint.cpp
 
 matrix.o: ../MATRIX/matrix.cpp
-	g++ -Wall -std=c++11 -c ../MATRIX/matrix.cpp
+	$(CC) $(CFLAGS) -c ../MATRIX/matrix.cpp
 
 parameters.o: ../PARAMETERS/parameters.cpp
-	g++ -Wall -std=c++11 -c ../PARAMETERS/parameters.cpp
+	$(CC) $(CFLAGS) -c ../PARAMETERS/parameters.cpp
 
 string_support.o: ../STRING_SUPPORT/string_support.cpp
-	g++ -Wall -std=c++11 -c ../STRING_SUPPORT/string_support.cpp
+	$(CC) $(CFLAGS) -c ../STRING_SUPPORT/string_support.cpp
 
 clean:
 	rm *.o test_argumentparser

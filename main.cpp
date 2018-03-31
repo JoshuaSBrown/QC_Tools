@@ -18,14 +18,97 @@
 #include "PARAMETERS/parameters.hpp"
 #include "IO/punreader.hpp"
 #include "IO/logreader.hpp"
+#include "IO/argumentparser.hpp"
 
 using namespace std;
+
+ArgumentParser setupParser(void){
+
+  // Creating Flags and their descriptions
+  string longFlag = "--log1";
+  string shortFlag = "-l_1";
+  string desc = "Specify the Gaussian .log file for monomer 1 this is "
+    "important for determining the HOMO and LUMO";
+
+  vector<string> flag1 = {longFlag,shortFlag,desc};
+ 
+  longFlag = "--log2";
+  shortFlag = "-l_2";
+  desc = "Specify the Gaussian .log file for monomer 2 this is important for "
+    "determining the HOMO and LUMO";
+
+  vector<string> flag2 = {longFlag,shortFlag,desc};
+
+  longFlag = "--logP";
+  shortFlag = "-l_P";
+  desc = "Specify the Gaussian .log file for the dimer this is important for "
+    "determining the HOMO and LUMO, the dimer.log file is also needed inorder "
+    "to get the overlap matrix S.";
+
+  vector<string> flag3 = {longFlag,shortFlag,desc};
+
+  longFlag = "--pun1";
+  shortFlag = "-p_1";
+  desc = "Specify the Gaussian fort.7 file for monomer 1. This file contains "
+    "the AO coefficients. Acceptable file extensions are .orb/.7/.pun";
+
+  vector<string> flag4 = {longFlag,shortFlag,desc};
+ 
+  longFlag = "--pun2";
+  shortFlag = "-p_2";
+  desc = "Specify the Gaussian fort.7 file for monomer 2. This file contains "
+    "the AO coefficients. Acceptable file extensions are .orb/.7/.pun";
+
+  vector<string> flag5 = {longFlag,shortFlag,desc};
+
+  longFlag = "--punP";
+  shortFlag = "-p_P";
+  desc = "Specify the Gaussian fort.7 file for the dimer. This file contains "
+    "the AO coefficients. Acceptable file extensions are .orb/.7/.pun";
+
+  vector<string> flag6 = {longFlag,shortFlag,desc};
+
+  set<vector<string>> flags;
+  flags.insert(flag1);
+  flags.insert(flag2);
+  flags.insert(flag3);
+  flags.insert(flag4);
+  flags.insert(flag5);
+  flags.insert(flag6);
+
+  ArgumentParser ArgPars(flags);
+
+  // Creating Rules for the flags
+  set<string> pun_exts = {".pun",".7",".orb"};
+  string log_ext = ".log";
+
+  ArgPars.setFlagRule("--pun1","FILE_EXT","ALLOWED_FILE_TYPE",pun_exts);
+  ArgPars.setFlagRule("--pun2","FILE_EXT","ALLOWED_FILE_TYPE",pun_exts);
+  ArgPars.setFlagRule("--punP","FILE_EXT","ALLOWED_FILE_TYPE",pun_exts);
+
+  ArgPars.setFlagRule("--log1","FILE_EXT","ALLOWED_FILE_TYPE",log_ext);
+  ArgPars.setFlagRule("--log2","FILE_EXT","ALLOWED_FILE_TYPE",log_ext);
+  ArgPars.setFlagRule("--logP","FILE_EXT","ALLOWED_FILE_TYPE",log_ext);
+
+  ArgPars.setFlagRule("--pun1","FILE_EXIST","FILE_MUST_EXIST",true);
+  ArgPars.setFlagRule("--pun2","FILE_EXIST","FILE_MUST_EXIST",true);
+  ArgPars.setFlagRule("--punP","FILE_EXIST","FILE_MUST_EXIST",true);
+  ArgPars.setFlagRule("--log1","FILE_EXIST","FILE_MUST_EXIST",true);
+  ArgPars.setFlagRule("--log2","FILE_EXIST","FILE_MUST_EXIST",true);
+  ArgPars.setFlagRule("--logP","FILE_EXIST","FILE_MUST_EXIST",true);
+
+  return ArgPars;
+}
+
 
 int main(int argc, char *argv[]){
 
 	string line;
 
-	Parameters par = check_arguments(argv, argc);
+  ArgumentParser ArgPars = setupParser();
+  ArgPars.parse(argv,argc);
+
+//	Parameters par = check_arguments(argv, argc);
 
   cout << "Grabbed arguments" << endl;
   

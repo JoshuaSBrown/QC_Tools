@@ -25,7 +25,10 @@ class Parameters {
     int HOMO_MO2_Beta_;
     int HOMO_MOP_Beta_;
 
-
+    // In reference to the HOMO level must be 0 or negative
+    int HOMO_LEVEL;
+    // In reference to the HOMO level must be 0 or positive
+    int LUMO_LEVEL;
   public:
     Parameters() : log1_(""), log2_(""), logP_(""),pun1_(""), pun2_(""), punP_(""), MO1_Alpha_(-1),MO2_Alpha_(-1),MOP_Alpha_(-1),MO1_Beta_(-1),MO2_Beta_(-1),MOP_Beta_(-1), HOMO_MO1_Alpha_(-1),HOMO_MO2_Alpha_(-1),HOMO_MOP_Alpha_(-1),HOMO_MO1_Beta_(-1),HOMO_MO2_Beta_(-1),HOMO_MOP_Beta_(-1){};
     std::string getLog1() const { return log1_; }
@@ -46,7 +49,10 @@ class Parameters {
     int getHOMO_MO2Beta() const { return HOMO_MO2_Beta_; }
     int getHOMO_MOPBeta() const { return HOMO_MOP_Beta_; }
 
-   int getMOP_Beta_() const { return MOP_Beta_; }
+    int getHOMO_Level() const { return HOMO_LEVEL; }
+    int getLUMO_Level() const { return LUMO_LEVEL; }
+
+    int getMOP_Beta_() const { return MOP_Beta_; }
 
     void setLog1(const std::string log1);
     void setLog2(const std::string log2);
@@ -66,6 +72,9 @@ class Parameters {
     void setHOMO_MO1Beta(const int mo) { HOMO_MO1_Beta_ = mo; }
     void setHOMO_MO2Beta(const int mo) { HOMO_MO2_Beta_ = mo; }
     void setHOMO_MOPBeta(const int mo) { HOMO_MOP_Beta_ = mo; }
+
+    void setHOMO_Level(const int mo) { HOMO_LEVEL = mo; }
+    void setLUMO_Level(const int mo) { LUMO_LEVEL = mo; }
 };
 
 #endif
