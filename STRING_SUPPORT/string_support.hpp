@@ -14,6 +14,9 @@ std::vector<std::string> splitSt(std::string input);
 // passing this path into the function will return File.cc
 std::string lastStringInPath(std::string input);
 
+// Grab Path only leave off the file name
+std::string getPath(std::string input);
+
 // Grabs the last n characters of a string
 std::string lastN(std::string input, int n);
 
@@ -49,6 +52,8 @@ std::string grabStrAfterLastOccuranceInclusive(std::string s, std::string occ);
 std::string grabStrBeforeFirstOccurance(std::string s, std::string occ);
 
 std::string grabStrBeforeLastOccurance(std::string s, std::string occ);
+
+std::string grabStrBeforeLastOccuranceInclusive(std::string s, std::string occ);
 
 // Determine if the sub string exists within the string
 bool foundSubStrInStr(std::string s,std::string sub_s);

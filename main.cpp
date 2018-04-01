@@ -22,117 +22,37 @@
 
 using namespace std;
 
-ArgumentParser setupParser(void){
-
-  // Creating Flags and their descriptions
-  string longFlag = "--log1";
-  string shortFlag = "-l_1";
-  string desc = "Specify the Gaussian .log file for monomer 1 this is "
-    "important for determining the HOMO and LUMO";
-
-  vector<string> flag1 = {longFlag,shortFlag,desc};
- 
-  longFlag = "--log2";
-  shortFlag = "-l_2";
-  desc = "Specify the Gaussian .log file for monomer 2 this is important for "
-    "determining the HOMO and LUMO";
-
-  vector<string> flag2 = {longFlag,shortFlag,desc};
-
-  longFlag = "--logP";
-  shortFlag = "-l_P";
-  desc = "Specify the Gaussian .log file for the dimer this is important for "
-    "determining the HOMO and LUMO, the dimer.log file is also needed inorder "
-    "to get the overlap matrix S.";
-
-  vector<string> flag3 = {longFlag,shortFlag,desc};
-
-  longFlag = "--pun1";
-  shortFlag = "-p_1";
-  desc = "Specify the Gaussian fort.7 file for monomer 1. This file contains "
-    "the AO coefficients. Acceptable file extensions are .orb/.7/.pun";
-
-  vector<string> flag4 = {longFlag,shortFlag,desc};
- 
-  longFlag = "--pun2";
-  shortFlag = "-p_2";
-  desc = "Specify the Gaussian fort.7 file for monomer 2. This file contains "
-    "the AO coefficients. Acceptable file extensions are .orb/.7/.pun";
-
-  vector<string> flag5 = {longFlag,shortFlag,desc};
-
-  longFlag = "--punP";
-  shortFlag = "-p_P";
-  desc = "Specify the Gaussian fort.7 file for the dimer. This file contains "
-    "the AO coefficients. Acceptable file extensions are .orb/.7/.pun";
-
-  vector<string> flag6 = {longFlag,shortFlag,desc};
-
-  set<vector<string>> flags;
-  flags.insert(flag1);
-  flags.insert(flag2);
-  flags.insert(flag3);
-  flags.insert(flag4);
-  flags.insert(flag5);
-  flags.insert(flag6);
-
-  ArgumentParser ArgPars(flags);
-
-  // Creating Rules for the flags
-  set<string> pun_exts = {".pun",".7",".orb"};
-  string log_ext = ".log";
-
-  ArgPars.setFlagRule("--pun1","FILE_EXT","ALLOWED_FILE_TYPE",pun_exts);
-  ArgPars.setFlagRule("--pun2","FILE_EXT","ALLOWED_FILE_TYPE",pun_exts);
-  ArgPars.setFlagRule("--punP","FILE_EXT","ALLOWED_FILE_TYPE",pun_exts);
-
-  ArgPars.setFlagRule("--log1","FILE_EXT","ALLOWED_FILE_TYPE",log_ext);
-  ArgPars.setFlagRule("--log2","FILE_EXT","ALLOWED_FILE_TYPE",log_ext);
-  ArgPars.setFlagRule("--logP","FILE_EXT","ALLOWED_FILE_TYPE",log_ext);
-
-  ArgPars.setFlagRule("--pun1","FILE_EXIST","FILE_MUST_EXIST",true);
-  ArgPars.setFlagRule("--pun2","FILE_EXIST","FILE_MUST_EXIST",true);
-  ArgPars.setFlagRule("--punP","FILE_EXIST","FILE_MUST_EXIST",true);
-  ArgPars.setFlagRule("--log1","FILE_EXIST","FILE_MUST_EXIST",true);
-  ArgPars.setFlagRule("--log2","FILE_EXIST","FILE_MUST_EXIST",true);
-  ArgPars.setFlagRule("--logP","FILE_EXIST","FILE_MUST_EXIST",true);
-
-  return ArgPars;
-}
-
-
 int main(int argc, char *argv[]){
 
 	string line;
 
-  ArgumentParser ArgPars = setupParser();
+  auto ArgPars = prepareParser();
   ArgPars.parse(argv,argc);
-
-//	Parameters par = check_arguments(argv, argc);
+  auto par = prepareParameters(ArgPars);
 
   cout << "Grabbed arguments" << endl;
   
-  cout << "log file for first monomer is:      "+par.getLog1()+'\n';
-  cout << "log file for second monomer is:     "+par.getLog2()+'\n';
-	cout << "log file for dimer is:              "+par.getLogP()+'\n';
-	cout << "pun file for the first monomer is:  "+par.getPun1()+'\n';
-	cout << "pun file for the second monomer is: "+par.getPun2()+'\n';
-	cout << "pun file for the dimer is:          "+par.getPunP()+'\n';
+  cout << "log file for first monomer is:      "+par->getLog1()+'\n';
+  cout << "log file for second monomer is:     "+par->getLog2()+'\n';
+	cout << "log file for dimer is:              "+par->getLogP()+'\n';
+	cout << "pun file for the first monomer is:  "+par->getPun1()+'\n';
+	cout << "pun file for the second monomer is: "+par->getPun2()+'\n';
+	cout << "pun file for the dimer is:          "+par->getPunP()+'\n';
 	
 	//Open the .pun file find the total number of molecular orbitals
 
-  PunReader pr_P(par.getPunP());
+  PunReader pr_P(par->getPunP());
   pr_P.read();
-  PunReader pr_1(par.getPun1());
+  PunReader pr_1(par->getPun1());
   pr_1.read();
-  PunReader pr_2(par.getPun2());
+  PunReader pr_2(par->getPun2());
   pr_2.read();
 
-  LogReader lr_P(par.getLogP());
+  LogReader lr_P(par->getLogP());
   lr_P.read();
-  LogReader lr_1(par.getLog1());
+  LogReader lr_1(par->getLog1());
   lr_1.read();
-  LogReader lr_2(par.getLog2());
+  LogReader lr_2(par->getLog2());
   lr_2.read();
   // Load in general coefficients 
 

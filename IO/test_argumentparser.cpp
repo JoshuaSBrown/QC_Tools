@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cassert>
 #include "../MATRIX/matrix.hpp"
+#include "../STRING_SUPPORT/string_support.hpp"
 
 using namespace std;
 
@@ -135,20 +136,31 @@ int main(void){
     set<string> exts = {val,val2,val3};
     ArgPars.setFlagArgOpt("--punfile-pair","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts);
     ArgPars.setFlagArgOpt("--punfile-mon1","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts);
+    vector<string> sis_exts{".log"};
+    ArgPars.setFlagArgOpt("--punfile-mon1","ARGUMENT_FILE","PROPERTY_SISTER_FILE","ALLOWED_SISTER_FILE_EXT",".log");
 
     int argc = 5;
     const char * argv[argc];
     argv[0] = "calc_J";
     argv[1] = "--punfile-pair";
-    argv[2] = "file.pun";
+    argv[2] = "file.orb";
     argv[3] = "--punfile-mon1";
-    argv[4] = "file.orb";
+    argv[4] = "testfile.pun";
     ArgPars.parse(argv,argc); 
+
   
     string fileName = ArgPars.getStr("--punfile-pair");
-    assert(fileName.compare("file.pun")==0);
+    assert(fileName.compare("file.orb")==0);
     string fileName2 = ArgPars.getStr("--punfile-mon1");
-    assert(fileName2.compare("file.orb")==0);
+    assert(fileName2.compare("testfile.pun")==0);
+    string sisFileNamePath = ArgPars.getFlagArgOptValue(
+      "--punfile-mon1",
+      "ARGUMENT_FILE",
+      "PROPERTY_SISTER_FILE",
+      "SISTER_FILE_PATH_NAME");
+
+    cerr << "File name " << sisFileNamePath <<endl;    
+    assert(sisFileNamePath.compare("testfile.log")==0);
 
   }
 

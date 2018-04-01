@@ -4,15 +4,13 @@
 #include <map>
 #include <set>
 #include <utility>
+#include <memory>
 #include "../MATRIX/matrix.hpp"
 #include "../PARAMETERS/parameters.hpp"
+#include "argumentparser.hpp"
 
-void show_usage(std::string name); 
+std::unique_ptr<ArgumentParser> prepareParser(void);
 
-int file_exist(char * name);
-
-Parameters check_arguments(char * argv[], int argc);
-
-int check_string_input(std::string str);
+std::unique_ptr<Parameters> prepareParameters(std::unique_ptr<ArgumentParser>& ArgParse);
 
 #endif

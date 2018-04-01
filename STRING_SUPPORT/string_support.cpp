@@ -49,6 +49,20 @@ string lastStringInPath(string input){
   return line;
 }
 
+string getPath(string input){
+  size_t found=0;
+  size_t found2=found;
+  string val = "";
+  string line = input;
+  while ((int)found!=-1){
+    found=line.find("/");
+    line = line.substr(found+1,line.size());
+    found2+=found+1;
+    val = input.substr(0,found2);
+  }
+  return val;
+}
+
 string lastN(string input, int n) {
   return input.substr(input.size()-n);
 }
@@ -129,6 +143,12 @@ string grabStrBeforeLastOccurance(string s, string occ){
   auto pos = s.find_last_of(occ);
   if(pos==string::npos) return s;
   return s.substr(0,pos);
+}
+ 
+string grabStrBeforeLastOccuranceInclusive(string s, string occ){
+  auto pos = s.find_last_of(occ);
+  if(pos==string::npos) return s;
+  return s.substr(0,pos+1);
 }
  
 bool foundSubStrInStr(string s, string sub_s){

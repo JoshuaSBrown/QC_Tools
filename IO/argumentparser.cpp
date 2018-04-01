@@ -13,6 +13,12 @@ using namespace std;
 
 ArgumentParser::ArgumentParser(set<vector<string>> flags){
 
+  vector<string> flag_help;
+  flag_help.push_back("--help");
+  flag_help.push_back("-h");
+  flag_help.push_back("Display help message");
+  flags.insert(flag_help);
+
   maxShortFlagSize = 0;
   maxFullFlagSize = 0;
   maxDescriptionSize = 0;   
@@ -23,9 +29,9 @@ ArgumentParser::ArgumentParser(set<vector<string>> flags){
         "values: full flag name, abbreviated name, and flag description");
     }
 
-    string full_flag = "";
-    string short_flag = "";
-    string desc = "";
+    string full_flag = "NO_FLAG_SPECIFIED";
+    string short_flag = "NO_SHORT_FLAG_SPECIFIED";
+    string desc = "NO_DESCRIPTION_GIVEN";
  
     bool description=false;
     bool abbreviation = false;
@@ -78,24 +84,25 @@ ArgumentParser::ArgumentParser(set<vector<string>> flags){
     if(!flag_name){
       throw invalid_argument("You have failed to provide the full flag name");
     }
-    flags_[make_pair(full_flag,short_flag)] = desc;
+    flags_[full_flag] = make_pair(short_flag,desc);
   }
 
 }
 
 void ArgumentParser::showUsage(void){
   cout << endl;
+  cout << endl;
   cout << "Options:" << endl;
   cout << endl;
 
   for(auto item : flags_ ){
-    string full_flag = item.first.first;
+    string full_flag = item.first;
     size_t diff = maxFullFlagSize-full_flag.size();
     cout << full_flag;
     for(size_t i=0;i<=diff;++i){
       cout << " ";
     }
-    string short_flag = item.first.second;
+    string short_flag = item.second.first;
     diff = maxShortFlagSize-short_flag.size();
     cout << short_flag;
     for(size_t i=0;i<=diff;++i){
@@ -109,7 +116,7 @@ void ArgumentParser::showUsage(void){
       space_block.append(" ");
     }
 
-    string desc = item.second;
+    string desc = item.second.second;
     vector<string> vec_string = splitSt(desc);
     size_t words_size = 0;
     for( auto word : vec_string ){
@@ -123,6 +130,7 @@ void ArgumentParser::showUsage(void){
         words_size = 0;
       }
     }
+    cout << endl;
     cout << endl;
   }
   cout << endl;
@@ -150,6 +158,15 @@ void ArgumentParser::setFlagArgOpt(
       str_arg_[flag]=ArString;
     }else{
       str_arg_[flag]->setArgPropertyOpt(property,option,val);
+    }
+  }else if(argname.compare("ARGUMENT_FILE")==0){
+    if(file_arg_.count(flag)==0){
+      ArgumentFile * ArFile = new ArgumentFile;
+      
+      ArFile->setArgPropertyOpt(property,option,val);
+      file_arg_[flag]=ArFile;
+    }else{
+      file_arg_[flag]->setArgPropertyOpt(property,option,val);
     }
   }else{
     throw invalid_argument("Unrecognized int arg");
@@ -183,27 +200,8 @@ void ArgumentParser::setFlagArgOpt(
     throw invalid_argument("Unrecognized double arg");
   }
 }
-/*
-void ArgumentParser::setFlagArgOpt(
-  string flag, 
-  string argname,
-  string property,
-  string option, 
-  size_t val){
 
-  }else if(argname.compare("ARGUMENT_STRING")==0){
-    if(str_arg_.count(flag)==0){
-      ArgumentString * ArString = new ArgumentString;
-      ArString->setArgPropertyOpt(property,option,val);
-      str_arg_[flag]=ArString;
-    }else{
-      str_arg_[flag]->setArgPropertyOpt(property,option,val);
-    }
-  }else{
-    throw invalid_argument("Unrecognized size_t arg");
-  }
-}
-*/
+
 void ArgumentParser::setFlagArgOpt(
   string flag, 
   string argname,
@@ -213,13 +211,29 @@ void ArgumentParser::setFlagArgOpt(
 
   if(argname.compare("ARGUMENT_FILE")==0){
     if(file_arg_.count(flag)==0){
-      set<string> temp{val};    
-      ArgumentFile * ArFile = new ArgumentFile;
-      ArFile->setArgPropertyOpt(property,option,temp);
-      file_arg_[flag] = ArFile;
+
+      if(property.compare("PROPERTY_FILE_EXT")==0){ 
+        set<string> temp{val};    
+        ArgumentFile * ArFile = new ArgumentFile;
+        ArFile->setArgPropertyOpt(property,option,temp);
+        file_arg_[flag] = ArFile;
+      }else if(property.compare("PROPERTY_SISTER_FILE_EXT")==0){
+        vector<string> temp{val};    
+        ArgumentFile * ArFile = new ArgumentFile;
+        ArFile->setArgPropertyOpt(property,option,temp);
+        file_arg_[flag] = ArFile;
+      }else{
+        ArgumentFile * ArFile = new ArgumentFile;
+        ArFile->setArgPropertyOpt(property,option,val);
+        file_arg_[flag] = ArFile;
+      }
     }else{
-      set<string> temp{val};    
-      file_arg_[flag]->setArgPropertyOpt(property,option,temp);
+      if(property.compare("PROPERTY_FILE_EXT")==0){ 
+        set<string> temp{val};    
+        file_arg_[flag]->setArgPropertyOpt(property,option,temp);
+      }else{
+        file_arg_[flag]->setArgPropertyOpt(property,option,val);
+      }
     }
   }else{
     throw invalid_argument("Unrecognized string arg");
@@ -242,7 +256,7 @@ void ArgumentParser::setFlagArgOpt(
       file_arg_[flag]->setArgPropertyOpt(property,option,vals);
     }
   }else{
-    throw invalid_argument("Unrecognized string arg");
+    throw invalid_argument("Unrecognized set<string> arg");
   }
 }
 
@@ -251,31 +265,35 @@ void ArgumentParser::setFlagArgOpt(
   string argname,
   string property,
   string option, 
-  bool val){
+  vector<string> vals){
 
   if(argname.compare("ARGUMENT_FILE")==0){
     if(file_arg_.count(flag)==0){
       ArgumentFile * ArFile = new ArgumentFile;
-      ArFile->setArgPropertyOpt(property,option,val);
-      file_arg_[flag]=ArFile;
+      ArFile->setArgPropertyOpt(property,option,vals);
+      file_arg_[flag] = ArFile;
     }else{
-      file_arg_[flag]->setArgPropertyOpt(property,option,val);
-    }
-  }else if(argname.compare("ARGUMENT_STRING")==0){
-    if(str_arg_.count(flag)==0){
-      ArgumentString * ArString = new ArgumentString;
-      ArString->setArgPropertyOpt(property,option,val);
-      str_arg_[flag]=ArString;
-    }else{
-      str_arg_[flag]->setArgPropertyOpt(property,option,val);
+      file_arg_[flag]->setArgPropertyOpt(property,option,vals);
     }
   }else{
-    throw invalid_argument("Unrecognized bool arg");
+    throw invalid_argument("Unrecognized vector<string> arg");
   }
 }
 
 void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
-  string flag = arguments.at(index); 
+  string flag = arguments.at(index);
+  // If the abbreviated flag is passed we need to resolve the full flag name
+  if(flags_.count(flag)==0){
+    for(auto item : flags_ ){
+      if(item.second.first.compare(flag)==0){
+        flag = item.first; 
+        break;
+      }
+    }
+  }
+
+  cout << "Scanning flag " << flag << endl;
+ 
   bool unrecognized = true;
   if(str_arg_.count(flag)!=0){
     if((index+1)>=arguments.size()){
@@ -317,10 +335,42 @@ void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
     unrecognized = false;
     string_values_[flag]=argument;
   }
+
   if(unrecognized){
     throw invalid_argument("The flag "+flag+" was unrecognized");
   }
   ++index;
+}
+
+string ArgumentParser::getFlagArgOptValue(
+  string flag,
+  string argname,
+  string property,
+  string option){
+
+  if(str_arg_.count(flag)!=0){ 
+    auto argStr = str_arg_[flag];
+    auto argName = argStr->getArgumentName();
+    if(argName.compare(argname)==0){
+      return argStr->getPropertyValues(property,option);
+    }
+  }
+  if(file_arg_.count(flag)!=0){ 
+    auto argFile = file_arg_[flag];
+    auto argName = argFile->getArgumentName();
+    if(argName.compare(argname)==0){
+      return argFile->getPropertyValues(property,option);
+    }
+  }
+  if(int_arg_.count(flag)!=0){ 
+    auto argInt = int_arg_[flag];
+    auto argName = argInt->getArgumentName();
+    if(argName.compare(argname)==0){
+      return argInt->getPropertyValues(property,option);
+    }
+  }
+
+  throw invalid_argument("Unrecognized flag or argument "+flag+" "+argname);
 }
 
 int ArgumentParser::getInt(string flag){
@@ -347,14 +397,6 @@ string ArgumentParser::getStr(string flag){
   return string_values_[flag];
 }
 
-bool ArgumentParser::getBool(string flag){
-  if(bool_values_.count(flag)==0){
-    string err = ""+flag+" does not contain a bool";
-    throw invalid_argument(err);
-  }
-  return bool_values_[flag];
-}
-
 size_t ArgumentParser::getSize_t(string flag){
   if(size_t_values_.count(flag)==0){
     string err = ""+flag+" does not contain a size_t";
@@ -363,6 +405,21 @@ size_t ArgumentParser::getSize_t(string flag){
   return size_t_values_[flag];
 }
 
+void ArgumentParser::postParseCheck(void){
+
+  for(auto str_arg : str_arg_ ){
+    str_arg.second->postArgCheck();
+  }
+  for(auto int_arg : int_arg_ ){
+    int_arg.second->postArgCheck();
+  }
+  for(auto double_arg : double_arg_ ){
+    double_arg.second->postArgCheck();
+  }
+  for(auto file_arg : file_arg_ ){
+    file_arg.second->postArgCheck();
+  }
+}
 
 void ArgumentParser::parse(const char * argv[], int argc){
 
@@ -375,8 +432,18 @@ void ArgumentParser::parse(const char * argv[], int argc){
     throw runtime_error("Must provide arguments");
   }
 
+  string help_flag = "--help";
+  string help_flag_short = "-h";
+
   for( size_t index=1; index<arguments.size();++index){
+    if(help_flag.compare(arguments.at(index))==0 || 
+       help_flag_short.compare(arguments.at(index))==0){
+	    cout << "Usage: " << arguments.at(0) << " <options(s)> SOURCES";
+      showUsage();
+      return;
+    }
     parseArg_(index,arguments);    
   }
 
+  postParseCheck();
 }

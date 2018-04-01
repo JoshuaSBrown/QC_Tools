@@ -27,11 +27,14 @@ test_argumentint: test_argumentint.cpp argumentint.o string_support.o propertyin
 argumentint.o : argumentint.cpp
 	$(CC) $(CFLAGS) -c argumentint.cpp
 
-test_argumentfile: test_argumentfile.cpp argumentfile.o string_support.o propertyfileexist.o propertyfileext.o
-	$(CC) $(CFLAGS) test_argumentfile.cpp argumentfile.o propertyfileexist.o propertyfileext.o string_support.o -o test_argumentfile
+test_argumentfile: test_argumentfile.cpp propertysisterfile.o argumentfile.o string_support.o propertyfileexist.o propertyfileext.o
+	$(CC) $(CFLAGS) test_argumentfile.cpp argumentfile.o propertysisterfile.o propertyfileexist.o propertyfileext.o string_support.o -o test_argumentfile
 
 argumentfile.o : argumentfile.cpp
 	$(CC) $(CFLAGS) -c argumentfile.cpp
+
+propertysisterfile.o : PROPERTIES/propertysisterfile.cpp
+	$(CC) $(CFLAGS) -c PROPERTIES/propertysisterfile.cpp
 
 propertyint.o : PROPERTIES/propertyint.cpp
 	$(CC) $(CFLAGS) -c PROPERTIES/propertyint.cpp
