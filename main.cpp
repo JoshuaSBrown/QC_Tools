@@ -16,13 +16,18 @@
 #include "IO/io.hpp"
 #include "QC_FUNCTIONS/qc_functions.hpp"
 #include "PARAMETERS/parameters.hpp"
-#include "IO/punreader.hpp"
-#include "IO/logreader.hpp"
-#include "IO/argumentparser.hpp"
+#include "IO/FILE_READERS/punreader.hpp"
+#include "IO/FILE_READERS/logreader.hpp"
+#include "IO/FILE_READERS/argumentparser.hpp"
+
+#include "calcJconfig.hpp"
 
 using namespace std;
 
 int main(int argc, char *argv[]){
+
+  cout << "Running calcJ VERSION " << calcJ_VERION_MAJOR << ".";
+  cout << calcJ_VERSION_MINOR << endl;
 
 	string line;
 

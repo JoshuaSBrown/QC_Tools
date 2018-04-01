@@ -7,10 +7,12 @@ set( calc_J_VERSION_MINOR 0)
 
 # Configure header file to pass some of the CMake settings
 # to the source code
-#configure_file(
-#  "${PROJECT_SOURCE_DIR}/calcJconfig.hpp.in"
-#  "${PROJECT_BINARY_DIR}/calcJconfig.hpp"
-#  )
+configure_file(
+  "${PROJECT_SOURCE_DIR}/calcJconfig.hpp.in"
+  "${PROJECT_BINARY_DIR}/calcJconfig.hpp"
+  )
+
+SET( CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic")
 
 # Add the binary tree to the search path for include files
 # so that we will find calcJconfig.hpp
