@@ -24,10 +24,16 @@ class PropertyObject{
       }
       return false; 
     }
-    
+   
     void setPropOption_(std::string option, T val) {
-      T * opt = new T(val);
-      options_[option]=static_cast<void *>(opt);
+
+      if(options_.count(option)==0){
+        T * opt = new T(val);
+        options_[option]=static_cast<void *>(opt);
+      }else{
+        T * opt = static_cast<T *>(options_[option]);
+        *opt = val;
+      }
     }
 
     virtual std::string getName_(void){return "UNKNOWN";}
@@ -40,12 +46,11 @@ class PropertyObject{
     
   public:
     virtual ~PropertyObject(void) {
-      auto itr = options_.begin();
-      while( itr != options_.end()){
-        T * opt = static_cast<T *>(itr->second);
+      for( auto itr : options_){
+        T * opt = static_cast<T *>(itr.second);
         delete opt;
-        itr = options_.erase(itr);
       }
+      options_.clear();
     }
     
     virtual bool propValid(S value) {
@@ -76,5 +81,7 @@ class PropertyObject{
       }
       return *(static_cast<T *>(options_[option]));
     }
+
+    virtual void postCheck(void) { return; }
 };
 #endif

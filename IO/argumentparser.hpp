@@ -26,17 +26,14 @@ class ArgumentParser{
     std::set<std::string> argument_types_; 
 
     // Known flags and their description 
-    std::map<std::pair<std::string,std::string>,std::string> flags_;
+    std::map<std::string,std::pair<std::string,std::string>> flags_;
 
     std::map<std::string,int> int_values_;
     std::map<std::string,double> double_values_;
     std::map<std::string,std::string> string_values_;
     std::map<std::string,size_t> size_t_values_;
-    std::map<std::string,bool> bool_values_;
 
     void parseArg_(size_t & index, std::vector<std::string> arguments);
-   
-//    void registerRules_(void); 
 
     size_t maxShortFlagSize;
     size_t maxFullFlagSize;
@@ -89,13 +86,20 @@ class ArgumentParser{
       std::string argname,
       std::string property,
       std::string option,
-      bool val);
+      std::vector<std::string> vals);
+
+    std::string getFlagArgOptValue(
+      std::string flag,
+      std::string argname,
+      std::string property,
+      std::string option);
 
     double getDouble(std::string flag);
     int getInt(std::string flag);
     std::string getStr(std::string flag);
-    bool getBool(std::string flag);
     size_t getSize_t(std::string flag);
+
+    void postParseCheck(void);
 
     void parse( const char * argv[], int argc);
     void showUsage();

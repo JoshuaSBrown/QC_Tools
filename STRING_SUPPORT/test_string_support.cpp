@@ -35,6 +35,17 @@ int main(void){
     assert(fileName.compare("File.cc")==0);
   }  
 
+  cerr << "Testing: getPath" << endl;
+  {
+    string str = "Path/To/Important/File.cc";
+    string filePath = getPath(str);
+    cerr << filePath << endl;
+    assert(filePath.compare("Path/To/Important/")==0);
+    string str2 = "File.cc";
+    string str3 = getPath(str2);
+    assert(str3.compare("")==0);
+  }  
+
   cerr << "Testing: cut_end" << endl;
   {
     string str = "Important words";
