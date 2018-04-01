@@ -1,0 +1,4 @@
+// Configured options and settings for calcJ
+
+#define calcJ_VERSION_MAJOR @calcJ_VERSION_MAJOR@
+#define calcJ_VERSION_MINOR @calcJ_VERSION_MINOR@
