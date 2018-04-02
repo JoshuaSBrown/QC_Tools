@@ -89,7 +89,7 @@ int main(void){
 
 
     int argc = 7;
-    const char * argv[argc];// = {"calc_J","--punfile-pair", "testfile.pun", "--punfile-mon1","file.orb"};
+    const char * argv[7];// = {"calc_J","--punfile-pair", "testfile.pun", "--punfile-mon1","file.orb"};
     argv[0] = "calc_J";
     argv[1] = "--punfile-pair";
     argv[2] = "testfile.pun";
@@ -100,7 +100,7 @@ int main(void){
     ArgPars.parse(argv,argc);
 
     argc = 7;
-    const char * argv2[argc];
+    const char * argv2[7];
     argv2[0] = "calc_J";
     argv2[1] = "--punfile-pair";
     argv2[2] = "testfile.pun";
@@ -141,7 +141,7 @@ int main(void){
     vector<string> sis_exts{".log"};
     ArgPars.setFlagArgOpt("--punfile-mon1","ARGUMENT_FILE","PROPERTY_SISTER_FILE","ALLOWED_SISTER_FILE_EXT",".log");
 
-    int argc = 5;
+    const int argc = 5;
     const char * argv[argc];
     argv[0] = "calc_J";
     argv[1] = "--punfile-pair";

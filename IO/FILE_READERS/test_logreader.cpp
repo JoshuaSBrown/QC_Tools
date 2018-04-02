@@ -38,6 +38,7 @@ int main(void){
     }
 */
     auto Soverlap = lr.getOverlapMatrix();
+    cout << Soverlap->get_rows() << endl;
   //  cout << *Soverlap << endl;
     auto Alpha = lr.getOE("Alpha");
    
