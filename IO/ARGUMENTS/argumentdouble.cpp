@@ -10,7 +10,7 @@ ArgumentDouble::ArgumentDouble(void){
 }
 
 void ArgumentDouble::registerProperties_(void){
-  PropertyDouble * prop_double = new PropertyDouble;
+  PropertyDouble * prop_double = new PropertyDouble();
   double_propobjs_.push_back(prop_double);
 }
 

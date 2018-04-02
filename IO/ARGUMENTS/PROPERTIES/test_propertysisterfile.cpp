@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <exception>
 #include <cassert>
 #include "propertysisterfile.hpp"
@@ -9,6 +10,9 @@
 using namespace std;
 
 int main(void){
+  fstream fs;
+  fs.open("testfile.pun", ios::out);
+  fs.close();
 
   cerr << "Testing: PropertySisterFile" << endl;
   cerr << "Testing: constructor" << endl;

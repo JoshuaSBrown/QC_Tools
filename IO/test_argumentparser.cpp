@@ -88,14 +88,16 @@ int main(void){
 
 
 
-    int argc = 5;
+    int argc = 7;
     const char * argv[argc];// = {"calc_J","--punfile-pair", "testfile.pun", "--punfile-mon1","file.orb"};
     argv[0] = "calc_J";
     argv[1] = "--punfile-pair";
     argv[2] = "testfile.pun";
     argv[3] = "--punfile-mon1";
     argv[4] = "file.orb";
-    ArgPars.parse(argv,argc); 
+    argv[5] = "--punfile-mon2";
+    argv[6] = "testfile.pun";
+    ArgPars.parse(argv,argc);
 
     argc = 7;
     const char * argv2[argc];
