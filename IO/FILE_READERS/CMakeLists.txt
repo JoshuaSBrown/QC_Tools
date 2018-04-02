@@ -1,3 +1,3 @@
-add_library(FILEREADERS_SRC filereader.cpp)
-add_library(FILEREADERS_SRC punreader.cpp)
-add_library(FILEREADERS_SRC logreader.cpp)
+#set(FILE_READERS_SRC filereader.cpp punreader.cpp logreader.cpp)
+#set_property(GLOBAL)
+add_library(FILE_READERS_SRC  filereader.cpp punreader.cpp logreader.cpp)
