@@ -20,9 +20,8 @@ int main(void){
     pr.read(); 
     
     auto m = pr.getCoefsMatrix("Alpha");
-
+    assert(m->get_rows() == 92);
     assert(pr.restrictedShell());
-//    cout << *m << endl;
   }
   return 0;
 }
