@@ -1,2 +1,6 @@
-add_library(IO_SRC io.cpp argumentparser.cpp)
-
+#set(IO_SRC io.cpp argumentparser.cpp)
+if(NOT TARGET IO_SRC)
+  add_library(IO_SRC io.cpp argumentparser.cpp)
+  add_subdirectory(FILE_READERS)
+  add_subdirectory(ARGUMENTS)
+endif()

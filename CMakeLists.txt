@@ -2,8 +2,8 @@ cmake_minimum_required (VERSION 2.6)
 project (calcJ)
 
 # The version number
-set( calc_J_VERSION_MAJOR 1)
-set( calc_J_VERSION_MINOR 0)
+set( calcJ_VERSION_MAJOR 1)
+set( calcJ_VERSION_MINOR 0)
 
 # Configure header file to pass some of the CMake settings
 # to the source code
@@ -38,10 +38,11 @@ target_link_libraries(calcJ IO_SRC)
 target_link_libraries(calcJ FILE_READERS_SRC)
 target_link_libraries(calcJ ARGUMENTS_SRC)
 target_link_libraries(calcJ PROPERTIES_SRC)
-target_link_libraries(calcJ CONSTANTS_SRC)
 target_link_libraries(calcJ MATRIX_SRC)
 target_link_libraries(calcJ PARAMETERS_SRC)
 target_link_libraries(calcJ QC_FUNCTIONS_SRC)
 target_link_libraries(calcJ STRING_SUPPORT_SRC)
 
-install( TARGETS calcJ DESTINATION bin)
+target_link_libraries(calcJ ${STRING_SUPPORT_SRC})
+
+#install( TARGETS calcJ DESTINATION bin)
