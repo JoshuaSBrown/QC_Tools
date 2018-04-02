@@ -64,4 +64,4 @@ target_link_libraries(calc_J QC_FUNCTIONS_SRC IO_SRC FILE_READERS_SRC PARAMETERS
 #target_link_libraries(calcJ PARAMETERS_SRC)
 #target_link_libraries(calcJ QC_FUNCTIONS_SRC)
 
-#install( TARGETS calcJ DESTINATION bin)
+install( TARGETS calc_J DESTINATION bin)
