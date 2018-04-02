@@ -134,19 +134,16 @@ unordered_map<int,pair<double,string>> findRank(Matrix & Orb_E_Alpha, Matrix & O
     }
   }
   // Sort the vectors
-  cerr << "Sorting pairs " << endl;
   sort(all.begin(),all.end(),[](const pair<double,string>& P1, const pair<double,string>& P2) -> bool 
   {
     return P1.first < P2.first;
   });
-//  cerr << "Finished Sorting " << endl;
   // Now that they are sorted we are going to update the ranks
   int rank = 1;
 
   unordered_map<int,pair<double,string>> rank_map;
 
   for( auto pr : all ){
-//    cerr << "Rank " << rank << " Energy " << pr.first << " Spin " << pr.second << endl;
     rank_map[rank] = pr;
     rank++;
   }
@@ -177,22 +174,17 @@ double calculate_transfer_integral(
   Matrix zetaAinv = zetaA.invert();
   Matrix zetaBinv = zetaB.invert();
 
-  cerr << "Multiplying S by P" << endl;
   Matrix Inter = mat_S * mat_P_Coefinv;
 
-  cerr << "Multiplying ZetaA by Inter" << endl;
   Matrix gammaA = zetaAinv * Inter ;
-  cerr << "Multiplying ZetaB by Inter" << endl;
   Matrix gammaB = zetaBinv * Inter ;
 
   Matrix gammaA_inv = gammaA.invert();
   Matrix gammaB_inv = gammaB.invert();
 
-  cerr << "Multiplying gammaB by gammaA_inv" << endl;
   Matrix S_AB = gammaB * gammaA_inv;
 
   Matrix Energy = Matrix_diag( mat_P_OE );
-  cerr << "Multiplying gammaB by Energy by gammaA_inv" << endl;
   Matrix J_AB = gammaB * (Energy * gammaA_inv);
 
   Matrix e_B = gammaB * (Energy * gammaB_inv );
