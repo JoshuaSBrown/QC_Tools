@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8)
 project (calc_J)
 
 # The version number
@@ -56,12 +56,5 @@ add_subdirectory(QC_FUNCTIONS)
 
 add_executable(calc_J main.cpp)
 target_link_libraries(calc_J QC_FUNCTIONS_SRC IO_SRC FILE_READERS_SRC PARAMETERS_SRC ARGUMENTS_SRC PROPERTIES_SRC MATRIX_SRC STRING_SUPPORT_SRC)
-#target_link_libraries(calcJ MATRIX_SRC)
-#target_link_libraries(calcJ PROPERTIES_SRC)
-#target_link_libraries(calcJ FILE_READERS_SRC)
-#target_link_libraries(calcJ ARGUMENTS_SRC)
-#target_link_libraries(calcJ IO_SRC)
-#target_link_libraries(calcJ PARAMETERS_SRC)
-#target_link_libraries(calcJ QC_FUNCTIONS_SRC)
 
 install( TARGETS calc_J DESTINATION bin)
