@@ -10,15 +10,10 @@ using namespace std;
 
 FileReader::FileReader(string fileName){
   fileName_ = fileName;
-  options_.push_back("FILE_EXIST");
 }
 
 string FileReader::getExt(){
   return fileExt_();
-}
-
-vector<string> FileReader::getArgOptions(){
-  return options_;
 }
 
 void FileReader::read(){

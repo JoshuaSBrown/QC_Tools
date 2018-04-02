@@ -14,25 +14,25 @@
 
 #include "MATRIX/matrix.hpp"
 #include "IO/io.hpp"
+#include "IO/argumentparser.hpp"
 #include "QC_FUNCTIONS/qc_functions.hpp"
 #include "PARAMETERS/parameters.hpp"
 #include "IO/FILE_READERS/punreader.hpp"
 #include "IO/FILE_READERS/logreader.hpp"
-#include "IO/FILE_READERS/argumentparser.hpp"
 
 #include "calcJconfig.hpp"
 
 using namespace std;
 
-int main(int argc, char *argv[]){
+int main(int argc,const char *argv[]){
 
-  cout << "Running calcJ VERSION " << calcJ_VERION_MAJOR << ".";
+  cout << "Running calcJ VERSION " << calcJ_VERSION_MAJOR << ".";
   cout << calcJ_VERSION_MINOR << endl;
 
 	string line;
 
   auto ArgPars = prepareParser();
-  ArgPars.parse(argv,argc);
+  ArgPars->parse(argv,argc);
   auto par = prepareParameters(ArgPars);
 
   cout << "Grabbed arguments" << endl;

@@ -15,7 +15,6 @@ class FileReader{
     FileReader(std::string fileName);    
     std::string getExt();
 
-    std::vector<std::string> getArgOptions();
     void read();
   protected:
 
