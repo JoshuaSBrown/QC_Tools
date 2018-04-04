@@ -3,8 +3,8 @@ CFLAGS= -Wall -Wextra -pedantic -std=c++11
 
 all: test_argumentfile test_argumentint test_argumentdouble test_argumentstring
 
-test_argumentstring: test_argumentstring.cpp argumentstring.o string_support.o propertystring.o
-	$(CC) $(CFLAGS) test_argumentstring.cpp argumentstring.o propertystring.o string_support.o -o test_argumentstring
+test_argumentstring: test_argumentstring.cpp argumentstring.o string_support.o propertystring.o propertystringchoice.o
+	$(CC) $(CFLAGS) test_argumentstring.cpp argumentstring.o propertystring.o string_support.o propertystringchoice.o -o test_argumentstring 
 
 argumentstring.o : argumentstring.cpp
 	$(CC) $(CFLAGS) -c argumentstring.cpp
@@ -41,6 +41,9 @@ propertyint.o : PROPERTIES/propertyint.cpp
 
 propertyfileexist.o : PROPERTIES/propertyfileexist.cpp
 	$(CC) $(CFLAGS) -c PROPERTIES/propertyfileexist.cpp
+
+propertystringchoice.o : PROPERTIES/propertystringchoice.cpp
+	$(CC) $(CFLAGS) -c PROPERTIES/propertystringchoice.cpp
 
 propertyfileext.o : PROPERTIES/propertyfileext.cpp
 	$(CC) $(CFLAGS) -c PROPERTIES/propertyfileext.cpp
