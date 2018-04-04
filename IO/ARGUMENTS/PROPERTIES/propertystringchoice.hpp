@@ -1,0 +1,19 @@
+
+#ifndef _PROPERTY_STRING_CHOICE_HPP
+#define _PROPERTY_STRING_CHOICE_HPP
+
+#include <set>
+#include "propertyobject.hpp"
+
+class PropertyStringChoice : 
+  public PropertyObject<std::string,std::set<std::string>>{
+  private:
+    std::string getName_(void) { return "PROPERTY_STRING_CHOICE"; }
+    std::vector<std::string> getOpts_(void);
+  public:
+    PropertyStringChoice(void);
+    void setPropOption(std::string option,std::string var);
+    void setPropOption(std::string option,std::set<std::string> var);
+    bool propValid(std::string string_choice);
+};
+#endif

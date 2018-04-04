@@ -1,6 +1,6 @@
 #file( GLOB SRCS property*.cpp )
-add_library(PROPERTIES_SRC propertyint.cpp propertydouble.cpp propertystring.cpp propertysisterfile.cpp propertyfileext.cpp propertyfileexist.cpp)
-foreach(PROG test_propertyint test_propertydouble test_propertystring test_propertysisterfile test_propertyfileext test_propertyfileexist )
+add_library(PROPERTIES_SRC propertyint.cpp propertystringchoice.cpp propertydouble.cpp propertystring.cpp propertysisterfile.cpp propertyfileext.cpp propertyfileexist.cpp)
+foreach(PROG test_propertyint test_propertystringchoice test_propertydouble test_propertystring test_propertysisterfile test_propertyfileext test_propertyfileexist )
   add_executable(${PROG} ${PROG}.cpp)
   add_dependencies(${PROG} STRING_SUPPORT_SRC)
   target_link_libraries(${PROG} PROPERTIES_SRC)

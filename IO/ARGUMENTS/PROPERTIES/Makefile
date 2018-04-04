@@ -1,7 +1,13 @@
 CC=g++
 CFLAGS= -Wall -Wextra -pedantic -std=c++11 -O2
 
-all: test_propertyint test_propertydouble test_propertystring test_propertyfileext test_propertyfileexist test_propertysisterfile
+all: test_propertyint test_propertydouble test_propertystring test_propertyfileext test_propertyfileexist test_propertysisterfile test_propertystringchoice
+
+test_propertystringchoice: test_propertystringchoice.cpp string_support.o propertystringchoice.o
+	$(CC) $(CFLAGS) test_propertystringchoice.cpp propertystringchoice.o string_support.o -o test_propertystringchoice
+
+propertystringchoice.o : propertystringchoice.cpp
+	$(CC) $(CFLAGS) -c propertystringchoice.cpp
 
 test_propertyfileexist: test_propertyfileexist.cpp string_support.o propertyfileexist.o
 	$(CC) $(CFLAGS) test_propertyfileexist.cpp propertyfileexist.o string_support.o -o test_propertyfileexist
