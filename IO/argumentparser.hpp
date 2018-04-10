@@ -28,6 +28,8 @@ class ArgumentParser{
     // Known flags and their description 
     std::map<std::string,std::pair<std::string,std::string>> flags_;
 
+    std::map<std::string,bool> defaults_set_;
+    // Arguments that are stored when argc and argv are parsed
     std::map<std::string,int> int_values_;
     std::map<std::string,double> double_values_;
     std::map<std::string,std::string> string_values_;
@@ -45,6 +47,16 @@ class ArgumentParser{
     // 3 - description
     ArgumentParser(std::set<std::vector<std::string>> flags);
 
+    // Set Defaults for the flags in the case that they are not found
+    void setFlagDefaultValue(std::string flag, int val);
+    void setFlagDefaultValue(std::string flag, size_t val);
+    void setFlagDefaultValue(std::string flag, double val);
+    void setFlagDefaultValue(std::string flag, std::string val);
+
+    // Add a argument without setting any of the values
+    void addFlagArg(
+      std::string flag,
+      std::string argname);
     // Set the rules for the flag and the type it is associated with types 
     // include:
     // "FILE_EXT"

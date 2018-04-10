@@ -64,43 +64,78 @@ void TransferComplex::unscramble(
   this->mat_S = unscrambled_S;
 }
 
-double TransferComplex::calcJ(string HOMO_OR_LUMO, int MO){
+double TransferComplex::calcJ(map<string,string> orbitaltype, map<string,int> orbnum){
+
+  if(unscrambled==false){
+    cerr << "WARNING unable to automatically line up basis functions of"
+      " monomers with dimers, you better make sure they correctly"
+      " line up or run the calculations again with the correct "
+      "flag pop=full" << endl;
+  }
 
   Matrix mat1coef;
   Matrix mat2coef;
 
+  
+  string HOMO_OR_LUMO = orbitaltype["mon1"]; 
+  int MO = orbnum["mon1"];
   if(HOMO_OR_LUMO.compare("HOMO")==0){
     if(MO>0) {
       throw invalid_argument("Having specified HOMO the MO"
       " value is in reference to the HOMO and must be a negative number");
     }
+    // Number of orbitals that are choices
+    if(MO<=(-1*Orbs1.second)){
+      string err ="You are trying to access HOMO"+to_string(MO)+" but there "
+        "are only "+to_string(Orbs1.second)+" HOMO orbitals";
+      throw invalid_argument(err);
+    }
     mat1coef = mat_1_Coef->getRow( Orbs1.second+MO );
+  }else if(HOMO_OR_LUMO.compare("LUMO")==0){
+    if(MO<0){
+      throw invalid_argument("Having specified LUMO the MO"
+      " value is in reference to the LUMO and must be a positive number");
+    }
+    int allowed_LUMO = Orbs1.first-Orbs1.second;
+    if(MO>=allowed_LUMO){
+      string err ="You are trying to access LUMO+"+to_string(MO)+" but there "
+        "are only "+to_string(allowed_LUMO)+" LUMO orbitals";
+      throw invalid_argument(err);
+    }
+    mat1coef = mat_1_Coef->getRow( Orbs1.second+MO+1 );
+  }else{
+    throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
+  }
+ 
+  HOMO_OR_LUMO = orbitaltype["mon2"];
+  MO = orbnum["mon2"];
+  if(HOMO_OR_LUMO.compare("HOMO")==0){
+    if(MO>0) {
+      throw invalid_argument("Having specified HOMO the MO"
+      " value is in reference to the HOMO and must be a negative number");
+    }
+    if(MO<=(-1*Orbs2.second)){
+      string err ="You are trying to access HOMO"+to_string(MO)+" but there "
+        "are only "+to_string(Orbs2.second)+" HOMO orbitals";
+      throw invalid_argument(err);
+    }
     mat2coef = mat_2_Coef->getRow( Orbs2.second+MO );
   }else if(HOMO_OR_LUMO.compare("LUMO")==0){
     if(MO<0){
       throw invalid_argument("Having specified LUMO the MO"
       " value is in reference to the LUMO and must be a positive number");
     }
-    mat1coef = mat_1_Coef->getRow( Orbs1.second+MO+1 );
+    int allowed_LUMO = Orbs2.first-Orbs2.second;
+    if(MO>=allowed_LUMO){
+      string err ="You are trying to access LUMO+"+to_string(MO)+" but there "
+        "are only "+to_string(allowed_LUMO)+" LUMO orbitals";
+      throw invalid_argument(err);
+    }
     mat2coef = mat_2_Coef->getRow( Orbs2.second+MO+1 );
   }else{
     throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
   }
- 
-  if(unscrambled==false){
-    cerr << "WARNING unable to automatically line up basis functions of"
-      " monomers with dimers, you better make sure they correctly"
-      " line up or run the calculations again with the correct "
-      "flag" << endl;
-  }
 
-  if(MO==0){
-    cout << HOMO_OR_LUMO << endl;
-  }else if(HOMO_OR_LUMO.compare("HOMO")==0){
-    cout << HOMO_OR_LUMO << MO << endl;
-  }else if(HOMO_OR_LUMO.compare("LUMO")==0){
-    cout << HOMO_OR_LUMO << "+" << MO << endl;
-  }
   return calculate_transfer_integral(
           mat1coef,
           mat2coef,
@@ -482,15 +517,16 @@ Matrix * unscramble_P_Coef(
   // of the dimer matrix
   // First int is the col in the dimer the atom should be at
   // Second int is the col in the dimer the atom is presently at
-  vector<pair<int,int>> monBmatch;
-  for(unsigned i=1;i<=matchDimerB.size();++i){
-    pair<int,int> pr(i,matchDimerB.at(i-1));
-    monBmatch.push_back(pr);
-  }
+
   vector<pair<int,int>> monAmatch;
   for(unsigned i=1;i<=matchDimerA.size();++i){
-    pair<int,int> pr(i+monBmatch.size(),matchDimerA.at(i-1));
+    pair<int,int> pr(i,matchDimerA.at(i-1));
     monAmatch.push_back(pr);
+  }
+  vector<pair<int,int>> monBmatch;
+  for(unsigned i=1;i<=matchDimerB.size();++i){
+    pair<int,int> pr(i+monAmatch.size(),matchDimerB.at(i-1));
+    monBmatch.push_back(pr);
   }
 
   refreshSwapOrder(monBmatch, monAmatch);
@@ -510,16 +546,18 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
   Matrix * S_new;
   { 
     list<Matrix *> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP,S,"Columns");
-    vector<pair<int,int>> monBmatch;
-    for(unsigned i=1;i<=matchDimerB.size();++i){
-      pair<int,int> pr(i,matchDimerB.at(i-1));
-      monBmatch.push_back(pr);
-    }
+
     vector<pair<int,int>> monAmatch;
     for(unsigned i=1;i<=matchDimerA.size();++i){
-      pair<int,int> pr(i+monBmatch.size(),matchDimerA.at(i-1));
+      pair<int,int> pr(i,matchDimerA.at(i-1));
       monAmatch.push_back(pr);
     }
+    vector<pair<int,int>> monBmatch;
+    for(unsigned i=1;i<=matchDimerB.size();++i){
+      pair<int,int> pr(i+monAmatch.size(),matchDimerB.at(i-1));
+      monBmatch.push_back(pr);
+    }
+
     refreshSwapOrder(monBmatch, monAmatch);
     updateSwapLists( monBmatch, monAmatch,p_atom_mat_S);
     S_new = createNewMatrix(p_atom_mat_S,S->get_rows(),S->get_cols(),"Columns");
@@ -529,16 +567,18 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
 
   {  
     list<Matrix *> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP,S,"Rows");
-    vector<pair<int,int>> monBmatch;
-    for(unsigned i=1;i<=matchDimerB.size();++i){
-      pair<int,int> pr(i,matchDimerB.at(i-1));
-      monBmatch.push_back(pr);
-    }
+
     vector<pair<int,int>> monAmatch;
     for(unsigned i=1;i<=matchDimerA.size();++i){
-      pair<int,int> pr(i+monBmatch.size(),matchDimerA.at(i-1));
+      pair<int,int> pr(i,matchDimerA.at(i-1));
       monAmatch.push_back(pr);
     }
+    vector<pair<int,int>> monBmatch;
+    for(unsigned i=1;i<=matchDimerB.size();++i){
+      pair<int,int> pr(i+monAmatch.size(),matchDimerB.at(i-1));
+      monBmatch.push_back(pr);
+    }
+
     refreshSwapOrder(monBmatch, monAmatch);
     updateSwapLists( monBmatch, monAmatch,p_atom_mat_S);
     S_new = createNewMatrix(p_atom_mat_S,S->get_rows(),S->get_cols(),"Rows");

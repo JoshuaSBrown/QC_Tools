@@ -25,8 +25,8 @@
 using namespace std;
 
 int main(int argc,const char *argv[]){
-
-  cout << "Running calcJ VERSION " << calcJ_VERSION_MAJOR << ".";
+  cout << endl;
+  cout << "Running calc_J VERSION " << calcJ_VERSION_MAJOR << ".";
   cout << calcJ_VERSION_MINOR << endl;
 
 	string line;
@@ -35,8 +35,6 @@ int main(int argc,const char *argv[]){
   ArgPars->parse(argv,argc);
   auto par = prepareParameters(ArgPars);
 
-  cout << "Grabbed arguments" << endl;
-  
   cout << "log file for first monomer is:      "+par->getLog1()+'\n';
   cout << "log file for second monomer is:     "+par->getLog2()+'\n';
 	cout << "log file for dimer is:              "+par->getLogP()+'\n';
@@ -65,23 +63,22 @@ int main(int argc,const char *argv[]){
   // was used
 
   // No need to worry about beta orbitals
-	string orb_type = "Alpha";
 
   {
     Matrix * mat_S = lr_P.getOverlapMatrix();
 
-    Matrix * mat_P_Coef = pr_P.getCoefsMatrix(orb_type);
-    auto vec_P_OE = lr_P.getOE(orb_type);
+    Matrix * mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
+    auto vec_P_OE = lr_P.getOE(par->getSpinP());
     Matrix * mat_P_OE = new Matrix(vec_P_OE);
 
-    int HOMO1 = lr_1.getHOMOLevel(orb_type);
-    Matrix * mat_1_Coef = pr_1.getCoefsMatrix(orb_type);
-    auto vec_1_OE = lr_1.getOE(orb_type);
+    int HOMO1 = lr_1.getHOMOLevel(par->getSpin1());
+    Matrix * mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
+    auto vec_1_OE = lr_1.getOE(par->getSpin1());
     Matrix * mat_1_OE = new Matrix(vec_1_OE);
 
-    int HOMO2 = lr_2.getHOMOLevel(orb_type);
-    Matrix * mat_2_Coef = pr_2.getCoefsMatrix(orb_type);
-    auto vec_2_OE = lr_2.getOE(orb_type);
+    int HOMO2 = lr_2.getHOMOLevel(par->getSpin2());
+    Matrix * mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
+    auto vec_2_OE = lr_2.getOE(par->getSpin2());
     Matrix * mat_2_OE = new Matrix(vec_2_OE);
 
     // Unscramble dimer coef and energies first need to see how the dimer
@@ -131,79 +128,38 @@ int main(int argc,const char *argv[]){
     }
 
     cout << endl;
-    cout << "Values calculated for " << orb_type << " orbitals" << endl;
-    TC.calcJ("HOMO",0);
-    TC.calcJ("LUMO",0);
-  }
+    cout << "Dimer     Spin " << par->getSpinP() << endl;
 
-  orb_type = "Beta";
-  if(!pr_P.restrictedShell()){
-    Matrix * mat_S = lr_P.getOverlapMatrix();
-
-    Matrix * mat_P_Coef = pr_P.getCoefsMatrix(orb_type);
-    auto vec_P_OE = lr_P.getOE(orb_type);
-    Matrix * mat_P_OE = new Matrix(vec_P_OE);
-
-    int HOMO1 = lr_1.getHOMOLevel(orb_type);
-    Matrix * mat_1_Coef = pr_1.getCoefsMatrix(orb_type);
-    auto vec_1_OE = lr_1.getOE(orb_type);
-    Matrix * mat_1_OE = new Matrix(vec_1_OE);
-
-    int HOMO2 = lr_2.getHOMOLevel(orb_type);
-    Matrix * mat_2_Coef = pr_2.getCoefsMatrix(orb_type);
-    auto vec_2_OE = lr_2.getOE(orb_type);
-    Matrix * mat_2_OE = new Matrix(vec_2_OE);
-
-    // Unscramble dimer coef and energies first need to see how the dimer
-    // and monomer coefficients line up. To determine how the ceofficients
-    // line up we will first look at how the atoms appear in each of the 
-    // .gjf files. We will also check to see how many coefficients are 
-    // assocaited with each of the atoms by checking the .log files. Given
-    // the position of the atoms in the monomer unit and the positions of
-    // the atoms in the dimer we can determine how the coefficients need 
-    // to be rearranged.     
-    auto coord_P = lr_P.getCoords();
-    auto coord_1 = lr_1.getCoords();
-    auto coord_2 = lr_2.getCoords();
-
-    // Convert coords to matrices
-    Matrix coord_P_mat(coord_P);
-    Matrix coord_1_mat(coord_1);
-    Matrix coord_2_mat(coord_2);
-
-    auto basis_P = lr_P.getBasisFuncCount();  
-    auto basis_1 = lr_1.getBasisFuncCount();  
-    auto basis_2 = lr_2.getBasisFuncCount();  
-
-    int MO1 = mat_1_OE->get_rows();
-    int MO2 = mat_2_OE->get_rows();
-
-    pair<int,int> Orbs1 = { MO1, HOMO1 };
-    pair<int,int> Orbs2 = { MO2, HOMO2 };
-
-    TransferComplex TC(
-        mat_1_Coef,
-        mat_2_Coef,
-        mat_P_Coef,
-        Orbs1,
-        Orbs2,
-        mat_S,
-        mat_P_OE);
-
-    // If the basis function search returns 0 for any of the components then
-    // we cannot automatically determine what the transfer integral is
-    if(basis_1.size()!=0 && basis_2.size()!=0 && basis_P.size()!=0){
-      TC.unscramble(
-          coord_1_mat,
-          coord_2_mat,
-          coord_P_mat,
-          basis_P);
+    cout << "Monomer 1 Spin " << par->getSpin1() << " ";
+    if(par->getOrbNum1()==0){
+      cout << "Orbital " << par->getOrbType1() << endl;
+    }else if(par->getOrbNum1()>0){
+      cout << "Orbital " << par->getOrbType1();
+      cout << "+" << par->getOrbNum1() << endl;
+    }else{
+      cout << "Orbital " << par->getOrbType1();
+      cout << par->getOrbNum1() << endl;
     }
-    
-    cout << endl;
-    cout << "Values calculated for " << orb_type << " orbitals" << endl;
-    TC.calcJ("HOMO",0);
-    TC.calcJ("LUMO",0);
+
+    cout << "Monomer 2 Spin " << par->getSpin2() << " ";
+    if(par->getOrbNum2()==0){
+      cout << "Orbital " << par->getOrbType2() << endl;
+    }else if(par->getOrbNum2()>0){
+      cout << "Orbital " << par->getOrbType2();
+      cout << "+" << par->getOrbNum2() << endl;
+    }else{
+      cout << "Orbital " << par->getOrbType2();
+      cout << par->getOrbNum2() << endl;
+    }
+
+    map<string,string> orbitaltypes;
+    map<string,int> orbitalnums;
+    orbitaltypes["mon1"]=par->getOrbType1();
+    orbitaltypes["mon2"]=par->getOrbType2();
+    orbitalnums["mon1"]=par->getOrbNum1();
+    orbitalnums["mon2"]=par->getOrbNum2();
+
+    TC.calcJ(orbitaltypes,orbitalnums);
 
   }
 

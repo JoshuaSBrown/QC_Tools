@@ -3,7 +3,7 @@ project (calc_J)
 
 # The version number
 set( calcJ_VERSION_MAJOR 1)
-set( calcJ_VERSION_MINOR 0)
+set( calcJ_VERSION_MINOR 1)
 
 enable_testing()
 
@@ -13,6 +13,9 @@ configure_file(
   "${PROJECT_SOURCE_DIR}/calcJconfig.hpp.in"
   "${PROJECT_BINARY_DIR}/calcJconfig.hpp"
   )
+
+# Find bash it is important for testing using scripts
+find_program (BASH_PROGRAM bash)
 
 SET( CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic")
 
@@ -56,5 +59,9 @@ add_subdirectory(QC_FUNCTIONS)
 
 add_executable(calc_J main.cpp)
 target_link_libraries(calc_J QC_FUNCTIONS_SRC IO_SRC FILE_READERS_SRC PARAMETERS_SRC ARGUMENTS_SRC PROPERTIES_SRC MATRIX_SRC STRING_SUPPORT_SRC)
+
+if(BASH_PROGRAM)
+  add_test(test_calc_J_script ${BASH_PROGRAM} ${CMAKE_CURRENT_SOURCE_DIR}/test_script_calc_J.sh ${CMAKE_SOURCE_DIR})
+endif(BASH_PROGRAM)
 
 install( TARGETS calc_J DESTINATION bin)

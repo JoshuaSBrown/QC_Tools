@@ -63,13 +63,78 @@ unique_ptr<ArgumentParser> prepareParser(void){
     ".log extension to be read.";
   flag6.push_back(desc);
 
-  set<vector<string>> flags = { 
-    flag1,
-    flag2,
-    flag3,
-    flag4,
-    flag5,
-    flag6};
+  vector<string> flag7;
+  flag7.push_back("--spin_P");
+  flag7.push_back("-s_P");
+  desc = "Specify which spin should be used for the dimer when running the "
+    "transfer integral calculations. By default the same spin will be used "
+    "for monomer 1, 2 and the dimer. The options are alpha or beta.";
+  flag7.push_back(desc);
+
+  vector<string> flag8;
+  flag8.push_back("--spin_1");
+  flag8.push_back("-s_1");
+  desc = "Specify which spin should be used for monomer 1 when running the "
+    "transfer integral calculations. By default the same spin will be used "
+    "for monomer 1, 2 and the dimer. The options are alpha or beta.";
+  flag8.push_back(desc);
+
+  vector<string> flag9;
+  flag9.push_back("--spin_2");
+  flag9.push_back("-s_2");
+  desc = "Specify which spin should be used for monomer 2 when running the "
+    "transfer integral calculations. By default the same spin will be used "
+    "for monomer 1, 2 and the dimer. The options are alpha or beta.";
+  flag9.push_back(desc);
+
+  vector<string> flag11;
+  flag11.push_back("--orbital_type_1");
+  flag11.push_back("-orb_ty_1"); 
+  desc = "Specify which orbital type will be used for monomer 1. By default "
+    "the HOMO will be used. Your options are HOMO or LUMO.";
+  flag11.push_back(desc);
+
+  vector<string> flag12;
+  flag12.push_back("--orbital_type_2");
+  flag12.push_back("-orb_ty_2"); 
+  desc = "Specify which orbital type will be used for monomer 2. By default "
+    "the HOMO will be used. Your options are HOMO or LUMO.";
+  flag12.push_back(desc);
+
+  vector<string> flag14;
+  flag14.push_back("--orbital_num_1");
+  flag14.push_back("-orb_num_1");
+  desc = "Specify which orbital will be used for monomer 1. If you specified an orbital "
+    "type of HOMO you must use 0 to indicate HOMO or a negative number. E.g. "
+    "a value of -1 would access the HOMO-1. If the LUMO is specified 0 - "
+    "represents the LUMO and is the default. To access another orbital specify"
+    " a positive number. E.g. 4 would access the LUMO+4";
+  flag14.push_back(desc);
+
+  vector<string> flag15;
+  flag15.push_back("--orbital_num_2");
+  flag15.push_back("-orb_num_2");
+  desc = "Specify which orbital will be used for monomer 2. If you specified an orbital "
+    "type of HOMO you must use 0 to indicate HOMO or a negative number. E.g. "
+    "a value of -1 would access the HOMO-1. If the LUMO is specified 0 - "
+    "represents the LUMO and is the default. To access another orbital specify"
+    " a positive number. E.g. 4 would access the LUMO+4";
+  flag15.push_back(desc);
+
+  set<vector<string>> flags; 
+  flags.insert(flag1);
+  flags.insert(flag2);
+  flags.insert(flag3);
+  flags.insert(flag4);
+  flags.insert(flag5);
+  flags.insert(flag6);
+  flags.insert(flag7);
+  flags.insert(flag8);
+  flags.insert(flag9);
+  flags.insert(flag11);
+  flags.insert(flag12);
+  flags.insert(flag14);
+  flags.insert(flag15);
 
   unique_ptr<ArgumentParser> ArgPars(new ArgumentParser(flags));
 
@@ -77,36 +142,211 @@ unique_ptr<ArgumentParser> prepareParser(void){
   set<string> exts{".orb",".7",".pun"};
   string ext_log = ".log";
 
-  ArgPars->setFlagArgOpt("--pun_P","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts);
-  ArgPars->setFlagArgOpt("--pun_P","ARGUMENT_FILE","PROPERTY_SISTER_FILE","ALLOWED_SISTER_FILE_EXT",ext_log);
-  ArgPars->setFlagArgOpt("--pun_P","ARGUMENT_FILE","PROPERTY_FILE_EXIST","FILE_MUST_EXIST",0);
-  cerr << endl;
+  // Setting up rules guiding pun files
+  {
+    ArgPars->setFlagArgOpt(
+        "--pun_P",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXT",
+        "ALLOWED_FILE_EXT",
+        exts);
+    ArgPars->setFlagArgOpt(
+        "--pun_P",
+        "ARGUMENT_FILE",
+        "PROPERTY_SISTER_FILE",
+        "ALLOWED_SISTER_FILE_EXT",
+        ext_log);
+    ArgPars->setFlagArgOpt(
+        "--pun_P",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXIST",
+        "FILE_MUST_EXIST",
+        0);
 
-  ArgPars->setFlagArgOpt("--pun_1","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts);
-  auto vals = ArgPars->getFlagArgOptValue("--pun_P","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT");
-  cerr << "vals " << vals << endl;
-  ArgPars->setFlagArgOpt("--pun_1","ARGUMENT_FILE","PROPERTY_SISTER_FILE","ALLOWED_SISTER_FILE_EXT",ext_log);
-  ArgPars->setFlagArgOpt("--pun_1","ARGUMENT_FILE","PROPERTY_FILE_EXIST","FILE_MUST_EXIST",0);
+    ArgPars->setFlagArgOpt(
+        "--pun_1",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXT",
+        "ALLOWED_FILE_EXT",
+        exts);
+    ArgPars->setFlagArgOpt(
+        "--pun_1",
+        "ARGUMENT_FILE",
+        "PROPERTY_SISTER_FILE",
+        "ALLOWED_SISTER_FILE_EXT",
+        ext_log);
+    ArgPars->setFlagArgOpt(
+        "--pun_1",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXIST",
+        "FILE_MUST_EXIST",
+        0);
 
-  ArgPars->setFlagArgOpt("--pun_2","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts);
-  ArgPars->setFlagArgOpt("--pun_2","ARGUMENT_FILE","PROPERTY_SISTER_FILE","ALLOWED_SISTER_FILE_EXT",ext_log);
-  ArgPars->setFlagArgOpt("--pun_2","ARGUMENT_FILE","PROPERTY_FILE_EXIST","FILE_MUST_EXIST",0);
+    ArgPars->setFlagArgOpt(
+        "--pun_2",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXT",
+        "ALLOWED_FILE_EXT",
+        exts);
+    ArgPars->setFlagArgOpt(
+        "--pun_2",
+        "ARGUMENT_FILE",
+        "PROPERTY_SISTER_FILE",
+        "ALLOWED_SISTER_FILE_EXT",
+        ext_log);
+    ArgPars->setFlagArgOpt(
+        "--pun_2",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXIST",
+        "FILE_MUST_EXIST",
+        0);
+  }
 
   set<string> exts_log{".log"};
   vector<string> exts_other{".orb",".7",".pun"};
+  // Setting up rules guiding log files
 
-  ArgPars->setFlagArgOpt("--log_P","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts_log);
-  ArgPars->setFlagArgOpt("--log_P","ARGUMENT_FILE","PROPERTY_SISTER_FILE","ALLOWED_SISTER_FILE_EXT",exts_other);
-  ArgPars->setFlagArgOpt("--log_P","ARGUMENT_FILE","PROPERTY_FILE_EXIST","FILE_MUST_EXIST",0);
+  // Setting rules guiding log files
+  {
+    ArgPars->setFlagArgOpt(
+        "--log_P",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXT",
+        "ALLOWED_FILE_EXT",
+        exts_log);
+    ArgPars->setFlagArgOpt(
+        "--log_P",
+        "ARGUMENT_FILE",
+        "PROPERTY_SISTER_FILE",
+        "ALLOWED_SISTER_FILE_EXT",
+        exts_other);
+    ArgPars->setFlagArgOpt(
+        "--log_P",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXIST",
+        "FILE_MUST_EXIST",
+        0);
 
-  ArgPars->setFlagArgOpt("--log_1","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts_log);
-  ArgPars->setFlagArgOpt("--log_1","ARGUMENT_FILE","PROPERTY_SISTER_FILE","ALLOWED_SISTER_FILE_EXT",exts_other);
-  ArgPars->setFlagArgOpt("--log_1","ARGUMENT_FILE","PROPERTY_FILE_EXIST","FILE_MUST_EXIST",0);
+    ArgPars->setFlagArgOpt(
+        "--log_1",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXT",
+        "ALLOWED_FILE_EXT",
+        exts_log);
+    ArgPars->setFlagArgOpt(
+        "--log_1",
+        "ARGUMENT_FILE",
+        "PROPERTY_SISTER_FILE",
+        "ALLOWED_SISTER_FILE_EXT",
+        exts_other);
+    ArgPars->setFlagArgOpt(
+        "--log_1",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXIST",
+        "FILE_MUST_EXIST",
+        0);
 
-  ArgPars->setFlagArgOpt("--log_2","ARGUMENT_FILE","PROPERTY_FILE_EXT","ALLOWED_FILE_EXT",exts_log);
-  ArgPars->setFlagArgOpt("--log_2","ARGUMENT_FILE","PROPERTY_SISTER_FILE","ALLOWED_SISTER_FILE_EXT",exts_other);
-  ArgPars->setFlagArgOpt("--log_2","ARGUMENT_FILE","PROPERTY_FILE_EXIST","FILE_MUST_EXIST",0);
+    ArgPars->setFlagArgOpt(
+        "--log_2",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXT",
+        "ALLOWED_FILE_EXT",
+        exts_log);
+    ArgPars->setFlagArgOpt(
+        "--log_2",
+        "ARGUMENT_FILE",
+        "PROPERTY_SISTER_FILE",
+        "ALLOWED_SISTER_FILE_EXT",
+        exts_other);
+    ArgPars->setFlagArgOpt(
+        "--log_2",
+        "ARGUMENT_FILE",
+        "PROPERTY_FILE_EXIST",
+        "FILE_MUST_EXIST",
+        0);
+  }
 
+  set<string> spin_opts{"Alpha","Beta"};
+ 
+  // Setting rules guiding spin
+  { 
+    ArgPars->setFlagArgOpt(
+        "--spin_P",
+        "ARGUMENT_STRING",
+        "PROPERTY_STRING_CHOICE",
+        "STRING_CHOICE_ENFORCED","true");
+    ArgPars->setFlagArgOpt(
+        "--spin_P",
+        "ARGUMENT_STRING",
+        "PROPERTY_STRING_CHOICE",
+        "STRING_CHOICES",spin_opts);
+
+    ArgPars->setFlagArgOpt(
+        "--spin_1",
+        "ARGUMENT_STRING",
+        "PROPERTY_STRING_CHOICE",
+        "STRING_CHOICE_ENFORCED","true");
+    ArgPars->setFlagArgOpt(
+        "--spin_1",
+        "ARGUMENT_STRING",
+        "PROPERTY_STRING_CHOICE",
+        "STRING_CHOICES",spin_opts);
+
+    ArgPars->setFlagArgOpt(
+        "--spin_2",
+        "ARGUMENT_STRING",
+        "PROPERTY_STRING_CHOICE",
+        "STRING_CHOICE_ENFORCED","true");
+    ArgPars->setFlagArgOpt(
+        "--spin_2",
+        "ARGUMENT_STRING",
+        "PROPERTY_STRING_CHOICE",
+        "STRING_CHOICES",spin_opts);
+
+    ArgPars->setFlagDefaultValue("--spin_P","Alpha");
+    ArgPars->setFlagDefaultValue("--spin_1","Alpha");
+    ArgPars->setFlagDefaultValue("--spin_2","Alpha");
+  }
+
+  // Setting rules guidling orbital type
+  set<string> orb_opts{"HOMO","LUMO"};
+  { 
+    ArgPars->setFlagArgOpt(
+        "--orbital_type_1",
+        "ARGUMENT_STRING",
+        "PROPERTY_STRING_CHOICE",
+        "STRING_CHOICE_ENFORCED","true");
+    ArgPars->setFlagArgOpt(
+        "--orbital_type_1",
+        "ARGUMENT_STRING",
+        "PROPERTY_STRING_CHOICE",
+        "STRING_CHOICES",orb_opts);
+
+    ArgPars->setFlagArgOpt(
+        "--orbital_type_2",
+        "ARGUMENT_STRING",
+        "PROPERTY_STRING_CHOICE",
+        "STRING_CHOICE_ENFORCED","true");
+    ArgPars->setFlagArgOpt(
+        "--orbital_type_2",
+        "ARGUMENT_STRING",
+        "PROPERTY_STRING_CHOICE",
+        "STRING_CHOICES",orb_opts);
+
+    ArgPars->setFlagDefaultValue("--orbital_type_1","HOMO");
+    ArgPars->setFlagDefaultValue("--orbital_type_2","HOMO");
+  }
+
+  // Set rules guiding orbital numbers
+  // Use default settings for min and max numbers
+  {
+    ArgPars->addFlagArg("--orbital_num_1","ARGUMENT_INT");
+    ArgPars->addFlagArg("--orbital_num_2","ARGUMENT_INT");
+
+    int orb_num = 0;
+    ArgPars->setFlagDefaultValue("--orbital_num_1",orb_num);
+    ArgPars->setFlagDefaultValue("--orbital_num_2",orb_num);
+  }
   return ArgPars;
 }
 
@@ -115,8 +355,21 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse){
   map<string,string> flag_arg;  
   map<string,string> flag_sister_arg;
 
-  vector<string> flags{"--pun_P","--pun_1","--pun_2","--log_P","--log_1","--log_2"};
-  vector<string> flags_sister{"--log_P","--log_1","--log_2","--pun_P","--pun_1","--pun_2"};
+  vector<string> flags{
+    "--pun_P",
+    "--pun_1",
+    "--pun_2",
+    "--log_P",
+    "--log_1",
+    "--log_2"};
+
+  vector<string> flags_sister{
+    "--log_P",
+    "--log_1",
+    "--log_2",
+    "--pun_P",
+    "--pun_1",
+    "--pun_2"};
 
   for(size_t i=0;i<flags.size();++i ){
     auto flag = flags.at(i);
@@ -133,16 +386,21 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse){
     prop = "PROPERTY_SISTER_FILE";
     opt = "SISTER_FILE_EXISTS";
     auto line = ArgParse->getFlagArgOptValue(flag,argu,prop,opt);
+    opt = "SISTER_FILE_PATH_NAME";
+    auto line2 = ArgParse->getFlagArgOptValue(flag,argu,prop,opt);
     auto sisters_exist = splitSt(line); 
+    vector<string> sister_file_paths = splitSt(line2);
+    int countFiles=0;
     for(auto sister_exists : sisters_exist){
       if(sister_exists.compare("true")==0){
-        opt = "SISTER_FILE_PATH_NAME";
-        flag_sister_arg[flag_sister] = ArgParse->getFlagArgOptValue(flag,argu,prop,opt);
+        flag_sister_arg[flag_sister] = sister_file_paths.at(countFiles);
       }
+      ++countFiles;
     }
   }
 
   unique_ptr<Parameters> Par(new Parameters);
+  // Read file related flags
   if(flag_arg.count("--pun_P")!=0){
     Par->setPunP(flag_arg["--pun_P"]);
   }else if(flag_sister_arg.count("--pun_P")!=0){
@@ -184,6 +442,49 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse){
     Par->setLog2(flag_sister_arg["--log_2"]);
   }else{
     throw runtime_error("Unable to find file for flag --log_2");
+  }
+
+  // Read spin related flags, do not need if statement because default values
+  // are defined
+  Par->setSpinP(ArgParse->getStr("--spin_P"));
+  Par->setSpin1(ArgParse->getStr("--spin_1"));
+  Par->setSpin2(ArgParse->getStr("--spin_2"));
+  // Read Orbital related flags
+  
+  {
+    string orb_typ_1 = ArgParse->getStr("--orbital_type_1");
+    Par->setOrbType1(orb_typ_1);
+    if(orb_typ_1.compare("HOMO")==0){
+      int MO = ArgParse->getInt("--orbital_num_1");
+      if(MO>0){
+        throw invalid_argument("HOMO orbital must be 0 or a negative number");
+      }
+      Par->setOrbNum1(MO);
+    }else if(orb_typ_1.compare("LUMO")==0){
+      int MO = ArgParse->getInt("--orbital_num_1");
+      if(MO<0){
+        throw invalid_argument("LUMO orbital must be 0 or a positive number");
+      }
+      Par->setOrbNum1(MO);
+    } 
+  }
+
+  {
+    string orb_typ_2 = ArgParse->getStr("--orbital_type_2");
+    Par->setOrbType2(orb_typ_2);
+    if(orb_typ_2.compare("HOMO")==0){
+      int MO = ArgParse->getInt("--orbital_num_2");
+      if(MO>0){
+        throw invalid_argument("HOMO orbital must be 0 or a negative number");
+      }
+      Par->setOrbNum2(MO);
+    }else if(orb_typ_2.compare("LUMO")==0){
+      int MO = ArgParse->getInt("--orbital_num_2");
+      if(MO<0){
+        throw invalid_argument("LUMO orbital must be 0 or a positive number");
+      }
+      Par->setOrbNum2(MO);
+    }    
   }
   return Par;
 }
