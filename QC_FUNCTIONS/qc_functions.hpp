@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <map>
 
 #include "../MATRIX/matrix.hpp"
 
@@ -37,9 +38,17 @@ class TransferComplex {
             Matrix coord_P_mat,
             std::vector<int> basisP);
 
-    // Calculate the transfer integral for the specified orbital
-    // MO is with reference to the HOMO or LUMO
-    double calcJ(std::string HOMO_OR_LUMO, int MO);
+    // Orbital type and a map of the corresponding number
+    // E.g.
+    // orbital type    orbital number
+    // "mon1" "LUMO"    "mon1" -3
+    // "mon2" "HOMO"    "mon2"  0
+    //
+    //    monomer1 LUMO-3
+    //    monomer2 HOMO
+    double calcJ(
+      std::map<std::string,std::string> orbitaltype,
+      std::map<std::string,int> orbitalnum);
 };
 
 

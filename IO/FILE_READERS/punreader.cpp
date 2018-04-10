@@ -27,6 +27,13 @@ void PunReader::registerSections_(){
   FileReader::registerSections_();
 }
 
+Matrix * PunReader::getCoefsMatrix(string orb_type){
+  if(coefs.count(orb_type)!=1){
+    throw invalid_argument("Coefficients for spin "+orb_type+" were not found");
+  }
+  return coefs[orb_type];
+}
+
 void PunReader::validFileName_(){  
   string ext = fileExt_();
   if(ext.compare(".pun")!=0){
@@ -81,7 +88,6 @@ void PunReader::ReadCoef(string orb_type){
 
     allCoefsRead = !(foundSubStrInStr(line,orb_type));
   } 
-
 
   Matrix * Coefs = new Matrix(v_vec);
   coefs[orb_type] = Coefs;

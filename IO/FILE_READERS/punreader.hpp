@@ -11,7 +11,7 @@
 class PunReader : public FileReader {
   public:
     PunReader(std::string str);     
-    Matrix * getCoefsMatrix(std::string orb_type) { return coefs[orb_type]; }
+    Matrix * getCoefsMatrix(std::string orb_type); 
     bool restrictedShell() { return coefs.size()==1; }
 
   private:

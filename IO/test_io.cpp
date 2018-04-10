@@ -15,7 +15,6 @@ int main(int argc, const char * argv[]){
   auto ArgParse = prepareParser();   
 
   ArgParse->parse(argv,argc);
-
   vector<string> flags{"--pun_P","--pun_1","--pun_2","--log_P","--log_1","--log_2"};
   
   for(auto flag : flags){

@@ -123,31 +123,30 @@ int main(void){
     // If we correct the dimer coefficient matrix to line up with the
     // coefficients of the monomers it should look like this 
     //
-    //         col 1  col 2  col 3  col 4  col 5  col 6  col 7  col 8
-    //        _______________________________________________________
-    // row 1 |  0.0    0.2    0.0   -3.0    1.3    9.4    3.4   82.4
-    // row 2 |  0.0    0.2    0.0   -3.0    1.3    9.4    3.4   82.4
-    // row 3 |  0.0    0.2    0.0   -3.0    1.3    9.4    3.4   82.4
-    // row 4 |  0.0    0.2    0.0   -3.0    1.3    9.4    3.4   82.4
-    // row 5 |  0.0    0.2    0.0   -3.0    1.3    9.4    3.4   82.4
-    // row 6 |  0.0    0.2    0.0   -3.0    1.3    9.4    3.4   82.4
-    // row 7 |  0.0    0.2    0.0   -3.0    1.3    9.4    3.4   82.4
-    // row 8 |  0.0    0.2    0.0   -3.0    1.3    9.4    3.4   82.4
-    //         atm1   atm1   atm2   atm2   atm3   atm4   atm4   atm5    
+    //        Col 1   Col 2   Col 3   Col 4   Col 5   Col 6   Col 7   Col 8
+    //Row 1   1.3     9.4     3.4     82.4    0       0.2     0       -3
+    //Row 2   1.3     9.4     3.4     82.4    0       0.2     0       -3
+    //Row 3   1.3     9.4     3.4     82.4    0       0.2     0       -3
+    //Row 4   1.3     9.4     3.4     82.4    0       0.2     0       -3
+    //Row 5   1.3     9.4     3.4     82.4    0       0.2     0       -3
+    //Row 6   1.3     9.4     3.4     82.4    0       0.2     0       -3
+    //Row 7   1.3     9.4     3.4     82.4    0       0.2     0       -3
+    //Row 8   1.3     9.4     3.4     82.4    0       0.2     0       -3
+
     cerr << "Calling unscramble" << endl;
     auto NewCoef = unscramble_P_Coef( matchB, matchA, basisFuncDimer,dimerCoef);
 
     cerr << *NewCoef << endl; 
 
     for(int i=1;i<=8;++i){
-      assert(static_cast<int>(NewCoef->get_elem(i,1))==0);
-      assert(static_cast<int>(NewCoef->get_elem(i,2)*10)==2);
-      assert(static_cast<int>(NewCoef->get_elem(i,3))==0);
-      assert(static_cast<int>(NewCoef->get_elem(i,4))==-3);
-      assert(static_cast<int>(NewCoef->get_elem(i,5)*10)==13);
-      assert(static_cast<int>(NewCoef->get_elem(i,6)*10)==94);
-      assert(static_cast<int>(NewCoef->get_elem(i,7)*10)==34);
-      assert(static_cast<int>(NewCoef->get_elem(i,8)*10)==824);
+      assert(static_cast<int>(NewCoef->get_elem(i,1)*10)==13);
+      assert(static_cast<int>(NewCoef->get_elem(i,2)*10)==94);
+      assert(static_cast<int>(NewCoef->get_elem(i,3)*10)==34);
+      assert(static_cast<int>(NewCoef->get_elem(i,4)*10)==824);
+      assert(static_cast<int>(NewCoef->get_elem(i,5))==0);
+      assert(static_cast<int>(NewCoef->get_elem(i,6)*10)==2);
+      assert(static_cast<int>(NewCoef->get_elem(i,7))==0);
+      assert(static_cast<int>(NewCoef->get_elem(i,8))==-3);
     }
 
   }
@@ -261,38 +260,39 @@ int main(void){
     // If we correct the dimer coefficient matrix to line up with the
     // coefficients of the monomers it should look like this 
     //
-    //         col 1  col 2  col 3  col 4  col 5  col 6  col 7  col 8
-    //        _______________________________________________________
-    // row 1 |  1.3    1.3    1.3   1.3    1.3    1.3    1.3   6.0
-    // row 2 |  1.3    1.3    1.3   1.3    1.3    1.3    1.3   6.0
-    // row 3 |  1.3    1.3    0.0   0.0    0.0    0.0    0.0   4.0
-    // row 4 |  1.3    1.3    0.0   0.0    0.0    0.0    0.0   4.0
-    // row 5 |  1.3    1.3    0.0   0.0    0.0    0.0    0.0   4.0
-    // row 6 |  1.3    1.3    0.0   0.0    0.0    0.0    0.0   4.0
-    // row 7 |  1.3    1.3    0.0   0.0    0.0    0.0    0.0   4.0
-    // row 8 |  6.0    6.0    4.0   4.0    4.0    4.0    4.0   4.0
-    //         atm1   atm1   atm2   atm2   atm3   atm4   atm4   atm5    
+    //        Col 1   Col 2   Col 3   Col 4   Col 5   Col 6   Col 7   Col 8
+    //Row 1   0       0       0       4       1.3     1.3     0       0
+    //Row 2   0       0       0       4       1.3     1.3     0       0
+    //Row 3   0       0       0       4       1.3     1.3     0       0
+    //Row 4   4       4       4       4       6       6       4       4
+    //Row 5   1.3     1.3     1.3     6       1.3     1.3     1.3     1.3
+    //Row 6   1.3     1.3     1.3     6       1.3     1.3     1.3     1.3
+    //Row 7   0       0       0       4       1.3     1.3     0       0
+    //Row 8   0       0       0       4       1.3     1.3     0       0
     cerr << "Calling unscramble" << endl;
     auto NewCoef = unscramble_S( matchB, matchA, basisFuncDimer,SCoef);
 
     cerr << *NewCoef << endl; 
 
-    for(int i=1;i<=7;++i){
-      assert(static_cast<int>(NewCoef->get_elem(i,1)*10)==13);
-      assert(static_cast<int>(NewCoef->get_elem(i,2)*10)==13);
+    for(int i=1;i<=8;++i){
+      if(i!=4){
+        assert(static_cast<int>(NewCoef->get_elem(i,5)*10)==13);
+        assert(static_cast<int>(NewCoef->get_elem(i,6)*10)==13);
 
-      assert(static_cast<int>(NewCoef->get_elem(1,i)*10)==13);
-      assert(static_cast<int>(NewCoef->get_elem(2,i)*10)==13);
+        assert(static_cast<int>(NewCoef->get_elem(5,i)*10)==13);
+        assert(static_cast<int>(NewCoef->get_elem(6,i)*10)==13);
+      }
     }
 
-    for(int i=3;i<=8;++i){
-      assert(static_cast<int>(NewCoef->get_elem(8,i))==4);
-      assert(static_cast<int>(NewCoef->get_elem(i,8))==4);
+    for(int i=1;i<=8;++i){
+      if(i==5 || i==6){
+        assert(static_cast<int>(NewCoef->get_elem(i,4))==6);
+        assert(static_cast<int>(NewCoef->get_elem(4,i))==6);
+      }else{
+        assert(static_cast<int>(NewCoef->get_elem(4,i))==4);
+        assert(static_cast<int>(NewCoef->get_elem(i,4))==4);
+      }
     }
-    assert(static_cast<int>(NewCoef->get_elem(1,8))==6);
-    assert(static_cast<int>(NewCoef->get_elem(2,8))==6);
-    assert(static_cast<int>(NewCoef->get_elem(8,2))==6);
-    assert(static_cast<int>(NewCoef->get_elem(8,1))==6);
   }
   return 0;
 }
