@@ -121,6 +121,15 @@ unique_ptr<ArgumentParser> prepareParser(void){
     " a positive number. E.g. 4 would access the LUMO+4";
   flag15.push_back(desc);
 
+  vector<string> flag16;
+  flag16.push_back("--counter_poise");
+  flag16.push_back("-cp");
+  desc = "Specify that the counter poise correction is being taken into account"
+    " this means that there should be the same number of basis functions for "
+    "the dimer as there are for each of the monomers";
+  flag16.push_back(desc);
+
+
   set<vector<string>> flags; 
   flags.insert(flag1);
   flags.insert(flag2);
@@ -135,6 +144,7 @@ unique_ptr<ArgumentParser> prepareParser(void){
   flags.insert(flag12);
   flags.insert(flag14);
   flags.insert(flag15);
+  flags.insert(flag16);
 
   unique_ptr<ArgumentParser> ArgPars(new ArgumentParser(flags));
 
@@ -200,6 +210,7 @@ unique_ptr<ArgumentParser> prepareParser(void){
         "PROPERTY_FILE_EXIST",
         "FILE_MUST_EXIST",
         0);
+  
   }
 
   set<string> exts_log{".log"};
@@ -337,6 +348,25 @@ unique_ptr<ArgumentParser> prepareParser(void){
     ArgPars->setFlagDefaultValue("--orbital_type_2","HOMO");
   }
 
+  // Set argument allowed values for counterpoise
+  {
+    cerr << "Setting counterpoise flag" << endl;
+    ArgPars->setFlagArgOpt(
+        "--counter_poise",
+        "ARGUMENT_INT",
+        "PROPERTY_INT",
+        "MIN",
+        0);
+    ArgPars->setFlagArgOpt(
+        "--counter_poise",
+        "ARGUMENT_INT",
+        "PROPERTY_INT",
+        "MAX",
+        1);
+    
+    // By default the flag counter poise is turned off
+    ArgPars->setFlagDefaultValue("--counter_poise",0);
+  }
   // Set rules guiding orbital numbers
   // Use default settings for min and max numbers
   {
