@@ -182,6 +182,7 @@ void ArgumentParser::addFlagArg(
 }
 
 void ArgumentParser::setFlagDefaultValue(string flag, int val){
+  cerr << "Setting default value for int " << flag << endl;
   int_values_[flag] = val;
   defaults_set_[flag] = true;
 }
@@ -209,7 +210,7 @@ void ArgumentParser::setFlagArgOpt(
   int val){
 
   if(argname.compare("ARGUMENT_INT")==0){
-    if(int_arg_.count(flag)!=0){
+    if(int_arg_.count(flag)==0){
       ArgumentInt * ArInt = new ArgumentInt;
       ArInt->setArgPropertyOpt(property,option,val);
       int_arg_[flag]=ArInt;
