@@ -447,6 +447,7 @@ void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
       str_arg_[flag]->argValid(argument);
       unrecognized = false;
       string_values_[flag]=argument;
+      ++index;
     }
   }
   if(switch_arg_.count(flag)!=0){
@@ -472,6 +473,9 @@ void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
           int_values_[flag]=0;
         }
       }
+    }else{
+      unrecognized = false;
+      int_values_[flag]=1;
     }
   }
   if(int_arg_.count(flag)!=0){
@@ -484,6 +488,7 @@ void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
       int_arg_[flag]->argValid(stoi(argument));
       unrecognized = false;
       int_values_[flag]=stoi(argument);
+      ++index;
     }
   }
   if(double_arg_.count(flag)!=0){
@@ -496,6 +501,7 @@ void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
       double_arg_[flag]->argValid(stod(argument));
       unrecognized = false;
       double_values_[flag]=stod(argument);
+      ++index;
     }
   }
   if(file_arg_.count(flag)!=0){
@@ -508,13 +514,13 @@ void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
       file_arg_[flag]->argValid(argument);
       unrecognized = false;
       string_values_[flag]=argument;
+      ++index;
     }
   }
 
   if(unrecognized){
     throw invalid_argument("The flag "+flag+" was unrecognized");
   }
-  ++index;
 }
 
 string ArgumentParser::getFlagArgOptValue(
