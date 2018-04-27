@@ -3,7 +3,7 @@ project (calc_J)
 
 # The version number
 set( calcJ_VERSION_MAJOR 1)
-set( calcJ_VERSION_MINOR 1)
+set( calcJ_VERSION_MINOR 2)
 
 enable_testing()
 
@@ -16,6 +16,9 @@ configure_file(
 
 # Find bash it is important for testing using scripts
 find_program (BASH_PROGRAM bash)
+
+SET( LOG_LEVEL 0 CACHE INT "Choose the log level" )
+add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
 
 SET( CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic")
 

@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-Wall -Wextra -std=c++11 -pedantic
-objects= argumentparser.o propertystringchoice.o matrix.o string_support.o parameters.o argumentstring.o argumentdouble.o argumentint.o argumentfile.o propertystring.o propertydouble.o propertyint.o propertyfileext.o propertysisterfile.o propertyfileexist.o
+objects= argumentparser.o propertystringchoice.o matrix.o string_support.o parameters.o argumentstring.o argumentdouble.o argumentint.o argumentfile.o argumentswitch.o propertystring.o propertydouble.o propertyint.o propertyfileext.o propertysisterfile.o propertyfileexist.o propertyswitch.o 
 
 
 all: test_argumentparser test_io
@@ -19,6 +19,9 @@ argumentparser.o : argumentparser.cpp
 
 argumentfile.o : ARGUMENTS/argumentfile.cpp
 	$(CC) $(CFLAGS) -c ARGUMENTS/argumentfile.cpp
+
+argumentswitch.o : ARGUMENTS/argumentswitch.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/argumentswitch.cpp
 
 argumentstring.o : ARGUMENTS/argumentstring.cpp
 	$(CC) $(CFLAGS) -c ARGUMENTS/argumentstring.cpp
@@ -40,6 +43,9 @@ propertyfileext.o : ARGUMENTS/PROPERTIES/propertyfileext.cpp
 
 propertyfileexist.o : ARGUMENTS/PROPERTIES/propertyfileexist.cpp
 	$(CC) $(CFLAGS) -c ARGUMENTS/PROPERTIES/propertyfileexist.cpp
+
+propertyswitch.o : ARGUMENTS/PROPERTIES/propertyswitch.cpp
+	$(CC) $(CFLAGS) -c ARGUMENTS/PROPERTIES/propertyswitch.cpp
 
 propertystring.o : ARGUMENTS/PROPERTIES/propertystring.cpp
 	$(CC) $(CFLAGS) -c ARGUMENTS/PROPERTIES/propertystring.cpp

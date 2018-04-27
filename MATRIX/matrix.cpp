@@ -212,6 +212,17 @@ int Matrix::resize( int r, int c ){
 	return 0;
 }
 
+Matrix& Matrix::operator=(const Matrix & m){
+  this->resize(m.get_rows(),m.get_cols());
+  
+  for(int i=1;i<=m.get_rows();++i){
+    for(int j=1;j<=m.get_cols();++j){
+      this->set_elem(m.get_elem(i,j),i,j);
+    }
+  }
+  return *this;
+}
+
 int Matrix::index(const int r,const int c,const int s) const{
 	return (r-1)*cols*shel+(c-1)*shel+s-1;
 }

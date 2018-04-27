@@ -150,6 +150,14 @@ void ArgumentParser::addFlagArg(
       throw invalid_argument("Int argument has already been added for "
         "flag "+flag);
     }
+  }else if(argname.compare("ARGUMENT_SWITCH")==0){
+    if(switch_arg_.count(flag)==0){
+      ArgumentSwitch * ArSwitch = new ArgumentSwitch;
+      switch_arg_[flag]=ArSwitch;
+    }else{
+      throw invalid_argument("switch argument has already been added for "
+        "flag "+flag);
+    }
   }else if(argname.compare("ARGUMENT_STRING")==0){
     if(str_arg_.count(flag)==0){
       ArgumentString * ArString = new ArgumentString;
@@ -182,7 +190,6 @@ void ArgumentParser::addFlagArg(
 }
 
 void ArgumentParser::setFlagDefaultValue(string flag, int val){
-  cerr << "Setting default value for int " << flag << endl;
   int_values_[flag] = val;
   defaults_set_[flag] = true;
 }
@@ -224,6 +231,26 @@ void ArgumentParser::setFlagArgOpt(
       str_arg_[flag]=ArString;
     }else{
       str_arg_[flag]->setArgPropertyOpt(property,option,val);
+    }
+  }else if(argname.compare("ARGUMENT_SWITCH")==0){
+    if(switch_arg_.count(flag)==0){
+      ArgumentSwitch * ArSwitch = new ArgumentSwitch;
+      if(val==0){
+        ArSwitch->setArgPropertyOpt(property,option,"OFF");
+      }else if(val==1){
+        ArSwitch->setArgPropertyOpt(property,option,"ON");
+      }else{
+        throw invalid_argument("Unrecognized option for switch "+val);
+      }
+      switch_arg_[flag]=ArSwitch;
+    }else{
+      if(val==0){
+        switch_arg_[flag]->setArgPropertyOpt(property,option,"OFF");
+      }else if(val==1){
+        switch_arg_[flag]->setArgPropertyOpt(property,option,"ON");
+      }else{
+        throw invalid_argument("Unrecognized option for switch "+val);
+      }
     }
   }else if(argname.compare("ARGUMENT_FILE")==0){
     if(file_arg_.count(flag)==0){
@@ -301,6 +328,23 @@ void ArgumentParser::setFlagArgOpt(
         file_arg_[flag]->setArgPropertyOpt(property,option,val);
       }
     }
+  }else if(argname.compare("ARGUMENT_SWITCH")==0){
+    if(switch_arg_.count(flag)==0){
+      ArgumentSwitch * ArSwitch = new ArgumentSwitch;
+      if(val.compare("OFF")!=0 && val.compare("ON")!=0){
+        throw invalid_argument("Unrecognized option for switch "+val);
+      }else{
+        ArSwitch->setArgPropertyOpt(property,option,val);
+      }
+      switch_arg_[flag]=ArSwitch;
+    }else{
+      if(val.compare("OFF")!=0 && val.compare("ON")!=0){
+        throw invalid_argument("Unrecognized option for switch"+val);
+      }else{
+        switch_arg_[flag]->setArgPropertyOpt(property,option,val);
+      }
+    }
+
   }else if(argname.compare("ARGUMENT_STRING")==0){
     if(str_arg_.count(flag)==0){
       set<string> temp{val};
@@ -364,6 +408,20 @@ void ArgumentParser::setFlagArgOpt(
   }
 }
 
+bool ArgumentParser::nextParameterIsAFlag_(size_t index, vector<string> arguments){
+
+  if((index+1)<arguments.size()){ 
+    for(auto flag : flags_ ){
+      if(flag.first.compare(arguments.at(index+1))==0){
+        return true;
+      }else if(flag.second.first.compare(arguments.at(index+1))==0){
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
   string flag = arguments.at(index);
   // If the abbreviated flag is passed we need to resolve the full flag name
@@ -378,44 +436,79 @@ void ArgumentParser::parseArg_(size_t & index, vector<string> arguments ){
 
   bool unrecognized = true;
   if(str_arg_.count(flag)!=0){
-    if((index+1)>=arguments.size()){
-      string err = ""+flag+" Missing arguments";
-      throw runtime_error(err);
+
+    if(!nextParameterIsAFlag_(index,arguments) || str_arg_[flag]->requiresParameter()){
+
+      if((index+1)>=arguments.size()){
+        string err = ""+flag+" Missing arguments";
+        throw runtime_error(err);
+      }
+      string argument = arguments.at(index+1);
+      str_arg_[flag]->argValid(argument);
+      unrecognized = false;
+      string_values_[flag]=argument;
     }
-    string argument = arguments.at(index+1);
-    str_arg_[flag]->argValid(argument);
-    unrecognized = false;
-    string_values_[flag]=argument;
+  }
+  if(switch_arg_.count(flag)!=0){
+
+    if(!nextParameterIsAFlag_(index,arguments)){
+
+      if((index+1)>=arguments.size()){
+        if(switch_arg_[flag]->requiresParameter()){
+          string err = ""+flag+" Missing arguments";
+          throw runtime_error(err);
+        }else{
+          unrecognized = false;
+          int_values_[flag]=1;
+        }
+      }else{
+        string argument = arguments.at(index+1);
+        switch_arg_[flag]->argValid(argument);
+        unrecognized = false;
+        string_values_[flag]=argument;
+        if(switch_arg_[flag]->positive(argument)){
+          int_values_[flag]=1;
+        }else{
+          int_values_[flag]=0;
+        }
+      }
+    }
   }
   if(int_arg_.count(flag)!=0){
-    if((index+1)>=arguments.size()){
-      string err = ""+flag+" Missing arguments";
-      throw runtime_error(err);
+    if(!nextParameterIsAFlag_(index,arguments) || int_arg_[flag]->requiresParameter()){
+      if((index+1)>=arguments.size()){
+        string err = ""+flag+" Missing arguments";
+        throw runtime_error(err);
+      }
+      string argument = arguments.at(index+1);
+      int_arg_[flag]->argValid(stoi(argument));
+      unrecognized = false;
+      int_values_[flag]=stoi(argument);
     }
-    string argument = arguments.at(index+1);
-    int_arg_[flag]->argValid(stoi(argument));
-    unrecognized = false;
-    int_values_[flag]=stoi(argument);
   }
   if(double_arg_.count(flag)!=0){
-    if((index+1)>=arguments.size()){
-      string err = ""+flag+" Missing arguments";
-      throw runtime_error(err);
+    if(!nextParameterIsAFlag_(index,arguments) || double_arg_[flag]->requiresParameter()){
+      if((index+1)>=arguments.size()){
+        string err = ""+flag+" Missing arguments";
+        throw runtime_error(err);
+      }
+      string argument = arguments.at(index+1);
+      double_arg_[flag]->argValid(stod(argument));
+      unrecognized = false;
+      double_values_[flag]=stod(argument);
     }
-    string argument = arguments.at(index+1);
-    double_arg_[flag]->argValid(stod(argument));
-    unrecognized = false;
-    double_values_[flag]=stod(argument);
   }
   if(file_arg_.count(flag)!=0){
-    if((index+1)>=arguments.size()){
-      string err = ""+flag+" Missing arguments";
-      throw runtime_error(err);
+    if(!nextParameterIsAFlag_(index,arguments) || file_arg_[flag]->requiresParameter()){
+      if((index+1)>=arguments.size()){
+        string err = ""+flag+" Missing arguments";
+        throw runtime_error(err);
+      }
+      string argument = arguments.at(index+1);
+      file_arg_[flag]->argValid(argument);
+      unrecognized = false;
+      string_values_[flag]=argument;
     }
-    string argument = arguments.at(index+1);
-    file_arg_[flag]->argValid(argument);
-    unrecognized = false;
-    string_values_[flag]=argument;
   }
 
   if(unrecognized){
@@ -437,6 +530,13 @@ string ArgumentParser::getFlagArgOptValue(
       return argStr->getPropertyValues(property,option);
     }
   }
+  if(switch_arg_.count(flag)!=0){ 
+    auto argSwitch = switch_arg_[flag];
+    auto argName = argSwitch->getArgumentName();
+    if(argName.compare(argname)==0){
+      return argSwitch->getPropertyValues(property,option);
+    }
+  }
   if(file_arg_.count(flag)!=0){ 
     auto argFile = file_arg_[flag];
     auto argName = argFile->getArgumentName();
@@ -456,8 +556,19 @@ string ArgumentParser::getFlagArgOptValue(
 }
 
 int ArgumentParser::getInt(string flag){
+
   if(int_values_.count(flag)==0){
-    string err = ""+flag+" does not contain a int";
+    if(switch_arg_.count(flag)){
+      if(string_values_.count(flag)){
+        if(switch_arg_[flag]->positive(string_values_[flag])){
+          return 1;
+        }else{
+          return 0;
+        }
+      }
+    }
+    string err = ""+flag+" does not contain an int. It is also possible that "
+      "you did not specify a default value";
     throw invalid_argument(err);
   }
   return int_values_[flag];
@@ -465,7 +576,8 @@ int ArgumentParser::getInt(string flag){
 
 double ArgumentParser::getDouble(string flag){
   if(double_values_.count(flag)==0){
-    string err = ""+flag+" does not contain a double";
+    string err = ""+flag+" does not contain a double. It is also possible that "
+      "you did not specify a default value";
     throw invalid_argument(err);
   }
   return double_values_[flag];
@@ -473,7 +585,17 @@ double ArgumentParser::getDouble(string flag){
 
 string ArgumentParser::getStr(string flag){
   if(string_values_.count(flag)==0){
-    string err = ""+flag+" does not contain a string";
+    if(switch_arg_.count(flag)){
+      if(int_values_.count(flag)){
+        if(switch_arg_[flag]->positive(int_values_[flag])){
+          return "ON";
+        }else{
+          return "OFF";
+        }
+      }
+    }
+    string err = ""+flag+" does not contain a string. It is also possible that "
+      "you did not specify a default value";
     throw invalid_argument(err);
   }
   return string_values_[flag];
@@ -481,7 +603,8 @@ string ArgumentParser::getStr(string flag){
 
 size_t ArgumentParser::getSize_t(string flag){
   if(size_t_values_.count(flag)==0){
-    string err = ""+flag+" does not contain a size_t";
+    string err = ""+flag+" does not contain a size_t. It is also possible that "
+      "you did not specify a default value";
     throw invalid_argument(err);
   }
   return size_t_values_[flag];
@@ -491,6 +614,9 @@ void ArgumentParser::postParseCheck(void){
 
   for(auto str_arg : str_arg_ ){
     str_arg.second->postArgCheck();
+  }
+  for(auto switch_arg : switch_arg_ ){
+    switch_arg.second->postArgCheck();
   }
   for(auto int_arg : int_arg_ ){
     int_arg.second->postArgCheck();

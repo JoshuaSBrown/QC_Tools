@@ -1,7 +1,13 @@
 CC=g++
 CFLAGS= -Wall -Wextra -pedantic -std=c++11
 
-all: test_argumentfile test_argumentint test_argumentdouble test_argumentstring
+all: test_argumentfile test_argumentswitch test_argumentint test_argumentdouble test_argumentstring
+
+test_argumentswitch: test_argumentswitch.cpp string_support.o argumentswitch.o propertyswitch.o 
+	$(CC) $(CFLAGS) test_argumentswitch.cpp string_support.o argumentswitch.o propertyswitch.o -o test_argumentswitch 
+
+argumentswitch.o : argumentswitch.cpp
+	$(CC) $(CFLAGS) -c argumentswitch.cpp
 
 test_argumentstring: test_argumentstring.cpp argumentstring.o string_support.o propertystring.o propertystringchoice.o
 	$(CC) $(CFLAGS) test_argumentstring.cpp argumentstring.o propertystring.o string_support.o propertystringchoice.o -o test_argumentstring 
@@ -33,6 +39,9 @@ test_argumentfile: test_argumentfile.cpp propertysisterfile.o argumentfile.o str
 argumentfile.o : argumentfile.cpp
 	$(CC) $(CFLAGS) -c argumentfile.cpp
 
+propertyswitch.o : PROPERTIES/propertyswitch.cpp
+	$(CC) $(CFLAGS) -c PROPERTIES/propertyswitch.cpp
+
 propertysisterfile.o : PROPERTIES/propertysisterfile.cpp
 	$(CC) $(CFLAGS) -c PROPERTIES/propertysisterfile.cpp
 
@@ -52,4 +61,4 @@ string_support.o: ../../STRING_SUPPORT/string_support.cpp
 	$(CC) $(CFLAGS) -c ../../STRING_SUPPORT/string_support.cpp
 
 clean:
-	rm *.o test_argumentfile test_argumentint test_argumentdouble test_argumentstring
+	rm *.o test_argumentfile test_argumentswitch test_argumentint test_argumentdouble test_argumentstring

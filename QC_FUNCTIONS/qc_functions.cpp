@@ -9,6 +9,7 @@
 #include "../IO/io.hpp"
 #include "../MATRIX/matrix.hpp"
 #include "../CONSTANTS/constants.hpp"
+#include "../LOG/log.hpp"
 #include "qc_functions.hpp"
 
 using namespace std;
@@ -20,9 +21,44 @@ TransferComplex::TransferComplex(
     std::pair<int,int> MOs1,
     std::pair<int,int> MOs2,
     Matrix * matS,
-    Matrix * matPOE){
+    Matrix * matPOE,
+    bool cp){
 
   unscrambled = false;
+  counterPoise_ = cp;
+  // Consistency check
+  if(matS->get_rows()!=matPCoef->get_rows() ||
+     matS->get_cols()!=matPCoef->get_cols()){
+    throw invalid_argument("The overlap matrix must have the same number "
+        "of basis functions as the dimer");
+  }
+  if(cp){
+    if(mat1Coef->get_rows()!=matPCoef->get_rows() ||
+       mat1Coef->get_cols()!=matPCoef->get_cols() ){
+      throw invalid_argument("Counter poise correction requires that the"
+        " monomers have the same number of coefficients as the dimer. "
+        "Your monomer 1 does not");
+    }
+    if(mat2Coef->get_rows()!=matPCoef->get_rows() ||
+       mat2Coef->get_cols()!=matPCoef->get_cols() ){
+      throw invalid_argument("Counter poise correction requires that the"
+        " monomers have the same number of coefficients as the dimer. "
+        "Your monomer 2 does not");
+    }
+  }else{
+    int total_rows = mat1Coef->get_rows()+mat2Coef->get_rows(); 
+    int total_cols = mat1Coef->get_cols()+mat2Coef->get_cols();
+
+    if(total_rows>matPCoef->get_rows()){
+      throw invalid_argument("Counter poise has not been specified and your "
+        "monomers have more basis function rows than your dimer");
+    }
+    if(total_cols>matPCoef->get_cols()){
+      throw invalid_argument("Counter poise has not been specified and your "
+        "monomers have more basis function cols than your dimer");
+    }
+  } 
+
   mat_1_Coef = mat1Coef;
   mat_2_Coef = mat2Coef;
   mat_P_Coef = matPCoef;
@@ -36,32 +72,61 @@ void TransferComplex::unscramble(
     Matrix coord_1_mat,
     Matrix coord_2_mat,
     Matrix coord_P_mat,
-    std::vector<int> basisP){
+    std::vector<int> basisP,
+    std::vector<int> basis2){
 
   unscrambled = true;
 
   int sig_fig = 4;
-  // Stores the rows in P that match 1
-  auto match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
 
-  // Stores the rows in P that match 2
-  auto match_2_P = coord_2_mat.matchCol(coord_P_mat,sig_fig);
+  // If dealing with counter poise correction may also need to unscramble
+  // the basis functions of the monomers
+  if(counterPoise_){
+    auto match_1_2 = coord_1_mat.matchCol(coord_2_mat,sig_fig);
 
-  auto unscrambled_P_Coef = unscramble_P_Coef(
+    LOG("Counter Poise unscrambling matrix 2 with respect to matrix 1",2);
+    auto unscrambled_2_Coef = unscramble_Coef( match_1_2,basis2,mat_2_Coef);
+
+    this->mat_2_Coef = unscrambled_2_Coef;
+
+    auto match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
+
+    auto unscrambled_P_Coef = unscramble_Coef(match_1_P,basisP,mat_P_Coef);
+    
+    this->mat_P_Coef = unscrambled_P_Coef;
+
+    auto unscrambled_S = unscramble_S(
       match_1_P,
-      match_2_P,
-      basisP,
-      mat_P_Coef);
-
-  this->mat_P_Coef = unscrambled_P_Coef;
-
-  auto unscrambled_S = unscramble_S(
-      match_1_P,
-      match_2_P,
       basisP,
       mat_S);
+    
+    this->mat_S = unscrambled_S;
 
-  this->mat_S = unscrambled_S;
+  }else{
+
+    // Stores the rows in P that match 1
+    auto match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
+
+    // Stores the rows in P that match 2
+    auto match_2_P = coord_2_mat.matchCol(coord_P_mat,sig_fig);
+
+    LOG("Unscrambling dimer matrix with respect to matrix 1 and 2",2);
+    auto unscrambled_P_Coef = unscramble_Coef(
+        match_1_P,
+        match_2_P,
+        basisP,
+        mat_P_Coef);
+
+    this->mat_P_Coef = unscrambled_P_Coef;
+
+    auto unscrambled_S = unscramble_S(
+        match_1_P,
+        match_2_P,
+        basisP,
+        mat_S);
+
+    this->mat_S = unscrambled_S;
+  }
 }
 
 double TransferComplex::calcJ(map<string,string> orbitaltype, map<string,int> orbnum){
@@ -143,7 +208,8 @@ double TransferComplex::calcJ(map<string,string> orbitaltype, map<string,int> or
           Orbs1.first,
           Orbs2.first,
           *mat_S,
-          *mat_P_OE);
+          *mat_P_OE,
+          counterPoise_);
 
 }
 
@@ -194,29 +260,41 @@ double calculate_transfer_integral(
   int MO1,
   int MO2,
   Matrix mat_S,
-  Matrix mat_P_OE){
+  Matrix mat_P_OE,
+  bool counterPoise_){
 
   Matrix mat_1_Coefinv = mat_1_Coef.invert();
   Matrix mat_2_Coefinv = mat_2_Coef.invert();
   Matrix mat_P_Coefinv = mat_P_Coef.invert();
 
-  Matrix zerosA(MO2,mat_1_Coefinv.get_cols(),mat_1_Coefinv.get_shel());
-  Matrix zerosB(MO1,mat_2_Coefinv.get_cols(),mat_2_Coefinv.get_shel());
 
-  Matrix zetaA = Matrix_concatenate_rows( mat_1_Coefinv, zerosA );
-  Matrix zetaB = Matrix_concatenate_rows( zerosB, mat_2_Coefinv );
-
+  Matrix zetaA;
+  Matrix zetaB;
+  if(counterPoise_){
+    LOG("Creating zeta matrices from coefficients assuming counterpoise",2);
+    zetaA = (mat_1_Coefinv);
+    zetaB = (mat_2_Coefinv);
+  }else{
+    LOG("Creating zeta matrices from coefficients",2);
+    Matrix zerosA(MO2,mat_1_Coefinv.get_cols(),mat_1_Coefinv.get_shel());
+    Matrix zerosB(MO1,mat_2_Coefinv.get_cols(),mat_2_Coefinv.get_shel());
+    zetaA = Matrix_concatenate_rows( mat_1_Coefinv, zerosA );
+    zetaB = Matrix_concatenate_rows( zerosB, mat_2_Coefinv );
+  }
   Matrix zetaAinv = zetaA.invert();
   Matrix zetaBinv = zetaB.invert();
 
+  LOG("Creating intermediate matrix",3);
   Matrix Inter = mat_S * mat_P_Coefinv;
 
+  LOG("Creating gamma and beta matrices",2);
   Matrix gammaA = zetaAinv * Inter ;
   Matrix gammaB = zetaBinv * Inter ;
 
   Matrix gammaA_inv = gammaA.invert();
   Matrix gammaB_inv = gammaB.invert();
 
+  LOG("Calculating S_AB",2);
   Matrix S_AB = gammaB * gammaA_inv;
 
   Matrix Energy = Matrix_diag( mat_P_OE );
@@ -424,6 +502,27 @@ void refreshSwapOrder(vector<pair<int,int>> & monBmatch, vector<pair<int,int>>& 
   return; 
 }
 
+void refreshSwapOrder(vector<pair<int,int>> & monAmatch){
+
+  for( auto pr_ptr=monAmatch.begin(); pr_ptr!=monAmatch.end(); ++pr_ptr ){
+    auto pr = *pr_ptr;
+
+    int row1was = pr.first;
+    int row1is  = pr.second;
+    auto pr_ptr_temp = pr_ptr;
+    pr_ptr_temp++;
+    while(pr_ptr_temp!=monAmatch.end()){
+      pr_ptr_temp = find_if(pr_ptr_temp,monAmatch.end(),[row1was](const pair<int,int>& p){
+          return row1was==p.second;});
+      if(pr_ptr_temp!=monAmatch.end()){
+        pr_ptr_temp->second = row1is;
+      }
+    } 
+  }
+  return; 
+}
+
+
 // The above function determines the appropriate sequence of swaps this function
 // then actually implements the swaps by exchanging the matrices in the list. 
 void updateSwapLists(
@@ -442,6 +541,20 @@ void updateSwapLists(
   for( auto p : monAmatch ){
     if(p.first!=p.second){
       auto it = p_atom_mat_coef.begin();  
+      Matrix * temp = *(next(it, p.first-1));
+      *(next(it,p.first-1)) = *(next(it,p.second-1));
+      *(next(it,p.second-1)) = temp;
+    } 
+  }
+  return;
+}
+void updateSwapLists(
+  vector<pair<int,int>>& monAmatch, 
+  list<Matrix *> & atom_mat_coef){
+
+  for( auto p : monAmatch ){
+    if(p.first!=p.second){
+      auto it = atom_mat_coef.begin();  
       Matrix * temp = *(next(it, p.first-1));
       *(next(it,p.first-1)) = *(next(it,p.second-1));
       *(next(it,p.second-1)) = temp;
@@ -499,7 +612,7 @@ Matrix * createNewMatrix(list<Matrix *> & p_atom_mat_coef,int rows, int cols,str
 }
 
 // unscramble the coefficients
-Matrix * unscramble_P_Coef(
+Matrix * unscramble_Coef(
   std::vector<int> matchDimerA, 
   std::vector<int> matchDimerB,
   std::vector<int> basisFuncP,
@@ -535,6 +648,36 @@ Matrix * unscramble_P_Coef(
   return dimerCoef_new;
 } 
 
+// unscramble the coefficients
+Matrix * unscramble_Coef(
+  std::vector<int> matchDimerB, 
+  std::vector<int> basisFuncB,
+  Matrix * Coef){
+
+  // Let's reduce the complexity of the problem by instead of working
+  // with the basis functions lets just work with the atoms. We can do
+  // this by treating all the basis functions associated with a single
+  // atom as a block. 
+
+  list<Matrix *> atom_mat_coef = splitCoefsUpByAtoms(basisFuncB,Coef,"Columns");
+
+  // Place all of monomer A atom basis functions on the left side of the
+  // matrix and all of B monomer atom basis functions on the right side 
+  // of the  matrix
+  // First int is the col in the dimer the atom should be at
+  // Second int is the col in the dimer the atom is presently at
+
+  vector<pair<int,int>> monBmatch;
+  for(unsigned i=1;i<=matchDimerB.size();++i){
+    pair<int,int> pr(i,matchDimerB.at(i-1));
+    monBmatch.push_back(pr);
+  }
+
+  refreshSwapOrder(monBmatch);
+  updateSwapLists( monBmatch,atom_mat_coef);
+  Matrix * Coef_new = createNewMatrix(atom_mat_coef,Coef->get_rows(),Coef->get_cols(),"Columns");
+  return Coef_new;
+} 
 
 // Similar to the above function but we will be moving both the rows
 // and columns
@@ -589,4 +732,45 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
   return S_new;
 }
 
+// Same as the above function but here we are assuming counterpoise correction
+// is being used and thus we do not need to match with both monomer A and 
+// monomer B but only need to match with A. 
+Matrix * unscramble_S(std::vector<int> matchDimerA,
+                  std::vector<int> basisFuncP,
+                  Matrix * S){
+
+  Matrix * S_new;
+  { 
+    list<Matrix *> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP,S,"Columns");
+
+    vector<pair<int,int>> monAmatch;
+    for(unsigned i=1;i<=matchDimerA.size();++i){
+      pair<int,int> pr(i,matchDimerA.at(i-1));
+      monAmatch.push_back(pr);
+    }
+    refreshSwapOrder(monAmatch);
+    updateSwapLists(monAmatch,p_atom_mat_S);
+    S_new = createNewMatrix(p_atom_mat_S,S->get_rows(),S->get_cols(),"Columns");
+  }
+
+  S = S_new;
+
+  {  
+    list<Matrix *> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP,S,"Rows");
+
+    vector<pair<int,int>> monAmatch;
+    for(unsigned i=1;i<=matchDimerA.size();++i){
+      pair<int,int> pr(i,matchDimerA.at(i-1));
+      monAmatch.push_back(pr);
+    }
+
+    refreshSwapOrder(monAmatch);
+    updateSwapLists(monAmatch,p_atom_mat_S);
+    S_new = createNewMatrix(p_atom_mat_S,S->get_rows(),S->get_cols(),"Rows");
+ 
+  }
+
+  // Return the correctly swapped dimerCoef
+  return S_new;
+}
 
