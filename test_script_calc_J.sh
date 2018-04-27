@@ -132,6 +132,24 @@ else
 fi
 echo $data >> $fileOut
 
+exec_command="${path}/build/calc_J -cp -p_P ${path}/GAUSSIANFILES/CounterPoise/Dist_1Ang/1_pair.pun -p_1 ${path}/GAUSSIANFILES/CounterPoise/Dist_1Ang/ref.pun -p_2 ${path}/GAUSSIANFILES/CounterPoise/Dist_1Ang/1_B.pun "
+data=$(${exec_command})
+if [ $? -eq 0 ]; then
+  findJeff 
+  if (( $(bc <<< "$J_val > 4.505" ) )) && (( $(bc <<< "$J_val < 4.506" ) ))
+  then
+    echo "${green}[SUCCESS]${reset} ${exec_command}" 
+  else
+    echo "${red}[FAILURE]${reset} ${exec_command} expected output 4.50589"
+    echo "actual output $J_val"
+    count_fails=$(($count_fails+1))
+  fi
+else
+  echo "${red}[FAILURE]${reset} ${exec_command}"
+  count_fails=$(($count_fails+1))
+fi
+echo $data >> $fileOut
+
 
 # The following commands should not work 
 
