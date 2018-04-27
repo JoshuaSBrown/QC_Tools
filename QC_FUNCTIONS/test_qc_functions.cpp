@@ -8,7 +8,7 @@ using namespace std;
 
 int main(void){
 
-  cout << "Testing: unscramble_P_Coef" << endl;
+  cout << "Testing: unscramble_Coef" << endl;
   {
     Matrix * dimerCoef = new Matrix(8,8);
     for(int i=1;i<=8;++i){
@@ -134,7 +134,7 @@ int main(void){
     //Row 8   1.3     9.4     3.4     82.4    0       0.2     0       -3
 
     cerr << "Calling unscramble" << endl;
-    auto NewCoef = unscramble_P_Coef( matchB, matchA, basisFuncDimer,dimerCoef);
+    auto NewCoef = unscramble_Coef( matchB, matchA, basisFuncDimer,dimerCoef);
 
     cerr << *NewCoef << endl; 
 

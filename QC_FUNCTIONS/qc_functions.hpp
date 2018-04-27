@@ -22,6 +22,8 @@ class TransferComplex {
     Matrix * mat_P_OE;
     // If unscrambaling is required
     bool unscrambled;
+    bool counterPoise_;
+
   public:
     TransferComplex(
         Matrix * mat1Coef,
@@ -30,13 +32,15 @@ class TransferComplex {
         std::pair<int,int> MOs1,
         std::pair<int,int> MOs2,
         Matrix * matS,
-        Matrix * matPOE);
+        Matrix * matPOE,
+        bool cp);
 
     void unscramble(
             Matrix coord_1_mat,
             Matrix coord_2_mat,
             Matrix coord_P_mat,
-            std::vector<int> basisP);
+            std::vector<int> basisP,
+            std::vector<int> basis2);
 
     // Orbital type and a map of the corresponding number
     // E.g.
@@ -51,7 +55,6 @@ class TransferComplex {
       std::map<std::string,int> orbitalnum);
 };
 
-
 std::unordered_map<int,std::pair<double,std::string>> findRank(Matrix & Orb_E_Alpha, Matrix & Orb_E_Beta);
 
 double calculate_transfer_integral(
@@ -61,7 +64,8 @@ double calculate_transfer_integral(
     int MO1,
     int MO2,
     Matrix mat_S,
-    Matrix mat_P_OE);
+    Matrix mat_P_OE,
+    bool counterPoise_);
 
 // Reorganize the dimer coefficients to match up with the monomers
 Matrix organize_P_Coef(std::vector<int> matchDimerA,
@@ -74,12 +78,19 @@ Matrix organize_P_Coef(std::vector<int> matchDimerA,
 // Unscramble the coefficients of the dimer matrix
 // Assumes that the match vectors describe swaps looking at a single
 // instance of the dimerCoef matrix
-Matrix * unscramble_P_Coef(std::vector<int> matchDimerA, std::vector<int> matchDimerB, std::vector<int> basisFuncDimer, Matrix * dimerCoef);
+Matrix * unscramble_Coef(std::vector<int> matchDimerA, std::vector<int> matchDimerB, std::vector<int> basisFuncDimer, Matrix * dimerCoef);
+
+Matrix * unscramble_Coef(std::vector<int> matchDimerA, 
+  std::vector<int> basisFuncDimer, Matrix * dimerCoef);
 
 // Reorganize the dimer overlap matrix to line up with the monomer
 // coefficients. 
 Matrix * unscramble_S(std::vector<int> matchDimerA,
     std::vector<int> matchDimerB,
+    std::vector<int> basisFuncDimer,
+    Matrix * S);
+
+Matrix * unscramble_S(std::vector<int> matchDimerA,
     std::vector<int> basisFuncDimer,
     Matrix * S);
 

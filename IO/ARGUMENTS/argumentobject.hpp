@@ -78,6 +78,9 @@ class ArgumentObject{
       string_vec_propobjs_.clear();
     }
 
+    // The argument object by default requires a parameter
+    virtual bool requiresParameter(void) { return true; }
+
     std::string getArgumentName(void) { return getName_(); }
  
     std::vector<std::string> getProperties(void){

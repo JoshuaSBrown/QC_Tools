@@ -66,6 +66,23 @@ int main() {
     cout <<  mat0 << endl;
   }
 
+  cout << "\nTesting: Matrix::operator=(const Matrix mat)\n" << endl;
+  {
+    vector<vector<double>> vv_data;
+    vector<double> v = { 1.2, 324.4, 23};
+    vv_data.push_back(v);
+    v.at(1) = -12.5;
+    vv_data.push_back(v);
+    Matrix mat3(vv_data);
+    Matrix mat1;
+    mat1 = mat3;
+    assert(static_cast<int>(mat1.get_elem(1,1)*10)==12);
+    assert(static_cast<int>(mat1.get_elem(1,2)*10)==3244);
+    assert(static_cast<int>(mat1.get_elem(1,3))==23);
+    assert(static_cast<int>(mat1.get_elem(2,1)*10)==12);
+    assert(static_cast<int>(mat1.get_elem(2,2)*10)==-125);
+    assert(static_cast<int>(mat1.get_elem(2,3))==23);
+  }
   cout << "\nTesting: Matrix::set_elem(double val)\n" << endl;
   {
     Matrix mat0;

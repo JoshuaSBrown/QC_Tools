@@ -17,6 +17,7 @@
 #include "IO/argumentparser.hpp"
 #include "QC_FUNCTIONS/qc_functions.hpp"
 #include "PARAMETERS/parameters.hpp"
+#include "LOG/log.hpp"
 #include "IO/FILE_READERS/punreader.hpp"
 #include "IO/FILE_READERS/logreader.hpp"
 
@@ -30,9 +31,11 @@ int main(int argc,const char *argv[]){
   cout << calcJ_VERSION_MINOR << endl;
 
 	string line;
-
+  LOG("Preparing parser",1);
   auto ArgPars = prepareParser();
+  LOG("Parsing arguments",1);
   ArgPars->parse(argv,argc);
+  LOG("Preparing parameter object",1);
   auto par = prepareParameters(ArgPars);
 
   cout << "log file for first monomer is:      "+par->getLog1()+'\n';
@@ -44,17 +47,25 @@ int main(int argc,const char *argv[]){
 	
 	//Open the .pun file find the total number of molecular orbitals
 
+  LOG("Reading pun files",1);
+  LOG("Reading pun file: "+par->getPunP(),2);
   PunReader pr_P(par->getPunP());
   pr_P.read();
+  LOG("Reading pun file: "+par->getPun1(),2);
   PunReader pr_1(par->getPun1());
   pr_1.read();
+  LOG("Reading pun file: "+par->getPun2(),2);
   PunReader pr_2(par->getPun2());
   pr_2.read();
 
+  LOG("Reading log files",1);
+  LOG("Reading log file: "+par->getLogP(),2);
   LogReader lr_P(par->getLogP());
   lr_P.read();
+  LOG("Reading log file: "+par->getLog1(),2);
   LogReader lr_1(par->getLog1());
   lr_1.read();
+  LOG("Reading log file: "+par->getLog2(),2);
   LogReader lr_2(par->getLog2());
   lr_2.read();
   // Load in general coefficients 
@@ -72,11 +83,13 @@ int main(int argc,const char *argv[]){
     Matrix * mat_P_OE = new Matrix(vec_P_OE);
 
     int HOMO1 = lr_1.getHOMOLevel(par->getSpin1());
+    LOG("Getting "+par->getSpin1()+" of monomer 1",2);
     Matrix * mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
     auto vec_1_OE = lr_1.getOE(par->getSpin1());
     Matrix * mat_1_OE = new Matrix(vec_1_OE);
 
     int HOMO2 = lr_2.getHOMOLevel(par->getSpin2());
+    LOG("Getting "+par->getSpin2()+" of monomer 2",2);
     Matrix * mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
     auto vec_2_OE = lr_2.getOE(par->getSpin2());
     Matrix * mat_2_OE = new Matrix(vec_2_OE);
@@ -108,6 +121,7 @@ int main(int argc,const char *argv[]){
     pair<int,int> Orbs1 = { MO1, HOMO1 };
     pair<int,int> Orbs2 = { MO2, HOMO2 };
 
+    LOG("Creating transfercomplex",1);
     TransferComplex TC(
         mat_1_Coef,
         mat_2_Coef,
@@ -115,16 +129,21 @@ int main(int argc,const char *argv[]){
         Orbs1,
         Orbs2,
         mat_S,
-        mat_P_OE);
+        mat_P_OE,
+        par->getCounterPoise());
+
+    // Set the transfer complex to counterpoise if it is the case. 
 
     // If the basis function search returns 0 for any of the components then
     // we cannot automatically determine what the transfer integral is
     if(basis_1.size()!=0 && basis_2.size()!=0 && basis_P.size()!=0){
+      LOG("Unscrambling matrices",1);
       TC.unscramble(
           coord_1_mat,
           coord_2_mat,
           coord_P_mat,
-          basis_P);
+          basis_P,
+          basis_2);
     }
 
     cout << endl;
@@ -159,6 +178,7 @@ int main(int argc,const char *argv[]){
     orbitalnums["mon1"]=par->getOrbNum1();
     orbitalnums["mon2"]=par->getOrbNum2();
 
+    LOG("Calculating transfer integral",1);
     TC.calcJ(orbitaltypes,orbitalnums);
 
   }

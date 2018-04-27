@@ -26,7 +26,7 @@ class PropertyObject{
     }
    
     void setPropOption_(std::string option, T val) {
-
+    
       if(options_.count(option)==0){
         T * opt = new T(val);
         options_[option]=static_cast<void *>(opt);
@@ -42,8 +42,7 @@ class PropertyObject{
       std::vector<std::string> options{"NO_OPTIONS"};
       return options;
     }
-    
-    
+ 
   public:
     virtual ~PropertyObject(void) {
       for( auto itr : options_){

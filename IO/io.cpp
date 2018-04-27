@@ -350,22 +350,21 @@ unique_ptr<ArgumentParser> prepareParser(void){
 
   // Set argument allowed values for counterpoise
   {
-    cerr << "Setting counterpoise flag" << endl;
     ArgPars->setFlagArgOpt(
         "--counter_poise",
-        "ARGUMENT_INT",
-        "PROPERTY_INT",
-        "MIN",
-        0);
-    ArgPars->setFlagArgOpt(
+        "ARGUMENT_SWITCH",
+        "PROPERTY_SWITCH",
+        "DEFAULT",
+        "OFF");
+/*    ArgPars->setFlagArgOpt(
         "--counter_poise",
         "ARGUMENT_INT",
         "PROPERTY_INT",
         "MAX",
         1);
-    
+*/    
     // By default the flag counter poise is turned off
-    ArgPars->setFlagDefaultValue("--counter_poise",0);
+    ArgPars->setFlagDefaultValue("--counter_poise","OFF");
   }
   // Set rules guiding orbital numbers
   // Use default settings for min and max numbers
@@ -479,8 +478,11 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse){
   Par->setSpinP(ArgParse->getStr("--spin_P"));
   Par->setSpin1(ArgParse->getStr("--spin_1"));
   Par->setSpin2(ArgParse->getStr("--spin_2"));
-  // Read Orbital related flags
   
+  // Determine if we are doing a counterpoise calculation
+  Par->setCounterPoise(ArgParse->getInt("--counter_poise"));
+
+  // Read Orbital related flags 
   {
     string orb_typ_1 = ArgParse->getStr("--orbital_type_1");
     Par->setOrbType1(orb_typ_1);

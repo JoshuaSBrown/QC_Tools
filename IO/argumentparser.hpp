@@ -7,6 +7,7 @@
 #include "../MATRIX/matrix.hpp"
 #include "../PARAMETERS/parameters.hpp"
 
+#include "ARGUMENTS/argumentswitch.hpp"
 #include "ARGUMENTS/argumentdouble.hpp"
 #include "ARGUMENTS/argumentint.hpp"
 #include "ARGUMENTS/argumentstring.hpp"
@@ -18,6 +19,7 @@ class ArgumentParser{
     // 1 - flag name
     // 2 - type
     std::map<std::string,ArgumentString*> str_arg_;
+    std::map<std::string,ArgumentSwitch*> switch_arg_;
     std::map<std::string,ArgumentInt*> int_arg_;
     std::map<std::string,ArgumentDouble*> double_arg_;
     std::map<std::string,ArgumentFile*> file_arg_;
@@ -36,6 +38,9 @@ class ArgumentParser{
     std::map<std::string,size_t> size_t_values_;
 
     void parseArg_(size_t & index, std::vector<std::string> arguments);
+
+    // Determine if the next value in arguments vector is a recognized flag
+    bool nextParameterIsAFlag_(size_t index, std::vector<std::string> arguments);
 
     size_t maxShortFlagSize;
     size_t maxFullFlagSize;

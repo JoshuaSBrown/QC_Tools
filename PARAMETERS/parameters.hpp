@@ -25,6 +25,7 @@ class Parameters {
     int orb_num1;
     int orb_num2;
 
+    bool counterPoise;
   public:
     Parameters() : 
       log1_(""), 
@@ -41,7 +42,8 @@ class Parameters {
       orb_type2(""),
       orb_numP(0),
       orb_num1(0),
-      orb_num2(0){};
+      orb_num2(0),
+      counterPoise(false){};
 
     std::string getLog1() const { return log1_; }
     std::string getLog2() const { return log2_; }
@@ -61,6 +63,7 @@ class Parameters {
     int getOrbNumP() const { return orb_numP; }
     int getOrbNum1() const { return orb_num1; }
     int getOrbNum2() const { return orb_num2; }
+    bool getCounterPoise() const { return counterPoise; }
 
     void setLog1(const std::string log1);
     void setLog2(const std::string log2);
@@ -80,6 +83,7 @@ class Parameters {
     void setOrbNumP(const int num) { orb_numP = num; }
     void setOrbNum1(const int num) { orb_num1 = num; }
     void setOrbNum2(const int num) { orb_num2 = num; }
+    void setCounterPoise(bool cp) { counterPoise = cp; }
 };
 
 #endif
