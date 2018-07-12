@@ -1,4 +1,4 @@
-# QC_Tools
+# QC_Tools or CATNIP - ChArge TraNsfer Integral Package
 
 Please take a look at the wiki posted on github: https://github.com/JoshuaSBrown/QC_Tools/wiki
 
