@@ -27,6 +27,7 @@ class Parameters {
     int orb_num1;
     int orb_num2;
 
+    bool citation;
     bool counterPoise;
   public:
     Parameters() : 
@@ -66,6 +67,7 @@ class Parameters {
     int getOrbNum1() const { return orb_num1; }
     int getOrbNum2() const { return orb_num2; }
     bool getCounterPoise() const { return counterPoise; }
+    bool getCitation() const { return citation; }
 
     void setLog1(const std::string log1);
     void setLog2(const std::string log2);
@@ -86,6 +88,7 @@ class Parameters {
     void setOrbNum1(const int num) { orb_num1 = num; }
     void setOrbNum2(const int num) { orb_num2 = num; }
     void setCounterPoise(bool cp) { counterPoise = cp; }
+    void setCitation(bool cite) { citation = cite; }
 };
 
 }
