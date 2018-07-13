@@ -1,13 +1,15 @@
 // Taken from https://stackoverflow.com/questions/19415845/a-better-log-macro-using-template-metaprogramming
 
-#ifndef _LOG_HPP_
-#define _LOG_HPP_
+#ifndef _CATNIP_LOG_HPP_
+#define _CATNIP_LOG_HPP_
 
 #ifndef LOG_LEVEL
 #define LOG_LEVEL 0
 #endif
 
 #include <iostream>
+
+namespace catnip {
 
 #define LOG(msg,log_level) (Log(__FILE__, __LINE__,LogData<None>() << msg,log_level))
 
@@ -19,6 +21,7 @@
     #define NOINLINE_ATTRIBUTE
   #endif // __ICC
 #endif // NOINLINE_ATTRIBUTE
+
 
 struct None { };
 
@@ -74,4 +77,6 @@ inline void output(std::ostream& os, None)
   os << "";
 }
 
-#endif
+}
+#endif // _CATNIP_LOG_HPP_
+

@@ -8,6 +8,14 @@ fi
 
 fileOut="test_script.out"
 
+# Ensure that the bc calculator is installed
+Is_bc_installed=$(command -v bc)
+if [ -z "$Is_bc_installed" ]
+then
+  echo "To run the test script you must have bc installed!"
+  exit 1
+fi
+
 echo "PATH "$path
 
 red=`tput setaf 1`
@@ -44,12 +52,14 @@ data=$(${exec_command} )
 if [ $? -eq 0 ]; then
 
   findJeff 
-  if (( $(bc <<< "$J_val > 0.04973" ) )) && (( $(bc <<< "$J_val < 0.04975" ) ))
+  if (( $( bc <<< "$J_val > 0.04973" ) )) && (( $( bc <<< "$J_val < 0.04975" ) ))
   then
     echo "${green}[SUCCESS]${reset} ${exec_command}" 
   else
     echo "${red}[FAILURE]${reset} ${exec_command} expected output 0.0497444"
     echo "actual output $J_val"
+    echo $( bc <<< "$J_val > 0.04973" )
+    echo $( bc <<< "$J_val < 0.04975" )
     count_fails=$(($count_fails+1))
   fi
 else

@@ -8,6 +8,7 @@
 #include "../MATRIX/matrix.hpp"
 #include "../STRING_SUPPORT/string_support.hpp"
 
+using namespace catnip;
 using namespace std;
 
 int main(void){

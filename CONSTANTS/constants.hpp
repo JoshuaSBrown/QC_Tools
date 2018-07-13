@@ -1,2 +1,6 @@
 
-const double hartreeToeV = 27.2114;
+namespace catnip {
+
+  const double hartreeToeV = 27.2114;
+
+}

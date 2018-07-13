@@ -1,9 +1,10 @@
 #include <sys/stat.h>
 #include <set>
 #include <iostream>
-#include "../STRING_SUPPORT/string_support.hpp"
+#include "../../STRING_SUPPORT/string_support.hpp"
 #include "filereader.hpp"
 
+using namespace catnip;
 using namespace std;
 
 // Public member functions

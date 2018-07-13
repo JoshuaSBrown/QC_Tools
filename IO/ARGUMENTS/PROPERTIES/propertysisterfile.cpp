@@ -4,6 +4,7 @@
 #include "propertysisterfile.hpp"
 #include "../../../STRING_SUPPORT/string_support.hpp"
 
+using namespace catnip;
 using namespace std;
 
 PropertySisterFile::PropertySisterFile(void){

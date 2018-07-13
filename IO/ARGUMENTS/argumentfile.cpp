@@ -5,6 +5,7 @@
 #include "PROPERTIES/propertysisterfile.hpp"
 #include <iostream>
 
+using namespace catnip;
 using namespace std;
 
 ArgumentFile::ArgumentFile(void){

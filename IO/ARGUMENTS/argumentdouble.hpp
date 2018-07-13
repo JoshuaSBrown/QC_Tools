@@ -1,9 +1,11 @@
 
-#ifndef _ARGUMENT_DOUBLE_HPP
-#define _ARGUMENT_DOUBLE_HPP
+#ifndef _CATNIP_ARGUMENT_DOUBLE_HPP
+#define _CATNIP_ARGUMENT_DOUBLE_HPP
 
 #include <set>
 #include "argumentobject.hpp"
+
+namespace catnip {
 
 class ArgumentDouble : public ArgumentObject<double> {
   private:
@@ -13,4 +15,5 @@ class ArgumentDouble : public ArgumentObject<double> {
     ArgumentDouble(void);
 };
 
-#endif
+}
+#endif // _CATNIP_ARGUMENT_DOUBLE_HPP

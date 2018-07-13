@@ -1,8 +1,10 @@
 
-#ifndef _PROPERTY_DOUBLE_HPP
-#define _PROPERTY_DOUBLE_HPP
+#ifndef _CATNIP_PROPERTY_DOUBLE_HPP
+#define _CATNIP_PROPERTY_DOUBLE_HPP
 
 #include "propertyobject.hpp"
+
+namespace catnip {
 
 class PropertyDouble : public PropertyObject<double,double> {
   private:
@@ -14,4 +16,7 @@ class PropertyDouble : public PropertyObject<double,double> {
     bool propValid(double value) { doubleValid(value); return true; }
 };
 
-#endif
+}
+
+#endif // _CATNIP_PROPERTY_DOUBLE_HPP
+

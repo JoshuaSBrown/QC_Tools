@@ -1,8 +1,12 @@
 #include "matrix.hpp"
 #include <iostream>
 #include <cassert>
+
+using namespace catnip;
 using namespace std;
+
 int main() {
+
   cout << "Testing Constructors\n" << endl;
 
   cout << "Testing: Matrix::Matrix()\n" << endl;

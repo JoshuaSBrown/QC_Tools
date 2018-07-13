@@ -1,9 +1,11 @@
 
-#ifndef _PROPERTY_FILEEXIST_HPP
-#define _PROPERTY_FILEEXIST_HPP
+#ifndef _CATNIP_PROPERTY_FILEEXIST_HPP
+#define _CATNIP_PROPERTY_FILEEXIST_HPP
 
 #include <set>
 #include "propertyobject.hpp"
+
+namespace catnip {
 
 class PropertyFileExist : public PropertyObject<std::string,int> {
   private:
@@ -17,4 +19,7 @@ class PropertyFileExist : public PropertyObject<std::string,int> {
     void postCheck(void);
 };
 
-#endif
+}
+
+#endif // _CATNIP_PROPERTY_FILEEXIST_HPP
+

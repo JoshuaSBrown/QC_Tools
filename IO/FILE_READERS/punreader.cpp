@@ -7,9 +7,10 @@
 #include <fstream>
 #include <sstream>
 
-#include "../STRING_SUPPORT/string_support.hpp"
+#include "../../STRING_SUPPORT/string_support.hpp"
 #include "punreader.hpp"
 
+using namespace catnip;
 using namespace std;
 
 PunReader::PunReader(string fileName) : FileReader(fileName){

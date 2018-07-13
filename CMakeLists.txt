@@ -3,7 +3,7 @@ project (calc_J)
 
 # The version number
 set( calcJ_VERSION_MAJOR 1)
-set( calcJ_VERSION_MINOR 2)
+set( calcJ_VERSION_MINOR 3)
 
 enable_testing()
 
