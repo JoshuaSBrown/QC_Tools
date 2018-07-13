@@ -1,9 +1,11 @@
 
-#ifndef _STRING_SUPPORT_HPP_
-#define _STRING_SUPPORT_HPP_
+#ifndef _CATNIP_STRING_SUPPORT_HPP_
+#define _CATNIP_STRING_SUPPORT_HPP_
 
 #include <string>
 #include <vector>
+
+namespace catnip {
 
 // Split a std::string up by spaces
 std::vector<std::string> splitSt(std::string input);
@@ -60,4 +62,7 @@ bool foundSubStrInStr(std::string s,std::string sub_s);
 
 // Determine if whole string is alphabetical characters
 bool isAlphabetical(std::string s);
-#endif
+
+}
+#endif // _CATNIP_STRING_SUPPORT_HPP_
+

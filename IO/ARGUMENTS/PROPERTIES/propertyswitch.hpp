@@ -1,8 +1,10 @@
 
-#ifndef _PROPERTY_SWITCH_HPP
-#define _PROPERTY_SWITCH_HPP
+#ifndef _CATNIP_PROPERTY_SWITCH_HPP
+#define _CATNIP_PROPERTY_SWITCH_HPP
 
 #include "propertyobject.hpp"
+
+namespace catnip {
 
 class PropertySwitch : public PropertyObject<std::string,std::string> {
   private:
@@ -18,4 +20,5 @@ class PropertySwitch : public PropertyObject<std::string,std::string> {
     bool propValid() { return true;}
 };
 
-#endif
+}
+#endif // _CATNIP_PROPERTY_SWITCH_HPP

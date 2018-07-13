@@ -1,10 +1,11 @@
 
-#ifndef _ARGUMENT_SWITCH_HPP
-#define _ARGUMENT_SWITCH_HPP
+#ifndef _CATNIP_ARGUMENT_SWITCH_HPP
+#define _CATNIP_ARGUMENT_SWITCH_HPP
 
 #include <set>
 #include "argumentobject.hpp"
 
+namespace catnip {
 class ArgumentSwitch : public ArgumentObject<std::string> {
   private:
     std::string getName_(void) { return "ARGUMENT_SWITCH"; }
@@ -16,4 +17,5 @@ class ArgumentSwitch : public ArgumentObject<std::string> {
     bool positive(std::string val);
 };
 
-#endif
+}
+#endif // _CATNIP_ARGUMENT_SWITCH_HPP

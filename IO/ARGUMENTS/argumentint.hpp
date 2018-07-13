@@ -1,9 +1,11 @@
 
-#ifndef _ARGUMENT_INT_HPP
-#define _ARGUMENT_INT_HPP
+#ifndef _CATNIP_ARGUMENT_INT_HPP
+#define _CATNIP_ARGUMENT_INT_HPP
 
 #include <set>
 #include "argumentobject.hpp"
+
+namespace catnip {
 
 class ArgumentInt : public ArgumentObject<int> {
   private:
@@ -13,4 +15,7 @@ class ArgumentInt : public ArgumentObject<int> {
     ArgumentInt(void);
 };
 
-#endif
+}
+
+#endif // _CATNIP_ARGUMENT_INT_HPP
+

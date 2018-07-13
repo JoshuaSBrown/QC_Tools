@@ -7,7 +7,10 @@
 #include "io.hpp"
 #include "../STRING_SUPPORT/string_support.hpp"
 #include "../PARAMETERS/parameters.hpp"
+
 using namespace std;
+
+namespace catnip {
 
 unique_ptr<ArgumentParser> prepareParser(void){
 
@@ -519,4 +522,6 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse){
     }    
   }
   return Par;
+}
+
 }

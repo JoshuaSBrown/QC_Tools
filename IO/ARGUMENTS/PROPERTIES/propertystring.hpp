@@ -1,8 +1,10 @@
 
-#ifndef _PROPERTY_STRING_HPP
-#define _PROPERTY_STRING_HPP
+#ifndef _CATNIP_PROPERTY_STRING_HPP
+#define _CATNIP_PROPERTY_STRING_HPP
 
 #include "propertyobject.hpp"
+
+namespace catnip {
 
 class PropertyString : public PropertyObject<std::string,size_t>{ 
   private:
@@ -14,5 +16,7 @@ class PropertyString : public PropertyObject<std::string,size_t>{
     bool propValid(std::string value) { stringValid(value); return true;}
 };
 
-#endif 
+}
+#endif // _CATNIP_PROPERTY_STRING_HPP
+
 

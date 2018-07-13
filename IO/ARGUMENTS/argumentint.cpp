@@ -3,6 +3,7 @@
 #include "PROPERTIES/propertyint.hpp"
 #include <iostream>
 
+using namespace catnip;
 using namespace std;
 
 ArgumentInt::ArgumentInt(void){

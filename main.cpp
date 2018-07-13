@@ -23,6 +23,7 @@
 
 #include "calcJconfig.hpp"
 
+using namespace catnip;
 using namespace std;
 
 int main(int argc,const char *argv[]){

@@ -3,6 +3,7 @@
 
 #include <limits>
 
+using namespace catnip;
 using namespace std;
 
 PropertyInt::PropertyInt(){

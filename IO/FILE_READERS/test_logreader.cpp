@@ -1,13 +1,15 @@
 
-#include "io.hpp"
 
 #include <string>
 #include <vector>
 #include <iostream>
 #include <sstream>
 #include <cassert>
-#include "logreader.hpp"
 
+#include "logreader.hpp"
+#include "../io.hpp"
+
+using namespace catnip;
 using namespace std;
 
 int main(void){

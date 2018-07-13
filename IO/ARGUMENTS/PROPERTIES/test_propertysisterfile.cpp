@@ -7,6 +7,7 @@
 #include <cassert>
 #include "propertysisterfile.hpp"
 
+using namespace catnip;
 using namespace std;
 
 int main(void){

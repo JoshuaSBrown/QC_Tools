@@ -1,9 +1,11 @@
 
-#ifndef _PROPERTY_FILEEXT_HPP
-#define _PROPERTY_FILEEXT_HPP
+#ifndef _CATNIP_PROPERTY_FILEEXT_HPP
+#define _CATNIP_PROPERTY_FILEEXT_HPP
 
 #include <set>
 #include "propertyobject.hpp"
+
+namespace catnip {
 
 class PropertyFileExt : public PropertyObject<std::string,std::set< std::string > >{
   private:
@@ -19,4 +21,6 @@ class PropertyFileExt : public PropertyObject<std::string,std::set< std::string 
     void setPropOption(std::string option,std::string var);
     void setPropOption(std::string option,std::set<std::string> var);
 };
-#endif
+
+}
+#endif // _CATNIP_PROPERTY_FILEEXT_HPP

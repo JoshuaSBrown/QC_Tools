@@ -1,5 +1,5 @@
-#ifndef _QC_FUNCTIONS_HPP
-#define _QC_FUNCTIONS_HPP
+#ifndef _CATNIP_QC_FUNCTIONS_HPP
+#define _CATNIP_QC_FUNCTIONS_HPP
 
 #include <sstream>
 #include <string>
@@ -8,6 +8,8 @@
 #include <map>
 
 #include "../MATRIX/matrix.hpp"
+
+namespace catnip{
 
 class TransferComplex {
   private:
@@ -98,4 +100,7 @@ Matrix * unscramble_OE(std::vector<int> matchDimerA,
     std::vector<int> matchDimerB,
     std::vector<int> basisFuncDimer,
     Matrix * OE);
-#endif
+
+}
+#endif // _CATNIP_QC_FUNCTIONS_HPP
+

@@ -6,6 +6,7 @@
 #include <cassert>
 #include "propertyfileext.hpp"
 
+using namespace catnip;
 using namespace std;
 
 int main(void){

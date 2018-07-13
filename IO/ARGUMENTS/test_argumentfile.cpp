@@ -2,6 +2,7 @@
 #include "argumentfile.hpp"
 #include <cassert>
 
+using namespace catnip;
 using namespace std;
 
 int main(void){
