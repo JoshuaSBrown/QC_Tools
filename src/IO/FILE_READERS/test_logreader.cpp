@@ -22,7 +22,7 @@ int main(void){
   cerr << "Testing: LogReader read" << endl;
   {
 
-    LogReader lr("../../GAUSSIANFILES/90_unordered/90_pair.log");
+    LogReader lr("../../../GAUSSIANFILES/90_unordered/90_pair.log");
     lr.read(); 
     auto orb_info = lr.getOrbitalInfo();
 /*
