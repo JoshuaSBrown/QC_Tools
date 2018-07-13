@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -eq 0 ]; then
-    path="."
+    path="./../"
 else
     path=$1
 fi
@@ -60,6 +60,31 @@ if [ $? -eq 0 ]; then
     echo "actual output $J_val"
     echo $( bc <<< "$J_val > 0.04973" )
     echo $( bc <<< "$J_val < 0.04975" )
+    count_fails=$(($count_fails+1))
+  fi
+else
+  echo "${red}[FAILURE]${reset} ${exec_command}"
+  count_fails=$(($count_fails+1))
+fi
+echo $data >> $fileOut
+
+# Because they are big files they are stored in tar.gz format we must first untar them
+tar -xzf ${path}/GAUSSIANFILES/P_test/A.tar.gz -C ${path}/GAUSSIANFILES/P_test/
+tar -xzf ${path}/GAUSSIANFILES/P_test/B.tar.gz -C ${path}/GAUSSIANFILES/P_test/
+tar -xzf ${path}/GAUSSIANFILES/P_test/AB.tar.gz -C ${path}/GAUSSIANFILES/P_test/
+exec_command="${path}/build/calc_J -p_P ${path}/GAUSSIANFILES/P_test/AB.pun  -p_1 ${path}/GAUSSIANFILES/P_test/A.pun -p_2 ${path}/GAUSSIANFILES/P_test/B.pun"
+data=$(${exec_command} )
+if [ $? -eq 0 ]; then
+
+  findJeff 
+  if (( $( bc <<< "$J_val > 0.02617" ) )) && (( $( bc <<< "$J_val < 0.02619" ) ))
+  then
+    echo "${green}[SUCCESS]${reset} ${exec_command}" 
+  else
+    echo "${red}[FAILURE]${reset} ${exec_command} expected output 0.0261851"
+    echo "actual output $J_val"
+    echo $( bc <<< "$J_val > 0.02617" )
+    echo $( bc <<< "$J_val < 0.02619" )
     count_fails=$(($count_fails+1))
   fi
 else
