@@ -20,7 +20,7 @@ unique_ptr<ArgumentParser> prepareParser(void){
   flag1.push_back("-p_P");
   string desc ="File contains the atomic orbital coefficients of the dimer of "
     "both monomer units. Must have the .pun/.orb/.7 file extension. This file "
-    "is in the same format as the fort.7 file that comes out of a Gaussian fun";
+    "is in the same format as the fort.7 file that comes out of a Gaussian run.";
   flag1.push_back(desc);
 
   vector<string> flag2;
@@ -28,7 +28,7 @@ unique_ptr<ArgumentParser> prepareParser(void){
   flag2.push_back("-p_1");
   desc ="File contains the atomic orbital coefficients of monomer 1. Must have "
     "the .pun/.orb/.7 file extension. This file is in the same format as the "
-    "fort.7 file that comes out of a Gaussian fun";
+    "fort.7 file that comes out of a Gaussian run.";
   flag2.push_back(desc);
 
   vector<string> flag3;
@@ -36,7 +36,7 @@ unique_ptr<ArgumentParser> prepareParser(void){
   flag3.push_back("-p_2");
   desc ="File contains the atomic orbital coefficients of monomer 2. Must have "
     "the .pun/.orb/.7 file extension. This file is in the same format as the "
-    "fort.7 file that comes out of a Gaussian fun";
+    "fort.7 file that comes out of a Gaussian run.";
   flag3.push_back(desc);
 
   vector<string> flag4;
@@ -111,7 +111,7 @@ unique_ptr<ArgumentParser> prepareParser(void){
     "type of HOMO you must use 0 to indicate HOMO or a negative number. E.g. "
     "a value of -1 would access the HOMO-1. If the LUMO is specified 0 - "
     "represents the LUMO and is the default. To access another orbital specify"
-    " a positive number. E.g. 4 would access the LUMO+4";
+    " a positive number. E.g. 4 would access the LUMO+4.";
   flag14.push_back(desc);
 
   vector<string> flag15;
@@ -121,7 +121,7 @@ unique_ptr<ArgumentParser> prepareParser(void){
     "type of HOMO you must use 0 to indicate HOMO or a negative number. E.g. "
     "a value of -1 would access the HOMO-1. If the LUMO is specified 0 - "
     "represents the LUMO and is the default. To access another orbital specify"
-    " a positive number. E.g. 4 would access the LUMO+4";
+    " a positive number. E.g. 4 would access the LUMO+4.";
   flag15.push_back(desc);
 
   vector<string> flag16;
@@ -129,9 +129,14 @@ unique_ptr<ArgumentParser> prepareParser(void){
   flag16.push_back("-cp");
   desc = "Specify that the counter poise correction is being taken into account"
     " this means that there should be the same number of basis functions for "
-    "the dimer as there are for each of the monomers";
+    "the dimer as there are for each of the monomers.";
   flag16.push_back(desc);
 
+  vector<string> flag17;
+  flag17.push_back("--citation");
+  flag17.push_back("-cite");
+  desc = "Print software citation.";
+  flag17.push_back(desc);
 
   set<vector<string>> flags; 
   flags.insert(flag1);
@@ -148,6 +153,7 @@ unique_ptr<ArgumentParser> prepareParser(void){
   flags.insert(flag14);
   flags.insert(flag15);
   flags.insert(flag16);
+  flags.insert(flag17);
 
   unique_ptr<ArgumentParser> ArgPars(new ArgumentParser(flags));
 
@@ -359,16 +365,23 @@ unique_ptr<ArgumentParser> prepareParser(void){
         "PROPERTY_SWITCH",
         "DEFAULT",
         "OFF");
-/*    ArgPars->setFlagArgOpt(
-        "--counter_poise",
-        "ARGUMENT_INT",
-        "PROPERTY_INT",
-        "MAX",
-        1);
-*/    
+   
     // By default the flag counter poise is turned off
     ArgPars->setFlagDefaultValue("--counter_poise","OFF");
   }
+
+  {
+    ArgPars->setFlagArgOpt(
+        "--citation",
+        "ARGUMENT_SWITCH",
+        "PROPERTY_SWITCH",
+        "DEFAULT",
+        "OFF");
+   
+    // By default the flag citation is turned off
+    ArgPars->setFlagDefaultValue("--citation","OFF");
+  }
+
   // Set rules guiding orbital numbers
   // Use default settings for min and max numbers
   {
@@ -484,7 +497,7 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse){
   
   // Determine if we are doing a counterpoise calculation
   Par->setCounterPoise(ArgParse->getInt("--counter_poise"));
-
+  Par->setCitation(ArgParse->getInt("--citation"));
   // Read Orbital related flags 
   {
     string orb_typ_1 = ArgParse->getStr("--orbital_type_1");

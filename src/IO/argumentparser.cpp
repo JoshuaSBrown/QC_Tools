@@ -8,6 +8,7 @@
 #include "argumentparser.hpp"
 
 #include "../STRING_SUPPORT/string_support.hpp"
+#include "../calcJconfig.hpp"
 
 using namespace catnip;
 using namespace std;
@@ -649,15 +650,32 @@ void ArgumentParser::parse(const char * argv[], int argc){
 
   string help_flag = "--help";
   string help_flag_short = "-h";
+  string citation_flag = "--citation";
+  string citation_flag_short = "-cite";
 
+  size_t allowed_args_before_exit = 2;
   for( size_t index=1; index<arguments.size();++index){
     if(help_flag.compare(arguments.at(index))==0 || 
        help_flag_short.compare(arguments.at(index))==0){
 	    cout << "Usage: " << arguments.at(0) << " <options(s)> SOURCES";
       showUsage();
-      if(2==arguments.size()){
+      if(allowed_args_before_exit==arguments.size()){
         exit(0);
       }
+      ++allowed_args_before_exit;
+    }else if(citation_flag.compare(arguments.at(index))==0 || 
+        citation_flag_short.compare(arguments.at(index))==0){
+        cout << "\nCitation: " << calcJ_AUTHOR_SURNAME << ", ";
+        cout << calcJ_AUTHOR_INITIALS << " (";
+        cout << calcJ_YEAR_PUBLISHED << "). ";
+        cout << calcJ_TITLE << " (Version ";
+        cout << calcJ_VERSION_MAJOR << ".";
+        cout << calcJ_VERSION_MINOR << "). [Software]. Available from ";
+        cout << calcJ_URL << ".\n\n";
+      if(allowed_args_before_exit==arguments.size()){
+        exit(0);
+      }
+      ++allowed_args_before_exit;
     }else{
       parseArg_(index,arguments);    
     }
