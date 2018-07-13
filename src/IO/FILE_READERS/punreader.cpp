@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include "../../STRING_SUPPORT/string_support.hpp"
+#include "../../LOG/log.hpp"
 #include "punreader.hpp"
 
 using namespace catnip;
@@ -61,6 +62,7 @@ vector<double> PunReader::readGausCoefLine(string line){
 
 void PunReader::ReadCoef(string orb_type){
 
+  LOG("Reading atomic orbital coefficients from .pun file.",1);
   string pattern = " MO OE";
 
   vector<vector<double>> v_vec;
@@ -92,6 +94,7 @@ void PunReader::ReadCoef(string orb_type){
 
   Matrix * Coefs = new Matrix(v_vec);
   coefs[orb_type] = Coefs;
+  LOG("Success reading atomic orbital coefficients from .pun file.",2);
 }
 
 void PunReader::OrbitalCoefAlphaSectionReader(void * ptr){

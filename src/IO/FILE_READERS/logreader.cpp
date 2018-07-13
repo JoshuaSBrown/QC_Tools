@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include "../../STRING_SUPPORT/string_support.hpp"
+#include "../../LOG/log.hpp"
 #include "logreader.hpp"
 
 using namespace catnip;
@@ -50,6 +51,7 @@ vector<int> LogReader::getBasisFuncCount(){
 }
 
 void LogReader::AOFunctionSectionReader(void * ptr){
+  LOG("Reading atomic basis functions from .log file",1);
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
 
   int atom_num = 1;
@@ -99,9 +101,10 @@ void LogReader::AOFunctionSectionReader(void * ptr){
 
       getline(LR_ptr->fid_,line);
 
-      elemType2 = "";
-      elemType2.append(string(1,line.at(9)));
-      elemType2.append(string(1,line.at(10)));
+      istringstream iss3(line);
+      iss3 >> elemType2;
+      iss3 >> elemType2;
+      iss3 >> elemType2;
       trim(elemType2);
 
       if(foundSubStrInStr(line,end_pattern)){
@@ -117,10 +120,12 @@ void LogReader::AOFunctionSectionReader(void * ptr){
     }
   }
 
+  LOG("Success reading atomic basis functions from .log file",2);
   return;
 }
 
 void LogReader::OverlapSectionReader(void * ptr){
+  LOG("Reading Overlap Coefficients from .log file",1);
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
 
   // Phase one read in the first group of coordinates and count
@@ -208,11 +213,13 @@ void LogReader::OverlapSectionReader(void * ptr){
     getline(LR_ptr->fid_,line);
   }
   LR_ptr->S_ = mat_S;
+  LOG("Success reading Overlap coefficients from .log file",2);
   return;
 }
 
 void LogReader::ReadOrbEnergies(string orb_type){
 
+  LOG("Reading Orbital Energies from .log file",1);
   string line;
   homoLevel[orb_type] = 0;
   // May be multiple energy sections we only wanted the latest one
@@ -239,6 +246,7 @@ void LogReader::ReadOrbEnergies(string orb_type){
   }
   // Reset the fid because Beta will come right after alpha
   fid_.seekg(pos_);
+  LOG("Success reading Orbital Energies from .log file",2);
 }
 
 void LogReader::OrbitalEnergiesAlphaSectionReader(void * ptr){
@@ -256,6 +264,7 @@ void LogReader::OrbitalEnergiesBetaSectionReader(void * ptr){
 }
 
 void LogReader::CoordSectionReader(void * ptr){
+  LOG("Reading Coordinates from .log file",1);
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
 
   // Clear contents only want the most uptodate coordinates
@@ -284,4 +293,5 @@ void LogReader::CoordSectionReader(void * ptr){
   LR_ptr->xyz.push_back(Y);
   LR_ptr->xyz.push_back(Z);
   
+  LOG("Success reading Coordinates from .log file",2);
 }
