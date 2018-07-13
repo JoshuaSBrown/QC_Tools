@@ -17,7 +17,7 @@ int main(void){
 
   cerr << "Testing: PunReader read" << endl;
   {
-    PunReader pr("../../GAUSSIANFILES/90_unordered/90_pair.pun");
+    PunReader pr("../../../GAUSSIANFILES/90_unordered/90_pair.pun");
     pr.read(); 
     
     auto m = pr.getCoefsMatrix("Alpha");
