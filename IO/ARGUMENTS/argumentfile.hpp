@@ -1,9 +1,11 @@
 
-#ifndef _ARGUMENT_FILE_HPP
-#define _ARGUMENT_FILE_HPP
+#ifndef _CATNIP_ARGUMENT_FILE_HPP
+#define _CATNIP_ARGUMENT_FILE_HPP
 
 #include <set>
 #include "argumentobject.hpp"
+
+namespace catnip {
 
 class ArgumentFile : public ArgumentObject<std::string> {
   private:
@@ -13,4 +15,7 @@ class ArgumentFile : public ArgumentObject<std::string> {
     ArgumentFile(void);
 };
 
-#endif
+}
+
+#endif // _CATNIP_ARGUMENT_FILE_HPP
+

@@ -1,5 +1,5 @@
-#ifndef _ARGUMENTPARSER_HPP
-#define _ARGUMENTPARSER_HPP
+#ifndef _CATNIP_ARGUMENTPARSER_HPP
+#define _CATNIP_ARGUMENTPARSER_HPP
 #include <string>
 #include <map>
 #include <set>
@@ -12,6 +12,8 @@
 #include "ARGUMENTS/argumentint.hpp"
 #include "ARGUMENTS/argumentstring.hpp"
 #include "ARGUMENTS/argumentfile.hpp"
+
+namespace catnip {
 
 class ArgumentParser{
   private:
@@ -122,4 +124,5 @@ class ArgumentParser{
     void showUsage();
 };
 
-#endif
+}
+#endif // _CATNIP_ARGUMENTPARSER_HPP

@@ -5,6 +5,7 @@
 #include <cassert>
 #include "punreader.hpp"
 
+using namespace catnip;
 using namespace std;
 
 int main(void){

@@ -1,12 +1,14 @@
 
-#ifndef _LogReader_HPP_
-#define _LogReader_HPP_
+#ifndef _CATNIP_LOGREADER_HPP_
+#define _CATNIP_LOGREADER_HPP_
 
 #include <vector>
 
-#include "../MATRIX/matrix.hpp"
+#include "../../MATRIX/matrix.hpp"
 #include "filereader.hpp"
 // Gaussian log file reader
+
+namespace catnip {
 
 typedef std::map<std::pair<int,std::string>,std::map<std::string,std::vector<double>>> orb_cont;
 
@@ -45,4 +47,7 @@ class LogReader : public FileReader {
     std::vector<std::vector<double>> xyz;
 };
 
-#endif
+}
+
+#endif // _CATNIP_LOGREADER_HPP_
+

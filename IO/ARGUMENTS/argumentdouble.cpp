@@ -3,6 +3,7 @@
 #include "PROPERTIES/propertydouble.hpp"
 #include <iostream>
 
+using namespace catnip;
 using namespace std;
 
 ArgumentDouble::ArgumentDouble(void){

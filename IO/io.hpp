@@ -1,5 +1,5 @@
-#ifndef _IO_HPP
-#define _IO_HPP
+#ifndef _CATNIP_IO_HPP
+#define _CATNIP_IO_HPP
 #include <string>
 #include <map>
 #include <set>
@@ -9,8 +9,12 @@
 #include "../PARAMETERS/parameters.hpp"
 #include "argumentparser.hpp"
 
+namespace catnip {
+
 std::unique_ptr<ArgumentParser> prepareParser(void);
 
 std::unique_ptr<Parameters> prepareParameters(std::unique_ptr<ArgumentParser>& ArgParse);
 
-#endif
+}
+
+#endif // _CATNIP_IO_HPP

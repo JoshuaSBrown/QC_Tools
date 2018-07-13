@@ -2,6 +2,7 @@
 #include "propertystring.hpp"
 #include <memory>
 
+using namespace catnip;
 using namespace std;
 
 PropertyString::PropertyString(void){

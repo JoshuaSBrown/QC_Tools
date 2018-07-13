@@ -1,9 +1,11 @@
 
-#ifndef _PROPERTY_SISTER_FILE_HPP
-#define _PROPERTY_SISTER_FILE_HPP
+#ifndef _CATNIP_PROPERTY_SISTER_FILE_HPP
+#define _CATNIP_PROPERTY_SISTER_FILE_HPP
 
 #include <vector>
 #include "propertyobject.hpp"
+
+namespace catnip {
 
 class PropertySisterFile : 
   public PropertyObject<std::string,std::vector<std::string>>{
@@ -19,4 +21,6 @@ class PropertySisterFile :
     void setPropOption(std::string option,std::vector<std::string> var);
     bool propValid(std::string fileNamePath);
 };
-#endif
+
+}
+#endif // _CATNIP_PROPERTY_SISTER_FILE_HPP

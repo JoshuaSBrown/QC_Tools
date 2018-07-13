@@ -1,12 +1,13 @@
 
-#ifndef _PunReader_HPP_
-#define _PunReader_HPP_
+#ifndef _CATNIP_PUNREADER_HPP_
+#define _CATNIP_PUNREADER_HPP_
 
 #include <vector>
 
-#include "../MATRIX/matrix.hpp"
+#include "../../MATRIX/matrix.hpp"
 #include "filereader.hpp"
 // Gaussian fort.7/.pun file reader
+namespace catnip {
 
 class PunReader : public FileReader {
   public:
@@ -27,4 +28,5 @@ class PunReader : public FileReader {
     std::map<std::string,Matrix *> coefs;
 };
 
-#endif
+}
+#endif //  _CATNIP_PUNREADER_HPP_

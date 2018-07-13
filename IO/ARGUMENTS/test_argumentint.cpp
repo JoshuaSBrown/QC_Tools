@@ -3,6 +3,7 @@
 #include <cassert>
 #include <limits>
 
+using namespace catnip;
 using namespace std;
 
 int main(void){
