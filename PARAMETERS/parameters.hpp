@@ -1,8 +1,10 @@
 
-#ifndef _PARAMETERS_HPP_
-#define _PARAMETERS_HPP_
+#ifndef _CATNIP_PARAMETERS_HPP_
+#define _CATNIP_PARAMETERS_HPP_
 
 #include <string>
+
+namespace catnip {
 
 class Parameters {
   private:
@@ -86,4 +88,6 @@ class Parameters {
     void setCounterPoise(bool cp) { counterPoise = cp; }
 };
 
-#endif
+}
+#endif // _CATNIP_PARAMETERS_HPP_
+ 

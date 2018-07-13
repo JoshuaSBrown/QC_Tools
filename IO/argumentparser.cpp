@@ -9,6 +9,7 @@
 
 #include "../STRING_SUPPORT/string_support.hpp"
 
+using namespace catnip;
 using namespace std;
 
 ArgumentParser::ArgumentParser(set<vector<string>> flags){

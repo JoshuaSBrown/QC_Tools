@@ -4,6 +4,7 @@
 #include "PROPERTIES/propertystringchoice.hpp"
 #include <iostream>
 
+using namespace catnip;
 using namespace std;
 
 ArgumentString::ArgumentString(void){

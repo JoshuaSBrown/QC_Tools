@@ -1,8 +1,10 @@
-#ifndef _Matrix_HPP
-#define _Matrix_HPP
+#ifndef _CATNIP_Matrix_HPP
+#define _CATNIP_Matrix_HPP
 #include <vector>
 #include <stdlib.h>
 #include <iostream>
+
+namespace catnip {
 
 class Matrix {
 	private :
@@ -72,7 +74,6 @@ class Matrix {
     std::vector<int> matchCol(Matrix mat,int sf);
 };	
 
-
 std::ostream &operator<<(std::ostream &out, Matrix &mat); 
 
 Matrix &operator*(Matrix &mat1, Matrix &mat2); 
@@ -92,4 +93,8 @@ Matrix Matrix_copy( Matrix mat );
 //of the matrix that is returned.
 Matrix Matrix_concatenate_rows( Matrix mat1, Matrix mat2 );
 Matrix Matrix_concatenate_cols( Matrix mat1, Matrix mat2 );
-#endif
+
+}
+
+#endif // _CATNIP_Matrix_HPP
+ 

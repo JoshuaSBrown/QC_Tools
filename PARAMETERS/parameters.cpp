@@ -4,6 +4,7 @@
 #include "parameters.hpp"
 #include "../STRING_SUPPORT/string_support.hpp"
 
+using namespace catnip;
 using namespace std;
 
 void Parameters::setLog1(const string log1){

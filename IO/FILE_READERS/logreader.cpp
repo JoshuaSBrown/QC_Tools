@@ -7,9 +7,10 @@
 #include <fstream>
 #include <sstream>
 
-#include "../STRING_SUPPORT/string_support.hpp"
+#include "../../STRING_SUPPORT/string_support.hpp"
 #include "logreader.hpp"
 
+using namespace catnip;
 using namespace std;
 
 LogReader::LogReader(string fileName) : FileReader(fileName){

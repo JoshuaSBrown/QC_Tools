@@ -1,8 +1,10 @@
 
-#ifndef _PROPERTY_INT_HPP
-#define _PROPERTY_INT_HPP
+#ifndef _CATNIP_PROPERTY_INT_HPP
+#define _CATNIP_PROPERTY_INT_HPP
 
 #include "propertyobject.hpp"
+
+namespace catnip {
 
 class PropertyInt : public PropertyObject<int,int> {
   private:
@@ -14,4 +16,6 @@ class PropertyInt : public PropertyObject<int,int> {
     bool propValid(int value) { intValid(value); return true;}
 };
 
-#endif
+}
+
+#endif // _CATNIP_PROPERTY_INT_HPP

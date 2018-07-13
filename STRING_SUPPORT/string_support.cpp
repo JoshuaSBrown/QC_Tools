@@ -14,6 +14,8 @@ using namespace std;
 // Internal functions 
 /////////////////////////////////////
 
+namespace catnip {
+
 // trim from start (in place)
 void ltrim_(string &s) {
   s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
@@ -157,4 +159,6 @@ bool foundSubStrInStr(string s, string sub_s){
 
 bool isAlphabetical(std::string s){
   return find_if(s.begin(), s.end(),not1(ptr_fun((int(*)(int))isalpha))) == s.end() && !s.empty();
+}
+
 }

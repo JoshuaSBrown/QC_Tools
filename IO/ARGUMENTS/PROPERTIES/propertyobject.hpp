@@ -1,6 +1,6 @@
 
-#ifndef _PROPERTY_OBJECT_HPP
-#define _PROPERTY_OBJECT_HPP
+#ifndef _CATNIP_PROPERTY_OBJECT_HPP
+#define _CATNIP_PROPERTY_OBJECT_HPP
 
 #include <string>
 #include <memory>
@@ -10,6 +10,8 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+
+namespace catnip {
 
 template<typename S, typename T> 
 class PropertyObject{
@@ -83,4 +85,7 @@ class PropertyObject{
 
     virtual void postCheck(void) { return; }
 };
-#endif
+
+}
+#endif // _CATNIP_PROPERTY_OBJECT_HPP
+  

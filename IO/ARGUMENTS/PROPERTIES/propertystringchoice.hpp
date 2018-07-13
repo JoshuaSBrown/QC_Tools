@@ -1,9 +1,11 @@
 
-#ifndef _PROPERTY_STRING_CHOICE_HPP
-#define _PROPERTY_STRING_CHOICE_HPP
+#ifndef _CATNIP_PROPERTY_STRING_CHOICE_HPP
+#define _CATNIP_PROPERTY_STRING_CHOICE_HPP
 
 #include <set>
 #include "propertyobject.hpp"
+
+namespace catnip {
 
 class PropertyStringChoice : 
   public PropertyObject<std::string,std::set<std::string>>{
@@ -16,4 +18,6 @@ class PropertyStringChoice :
     void setPropOption(std::string option,std::set<std::string> var);
     bool propValid(std::string string_choice);
 };
-#endif
+
+}
+#endif // _CATNIP_PROPERTY_STRING_CHOICE_HPP

@@ -1,10 +1,12 @@
 
-#ifndef _FILEREADER_HPP_
-#define _FILEREADER_HPP_
+#ifndef _CATNIP_FILEREADER_HPP_
+#define _CATNIP_FILEREADER_HPP_
 
 #include <string>
 #include <fstream>
 #include <map>
+
+namespace catnip {
 
 struct FilePackage{
   void * ptr;
@@ -43,4 +45,6 @@ class FileReader{
     std::streampos pos_;
     bool fileOpen_;
 };
-#endif
+
+}
+#endif // _CATNIP_FILEREADER_HPP_

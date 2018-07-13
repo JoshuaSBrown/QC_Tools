@@ -3,6 +3,7 @@
 #include "PROPERTIES/propertyswitch.hpp"
 #include <iostream>
 
+using namespace catnip;
 using namespace std;
 
 ArgumentSwitch::ArgumentSwitch(void){

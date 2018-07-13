@@ -6,6 +6,7 @@
 #include <string>
 #include <list>
 #include <unordered_map>
+
 #include "../IO/io.hpp"
 #include "../MATRIX/matrix.hpp"
 #include "../CONSTANTS/constants.hpp"
@@ -14,204 +15,7 @@
 
 using namespace std;
 
-TransferComplex::TransferComplex(
-    Matrix * mat1Coef,
-    Matrix * mat2Coef,
-    Matrix * matPCoef,
-    std::pair<int,int> MOs1,
-    std::pair<int,int> MOs2,
-    Matrix * matS,
-    Matrix * matPOE,
-    bool cp){
-
-  unscrambled = false;
-  counterPoise_ = cp;
-  // Consistency check
-  if(matS->get_rows()!=matPCoef->get_rows() ||
-     matS->get_cols()!=matPCoef->get_cols()){
-    throw invalid_argument("The overlap matrix must have the same number "
-        "of basis functions as the dimer");
-  }
-  if(cp){
-    if(mat1Coef->get_rows()!=matPCoef->get_rows() ||
-       mat1Coef->get_cols()!=matPCoef->get_cols() ){
-      throw invalid_argument("Counter poise correction requires that the"
-        " monomers have the same number of coefficients as the dimer. "
-        "Your monomer 1 does not");
-    }
-    if(mat2Coef->get_rows()!=matPCoef->get_rows() ||
-       mat2Coef->get_cols()!=matPCoef->get_cols() ){
-      throw invalid_argument("Counter poise correction requires that the"
-        " monomers have the same number of coefficients as the dimer. "
-        "Your monomer 2 does not");
-    }
-  }else{
-    int total_rows = mat1Coef->get_rows()+mat2Coef->get_rows(); 
-    int total_cols = mat1Coef->get_cols()+mat2Coef->get_cols();
-
-    if(total_rows>matPCoef->get_rows()){
-      throw invalid_argument("Counter poise has not been specified and your "
-        "monomers have more basis function rows than your dimer");
-    }
-    if(total_cols>matPCoef->get_cols()){
-      throw invalid_argument("Counter poise has not been specified and your "
-        "monomers have more basis function cols than your dimer");
-    }
-  } 
-
-  mat_1_Coef = mat1Coef;
-  mat_2_Coef = mat2Coef;
-  mat_P_Coef = matPCoef;
-  Orbs1 = MOs1;
-  Orbs2 = MOs2;
-  mat_S = matS;
-  mat_P_OE = matPOE;
-}
-
-void TransferComplex::unscramble(
-    Matrix coord_1_mat,
-    Matrix coord_2_mat,
-    Matrix coord_P_mat,
-    std::vector<int> basisP,
-    std::vector<int> basis2){
-
-  unscrambled = true;
-
-  int sig_fig = 4;
-
-  // If dealing with counter poise correction may also need to unscramble
-  // the basis functions of the monomers
-  if(counterPoise_){
-    auto match_1_2 = coord_1_mat.matchCol(coord_2_mat,sig_fig);
-
-    LOG("Counter Poise unscrambling matrix 2 with respect to matrix 1",2);
-    auto unscrambled_2_Coef = unscramble_Coef( match_1_2,basis2,mat_2_Coef);
-
-    this->mat_2_Coef = unscrambled_2_Coef;
-
-    auto match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
-
-    auto unscrambled_P_Coef = unscramble_Coef(match_1_P,basisP,mat_P_Coef);
-    
-    this->mat_P_Coef = unscrambled_P_Coef;
-
-    auto unscrambled_S = unscramble_S(
-      match_1_P,
-      basisP,
-      mat_S);
-    
-    this->mat_S = unscrambled_S;
-
-  }else{
-
-    // Stores the rows in P that match 1
-    auto match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
-
-    // Stores the rows in P that match 2
-    auto match_2_P = coord_2_mat.matchCol(coord_P_mat,sig_fig);
-
-    LOG("Unscrambling dimer matrix with respect to matrix 1 and 2",2);
-    auto unscrambled_P_Coef = unscramble_Coef(
-        match_1_P,
-        match_2_P,
-        basisP,
-        mat_P_Coef);
-
-    this->mat_P_Coef = unscrambled_P_Coef;
-
-    auto unscrambled_S = unscramble_S(
-        match_1_P,
-        match_2_P,
-        basisP,
-        mat_S);
-
-    this->mat_S = unscrambled_S;
-  }
-}
-
-double TransferComplex::calcJ(map<string,string> orbitaltype, map<string,int> orbnum){
-
-  if(unscrambled==false){
-    cerr << "WARNING unable to automatically line up basis functions of"
-      " monomers with dimers, you better make sure they correctly"
-      " line up or run the calculations again with the correct "
-      "flag pop=full" << endl;
-  }
-
-  Matrix mat1coef;
-  Matrix mat2coef;
-
-  
-  string HOMO_OR_LUMO = orbitaltype["mon1"]; 
-  int MO = orbnum["mon1"];
-  if(HOMO_OR_LUMO.compare("HOMO")==0){
-    if(MO>0) {
-      throw invalid_argument("Having specified HOMO the MO"
-      " value is in reference to the HOMO and must be a negative number");
-    }
-    // Number of orbitals that are choices
-    if(MO<=(-1*Orbs1.second)){
-      string err ="You are trying to access HOMO"+to_string(MO)+" but there "
-        "are only "+to_string(Orbs1.second)+" HOMO orbitals";
-      throw invalid_argument(err);
-    }
-    mat1coef = mat_1_Coef->getRow( Orbs1.second+MO );
-  }else if(HOMO_OR_LUMO.compare("LUMO")==0){
-    if(MO<0){
-      throw invalid_argument("Having specified LUMO the MO"
-      " value is in reference to the LUMO and must be a positive number");
-    }
-    int allowed_LUMO = Orbs1.first-Orbs1.second;
-    if(MO>=allowed_LUMO){
-      string err ="You are trying to access LUMO+"+to_string(MO)+" but there "
-        "are only "+to_string(allowed_LUMO)+" LUMO orbitals";
-      throw invalid_argument(err);
-    }
-    mat1coef = mat_1_Coef->getRow( Orbs1.second+MO+1 );
-  }else{
-    throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
-  }
- 
-  HOMO_OR_LUMO = orbitaltype["mon2"];
-  MO = orbnum["mon2"];
-  if(HOMO_OR_LUMO.compare("HOMO")==0){
-    if(MO>0) {
-      throw invalid_argument("Having specified HOMO the MO"
-      " value is in reference to the HOMO and must be a negative number");
-    }
-    if(MO<=(-1*Orbs2.second)){
-      string err ="You are trying to access HOMO"+to_string(MO)+" but there "
-        "are only "+to_string(Orbs2.second)+" HOMO orbitals";
-      throw invalid_argument(err);
-    }
-    mat2coef = mat_2_Coef->getRow( Orbs2.second+MO );
-  }else if(HOMO_OR_LUMO.compare("LUMO")==0){
-    if(MO<0){
-      throw invalid_argument("Having specified LUMO the MO"
-      " value is in reference to the LUMO and must be a positive number");
-    }
-    int allowed_LUMO = Orbs2.first-Orbs2.second;
-    if(MO>=allowed_LUMO){
-      string err ="You are trying to access LUMO+"+to_string(MO)+" but there "
-        "are only "+to_string(allowed_LUMO)+" LUMO orbitals";
-      throw invalid_argument(err);
-    }
-    mat2coef = mat_2_Coef->getRow( Orbs2.second+MO+1 );
-  }else{
-    throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
-  }
-
-  return calculate_transfer_integral(
-          mat1coef,
-          mat2coef,
-          *mat_P_Coef,
-          Orbs1.first,
-          Orbs2.first,
-          *mat_S,
-          *mat_P_OE,
-          counterPoise_);
-
-}
+namespace catnip {
 
 unordered_map<int,pair<double,string>> findRank(Matrix & Orb_E_Alpha, Matrix & Orb_E_Beta){
 
@@ -250,7 +54,6 @@ unordered_map<int,pair<double,string>> findRank(Matrix & Orb_E_Alpha, Matrix & O
   }
   return rank_map;
 }
-
 
 // Essentially calculates the transfer integral
 double calculate_transfer_integral(
@@ -772,5 +575,209 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
 
   // Return the correctly swapped dimerCoef
   return S_new;
+}
+
+
+}
+
+using namespace catnip;
+
+TransferComplex::TransferComplex(
+    Matrix * mat1Coef,
+    Matrix * mat2Coef,
+    Matrix * matPCoef,
+    std::pair<int,int> MOs1,
+    std::pair<int,int> MOs2,
+    Matrix * matS,
+    Matrix * matPOE,
+    bool cp){
+
+  unscrambled = false;
+  counterPoise_ = cp;
+  // Consistency check
+  if(matS->get_rows()!=matPCoef->get_rows() ||
+     matS->get_cols()!=matPCoef->get_cols()){
+    throw invalid_argument("The overlap matrix must have the same number "
+        "of basis functions as the dimer");
+  }
+  if(cp){
+    if(mat1Coef->get_rows()!=matPCoef->get_rows() ||
+       mat1Coef->get_cols()!=matPCoef->get_cols() ){
+      throw invalid_argument("Counter poise correction requires that the"
+        " monomers have the same number of coefficients as the dimer. "
+        "Your monomer 1 does not");
+    }
+    if(mat2Coef->get_rows()!=matPCoef->get_rows() ||
+       mat2Coef->get_cols()!=matPCoef->get_cols() ){
+      throw invalid_argument("Counter poise correction requires that the"
+        " monomers have the same number of coefficients as the dimer. "
+        "Your monomer 2 does not");
+    }
+  }else{
+    int total_rows = mat1Coef->get_rows()+mat2Coef->get_rows(); 
+    int total_cols = mat1Coef->get_cols()+mat2Coef->get_cols();
+
+    if(total_rows>matPCoef->get_rows()){
+      throw invalid_argument("Counter poise has not been specified and your "
+        "monomers have more basis function rows than your dimer");
+    }
+    if(total_cols>matPCoef->get_cols()){
+      throw invalid_argument("Counter poise has not been specified and your "
+        "monomers have more basis function cols than your dimer");
+    }
+  } 
+
+  mat_1_Coef = mat1Coef;
+  mat_2_Coef = mat2Coef;
+  mat_P_Coef = matPCoef;
+  Orbs1 = MOs1;
+  Orbs2 = MOs2;
+  mat_S = matS;
+  mat_P_OE = matPOE;
+}
+
+void TransferComplex::unscramble(
+    Matrix coord_1_mat,
+    Matrix coord_2_mat,
+    Matrix coord_P_mat,
+    std::vector<int> basisP,
+    std::vector<int> basis2){
+
+  unscrambled = true;
+
+  int sig_fig = 4;
+
+  // If dealing with counter poise correction may also need to unscramble
+  // the basis functions of the monomers
+  if(counterPoise_){
+    auto match_1_2 = coord_1_mat.matchCol(coord_2_mat,sig_fig);
+
+    LOG("Counter Poise unscrambling matrix 2 with respect to matrix 1",2);
+    auto unscrambled_2_Coef = unscramble_Coef( match_1_2,basis2,mat_2_Coef);
+
+    this->mat_2_Coef = unscrambled_2_Coef;
+
+    auto match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
+
+    auto unscrambled_P_Coef = unscramble_Coef(match_1_P,basisP,mat_P_Coef);
+    
+    this->mat_P_Coef = unscrambled_P_Coef;
+
+    auto unscrambled_S = unscramble_S(
+      match_1_P,
+      basisP,
+      mat_S);
+    
+    this->mat_S = unscrambled_S;
+
+  }else{
+
+    // Stores the rows in P that match 1
+    auto match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
+
+    // Stores the rows in P that match 2
+    auto match_2_P = coord_2_mat.matchCol(coord_P_mat,sig_fig);
+
+    LOG("Unscrambling dimer matrix with respect to matrix 1 and 2",2);
+    auto unscrambled_P_Coef = unscramble_Coef(
+        match_1_P,
+        match_2_P,
+        basisP,
+        mat_P_Coef);
+
+    this->mat_P_Coef = unscrambled_P_Coef;
+
+    auto unscrambled_S = unscramble_S(
+        match_1_P,
+        match_2_P,
+        basisP,
+        mat_S);
+
+    this->mat_S = unscrambled_S;
+  }
+}
+
+double TransferComplex::calcJ(map<string,string> orbitaltype, map<string,int> orbnum){
+
+  if(unscrambled==false){
+    cerr << "WARNING unable to automatically line up basis functions of"
+      " monomers with dimers, you better make sure they correctly"
+      " line up or run the calculations again with the correct "
+      "flag pop=full" << endl;
+  }
+
+  Matrix mat1coef;
+  Matrix mat2coef;
+
+  
+  string HOMO_OR_LUMO = orbitaltype["mon1"]; 
+  int MO = orbnum["mon1"];
+  if(HOMO_OR_LUMO.compare("HOMO")==0){
+    if(MO>0) {
+      throw invalid_argument("Having specified HOMO the MO"
+      " value is in reference to the HOMO and must be a negative number");
+    }
+    // Number of orbitals that are choices
+    if(MO<=(-1*Orbs1.second)){
+      string err ="You are trying to access HOMO"+to_string(MO)+" but there "
+        "are only "+to_string(Orbs1.second)+" HOMO orbitals";
+      throw invalid_argument(err);
+    }
+    mat1coef = mat_1_Coef->getRow( Orbs1.second+MO );
+  }else if(HOMO_OR_LUMO.compare("LUMO")==0){
+    if(MO<0){
+      throw invalid_argument("Having specified LUMO the MO"
+      " value is in reference to the LUMO and must be a positive number");
+    }
+    int allowed_LUMO = Orbs1.first-Orbs1.second;
+    if(MO>=allowed_LUMO){
+      string err ="You are trying to access LUMO+"+to_string(MO)+" but there "
+        "are only "+to_string(allowed_LUMO)+" LUMO orbitals";
+      throw invalid_argument(err);
+    }
+    mat1coef = mat_1_Coef->getRow( Orbs1.second+MO+1 );
+  }else{
+    throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
+  }
+ 
+  HOMO_OR_LUMO = orbitaltype["mon2"];
+  MO = orbnum["mon2"];
+  if(HOMO_OR_LUMO.compare("HOMO")==0){
+    if(MO>0) {
+      throw invalid_argument("Having specified HOMO the MO"
+      " value is in reference to the HOMO and must be a negative number");
+    }
+    if(MO<=(-1*Orbs2.second)){
+      string err ="You are trying to access HOMO"+to_string(MO)+" but there "
+        "are only "+to_string(Orbs2.second)+" HOMO orbitals";
+      throw invalid_argument(err);
+    }
+    mat2coef = mat_2_Coef->getRow( Orbs2.second+MO );
+  }else if(HOMO_OR_LUMO.compare("LUMO")==0){
+    if(MO<0){
+      throw invalid_argument("Having specified LUMO the MO"
+      " value is in reference to the LUMO and must be a positive number");
+    }
+    int allowed_LUMO = Orbs2.first-Orbs2.second;
+    if(MO>=allowed_LUMO){
+      string err ="You are trying to access LUMO+"+to_string(MO)+" but there "
+        "are only "+to_string(allowed_LUMO)+" LUMO orbitals";
+      throw invalid_argument(err);
+    }
+    mat2coef = mat_2_Coef->getRow( Orbs2.second+MO+1 );
+  }else{
+    throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
+  }
+
+  return calculate_transfer_integral(
+          mat1coef,
+          mat2coef,
+          *mat_P_Coef,
+          Orbs1.first,
+          Orbs2.first,
+          *mat_S,
+          *mat_P_OE,
+          counterPoise_);
+
 }
 

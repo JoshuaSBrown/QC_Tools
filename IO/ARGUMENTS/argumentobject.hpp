@@ -1,6 +1,6 @@
 
-#ifndef _ARGUMENTOBJECT_HPP
-#define _ARGUMENTOBJECT_HPP
+#ifndef _CATNIP_ARGUMENTOBJECT_HPP
+#define _CATNIP_ARGUMENTOBJECT_HPP
 
 #include <string>
 #include <memory>
@@ -9,6 +9,8 @@
 #include <iostream>
 #include "../../STRING_SUPPORT/string_support.hpp"
 #include "PROPERTIES/propertyobject.hpp"
+
+namespace catnip{
 // The template is simply for specifying the type of the argument coming
 // from the command line
 template<typename S>
@@ -401,4 +403,6 @@ class ArgumentObject{
       }
     }
 };
-#endif
+
+}
+#endif // _CATNIP_ARGUMENTOBJECT_HPP
