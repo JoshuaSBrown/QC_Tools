@@ -63,8 +63,6 @@ double calculate_transfer_integral(
     Matrix mat_1_Coef,
     Matrix mat_2_Coef,
     Matrix mat_P_Coef,
-    int MO1,
-    int MO2,
     Matrix mat_S,
     Matrix mat_P_OE,
     bool counterPoise_);
