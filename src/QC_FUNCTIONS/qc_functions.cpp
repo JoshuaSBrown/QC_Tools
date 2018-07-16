@@ -113,8 +113,8 @@ double calculate_transfer_integral(
 
 
   cout << "J_ab  " << J_ab*hartreeToeV << " eV\n";
-  cout << "e_a   " << e_b*hartreeToeV << " eV\n";
-  cout << "e_b   " << e_a*hartreeToeV << " eV\n";
+  cout << "e_a   " << e_a*hartreeToeV << " eV\n";
+  cout << "e_b   " << e_b*hartreeToeV << " eV\n";
   cout << "S_ab  " << S_ab << "\n";
   cout << "J_eff " << J_eff*hartreeToeV << " eV\n";
 
