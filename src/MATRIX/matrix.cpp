@@ -17,14 +17,13 @@ namespace catnip {
 Matrix Matrix_Multiply( Matrix mat1, Matrix mat2){
 
 	if(mat1.get_shel() != 1 || mat2.get_shel() !=1){
-		printf("ERROR Matrix_Multiply only allowed for 2d nxm matrix not 3d nxmxl\n");
-		exit(1);
+		throw invalid_argument("ERROR Matrix_Multiply only allowed for 2d nxm matrix"
+      " not 3d nxmxl\n");
 	}
 	if(mat1.get_cols() != mat2.get_rows()){
-		printf("ERROR Matrix_Multiply only allowed for nxm by lxn matrices\n");
-		printf("      second matrix must have same number of colums as first\n");
-		printf("      matrix has number of rows\n");
-		exit(1);
+		throw invalid_argument("ERROR Matrix_Multiply only allowed for nxm by mxl "
+      "matrices\n      second matrix must have same number of colums as first\n"
+		  "      matrix has number of rows\n");
 	}
 
 	Matrix mat3(mat1.get_rows(), mat2.get_cols());
@@ -49,15 +48,13 @@ Matrix Matrix_Multiply( Matrix mat1, Matrix mat2){
 Matrix Matrix_diag(Matrix mat){
 
 	if(mat.get_cols()>1 && mat.get_rows()>1){
-		printf("ERROR Matrix_diag can only create a diagonal matrix\n");
-		printf("from a vector.\n");
-		exit(1);
+		throw invalid_argument("ERROR Matrix_diag can only create a diagonal "
+      "matrix from a vector.\n");
 	}
 
 	if(mat.get_shel()>1){
-		printf("ERROR Matrix_diag cannot create diagonal matrix from\n");
-		printf("a 3d matrix must be passed a vector.\n");
-		exit(1);
+		throw invalid_argument("ERROR Matrix_diag cannot create diagonal matrix "
+      "from a 3d matrix, it must be passed a vector.\n");
 	}
 
 	int i;

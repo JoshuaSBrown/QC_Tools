@@ -93,6 +93,32 @@ else
 fi
 echo $data >> $fileOut
 
+tar -xzf ${path}/GAUSSIANFILES/Square_Matrix_test/monomer1.tar.gz -C ${path}/GAUSSIANFILES/Square_Matrix_test/
+tar -xzf ${path}/GAUSSIANFILES/Square_Matrix_test/monomer2.tar.gz -C ${path}/GAUSSIANFILES/Square_Matrix_test/
+tar -xzf ${path}/GAUSSIANFILES/Square_Matrix_test/dimer.tar.gz -C ${path}/GAUSSIANFILES/Square_Matrix_test/
+exec_command="${path}/build/calc_J -p_P ${path}/GAUSSIANFILES/Square_Matrix_test/dimer.pun  -p_1 ${path}/GAUSSIANFILES/Square_Matrix_test/monomer1.pun -p_2 ${path}/GAUSSIANFILES/Square_Matrix_test/monomer2.pun"
+data=$(${exec_command} )
+if [ $? -eq 0 ]; then
+
+  findJeff 
+  if (( $( bc <<< "$J_val > 0.001245" ) )) && (( $( bc <<< "$J_val < 0.001247" ) ))
+  then
+    echo "${green}[SUCCESS]${reset} ${exec_command}" 
+  else
+    echo "${red}[FAILURE]${reset} ${exec_command} expected output 0.00124623"
+    echo "actual output $J_val"
+    echo $( bc <<< "$J_val > 0.001245" )
+    echo $( bc <<< "$J_val < 0.001247" )
+    count_fails=$(($count_fails+1))
+  fi
+else
+  echo "${red}[FAILURE]${reset} ${exec_command}"
+  count_fails=$(($count_fails+1))
+fi
+echo $data >> $fileOut
+
+
+
 exec_command="${path}/build/calc_J -l_P ${path}/GAUSSIANFILES/30/30_pair.log  -l_1 ${path}/GAUSSIANFILES/30/ref.log -l_2 ${path}/GAUSSIANFILES/30/30_2.log"
 data=$(${exec_command})
 if [ $? -eq 0 ]; then

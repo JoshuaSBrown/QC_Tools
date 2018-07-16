@@ -60,8 +60,6 @@ double calculate_transfer_integral(
   Matrix mat_1_Coef,
   Matrix mat_2_Coef,
   Matrix mat_P_Coef,
-  int MO1,
-  int MO2,
   Matrix mat_S,
   Matrix mat_P_OE,
   bool counterPoise_){
@@ -69,7 +67,6 @@ double calculate_transfer_integral(
   Matrix mat_1_Coefinv = mat_1_Coef.invert();
   Matrix mat_2_Coefinv = mat_2_Coef.invert();
   Matrix mat_P_Coefinv = mat_P_Coef.invert();
-
 
   Matrix zetaA;
   Matrix zetaB;
@@ -79,8 +76,8 @@ double calculate_transfer_integral(
     zetaB = (mat_2_Coefinv);
   }else{
     LOG("Creating zeta matrices from coefficients",2);
-    Matrix zerosA(MO2,mat_1_Coefinv.get_cols(),mat_1_Coefinv.get_shel());
-    Matrix zerosB(MO1,mat_2_Coefinv.get_cols(),mat_2_Coefinv.get_shel());
+    Matrix zerosA(mat_1_Coefinv.get_rows(),1,mat_1_Coefinv.get_shel());
+    Matrix zerosB(mat_2_Coefinv.get_rows(),1,mat_2_Coefinv.get_shel());
     zetaA = Matrix_concatenate_rows( mat_1_Coefinv, zerosA );
     zetaB = Matrix_concatenate_rows( zerosB, mat_2_Coefinv );
   }
@@ -91,8 +88,8 @@ double calculate_transfer_integral(
   Matrix Inter = mat_S * mat_P_Coefinv;
 
   LOG("Creating gamma and beta matrices",2);
-  Matrix gammaA = zetaAinv * Inter ;
-  Matrix gammaB = zetaBinv * Inter ;
+  Matrix gammaA = zetaAinv * Inter;
+  Matrix gammaB = zetaBinv * Inter;
 
   Matrix gammaA_inv = gammaA.invert();
   Matrix gammaB_inv = gammaB.invert();
@@ -595,32 +592,24 @@ TransferComplex::TransferComplex(
   unscrambled = false;
   counterPoise_ = cp;
   // Consistency check
-  if(matS->get_rows()!=matPCoef->get_rows() ||
-     matS->get_cols()!=matPCoef->get_cols()){
+  if(matS->get_cols()!=matPCoef->get_cols()){
     throw invalid_argument("The overlap matrix must have the same number "
         "of basis functions as the dimer");
   }
   if(cp){
-    if(mat1Coef->get_rows()!=matPCoef->get_rows() ||
-       mat1Coef->get_cols()!=matPCoef->get_cols() ){
+    if(mat1Coef->get_cols()!=matPCoef->get_cols() ){
       throw invalid_argument("Counter poise correction requires that the"
         " monomers have the same number of coefficients as the dimer. "
         "Your monomer 1 does not");
     }
-    if(mat2Coef->get_rows()!=matPCoef->get_rows() ||
-       mat2Coef->get_cols()!=matPCoef->get_cols() ){
+    if(mat2Coef->get_cols()!=matPCoef->get_cols() ){
       throw invalid_argument("Counter poise correction requires that the"
         " monomers have the same number of coefficients as the dimer. "
         "Your monomer 2 does not");
     }
   }else{
-    int total_rows = mat1Coef->get_rows()+mat2Coef->get_rows(); 
     int total_cols = mat1Coef->get_cols()+mat2Coef->get_cols();
 
-    if(total_rows>matPCoef->get_rows()){
-      throw invalid_argument("Counter poise has not been specified and your "
-        "monomers have more basis function rows than your dimer");
-    }
     if(total_cols>matPCoef->get_cols()){
       throw invalid_argument("Counter poise has not been specified and your "
         "monomers have more basis function cols than your dimer");
@@ -773,8 +762,6 @@ double TransferComplex::calcJ(map<string,string> orbitaltype, map<string,int> or
           mat1coef,
           mat2coef,
           *mat_P_Coef,
-          Orbs1.first,
-          Orbs2.first,
           *mat_S,
           *mat_P_OE,
           counterPoise_);
