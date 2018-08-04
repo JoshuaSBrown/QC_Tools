@@ -242,7 +242,7 @@ void ArgumentParser::setFlagArgOpt(
       }else if(val==1){
         ArSwitch->setArgPropertyOpt(property,option,"ON");
       }else{
-        throw invalid_argument("Unrecognized option for switch "+val);
+        throw invalid_argument("Unrecognized option for switch "+to_string(val));
       }
       switch_arg_[flag]=ArSwitch;
     }else{
@@ -251,7 +251,7 @@ void ArgumentParser::setFlagArgOpt(
       }else if(val==1){
         switch_arg_[flag]->setArgPropertyOpt(property,option,"ON");
       }else{
-        throw invalid_argument("Unrecognized option for switch "+val);
+        throw invalid_argument("Unrecognized option for switch "+to_string(val));
       }
     }
   }else if(argname.compare("ARGUMENT_FILE")==0){
