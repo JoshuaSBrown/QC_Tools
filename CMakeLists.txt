@@ -25,7 +25,7 @@ find_program (BASH_PROGRAM bash)
 SET( LOG_LEVEL 0 CACHE INT "Choose the log level" )
 add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
 
-SET( CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic")
+SET( CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic -Werror")
 
 file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
 file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
