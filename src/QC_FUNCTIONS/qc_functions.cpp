@@ -6,6 +6,7 @@
 #include <string>
 #include <list>
 #include <unordered_map>
+#include <cmath>
 
 #include "../IO/io.hpp"
 #include "../MATRIX/matrix.hpp"
