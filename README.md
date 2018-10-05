@@ -30,3 +30,10 @@ If you run into a problem feel free to create an issue on [github](https://githu
 If you use CATNIP to get values for a paper it would be nice if you cited it. To know how to cite it you can simply pass the folloing -cite flag to `calc_J` as:
 
 ```calc_J -cite```
+
+## Acknowledgements and Relevant Papers
+
+[1]	B. Baumeier, J. Kirkpatrick, and D. Andrienko, “Density-functional based determination of intermolecular charge transfer properties for large-scale morphologies,” Phys. Chem. Chem. Phys., vol. 12, no. 36, p. 11103, 2010.  
+[2]	E. F. Valeev, V. Coropceanu, D. a da Silva Filho, S. Salman, and J.-L. Brédas, “Effect of electronic polarization on charge-transport parameters in molecular organic semiconductors.,” J. Am. Chem. Soc., vol. 128, no. 30, pp. 9882–6, Aug. 2006.  
+
+The author would like to acknowledge insightful correspondence with E. F. Valeev and B. Baumeier. 
