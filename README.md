@@ -2,16 +2,16 @@
 
 ## Documentation
 
- * [Home](https://github.com/JoshuaSBrown/QC_Tools/wiki/1.-Home)
- * [Downloading](https://github.com/JoshuaSBrown/QC_Tools/wiki/2.-Downloading)
- * [Compiling](https://github.com/JoshuaSBrown/QC_Tools/wiki/3.-Compiling)
- * [Gaussian Files](https://github.com/JoshuaSBrown/QC_Tools/wiki/4.-Gaussian-Files)
- * [Tutorial 1](https://github.com/JoshuaSBrown/QC_Tools/wiki/5.-Tutorial-1)
- * [Tutorial 2](https://github.com/JoshuaSBrown/QC_Tools/wiki/6.-Tutorial-2)
- * [Tutorial 3](https://github.com/JoshuaSBrown/QC_Tools/wiki/7.-Tutorial-3)
- * [Common Problems](https://github.com/JoshuaSBrown/QC_Tools/wiki/8.-Common-Problems)
- * [Other Resources](https://github.com/JoshuaSBrown/QC_Tools/wiki/9.-Other-Resources)
- * [Versions](https://github.com/JoshuaSBrown/QC_Tools/wiki/10.-Versions)
+ * [Home](https://github.com/JoshuaSBrown/QC_Tools/wiki)
+ * [Downloading](https://github.com/JoshuaSBrown/QC_Tools/wiki/1.-Downloading)
+ * [Compiling](https://github.com/JoshuaSBrown/QC_Tools/wiki/2.-Compiling)
+ * [Gaussian Files](https://github.com/JoshuaSBrown/QC_Tools/wiki/3.-Gaussian-Files)
+ * [Tutorial 1](https://github.com/JoshuaSBrown/QC_Tools/wiki/4.-Tutorial-1)
+ * [Tutorial 2](https://github.com/JoshuaSBrown/QC_Tools/wiki/5.-Tutorial-2)
+ * [Tutorial 3](https://github.com/JoshuaSBrown/QC_Tools/wiki/6.-Tutorial-3)
+ * [Common Problems](https://github.com/JoshuaSBrown/QC_Tools/wiki/7.-Common-Problems)
+ * [Other Resources](https://github.com/JoshuaSBrown/QC_Tools/wiki/8.-Other-Resources)
+ * [Versions](https://github.com/JoshuaSBrown/QC_Tools/wiki/9.-Versions)
 
 ## Objective
 
