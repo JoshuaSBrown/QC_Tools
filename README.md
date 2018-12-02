@@ -9,8 +9,9 @@
  * [Tutorial 1](https://github.com/JoshuaSBrown/QC_Tools/wiki/5.-Tutorial-1)
  * [Tutorial 2](https://github.com/JoshuaSBrown/QC_Tools/wiki/6.-Tutorial-2)
  * [Tutorial 3](https://github.com/JoshuaSBrown/QC_Tools/wiki/7.-Tutorial-3)
- * [Other Resources](https://github.com/JoshuaSBrown/QC_Tools/wiki/8.-Other-Resources)
- * [Versions](https://github.com/JoshuaSBrown/QC_Tools/wiki/9.-Versions)
+ * [Common Problems](https://github.com/JoshuaSBrown/QC_Tools/wiki/8.-Common-Problems)
+ * [Other Resources](https://github.com/JoshuaSBrown/QC_Tools/wiki/9.-Other-Resources)
+ * [Versions](https://github.com/JoshuaSBrown/QC_Tools/wiki/10.-Versions)
 
 ## Objective
 
