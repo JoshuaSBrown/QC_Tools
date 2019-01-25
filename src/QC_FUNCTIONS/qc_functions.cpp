@@ -623,8 +623,9 @@ TransferComplex::TransferComplex(
     int total_cols = mat1Coef->get_cols()+mat2Coef->get_cols();
 
     if(total_cols>matPCoef->get_cols()){
-      throw invalid_argument("Counter poise has not been specified and your "
-        "monomers have more basis function cols than your dimer");
+      throw invalid_argument("Counter poise has not been specified and the total "
+        "number of basis functions in your monomer files is greater than the the "
+        "number of basis functions in your dimer");
     }
   } 
 
