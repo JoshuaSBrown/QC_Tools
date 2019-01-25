@@ -77,10 +77,20 @@ double calculate_transfer_integral(
     zetaB = (mat_2_Coefinv);
   }else{
     LOG("Creating zeta matrices from coefficients",2);
+    
     Matrix zerosA(mat_1_Coefinv.get_rows(),1,mat_1_Coefinv.get_shel());
     Matrix zerosB(mat_2_Coefinv.get_rows(),1,mat_2_Coefinv.get_shel());
-    zetaA = Matrix_concatenate_rows( mat_1_Coefinv, zerosA );
-    zetaB = Matrix_concatenate_rows( zerosB, mat_2_Coefinv );
+    zetaA = Matrix_concatenate_rows( mat_1_Coefinv, zerosB );
+    zetaB = Matrix_concatenate_rows( zerosA, mat_2_Coefinv );
+  }
+
+  if(mat_P_Coefinv.get_rows() != zetaA.get_rows() ){
+    throw runtime_error("ERROR monomer A zeta matrix does not have the same "
+        "number of rows as the dimer.");
+  }
+  if(mat_P_Coefinv.get_rows() != zetaB.get_rows() ){
+    throw runtime_error("ERROR monomer B zeta matrix does not have the same "
+        "number of rows as the dimer.");
   }
   Matrix zetaAinv = zetaA.invert();
   Matrix zetaBinv = zetaB.invert();
@@ -89,6 +99,7 @@ double calculate_transfer_integral(
   Matrix Inter = mat_S * mat_P_Coefinv;
 
   LOG("Creating gamma and beta matrices",2);
+
   Matrix gammaA = zetaAinv * Inter;
   Matrix gammaB = zetaBinv * Inter;
 

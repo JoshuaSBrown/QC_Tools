@@ -25,11 +25,11 @@ class LogReader : public FileReader {
     virtual void registerSections_();
     virtual void validFileName_();
 
-    static void AOFunctionSectionReader(void *);
-    static void OverlapSectionReader(void *);
-    static void OrbitalEnergiesAlphaSectionReader(void *);
-    static void OrbitalEnergiesBetaSectionReader(void *);
-    static void CoordSectionReader(void *);
+    static void AOFunctionSectionReader(FileReader *);
+    static void OverlapSectionReader(FileReader *);
+    static void OrbitalEnergiesAlphaSectionReader(FileReader *);
+    static void OrbitalEnergiesBetaSectionReader(FileReader *);
+    static void CoordSectionReader(FileReader *);
 
     void ReadOrbEnergies(std::string orb_type);
     // Contains the information as so:

@@ -20,11 +20,11 @@ LogReader::LogReader(string fileName) : FileReader(fileName){
 }
 
 void LogReader::registerSections_(){
-  sectionHeaders_["AOFunction"] = "     Gross orbital populations:";
-  sectionHeaders_["Overlap"] = " *** Overlap ***";
-  sectionHeaders_["OEAlpha"] = " Alpha  occ. eigenvalues --";
-  sectionHeaders_["OEBeta"] = "  Beta  occ. eigenvalues --";
-  sectionHeaders_["Coord"] = "Center     Atomic";
+  sectionHeaders_["AOFunction"] = vector<string>{"     Gross orbital populations:"};
+  sectionHeaders_["Overlap"] = vector<string>{" *** Overlap ***"};
+  sectionHeaders_["OEAlpha"] = vector<string>{" Alpha  occ. eigenvalues --"};
+  sectionHeaders_["OEBeta"] = vector<string>{"  Beta  occ. eigenvalues --"};
+  sectionHeaders_["Coord"] = vector<string>{"Center     Atomic      Atomic","Center     Atomic     Atomic"};
 
   sectionReaders_["AOFunction"] = &LogReader::AOFunctionSectionReader;
   sectionReaders_["Overlap"] = &LogReader::OverlapSectionReader;
@@ -50,7 +50,7 @@ vector<int> LogReader::getBasisFuncCount(){
   return basisFuncCount;
 }
 
-void LogReader::AOFunctionSectionReader(void * ptr){
+void LogReader::AOFunctionSectionReader(FileReader * ptr){
   LOG("Reading atomic basis functions from .log file",1);
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
 
@@ -124,7 +124,7 @@ void LogReader::AOFunctionSectionReader(void * ptr){
   return;
 }
 
-void LogReader::OverlapSectionReader(void * ptr){
+void LogReader::OverlapSectionReader(FileReader * ptr){
   LOG("Reading Overlap Coefficients from .log file",1);
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
 
@@ -249,21 +249,21 @@ void LogReader::ReadOrbEnergies(string orb_type){
   LOG("Success reading Orbital Energies from .log file",2);
 }
 
-void LogReader::OrbitalEnergiesAlphaSectionReader(void * ptr){
+void LogReader::OrbitalEnergiesAlphaSectionReader(FileReader * ptr){
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
   string line;
   LR_ptr->fid_.seekg(LR_ptr->pos_);
   LR_ptr->ReadOrbEnergies("Alpha");
 }
 
-void LogReader::OrbitalEnergiesBetaSectionReader(void * ptr){
+void LogReader::OrbitalEnergiesBetaSectionReader(FileReader * ptr){
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
   string line;
   LR_ptr->fid_.seekg(LR_ptr->pos_);
   LR_ptr->ReadOrbEnergies("Beta");
 }
 
-void LogReader::CoordSectionReader(void * ptr){
+void LogReader::CoordSectionReader(FileReader * ptr){
   LOG("Reading Coordinates from .log file",1);
   LogReader * LR_ptr = static_cast<LogReader *>(ptr);
 
@@ -284,14 +284,15 @@ void LogReader::CoordSectionReader(void * ptr){
   // While the line does not match the end of the table read in the coordinates
   while(!foundSubStrInStr(line,end_pattern)){
     auto vec_str = splitSt(line);
+
     X.push_back(stod(vec_str.at(3)));
     Y.push_back(stod(vec_str.at(4)));
     Z.push_back(stod(vec_str.at(5)));
     getline(LR_ptr->fid_,line);
   }
+
   LR_ptr->xyz.push_back(X);
   LR_ptr->xyz.push_back(Y);
   LR_ptr->xyz.push_back(Z);
-  
   LOG("Success reading Coordinates from .log file",2);
 }

@@ -3,7 +3,7 @@ project (calc_J)
 
 # The version number
 set( calcJ_VERSION_MAJOR 1 )
-set( calcJ_VERSION_MINOR 5 )
+set( calcJ_VERSION_MINOR 6 )
 set( calcJ_YEAR_PUBLISHED 2018 )
 set( calcJ_AUTHOR_SURNAME "\"Brown\"" )
 set( calcJ_AUTHOR_INITIALS "\"J. S.\"" )
