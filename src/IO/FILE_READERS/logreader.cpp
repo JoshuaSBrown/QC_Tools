@@ -24,7 +24,7 @@ void LogReader::registerSections_(){
   sectionHeaders_["Overlap"] = " *** Overlap ***";
   sectionHeaders_["OEAlpha"] = " Alpha  occ. eigenvalues --";
   sectionHeaders_["OEBeta"] = "  Beta  occ. eigenvalues --";
-  sectionHeaders_["Coord"] = "Center     Atomic";
+  sectionHeaders_["Coord"] = "Center     Atomic      Atomic";
 
   sectionReaders_["AOFunction"] = &LogReader::AOFunctionSectionReader;
   sectionReaders_["Overlap"] = &LogReader::OverlapSectionReader;
@@ -284,6 +284,7 @@ void LogReader::CoordSectionReader(void * ptr){
   // While the line does not match the end of the table read in the coordinates
   while(!foundSubStrInStr(line,end_pattern)){
     auto vec_str = splitSt(line);
+
     X.push_back(stod(vec_str.at(3)));
     Y.push_back(stod(vec_str.at(4)));
     Z.push_back(stod(vec_str.at(5)));
