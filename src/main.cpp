@@ -50,25 +50,25 @@ int main(int argc,const char *argv[]){
 
   LOG("Reading pun files",1);
   LOG("Reading pun file: "+par->getPunP(),2);
-  PunReader pr_P(par->getPunP());
-  pr_P.read();
+  PunReader pun_reader_P(par->getPunP());
+  pun_reader_P.read();
   LOG("Reading pun file: "+par->getPun1(),2);
-  PunReader pr_1(par->getPun1());
-  pr_1.read();
+  PunReader pun_reader_1(par->getPun1());
+  pun_reader_1.read();
   LOG("Reading pun file: "+par->getPun2(),2);
-  PunReader pr_2(par->getPun2());
-  pr_2.read();
+  PunReader pun_reader_2(par->getPun2());
+  pun_reader_2.read();
 
   LOG("Reading log files",1);
   LOG("Reading log file: "+par->getLogP(),2);
-  LogReader lr_P(par->getLogP());
-  lr_P.read();
+  LogReader log_reader_P(par->getLogP());
+  log_reader_P.read();
   LOG("Reading log file: "+par->getLog1(),2);
-  LogReader lr_1(par->getLog1());
-  lr_1.read();
+  LogReader log_reader_1(par->getLog1());
+  log_reader_1.read();
   LOG("Reading log file: "+par->getLog2(),2);
-  LogReader lr_2(par->getLog2());
-  lr_2.read();
+  LogReader log_reader_2(par->getLog2());
+  log_reader_2.read();
   // Load in general coefficients 
 
   // If there are only alpha orbitals then we can assume that restricted HF 
@@ -77,24 +77,23 @@ int main(int argc,const char *argv[]){
   // No need to worry about beta orbitals
 
   {
-    Matrix * mat_S = lr_P.getOverlapMatrix();
+    Matrix * mat_S = log_reader_P.getOverlapMatrix();
 
-    Matrix * mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
-    auto vec_P_OE = lr_P.getOE(par->getSpinP());
+    Matrix * mat_P_Coef = pun_reader_P.getCoefsMatrix(par->getSpinP());
+    auto vec_P_OE = log_reader_P.getOE(par->getSpinP());
     Matrix * mat_P_OE = new Matrix(vec_P_OE);
 
-    int HOMO1 = lr_1.getHOMOLevel(par->getSpin1());
+    int HOMO1 = log_reader_1.getHOMOLevel(par->getSpin1());
     LOG("Getting "+par->getSpin1()+" of monomer 1",2);
-    Matrix * mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
-    auto vec_1_OE = lr_1.getOE(par->getSpin1());
+    Matrix * mat_1_Coef = pun_reader_1.getCoefsMatrix(par->getSpin1());
+    auto vec_1_OE = log_reader_1.getOE(par->getSpin1());
     Matrix * mat_1_OE = new Matrix(vec_1_OE);
 
-    int HOMO2 = lr_2.getHOMOLevel(par->getSpin2());
+    int HOMO2 = log_reader_2.getHOMOLevel(par->getSpin2());
     LOG("Getting "+par->getSpin2()+" of monomer 2",2);
-    Matrix * mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
-    auto vec_2_OE = lr_2.getOE(par->getSpin2());
+    Matrix * mat_2_Coef = pun_reader_2.getCoefsMatrix(par->getSpin2());
+    auto vec_2_OE = log_reader_2.getOE(par->getSpin2());
     Matrix * mat_2_OE = new Matrix(vec_2_OE);
-
     // Unscramble dimer coef and energies first need to see how the dimer
     // and monomer coefficients line up. To determine how the ceofficients
     // line up we will first look at how the atoms appear in each of the 
@@ -102,19 +101,54 @@ int main(int argc,const char *argv[]){
     // assocaited with each of the atoms by checking the .log files. Given
     // the position of the atoms in the monomer unit and the positions of
     // the atoms in the dimer we can determine how the coefficients need 
-    // to be rearranged.     
-    auto coord_P = lr_P.getCoords();
-    auto coord_1 = lr_1.getCoords();
-    auto coord_2 = lr_2.getCoords();
+    // to be rearranged.    
+    vector<vector<double>> coord_P = log_reader_P.getCoords();
+    vector<vector<double>> coord_1 = log_reader_1.getCoords();
+    vector<vector<double>> coord_2 = log_reader_2.getCoords();
 
+    if(coord_P.size()==0){
+      throw runtime_error("Unable to read in coordinates from "+par->getLogP()); 
+    }
+    if(coord_1.size()==0){
+      throw runtime_error("Unable to read in coordinates from "+par->getLog1()); 
+    }
+    if(coord_2.size()==0){
+      throw runtime_error("Unable to read in coordinates from "+par->getLog2()); 
+    }
+    if(par->getCounterPoise()){
+      if(coord_P.at(0).size()!=coord_1.at(0).size() && coord_P.at(0).size() != coord_2.at(0).size()){
+        stringstream ss;
+        ss << "Error the number of atom coordinates read in by "
+          << par->getLogP() << " is " << coord_P.at(0).size()
+          << ", it is not matched by the number of coordinates in "
+          << par->getLog1() << " with " << coord_1.at(0).size() 
+          << " atoms and " << par->getLog2() << " with "
+          << coord_2.at(0).size() << " atoms."
+          << " In a counter poise calculation all atoms must appear in both"
+          << " files. Ghost atoms can be specifed with the -Bq keyword";
+        throw runtime_error(ss.str());
+      }
+
+    }else{
+      if(coord_P.at(0).size()!=(coord_1.at(0).size()+coord_2.at(0).size())){
+        stringstream ss;
+        ss << "Error the number of atom coordinates read in by "
+          << par->getLogP() << " is " << coord_P.at(0).size()
+          << ", it is not matched by the number of coordinates in "
+          << par->getLog1() << " with " << coord_1.at(0).size() 
+          << " atoms and " << par->getLog2() << " with "
+          << coord_2.at(0).size() << " atoms.";
+        throw runtime_error(ss.str());
+      }
+    }
     // Convert coords to matrices
     Matrix coord_P_mat(coord_P);
     Matrix coord_1_mat(coord_1);
     Matrix coord_2_mat(coord_2);
 
-    auto basis_P = lr_P.getBasisFuncCount();  
-    auto basis_1 = lr_1.getBasisFuncCount();  
-    auto basis_2 = lr_2.getBasisFuncCount();  
+    auto basis_P = log_reader_P.getBasisFuncCount();  
+    auto basis_1 = log_reader_1.getBasisFuncCount();  
+    auto basis_2 = log_reader_2.getBasisFuncCount();  
 
     int MO1 = mat_1_OE->get_rows();
     int MO2 = mat_2_OE->get_rows();

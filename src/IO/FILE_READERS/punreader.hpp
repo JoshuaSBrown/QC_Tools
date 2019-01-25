@@ -19,8 +19,8 @@ class PunReader : public FileReader {
     virtual void registerSections_();
     virtual void validFileName_();
 
-    static void OrbitalCoefAlphaSectionReader(void *);
-    static void OrbitalCoefBetaSectionReader(void *);
+    static void OrbitalCoefAlphaSectionReader(FileReader *);
+    static void OrbitalCoefBetaSectionReader(FileReader *);
 
     void ReadCoef(std::string orb_type);
     std::vector<double> readGausCoefLine(std::string line);

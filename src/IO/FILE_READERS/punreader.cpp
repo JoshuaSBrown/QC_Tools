@@ -20,8 +20,8 @@ PunReader::PunReader(string fileName) : FileReader(fileName){
 }
 
 void PunReader::registerSections_(){
-  sectionHeaders_["CoefAlpha"] = " 1 Alpha MO ";
-  sectionHeaders_["CoefBeta"] = " 1 Beta MO ";
+  sectionHeaders_["CoefAlpha"] = vector<string>{" 1 Alpha MO "};
+  sectionHeaders_["CoefBeta"] = vector<string>{" 1 Beta MO "};
 
   sectionReaders_["CoefAlpha"] = &PunReader::OrbitalCoefAlphaSectionReader;
   sectionReaders_["CoefBeta"] = &PunReader::OrbitalCoefBetaSectionReader;
@@ -97,12 +97,12 @@ void PunReader::ReadCoef(string orb_type){
   LOG("Success reading atomic orbital coefficients from .pun file.",2);
 }
 
-void PunReader::OrbitalCoefAlphaSectionReader(void * ptr){
+void PunReader::OrbitalCoefAlphaSectionReader(FileReader * ptr){
   PunReader * PR_ptr = static_cast<PunReader *>(ptr);
   PR_ptr->ReadCoef("Alpha");
 }
 
-void PunReader::OrbitalCoefBetaSectionReader(void * ptr){
+void PunReader::OrbitalCoefBetaSectionReader(FileReader * ptr){
   PunReader * PR_ptr = static_cast<PunReader *>(ptr);
   PR_ptr->ReadCoef("Beta");
 }

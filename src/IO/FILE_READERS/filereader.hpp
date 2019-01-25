@@ -5,12 +5,9 @@
 #include <string>
 #include <fstream>
 #include <map>
+#include <vector>
 
 namespace catnip {
-
-struct FilePackage{
-  void * ptr;
-};
 
 class FileReader{
   public:
@@ -20,7 +17,7 @@ class FileReader{
     void read();
   protected:
 
-    typedef void (*FRfunc)(void *);
+    typedef void (*FileReaderFunction)(FileReader *);
 
     // Private members
     void open();
@@ -35,10 +32,10 @@ class FileReader{
     // Private attributes
     // key - stores tag of the section
     // value - stores the pattern used to identify the section
-    std::map<std::string,std::string> sectionHeaders_;
+    std::map<std::string,std::vector<std::string>> sectionHeaders_;
     // key - stores tag of the section
     // value - stores the section reader function
-    std::map<std::string,FRfunc > sectionReaders_;
+    std::map<std::string,FileReaderFunction > sectionReaders_;
 
     std::string fileName_;
     std::ifstream fid_;

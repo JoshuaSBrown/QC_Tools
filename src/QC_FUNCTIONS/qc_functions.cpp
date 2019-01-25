@@ -83,6 +83,15 @@ double calculate_transfer_integral(
     zetaA = Matrix_concatenate_rows( mat_1_Coefinv, zerosB );
     zetaB = Matrix_concatenate_rows( zerosA, mat_2_Coefinv );
   }
+
+  if(mat_P_Coefinv.get_rows() != zetaA.get_rows() ){
+    throw runtime_error("ERROR monomer A zeta matrix does not have the same "
+        "number of rows as the dimer.");
+  }
+  if(mat_P_Coefinv.get_rows() != zetaB.get_rows() ){
+    throw runtime_error("ERROR monomer B zeta matrix does not have the same "
+        "number of rows as the dimer.");
+  }
   Matrix zetaAinv = zetaA.invert();
   Matrix zetaBinv = zetaB.invert();
 

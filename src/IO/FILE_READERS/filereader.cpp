@@ -83,13 +83,14 @@ bool FileReader::fileExist_(){
 }
 
 void FileReader::readSection_(string tag){
-  void * ptr = static_cast<void *>(this);
-  sectionReaders_[tag](ptr); 
+  sectionReaders_[tag](this); 
 }
 
 string FileReader::startSection_(string line){
   for( auto pr : sectionHeaders_ ){
-    if(foundSubStrInStr(line,pr.second)) return pr.first;
+    for(string& header : pr.second){
+      if(foundSubStrInStr(line,header)) return pr.first;
+    }
   }
   return "";
 }
