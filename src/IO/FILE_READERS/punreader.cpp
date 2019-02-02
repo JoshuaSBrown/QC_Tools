@@ -66,7 +66,7 @@ void PunReader::ReadCoef(string orb_type){
   string pattern = " MO OE";
 
   vector<vector<double>> v_vec;
-  size_t count;
+  size_t count = 0;
   bool first_row_set = false;
 
   bool allCoefsRead = false;
