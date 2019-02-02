@@ -16,6 +16,16 @@ using namespace std;
 
 namespace catnip {
 
+const string PATH_SEPERATOR_ = 
+#ifdef _WIN32
+  "\\/";
+#else
+  "/";
+#endif
+// const std::string PATH_SEPERATOR_;
+// FROM https://stackoverflow.com/questions/12971499/how-to-get-the-file-separator-symbol-in-standard-c-c-or
+// A compatible edit for running on windows Command line  
+  
 // trim from start (in place)
 void ltrim_(string &s) {
   s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
@@ -45,7 +55,7 @@ string lastStringInPath(string input){
   size_t found;
   string line;
   line = input;
-  while ((int)(found=line.find("/"))!=-1){
+  while ((int)(found=line.find_first_of(PATH_SEPERATOR_))!=-1){  // http://www.cplusplus.com/reference/string/string/find_first_of/
     line = line.substr(found+1,line.size());
   }
   return line;
@@ -57,7 +67,7 @@ string getPath(string input){
   string val = "";
   string line = input;
   while ((int)found!=-1){
-    found=line.find("/");
+    found=line.find_first_of(PATH_SEPERATOR_);                   // http://www.cplusplus.com/reference/string/string/find_first_of/
     line = line.substr(found+1,line.size());
     found2+=found+1;
     val = input.substr(0,found2);
