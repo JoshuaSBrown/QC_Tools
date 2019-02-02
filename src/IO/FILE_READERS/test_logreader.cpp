@@ -25,35 +25,15 @@ int main(void){
     LogReader lr("../../../GAUSSIANFILES/90_unordered/90_pair.log");
     lr.read(); 
     auto orb_info = lr.getOrbitalInfo();
-/*
-    for(auto pr : orb_info ){
-      cout << "Num " << pr.first.first << " Elem " << pr.first.second << endl; 
-      map<string,vector<double>> next = pr.second;
-      
-      for(auto obs : next ){
-        cout << "Orb " << obs.first << " ";
-        for( auto item : obs.second ){
-          cout << item << " ";
-        }
-        cout << endl;
-      }
-    }
-*/
+
     auto Soverlap = lr.getOverlapMatrix();
     cout << Soverlap->get_rows() << endl;
-  //  cout << *Soverlap << endl;
     auto Alpha = lr.getOE("Alpha");
    
     auto basisFuncCount = lr.getBasisFuncCount(); 
     for( auto c : basisFuncCount ){
       cout << c << endl;
     }
-//    for( auto en : Alpha ) {
-//      cout << en << endl;
-//    }
-
-//    cout << "Alpha HOMO " << lr.getHOMOLevel("Alpha") << endl;
-
     auto xyz = lr.getCoords();
     auto x = xyz.at(0);
     auto y = xyz.at(1);

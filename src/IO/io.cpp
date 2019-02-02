@@ -138,6 +138,12 @@ unique_ptr<ArgumentParser> prepareParser(void){
   desc = "Print software citation.";
   flag17.push_back(desc);
 
+  vector<string> flag18;
+  flag18.push_back("--version");
+  flag18.push_back("-v");
+  desc = "Print the version";
+  flag18.push_back(desc);
+
   set<vector<string>> flags; 
   flags.insert(flag1);
   flags.insert(flag2);
@@ -154,6 +160,7 @@ unique_ptr<ArgumentParser> prepareParser(void){
   flags.insert(flag15);
   flags.insert(flag16);
   flags.insert(flag17);
+  flags.insert(flag18);
 
   unique_ptr<ArgumentParser> ArgPars(new ArgumentParser(flags));
 
@@ -381,6 +388,19 @@ unique_ptr<ArgumentParser> prepareParser(void){
     // By default the flag citation is turned off
     ArgPars->setFlagDefaultValue("--citation","OFF");
   }
+
+  {
+    ArgPars->setFlagArgOpt(
+        "--version",
+        "ARGUMENT_SWITCH",
+        "PROPERTY_SWITCH",
+        "DEFAULT",
+        "OFF");
+   
+    // By default the flag citation is turned off
+    ArgPars->setFlagDefaultValue("--version","OFF");
+  }
+
 
   // Set rules guiding orbital numbers
   // Use default settings for min and max numbers
