@@ -10,8 +10,10 @@ set( calcJ_AUTHOR_INITIALS "\"J. S.\"" )
 set( calcJ_TITLE "\"CATNIP\"")
 set( calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
 
-enable_testing()
-
+option(ENABLE_TESTS "Enable tests" OFF)
+if (${ENABLE_TESTS})
+  enable_testing()
+endif()
 # Configure header file to pass some of the CMake settings
 # to the source code
 configure_file(
@@ -27,15 +29,17 @@ add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
 
 SET( CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic -Werror")
 
-file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
-file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+if (${ENABLE_TESTS})
+  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
 
-file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
 
-file( COPY "${PROJECT_SOURCE_DIR}/src/IO/testfile.pun" DESTINATION "${PROJECT_BINARY_DIR}/src/IO")
-file( COPY "${PROJECT_SOURCE_DIR}/src/IO/testfile.log" DESTINATION "${PROJECT_BINARY_DIR}/src/IO")
+  file( COPY "${PROJECT_SOURCE_DIR}/src/IO/testfile.pun" DESTINATION "${PROJECT_BINARY_DIR}/src/IO")
+  file( COPY "${PROJECT_SOURCE_DIR}/src/IO/testfile.log" DESTINATION "${PROJECT_BINARY_DIR}/src/IO")
+endif()
 
 # Add the binary tree to the search path for include files
 # so that we will find calcJconfig.hpp
