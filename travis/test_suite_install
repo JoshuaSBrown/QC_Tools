@@ -4,16 +4,26 @@
 
 wget -O "test_suite_files" "https://docs.google.com/uc?id=0B3X9GlR6EmbnQ0FtZmJJUXEyRTA&export=download"
 
-cp .gdrive/token_v2.json ~/.gdrive/
+HOME_DIR=$(echo ~)
 
+[[ -d "${HOME_DIR}/.gdrive" ]] || mkdir "${HOME_DIR}/.gdrive"
+
+pwd
+ls ./travis/.gdrive
+cp "./travis/.gdrive/token_v2.json" "${HOME_DIR}/.gdrive/token_v2.json"
+ls "${HOME_DIR}/.gdrive"
+
+chmod +x ./test_suite_files
+
+
+./test_suite_files list
 file_id=$(./test_suite_files list | grep GAUSSIANFILES.zip | awk '{print $1}')
 
 echo $file_id
 
 ./test_suite_files download $file_id
 
-mv $file_id ../
-unzip "../GAUSSIANFILES.zip"
+unzip "GAUSSIANFILES.zip"
 
 #cleanup
 rm GAUSSIANFILES.zip
