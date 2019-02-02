@@ -29,7 +29,7 @@ I welcome feedback and contributors. If you have suggestions for integrating CAT
 
 [![Join the chat at https://gitter.im/QC_Tools/Lobby](https://badges.gitter.im/QC_Tools/Lobby.svg)](https://gitter.im/QC_Tools/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-If you run into a problem feel free to create an issue on [github](https://github.com/JoshuaSBrown/QC_Tools/issues)
+If you run into a problem feel free to create an issue on [github](https://github.com/JoshuaSBrown/QC_Tools/issues), if I do not respond promptly feel free to reach out again. Often responses get filtered to my spam folder or I simply do not see them.
 
 ## Citing
 
