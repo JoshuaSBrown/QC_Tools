@@ -1,6 +1,6 @@
 # WARNING TO USERS
 
-Feb 2nd to Feb3rd, CATNIP will be undergoing a transition and you might experience difficulty. The GAUSSIANFILES folder which contains files for running the tutorials is being moved to a zip file that is publicly available [here](https://drive.google.com/open?id=1C3CRQJxXyDgmEBgjvQ7_J4HzuS63ppQG) on google drive. 
+Feb 2nd to Feb 3rd 2019, CATNIP will be undergoing a transition and you might experience difficulty. The GAUSSIANFILES folder which contains files for running the tutorials is being moved to a zip file that is publicly available [here](https://drive.google.com/open?id=1C3CRQJxXyDgmEBgjvQ7_J4HzuS63ppQG) on google drive. 
 
 # QC_Tools or CATNIP - ChArge TraNsfer Integral Package#
 
