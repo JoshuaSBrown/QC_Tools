@@ -9,6 +9,9 @@ compiler:
 before_install:
   - pwd
   - openssl aes-256-cbc -K $encrypted_93e1b7320130_key -iv $encrypted_93e1b7320130_iv -in travis/.gdrive/token_v2.json.enc -out travis/.gdrive/token_v2.json -d
+  - ls
+  - ls travis
+  - ls travis/.gdrive
   - chmod +x travis/test_suite_install
   - ./travis/test_suite_install 
 
