@@ -68,10 +68,6 @@ else
 fi
 echo $data >> $fileOut
 
-# Because they are big files they are stored in tar.gz format we must first untar them
-tar -xzf ${path}/GAUSSIANFILES/P_test/A.tar.gz -C ${path}/GAUSSIANFILES/P_test/
-tar -xzf ${path}/GAUSSIANFILES/P_test/B.tar.gz -C ${path}/GAUSSIANFILES/P_test/
-tar -xzf ${path}/GAUSSIANFILES/P_test/AB.tar.gz -C ${path}/GAUSSIANFILES/P_test/
 exec_command="${path}/build/calc_J -p_P ${path}/GAUSSIANFILES/P_test/AB.pun  -p_1 ${path}/GAUSSIANFILES/P_test/A.pun -p_2 ${path}/GAUSSIANFILES/P_test/B.pun"
 data=$(${exec_command} )
 if [ $? -eq 0 ]; then
@@ -93,9 +89,6 @@ else
 fi
 echo $data >> $fileOut
 
-tar -xzf ${path}/GAUSSIANFILES/Square_Matrix_test/monomer1.tar.gz -C ${path}/GAUSSIANFILES/Square_Matrix_test/
-tar -xzf ${path}/GAUSSIANFILES/Square_Matrix_test/monomer2.tar.gz -C ${path}/GAUSSIANFILES/Square_Matrix_test/
-tar -xzf ${path}/GAUSSIANFILES/Square_Matrix_test/dimer.tar.gz -C ${path}/GAUSSIANFILES/Square_Matrix_test/
 exec_command="${path}/build/calc_J -p_P ${path}/GAUSSIANFILES/Square_Matrix_test/dimer.pun  -p_1 ${path}/GAUSSIANFILES/Square_Matrix_test/monomer1.pun -p_2 ${path}/GAUSSIANFILES/Square_Matrix_test/monomer2.pun"
 data=$(${exec_command} )
 if [ $? -eq 0 ]; then
