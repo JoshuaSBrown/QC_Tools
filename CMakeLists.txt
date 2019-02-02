@@ -10,6 +10,7 @@ set( calcJ_AUTHOR_INITIALS "\"J. S.\"" )
 set( calcJ_TITLE "\"CATNIP\"")
 set( calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
 
+option(ENABLE_REGRESSION_TESTS "Enable Regression tests" OFF)
 option(ENABLE_TESTS "Enable tests" OFF)
 if (${ENABLE_TESTS})
   enable_testing()
@@ -29,7 +30,7 @@ add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
 
 SET( CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic -Werror")
 
-if (${ENABLE_TESTS})
+if (${ENABLE_REGRESSION_TESTS})
   file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
   file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
 
@@ -73,7 +74,9 @@ add_executable(calc_J src/main.cpp)
 target_link_libraries(calc_J QC_FUNCTIONS_SRC IO_SRC FILE_READERS_SRC PARAMETERS_SRC ARGUMENTS_SRC PROPERTIES_SRC MATRIX_SRC STRING_SUPPORT_SRC)
 
 if(BASH_PROGRAM)
+  if(${ENABLE_REGRESSION_TESTS})
   add_test(test_calc_J_script ${BASH_PROGRAM} ${CMAKE_CURRENT_SOURCE_DIR}/src/test_script_calc_J.sh ${CMAKE_SOURCE_DIR})
+  endif(${ENABLE_REGRESSION_TESTS})
 endif(BASH_PROGRAM)
 
 install( TARGETS calc_J DESTINATION bin)

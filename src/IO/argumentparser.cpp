@@ -652,6 +652,8 @@ void ArgumentParser::parse(const char * argv[], int argc){
   string help_flag_short = "-h";
   string citation_flag = "--citation";
   string citation_flag_short = "-cite";
+  string version_flag = "--version";
+  string version_flag_short = "-version";
 
   size_t allowed_args_before_exit = 2;
   for( size_t index=1; index<arguments.size();++index){
@@ -663,6 +665,10 @@ void ArgumentParser::parse(const char * argv[], int argc){
         exit(0);
       }
       ++allowed_args_before_exit;
+    }else if(version_flag.compare(arguments.at(index))==0 || 
+        version_flag_short.compare(arguments.at(index))==0){
+        cout << "Version " << calcJ_VERSION_MAJOR << "." << calcJ_VERSION_MINOR  << endl;
+        exit(0);
     }else if(citation_flag.compare(arguments.at(index))==0 || 
         citation_flag_short.compare(arguments.at(index))==0){
         cout << "\nCitation: " << calcJ_AUTHOR_SURNAME << ", ";
