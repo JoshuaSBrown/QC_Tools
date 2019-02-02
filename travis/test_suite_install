@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Pulls GAUSSIANFILES.zip from public google drive and unzips
+
+wget -O "test_suite_files" "https://docs.google.com/uc?id=0B3X9GlR6EmbnQ0FtZmJJUXEyRTA&export=download"
+
+cp .gdrive/token_v2.json ~/.gdrive/
+
+file_id=$(./test_suite_files list | grep GAUSSIANFILES.zip | awk '{print $1}')
+
+echo $file_id
+
+./test_suite_files download $file_id
+
+mv $file_id ../
+unzip "../GAUSSIANFILES.zip"
+
+#cleanup
+rm ../GAUSSIANFILES.zip
+rm ../test_suite_files
