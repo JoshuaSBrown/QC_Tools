@@ -16,5 +16,5 @@ mv $file_id ../
 unzip "../GAUSSIANFILES.zip"
 
 #cleanup
-rm ../GAUSSIANFILES.zip
-rm ../test_suite_files
+rm GAUSSIANFILES.zip
+rm test_suite_files
