@@ -667,7 +667,6 @@ void ArgumentParser::parse(const char * argv[], int argc){
       ++allowed_args_before_exit;
     }else if(version_flag.compare(arguments.at(index))==0 || 
         version_flag_short.compare(arguments.at(index))==0){
-        cout << "Version " << calcJ_VERSION_MAJOR << "." << calcJ_VERSION_MINOR  << endl;
         exit(0);
     }else if(citation_flag.compare(arguments.at(index))==0 || 
         citation_flag_short.compare(arguments.at(index))==0){
