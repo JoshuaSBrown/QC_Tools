@@ -39,3 +39,10 @@ If you use CATNIP to get values for a paper it would be nice if you cited it. To
 [2]	E. F. Valeev, V. Coropceanu, D. a da Silva Filho, S. Salman, and J.-L. Brédas, “Effect of electronic polarization on charge-transport parameters in molecular organic semiconductors.,” J. Am. Chem. Soc., vol. 128, no. 30, pp. 9882–6, Aug. 2006.  
 
 The author would like to acknowledge insightful correspondence with E. F. Valeev and B. Baumeier. 
+
+### Thanks to the following for helping to make CATNIP better
+
+* NKUCodingCat 
+* dwaipayanroni
+* rdft4e
+* ivorever
