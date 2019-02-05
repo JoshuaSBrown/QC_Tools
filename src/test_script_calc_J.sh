@@ -204,6 +204,24 @@ else
 fi
 echo $data >> $fileOut
 
+exec_command="${path}/build/calc_J -p_P ${path}/GAUSSIANFILES/CuBr2_Py/CuBr2-Py.pun -p_1 ${path}/GAUSSIANFILES/CuBr2_Py/CuBr2.pun -p_2 ${path}/GAUSSIANFILES/CuBr2_Py/Py.pun"
+data=$(${exec_command})
+if [ $? -eq 0 ]; then
+  findJeff 
+  if (( $(bc <<< "$J_val > -0.0055" ) )) && (( $(bc <<< "$J_val < -0.0053" ) ))
+  then
+    echo "${green}[SUCCESS]${reset} ${exec_command}" 
+  else
+    echo "${red}[FAILURE]${reset} ${exec_command} expected output -0.00542741"
+    echo "actual output $J_val"
+    count_fails=$(($count_fails+1))
+  fi
+else
+  echo "${red}[FAILURE]${reset} ${exec_command}"
+  count_fails=$(($count_fails+1))
+fi
+echo $data >> $fileOut
+
 
 # The following commands should not work 
 
