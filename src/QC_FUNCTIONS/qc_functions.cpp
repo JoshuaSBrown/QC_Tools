@@ -79,8 +79,8 @@ double calculate_transfer_integral(
     LOG("Creating zeta matrices from coefficients",2);
     Matrix zerosA(mat_1_Coefinv.get_rows(),1,mat_1_Coefinv.get_shel());
     Matrix zerosB(mat_2_Coefinv.get_rows(),1,mat_2_Coefinv.get_shel());
-    zetaA = Matrix_concatenate_rows( mat_1_Coefinv, zerosA );
-    zetaB = Matrix_concatenate_rows( zerosB, mat_2_Coefinv );
+    zetaA = Matrix_concatenate_rows( mat_1_Coefinv, zerosB );
+    zetaB = Matrix_concatenate_rows( zerosA, mat_2_Coefinv );
   }
   Matrix zetaAinv = zetaA.invert();
   Matrix zetaBinv = zetaB.invert();

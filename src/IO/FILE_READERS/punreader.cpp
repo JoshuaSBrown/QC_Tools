@@ -20,8 +20,8 @@ PunReader::PunReader(string fileName) : FileReader(fileName){
 }
 
 void PunReader::registerSections_(){
-  sectionHeaders_["CoefAlpha"] = " 1 Alpha MO ";
-  sectionHeaders_["CoefBeta"] = " 1 Beta MO ";
+  sectionHeaders_["CoefAlpha"] =set<string>{" 1 Alpha MO "};
+  sectionHeaders_["CoefBeta"] =set<string>{" 1 Beta MO "};
 
   sectionReaders_["CoefAlpha"] = &PunReader::OrbitalCoefAlphaSectionReader;
   sectionReaders_["CoefBeta"] = &PunReader::OrbitalCoefBetaSectionReader;

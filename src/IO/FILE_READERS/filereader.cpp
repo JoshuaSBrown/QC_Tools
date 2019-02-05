@@ -53,8 +53,8 @@ void FileReader::registerSections_(){
 // as well as a section header pair exist
 void FileReader::checkSections_(){
   set<std::string> tags;
-  for( auto pr : sectionHeaders_){
-    tags.insert(pr.first);
+  for( pair<const string,set<string>> & tag_and_header : sectionHeaders_){
+    tags.insert(tag_and_header.first);
   }
   for( auto pr : sectionReaders_){
     tags.insert(pr.first);
@@ -88,8 +88,12 @@ void FileReader::readSection_(string tag){
 }
 
 string FileReader::startSection_(string line){
-  for( auto pr : sectionHeaders_ ){
-    if(foundSubStrInStr(line,pr.second)) return pr.first;
+  for( pair<const string,set<string>> & tag_and_header : sectionHeaders_ ){
+    for( const string & header : tag_and_header.second){
+      if(foundSubStrInStr(line,header)) {
+        return tag_and_header.first;
+      }
+    }
   }
   return "";
 }

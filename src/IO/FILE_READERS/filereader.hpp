@@ -4,6 +4,7 @@
 
 #include <string>
 #include <fstream>
+#include <set>
 #include <map>
 
 namespace catnip {
@@ -35,7 +36,7 @@ class FileReader{
     // Private attributes
     // key - stores tag of the section
     // value - stores the pattern used to identify the section
-    std::map<std::string,std::string> sectionHeaders_;
+    std::map<std::string,std::set<std::string>> sectionHeaders_;
     // key - stores tag of the section
     // value - stores the section reader function
     std::map<std::string,FRfunc > sectionReaders_;
