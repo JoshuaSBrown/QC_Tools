@@ -20,11 +20,11 @@ LogReader::LogReader(string fileName) : FileReader(fileName){
 }
 
 void LogReader::registerSections_(){
-  sectionHeaders_["AOFunction"] = "     Gross orbital populations:";
-  sectionHeaders_["Overlap"] = " *** Overlap ***";
-  sectionHeaders_["OEAlpha"] = " Alpha  occ. eigenvalues --";
-  sectionHeaders_["OEBeta"] = "  Beta  occ. eigenvalues --";
-  sectionHeaders_["Coord"] = "Center     Atomic";
+  sectionHeaders_["AOFunction"] = set<string>{"     Gross orbital populations:"};
+  sectionHeaders_["Overlap"] = set<string>{" *** Overlap ***"};
+  sectionHeaders_["OEAlpha"] = set<string>{" Alpha  occ. eigenvalues --"};
+  sectionHeaders_["OEBeta"] = set<string>{"  Beta  occ. eigenvalues --"};
+  sectionHeaders_["Coord"] = set<string>{"Center     Atomic      Atomic","Center     Atomic     Atomic"};
 
   sectionReaders_["AOFunction"] = &LogReader::AOFunctionSectionReader;
   sectionReaders_["Overlap"] = &LogReader::OverlapSectionReader;
