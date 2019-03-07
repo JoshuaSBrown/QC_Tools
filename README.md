@@ -23,6 +23,7 @@ CATNIP is meant to make difficult calculations accessible to the masses. The foc
  
 I welcome feedback and contributors. If you have suggestions for integrating CATNIP with other programs please do not hesitate to create an issue or contact me on gitter:
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bb8543f475c64968871b7109879b1f0a)](https://app.codacy.com/app/JoshuaSBrown/QC_Tools?utm_source=github.com&utm_medium=referral&utm_content=JoshuaSBrown/QC_Tools&utm_campaign=Badge_Grade_Dashboard)
 [![Join the chat at https://gitter.im/QC_Tools/Lobby](https://badges.gitter.im/QC_Tools/Lobby.svg)](https://gitter.im/QC_Tools/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 If you run into a problem feel free to create an issue on [github](https://github.com/JoshuaSBrown/QC_Tools/issues), if I do not respond promptly feel free to reach out again. Often responses get filtered to my spam folder or I simply do not see them.
