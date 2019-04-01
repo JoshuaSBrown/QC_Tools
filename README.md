@@ -1,4 +1,4 @@
-# QC_Tools or CATNIP - ChArge TraNsfer Integral Package#
+# QC_Tools or CATNIP - ChArge TraNsfer Integral Package
 
 ## Badges
 
