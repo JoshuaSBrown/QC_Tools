@@ -15,8 +15,8 @@ before_install:
   - pwd
   - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
   - python get-pip.py
-  - pip install --upgrade pip
-  - pip install gdown
+  - sudo pip install --upgrade pip
+  - sudo pip install gdown
     #  - openssl aes-256-cbc -K $encrypted_93e1b7320130_key -iv $encrypted_93e1b7320130_iv -in travis/.gdrive/token_v2.json.enc -out travis/.gdrive/token_v2.json -d
   - ls
   - ls travis
