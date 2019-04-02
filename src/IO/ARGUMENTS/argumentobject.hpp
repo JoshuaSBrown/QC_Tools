@@ -283,7 +283,7 @@ class ArgumentObject{
 
 
     // Setup the valid options associated with the parameter
-    void setArgPropertyOpt(std::string property, std::string option, double val){
+    void setArgPropertyOpt(std::string property, std::string option,const double & val){
       bool setval = false;
       for(auto prop : double_propobjs_){
         if(property.compare(prop->getPropertyName())==0){
