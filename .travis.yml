@@ -1,5 +1,13 @@
 sudo: required
 
+dist: xenial
+addons:
+  apt:
+    update: true
+    packages:
+    - pip
+    - python
+
 language: cpp
 
 compiler:
