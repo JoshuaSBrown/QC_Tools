@@ -16,7 +16,7 @@ class PropertySwitch : public PropertyObject<std::string,std::string> {
   public:
     PropertySwitch(void);
     bool propValid(int value) { switchValid(value); return true;}
-    bool propValid(std::string value) { switchValid(value); return true;}
+    bool propValid(const std::string & value) { switchValid(value); return true;}
     bool propValid() { return true;}
 };
 

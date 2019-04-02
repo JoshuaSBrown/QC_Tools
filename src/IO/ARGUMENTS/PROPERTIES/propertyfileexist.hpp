@@ -15,7 +15,7 @@ class PropertyFileExist : public PropertyObject<std::string,int> {
   public:
     PropertyFileExist(void);
     PropertyFileExist(int fileMustExist);
-    bool propValid(std::string fileName);
+    bool propValid(const std::string & fileName);
     void postCheck(void) const;
 };
 

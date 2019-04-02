@@ -13,7 +13,7 @@ class PropertyString : public PropertyObject<std::string,size_t>{
     std::vector<std::string> getOpts_(void) const;
   public:
     PropertyString(void);
-    bool propValid(const std::string & value) const { stringValid(value); return true;}
+    bool propValid(const std::string & value) { stringValid(value); return true;}
 };
 
 }

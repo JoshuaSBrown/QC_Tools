@@ -26,7 +26,7 @@ bool PropertyFileExist::fileExist(const string & fileNamePath) const {
   return (stat(fileNamePath.c_str(),&buf)==0);
 }
 
-bool PropertyFileExist::propValid(string fileNamePath){
+bool PropertyFileExist::propValid(const string & fileNamePath){
   if(getPropOption("FILE_MUST_EXIST")){
     if(!fileExist(fileNamePath)){
       string err = ""+fileNamePath+" does not exist";

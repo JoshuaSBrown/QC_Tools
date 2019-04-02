@@ -16,7 +16,7 @@ class PropertyStringChoice :
     PropertyStringChoice(void);
     void setPropOption(std::string option,std::string var);
     void setPropOption(std::string option,std::set<std::string> var);
-    bool propValid(std::string string_choice);
+    bool propValid(const std::string & string_choice);
 };
 
 }

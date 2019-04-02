@@ -54,13 +54,7 @@ class PropertyObject{
       options_.clear();
     }
     
-    virtual bool propValid(const S & value){
-      std::ostringstream err;
-      err << "propValid has been called from base class with value: ";
-      err << value << ". It is only meant to be called from a derived class.";
-      throw std::runtime_error(err.str());
-      return true;
-    }
+    virtual bool propValid(const S & value) = 0;
 
     std::string getPropertyName(void) const { return getName_(); }
 

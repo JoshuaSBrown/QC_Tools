@@ -76,7 +76,7 @@ void PropertyStringChoice::setPropOption(std::string option,set<string> set_vars
   throw invalid_argument("Unrecognized option value combo "+option+" "+vars);
 }
 
-bool PropertyStringChoice::propValid(string string_choice){
+bool PropertyStringChoice::propValid(const string & string_choice){
 
   set<string> opt_val = getPropOption("STRING_CHOICE_ENFORCED");
   string val = *(opt_val.begin());

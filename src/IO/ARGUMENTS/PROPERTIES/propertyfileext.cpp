@@ -73,7 +73,7 @@ void PropertyFileExt::setPropOption(std::string option,std::string var){
   PropertyObject::setPropOption(option,vars);
 }
 
-bool PropertyFileExt::propValid(string fileNamePath){
+bool PropertyFileExt::propValid(const string & fileNamePath){
   string fileName = lastStringInPath(fileNamePath);
   string ext = grabStrAfterLastOccuranceInclusive(fileName,".");
   extSupported(ext);
