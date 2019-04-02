@@ -15,7 +15,7 @@ struct FilePackage{
 
 class FileReader{
   public:
-    FileReader(std::string fileName);    
+    FileReader(std::string fileName) : fileName_(fileName) {};    
     std::string getExt();
 
     void read();
