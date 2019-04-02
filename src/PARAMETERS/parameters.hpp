@@ -69,12 +69,12 @@ class Parameters {
     bool getCounterPoise() const { return counterPoise; }
     bool getCitation() const { return citation; }
 
-    void setLog1(const std::string log1);
-    void setLog2(const std::string log2);
-    void setLogP(const std::string logP);
-    void setPun1(const std::string pun1);
-    void setPun2(const std::string pun2);
-    void setPunP(const std::string punP);
+    void setLog1(const std::string & log1);
+    void setLog2(const std::string & log2);
+    void setLogP(const std::string & logP);
+    void setPun1(const std::string & pun1);
+    void setPun2(const std::string & pun2);
+    void setPunP(const std::string & punP);
 
     void setSpinP(const std::string spin) { spinP=spin; }
     void setSpin1(const std::string spin) { spin1=spin; }

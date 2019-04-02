@@ -14,37 +14,6 @@ using namespace std;
 
 namespace catnip {
 
-Matrix Matrix_Multiply( Matrix mat1, Matrix mat2){
-
-	if(mat1.get_shel() != 1 || mat2.get_shel() !=1){
-		throw invalid_argument("ERROR Matrix_Multiply only allowed for 2d nxm matrix"
-      " not 3d nxmxl\n");
-	}
-	if(mat1.get_cols() != mat2.get_rows()){
-		throw invalid_argument("ERROR Matrix_Multiply only allowed for nxm by mxl "
-      "matrices\n      second matrix must have same number of colums as first\n"
-		  "      matrix has number of rows\n");
-	}
-
-	Matrix mat3(mat1.get_rows(), mat2.get_cols());
-
-	int i;
-	int j;
-	int k;
-	double sum;
-
-	for(i=1;i<=mat1.get_rows();i++){
-		for(j=1;j<=mat2.get_cols();j++){
-			sum = 0;
-			for(k=1;k<=mat1.get_cols();k++){
-				sum += mat1.get_elem(i,k)*mat2.get_elem(k,j);
-			}
-			mat3.set_elem(sum,i,j);
-		}
-	}
-	return mat3;
-}
-
 Matrix Matrix_diag(Matrix mat){
 
 	if(mat.get_cols()>1 && mat.get_rows()>1){
@@ -154,7 +123,7 @@ Matrix Matrix_concatenate_rows( Matrix mat1, Matrix mat2 ){
 
 }
 
-Matrix Matrix_concatenate_cols( Matrix mat1, Matrix mat2 ){
+Matrix Matrix_concatenate_cols( Matrix mat1,const Matrix & mat2 ){
 
 	//For this function to work both mat1 and mat2 must have
 	//the same number of columns and shelves
@@ -238,7 +207,7 @@ std::ostream & operator<<(std::ostream &out, Matrix &mat){
 	return out;
 }
 
-Matrix & operator* (Matrix &mat1, Matrix &mat2){
+Matrix & operator* (Matrix &mat1, const Matrix &mat2){
 
 	if(mat1.get_shel() != 1 || mat2.get_shel() !=1){
 		printf("ERROR Matrix_Multiply only allowed for 2d nxm matrix not 3d nxmxl\n");

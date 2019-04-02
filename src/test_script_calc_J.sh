@@ -18,9 +18,9 @@ fi
 
 echo "PATH "$path
 
-red=`tput setaf 1`
-green=`tput setaf 2`
-reset=`tput sgr0`
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+reset=$(tput sgr0)
 count_fails=0
 
 findJeff() {
@@ -44,7 +44,7 @@ if [ $? -eq 0 ]; then
   echo "${green}[SUCCESS]${reset} ${exec_command}"
 else
   echo "${red}[FAILURE]${reset} ${exec_command}"
-  count_fails=$(($count_fails+1))
+  count_fails=$((count_fails+1))
 fi
 
 exec_command="${path}/build/calc_J -p_P ${path}/GAUSSIANFILES/30/30_pair.pun  -p_1 ${path}/GAUSSIANFILES/30/ref.pun -p_2 ${path}/GAUSSIANFILES/30/30_2.pun"

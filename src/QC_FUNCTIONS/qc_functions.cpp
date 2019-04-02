@@ -368,7 +368,7 @@ Matrix * mergeListOfMatrices(
   list<Matrix *> & matrix_list, 
   const int rows, 
   const int cols, 
-  string ColRowMerge){
+  const string & ColRowMerge){
 
   Matrix * full_matrix = new Matrix(rows,cols);
   if(ColRowMerge.compare("Columns")==0){
@@ -408,15 +408,15 @@ Matrix * mergeListOfMatrices(
 }
 
 // This function 
-Matrix * createNewMatrix(list<Matrix *> & p_atom_mat_coef,int rows, int cols,string ColRow){
+Matrix * createNewMatrix(list<Matrix *> & p_atom_mat_coef,int rows, int cols,const string & ColRow){
   return mergeListOfMatrices(p_atom_mat_coef, rows, cols, ColRow);
 }
 
 // unscramble the coefficients
 Matrix * unscramble_Coef(
-  std::vector<int> matchDimerA, 
+  const std::vector<int> & matchDimerA, 
   std::vector<int> matchDimerB,
-  std::vector<int> basisFuncP,
+  const std::vector<int> & basisFuncP,
   Matrix * dimerCoef){
 
   // Let's reduce the complexity of the problem by instead of working
@@ -630,7 +630,7 @@ void TransferComplex::unscramble(
     Matrix coord_1_mat,
     Matrix coord_2_mat,
     Matrix coord_P_mat,
-    std::vector<int> basisP,
+    const std::vector<int> & basisP,
     std::vector<int> basis2){
 
   unscrambled = true;
