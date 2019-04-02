@@ -10,8 +10,8 @@ namespace catnip {
 class PropertyStringChoice : 
   public PropertyObject<std::string,std::set<std::string>>{
   private:
-    std::string getName_(void) { return "PROPERTY_STRING_CHOICE"; }
-    std::vector<std::string> getOpts_(void);
+    std::string getName_(void) const { return "PROPERTY_STRING_CHOICE"; }
+    std::vector<std::string> getOpts_(void) const;
   public:
     PropertyStringChoice(void);
     void setPropOption(std::string option,std::string var);

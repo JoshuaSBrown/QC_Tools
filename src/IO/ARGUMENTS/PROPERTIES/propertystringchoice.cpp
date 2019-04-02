@@ -15,7 +15,7 @@ PropertyStringChoice::PropertyStringChoice(void){
   setPropOption_("STRING_CHOICES",set_var2);
 }
 
-vector<string> PropertyStringChoice::getOpts_(void){
+vector<string> PropertyStringChoice::getOpts_(void) const{
   vector<string> options;
   options.push_back("STRING_CHOICE_ENFORCED");
   options.push_back("STRING_CHOICES");

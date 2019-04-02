@@ -9,10 +9,10 @@ namespace catnip {
 
 class PropertyFileExt : public PropertyObject<std::string,std::set< std::string > >{
   private:
-    void checkExt(std::string);
-    void extSupported(std::string);
-    std::string getName_(void) { return "PROPERTY_FILE_EXT"; }
-    std::vector<std::string> getOpts_(void);
+    void checkExt(const std::string &) const;
+    void extSupported(const std::string &) const;
+    std::string getName_(void) const { return "PROPERTY_FILE_EXT"; }
+    std::vector<std::string> getOpts_(void) const;
   public:
     PropertyFileExt(void);
     PropertyFileExt(std::string ext);

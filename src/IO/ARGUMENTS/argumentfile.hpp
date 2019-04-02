@@ -9,7 +9,7 @@ namespace catnip {
 
 class ArgumentFile : public ArgumentObject<std::string> {
   private:
-    std::string getName_(void) { return "ARGUMENT_FILE"; }
+    std::string getName_(void) const { return "ARGUMENT_FILE"; }
     void registerProperties_(void);
   public:
     ArgumentFile(void);

@@ -20,8 +20,8 @@ class PropertyObject{
     // void * points to the correct value for that type
     std::map<std::string,void *> options_;
 
-    bool propOptionValid_(std::string option) { 
-      for(auto opt : options_ ){
+    bool propOptionValid_(const std::string & option) const { 
+      for(const auto & opt : options_ ){
         if(opt.first.compare(option)==0) return true;
       }
       return false; 
@@ -38,9 +38,9 @@ class PropertyObject{
       }
     }
 
-    virtual std::string getName_(void){return "UNKNOWN";}
+    virtual std::string getName_(void) const {return "UNKNOWN";}
 
-    virtual std::vector<std::string> getOpts_(void){
+    virtual std::vector<std::string> getOpts_(void) const{
       std::vector<std::string> options{"NO_OPTIONS"};
       return options;
     }
@@ -54,7 +54,7 @@ class PropertyObject{
       options_.clear();
     }
     
-    virtual bool propValid(S value) {
+    virtual bool propValid(const S & value){
       std::ostringstream err;
       err << "propValid has been called from base class with value: ";
       err << value << ". It is only meant to be called from a derived class.";
@@ -62,9 +62,9 @@ class PropertyObject{
       return true;
     }
 
-    std::string getPropertyName(void) { return getName_(); }
+    std::string getPropertyName(void) const { return getName_(); }
 
-    std::vector<std::string> getPropertyOptions(void) { return getOpts_(); }
+    std::vector<std::string> getPropertyOptions(void) const { return getOpts_(); }
 
     // Setup the valid options associated with the parameter
     void setPropOption(std::string option, T val) {
@@ -74,16 +74,16 @@ class PropertyObject{
       setPropOption_(option,val);
     }
 
-    T getPropOption(std::string option){
+    T getPropOption(const std::string & option) const {
       if(!propOptionValid_(option)){
         std::string err = ""+option+" is an unrecognized property option for "
           "property "+getName_();
         throw std::invalid_argument(err);  
       }
-      return *(static_cast<T *>(options_[option]));
+      return *(static_cast<T *>(options_.at(option)));
     }
 
-    virtual void postCheck(void) { return; }
+    virtual void postCheck(void) const { return; }
 };
 
 }

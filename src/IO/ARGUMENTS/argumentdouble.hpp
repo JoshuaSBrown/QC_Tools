@@ -9,7 +9,7 @@ namespace catnip {
 
 class ArgumentDouble : public ArgumentObject<double> {
   private:
-    std::string getName_(void) { return "ARGUMENT_DOUBLE"; }
+    std::string getName_(void) const { return "ARGUMENT_DOUBLE"; }
     void registerProperties_(void);
   public:
     ArgumentDouble(void);

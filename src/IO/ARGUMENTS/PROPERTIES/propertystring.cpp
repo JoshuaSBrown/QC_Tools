@@ -10,12 +10,12 @@ PropertyString::PropertyString(void){
   setPropOption_("MAX_LENGTH",(size_t)-1);
 }
 
-vector<string> PropertyString::getOpts_(void){
+vector<string> PropertyString::getOpts_(void) const {
   vector<string> options{"MIN_LENGTH","MAX_LENGTH"};
   return options;
 }
 
-void PropertyString::stringValid(string val){
+void PropertyString::stringValid(const string & val) const {
   if(val.size()>getPropOption("MAX_LENGTH")){
     string err = "The string is larger than allowed "+val+" the "
       "maximum allowed value is "+to_string(getPropOption("MAX_LENGTH"));

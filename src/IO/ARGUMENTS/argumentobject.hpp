@@ -24,9 +24,9 @@ class ArgumentObject{
     std::vector<PropertyObject<S,std::set<std::string>>*> string_set_propobjs_;
     std::vector<PropertyObject<S,std::vector<std::string>>*> string_vec_propobjs_;
 
-    virtual std::string getName_(void){return "UNKNOWN";}
+    virtual std::string getName_(void) const {return "UNKNOWN";}
 
-    void checkValid_(S val){
+    void checkValid_(const S & val) const {
       for(auto prop : int_propobjs_){
         prop->propValid(val);
       }
@@ -377,7 +377,7 @@ class ArgumentObject{
       }
     }
 
-    bool argValid(S value){
+    bool argValid(const S & value) const {
       checkValid_(value);
       return true;
     }

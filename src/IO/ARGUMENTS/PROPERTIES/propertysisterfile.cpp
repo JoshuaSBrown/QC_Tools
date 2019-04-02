@@ -18,7 +18,7 @@ PropertySisterFile::PropertySisterFile(void){
   setPropOption_("SISTER_FILE_EXISTS",vec_var2);
 }
 
-vector<string> PropertySisterFile::getOpts_(void){
+vector<string> PropertySisterFile::getOpts_(void) const{
   vector<string> options;
   options.push_back("ALLOWED_SISTER_FILE_EXT");
   options.push_back("SISTER_FILE_NAME");
@@ -28,12 +28,12 @@ vector<string> PropertySisterFile::getOpts_(void){
   return options;
 }
 
-bool PropertySisterFile::fileExist(string fileNamePath){
+bool PropertySisterFile::fileExist(const string & fileNamePath) const{
   struct stat buf;
   return (stat(fileNamePath.c_str(),&buf)==0);
 }
 
-void PropertySisterFile::extSupported(string ext){
+void PropertySisterFile::extSupported(const string & ext) const{
   checkExt(ext);
   auto exts_ = getPropOption("ALLOWED_SISTER_FILE_EXT"); 
   for(auto ext_ : exts_){
@@ -45,7 +45,7 @@ void PropertySisterFile::extSupported(string ext){
   throw invalid_argument(err);
 }
 
-void PropertySisterFile::checkExt(string ext){
+void PropertySisterFile::checkExt(const string & ext) const{
   string excess = grabStrBeforeLastOccurance(ext,".");
   if(excess.compare("")!=0){
     throw invalid_argument("An extension must be of type '.ext'"
@@ -107,7 +107,7 @@ void PropertySisterFile::setPropOption(std::string option,vector<string> vec_var
   throw invalid_argument("Unrecognized option value combo "+option+" "+vars);
 }
 
-bool PropertySisterFile::propValid(string fileNamePath){
+bool PropertySisterFile::propValid(const string & fileNamePath) {
 
   string fileName = lastStringInPath(fileNamePath);
   string path = getPath(fileNamePath);
