@@ -92,7 +92,7 @@ Matrix Matrix_copy( Matrix mat );
 //mat1 will always appear above mat2 in the rows
 //of the matrix that is returned.
 Matrix Matrix_concatenate_rows( Matrix mat1, Matrix mat2 );
-Matrix Matrix_concatenate_cols( Matrix mat1,const Matrix & mat2 );
+Matrix Matrix_concatenate_cols( const Matrix & mat1,const Matrix & mat2 );
 
 }
 

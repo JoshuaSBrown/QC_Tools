@@ -123,7 +123,7 @@ Matrix Matrix_concatenate_rows( Matrix mat1, Matrix mat2 ){
 
 }
 
-Matrix Matrix_concatenate_cols( Matrix mat1,const Matrix & mat2 ){
+Matrix Matrix_concatenate_cols(const Matrix & mat1,const Matrix & mat2 ){
 
 	//For this function to work both mat1 and mat2 must have
 	//the same number of columns and shelves
@@ -337,14 +337,12 @@ Matrix::Matrix(const int r,const int c) {
 		printf("ERROR negative number of cols submitted to Matrix\n");
 		exit(1);
 	}
-	int i;
-	int j;
 	rows = r;
 	cols = c;
 	shel = 1;
 	elem = new double[rows*cols];
-	for(i=1;i<=rows;i++){
-		for(j=1;j<=cols;j++){
+	for(int i=1;i<=rows;i++){
+		for(int j=1;j<=cols;j++){
 			elem[(i-1)*cols+j-1] = 0;
 		}
 	}
@@ -361,16 +359,13 @@ Matrix::Matrix(const int r, const int c, const int s) {
 		printf("ERROR negative number of shelves submitted to Matrix\n");
 		exit(1);
 	}
-	int i;
-	int j;
-	int k;
 	rows = r;
 	cols = c;
 	shel = s;
 	elem = new double[rows*cols*shel];
-	for(i=1;i<=rows;i++){
-		for(j=1;j<=cols;j++){
-			for(k=1;k<=shel;k++){
+	for(int i=1;i<=rows;i++){
+		for(int j=1;j<=cols;j++){
+			for(int k=1;k<=shel;k++){
 				elem[(i-1)*cols*shel+(j-1)*shel+k-1] = 0;
 			}
 		}
@@ -392,16 +387,14 @@ int Matrix::resize( int r, int c ){
 	temp = new double[ r*c ];
 
 	//adding values from old matrix to new
-	int i;
-	int j;
 	if(r<=rows){
-		for( i=1; i<=r;i++){
+		for(int i=1; i<=r;i++){
 			if(c<=cols){
-				for( j=1; j<=c;j++){
+				for(int j=1; j<=c;j++){
 					temp[(i-1)*c*1+(j-1)*1+1-1] = elem[index(i,j,1)];
 				}
 			}else{
-				for( j=1; j<=c;j++){
+				for(int j=1; j<=c;j++){
 					if(j<=cols){
 						temp[(i-1)*c*1+(j-1)*1+1-1] = elem[index(i,j,1)];
 					}else{
@@ -411,9 +404,9 @@ int Matrix::resize( int r, int c ){
 			}
 		}
 	}else{
-		for( i=1; i<=r;i++){
+		for(int i=1; i<=r;i++){
 			if(c<=cols){
-				for( j=1; j<=c;j++){
+				for(int j=1; j<=c;j++){
 					if(i<=rows){
 						temp[(i-1)*c*1+(j-1)*1+1-1] = elem[index(i,j,1)];
 					}else{
@@ -421,7 +414,7 @@ int Matrix::resize( int r, int c ){
 					}
 				}
 			}else{
-				for( j=1; j<=c;j++){
+				for(int j=1; j<=c;j++){
 					if(i<=rows && j<=cols){
 						temp[(i-1)*c*1+(j-1)*1+1-1] = elem[index(i,j,1)];
 					}else{
@@ -490,16 +483,12 @@ void Matrix::set_rows(int r){
 		printf("ERROR negative number submitted to set_rows\n");
 		exit(1);
 	}
-	int i;
-	int j;
-	int k;
-
 	if(r>rows){
 	
 		double * temp = new double[r*cols*shel];
-		for(i=1;i<=r;i++){
-			for(j=1;j<=cols;j++){
-				for(k=1;k<=shel;k++){
+		for(int i=1;i<=r;i++){
+			for(int j=1;j<=cols;j++){
+				for(int k=1;k<=shel;k++){
 					if(r<=rows){
 						temp[index(i,j,k)] = elem[index(i,j,k)];
 					} else {
@@ -516,9 +505,9 @@ void Matrix::set_rows(int r){
 		double * temp = new double[r*cols*shel];
 		printf("WARNING reducing matrix rows below previous value\n");
 		printf("could lose data in the process\n");
-		for(i=1;i<=r;i++){
-			for(j=1;j<=cols;j++){
-				for(k=1;k<=shel;k++){
+		for(int i=1;i<=r;i++){
+			for(int j=1;j<=cols;j++){
+				for(int k=1;k<=shel;k++){
 					temp[index(i,j,k)] = elem[index(i,j,k)];
 				}
 			}
@@ -550,16 +539,13 @@ void Matrix::set_cols(int c){
 		printf("ERROR negative number submitted to set_cols\n");
 		exit(1);
 	}
-	int i;
-	int j;
-	int k;
 
 	if(c>cols){
 	
 		double * temp = new double[rows*c*shel];
-		for(i=1;i<=rows;i++){
-			for(j=1;j<=c;j++){
-				for(k=1;k<=shel;k++){
+		for(int i=1;i<=rows;i++){
+			for(int j=1;j<=c;j++){
+				for(int k=1;k<=shel;k++){
 					if(c<=cols){
 						temp[index(i,j,k)] = elem[index(i,j,k)];
 					} else {
@@ -576,9 +562,9 @@ void Matrix::set_cols(int c){
 		double * temp = new double[rows*c*shel];
 		printf("WARNING reducing matrix cols below previous value\n");
 		printf("could lose data in the process\n");
-		for(i=1;i<=rows;i++){
-			for(j=1;j<=c;j++){
-				for(k=1;k<=shel;k++){
+		for(int i=1;i<=rows;i++){
+			for(int j=1;j<=c;j++){
+				for(int k=1;k<=shel;k++){
 					temp[index(i,j,k)] = elem[index(i,j,k)];
 				}
 			}
@@ -594,16 +580,12 @@ void Matrix::set_shel(int s){
 		printf("ERROR negative number submitted to set_shel\n");
 		exit(1);
 	}
-	int i;
-	int j;
-	int k;
-
 	if(s>shel){
 	
 		double * temp = new double[rows*cols*s];
-		for(i=1;i<=rows;i++){
-			for(j=1;j<=cols;j++){
-				for(k=1;k<=s;k++){
+		for(int i=1;i<=rows;i++){
+			for(int j=1;j<=cols;j++){
+				for(int k=1;k<=s;k++){
 					if(s<=shel){
 						temp[index(i,j,k)] = elem[index(i,j,k)];
 					} else {
@@ -620,9 +602,9 @@ void Matrix::set_shel(int s){
 		double * temp = new double[rows*cols*s];
 		printf("WARNING reducing matrix shel below previous value\n");
 		printf("could lose data in the process\n");
-		for(i=1;i<=rows;i++){
-			for(j=1;j<=cols;j++){
-				for(k=1;k<=s;k++){
+		for(int i=1;i<=rows;i++){
+			for(int j=1;j<=cols;j++){
+				for(int k=1;k<=s;k++){
 					temp[index(i,j,k)] = elem[index(i,j,k)];
 				}
 			}
@@ -901,13 +883,9 @@ Matrix Matrix::invert(){
 
 	Matrix * mat2 = new Matrix(this->get_cols(), this->get_rows());
 
-	int i;
-	int j;
-	double val;
-
-	for(i=1;i<=this->get_rows();i++){
-		for(j=1;j<=this->get_cols();j++){
-			val = this->get_elem(i,j);
+	for(int i=1;i<=this->get_rows();i++){
+		for(int j=1;j<=this->get_cols();j++){
+			double val = this->get_elem(i,j);
 			(*mat2).set_elem(val,j,i);	
 		}
 	}
@@ -924,13 +902,9 @@ Matrix Matrix::getRow( int R){
 
 	Matrix mat2( 1, this->get_cols(), this->get_shel());
 
-	int j;
-	int k;
-	double val;
-
-	for(j=1;j<=this->get_cols();j++){
-		for(k=1;k<=this->get_shel();k++){
-			val = this->get_elem(R,j,k);
+	for(int j=1;j<=this->get_cols();j++){
+		for(int k=1;k<=this->get_shel();k++){
+			double val = this->get_elem(R,j,k);
 			mat2.set_elem(val,1,j,k);	
 		}
 	}
@@ -946,13 +920,9 @@ Matrix Matrix::getCol( int C){
 	}
 	Matrix mat2( this->get_cols(),1, this->get_shel());
 
-	int i;
-	int k;
-	double val;
-
-	for(i=1;i<=this->get_rows();i++){
-		for(k=1;k<=this->get_shel();k++){
-			val = this->get_elem(i,C,k);
+	for(int i=1;i<=this->get_rows();i++){
+		for(int k=1;k<=this->get_shel();k++){
+			double val = this->get_elem(i,C,k);
 			mat2.set_elem(val,i,1,k);	
 		}
 	}
