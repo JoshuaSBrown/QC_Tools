@@ -51,7 +51,7 @@ Matrix Matrix_diag(Matrix mat){
 
 }
 
-Matrix Matrix_copy( Matrix mat){
+Matrix Matrix_copy(const Matrix & mat){
 
 	Matrix mat2(mat.get_rows(),mat.get_cols(),mat.get_shel());
 

@@ -86,7 +86,7 @@ Matrix Matrix_diag( Matrix mat );
 
 //Copies a matrix and returns the new
 //matrix
-Matrix Matrix_copy( Matrix mat );
+Matrix Matrix_copy(const Matrix & mat );
 
 //Add two matrices together to create a third
 //mat1 will always appear above mat2 in the rows
