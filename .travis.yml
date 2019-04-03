@@ -42,7 +42,7 @@ install:
 script:
   - mkdir build
   - cd build
-  - ${DEPS_DIR}/cmake/bin/cmake -DENABLE_REGRESSION_TESTS=ON -DENABLE_TESTS=ON -DCODE_COVERAGE=ON .. && make && ctest --verbose
+  - ${DEPS_DIR}/cmake/bin/cmake -DENABLE_REGRESSION_TESTS=ON -DENABLE_TESTS=ON .. && make && ctest --verbose
   - chmod +x ./../scripts/build.sh
   - ./../scripts/build.sh
 
