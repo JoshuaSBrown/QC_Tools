@@ -38,9 +38,9 @@ class TransferComplex {
         bool cp);
 
     void unscramble(
-            Matrix coord_1_mat,
+            const Matrix & coord_1_mat,
             Matrix coord_2_mat,
-            Matrix coord_P_mat,
+            const Matrix & coord_P_mat,
             const std::vector<int> & basisP,
             std::vector<int> basis2);
 
@@ -54,7 +54,7 @@ class TransferComplex {
     //    monomer2 HOMO
     double calcJ(
       std::map<std::string,std::string> orbitaltype,
-      std::map<std::string,int> orbitalnum);
+      const std::map<std::string,int> & orbitalnum);
 };
 
 std::unordered_map<int,std::pair<double,std::string>> findRank(Matrix & Orb_E_Alpha, Matrix & Orb_E_Beta);
@@ -64,7 +64,7 @@ double calculate_transfer_integral(
     Matrix mat_2_Coef,
     Matrix mat_P_Coef,
     Matrix mat_S,
-    Matrix mat_P_OE,
+    const Matrix & mat_P_OE,
     bool counterPoise_);
 
 // Reorganize the dimer coefficients to match up with the monomers
@@ -86,11 +86,11 @@ Matrix * unscramble_Coef(std::vector<int> matchDimerA,
 // Reorganize the dimer overlap matrix to line up with the monomer
 // coefficients. 
 Matrix * unscramble_S(std::vector<int> matchDimerA,
-    std::vector<int> matchDimerB,
+    const std::vector<int> & matchDimerB,
     std::vector<int> basisFuncDimer,
     Matrix * S);
 
-Matrix * unscramble_S(std::vector<int> matchDimerA,
+Matrix * unscramble_S(const std::vector<int> & matchDimerA,
     std::vector<int> basisFuncDimer,
     Matrix * S);
 

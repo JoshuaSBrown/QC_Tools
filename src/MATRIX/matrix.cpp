@@ -841,7 +841,7 @@ vector<int> Matrix::matchRow(Matrix mat, int sf){
   return m_vec;
 }
 
-vector<int> Matrix::matchCol(const Matrix & mat, int sf){
+vector<int> Matrix::matchCol(const Matrix & mat,const int sf) const {
   if(mat.get_shel()!=1 || this->get_shel()!=1){
     cerr << "ERROR shel should be 1" << endl;
     exit(1);
