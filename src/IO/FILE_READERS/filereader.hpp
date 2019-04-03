@@ -16,7 +16,7 @@ struct FilePackage{
 class FileReader{
   public:
     FileReader(const std::string & fileName) : fileName_(fileName) {};    
-    std::string getExt();
+    std::string getExt() const;
 
     void read();
   protected:
@@ -30,9 +30,9 @@ class FileReader{
     virtual void validFileName_() {};
     void checkSections_();
     void readSection_(std::string tag);
-    std::string startSection_(std::string tag);
-    std::string fileExt_();
-    bool fileExist_(); 
+    std::string startSection_(const std::string & tag);
+    std::string fileExt_() const;
+    bool fileExist_() const; 
     // Private attributes
     // key - stores tag of the section
     // value - stores the pattern used to identify the section

@@ -71,7 +71,7 @@ class Matrix {
     // sf is the number of significant figures that will be checked to ensure 
     // the same value
     std::vector<int> matchRow(Matrix mat,int sf);
-    std::vector<int> matchCol(Matrix mat,int sf);
+    std::vector<int> matchCol(const Matrix & mat,const int sf) const;
 };	
 
 std::ostream &operator<<(std::ostream &out, Matrix &mat); 
@@ -82,7 +82,7 @@ Matrix &operator*(Matrix &mat1,const Matrix &mat2);
 //vector in a 2 dimensional matrix where
 //everything but the diagonal is assigned
 //a 0
-Matrix Matrix_diag( Matrix mat );
+Matrix Matrix_diag(const Matrix & mat );
 
 //Copies a matrix and returns the new
 //matrix

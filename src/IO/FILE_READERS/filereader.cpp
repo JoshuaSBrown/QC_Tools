@@ -9,7 +9,7 @@ using namespace std;
 
 // Public member functions
 
-string FileReader::getExt(){
+string FileReader::getExt() const {
   return fileExt_();
 }
 
@@ -65,7 +65,7 @@ void FileReader::checkSections_(){
   }
 }
 
-string FileReader::fileExt_(){
+string FileReader::fileExt_() const {
   string path = lastStringInPath(fileName_);
   path = trimmed(path);
   auto index = path.find(".");
@@ -73,7 +73,7 @@ string FileReader::fileExt_(){
   return path.substr(index);
 }
 
-bool FileReader::fileExist_(){
+bool FileReader::fileExist_() const {
   struct stat buffer;
   return (stat (fileName_.c_str(),&buffer)==0);
 }
@@ -83,7 +83,7 @@ void FileReader::readSection_(string tag){
   sectionReaders_[tag](ptr); 
 }
 
-string FileReader::startSection_(string line){
+string FileReader::startSection_(const string & line){
   for( pair<const string,set<string>> & tag_and_header : sectionHeaders_ ){
     for( const string & header : tag_and_header.second){
       if(foundSubStrInStr(line,header)) {

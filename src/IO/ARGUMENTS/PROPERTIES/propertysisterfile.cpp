@@ -55,7 +55,7 @@ void PropertySisterFile::checkExt(const string & ext) const{
 }
 
 
-void PropertySisterFile::setPropOption(std::string option,std::string var){
+void PropertySisterFile::setPropOption(std::string option,const std::string & var){
 
   if(option.compare("ALLOWED_SISTER_FILE_EXT")==0){
     checkExt(var);

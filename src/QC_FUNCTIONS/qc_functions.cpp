@@ -62,7 +62,7 @@ double calculate_transfer_integral(
   Matrix mat_2_Coef,
   Matrix mat_P_Coef,
   Matrix mat_S,
-  Matrix mat_P_OE,
+  const Matrix & mat_P_OE,
   bool counterPoise_){
 
   Matrix mat_1_Coefinv = mat_1_Coef.invert();
@@ -142,9 +142,9 @@ double calculate_transfer_integral(
 //   3 4         5
 //
 list<Matrix *> splitMatrixIntoList(
-  const vector<int> subMatrixDimension, 
+  const vector<int> & subMatrixDimension, 
   const Matrix * const mat,
-  const string ColRowSplit){
+  const string & ColRowSplit){
 
   list<Matrix *> list_matrix;
   int num_sub_matrices = subMatrixDimension.size();
@@ -483,7 +483,7 @@ Matrix * unscramble_Coef(
 // Similar to the above function but we will be moving both the rows
 // and columns
 Matrix * unscramble_S(std::vector<int> matchDimerA,
-                  std::vector<int> matchDimerB,
+                  const std::vector<int> & matchDimerB,
                   std::vector<int> basisFuncP,
                   Matrix * S){
 
@@ -536,7 +536,7 @@ Matrix * unscramble_S(std::vector<int> matchDimerA,
 // Same as the above function but here we are assuming counterpoise correction
 // is being used and thus we do not need to match with both monomer A and 
 // monomer B but only need to match with A. 
-Matrix * unscramble_S(std::vector<int> matchDimerA,
+Matrix * unscramble_S(const std::vector<int> & matchDimerA,
                   std::vector<int> basisFuncP,
                   Matrix * S){
 
@@ -627,27 +627,27 @@ TransferComplex::TransferComplex(
 }
 
 void TransferComplex::unscramble(
-    Matrix coord_1_mat,
+    const Matrix & coord_1_mat,
     Matrix coord_2_mat,
-    Matrix coord_P_mat,
+    const Matrix & coord_P_mat,
     const std::vector<int> & basisP,
     std::vector<int> basis2){
 
   unscrambled = true;
 
-  int sig_fig = 4;
+  const int sig_fig = 4;
 
   // If dealing with counter poise correction may also need to unscramble
   // the basis functions of the monomers
   if(counterPoise_){
-    auto match_1_2 = coord_1_mat.matchCol(coord_2_mat,sig_fig);
+    vector<int> match_1_2 = coord_1_mat.matchCol(coord_2_mat,sig_fig);
 
     LOG("Counter Poise unscrambling matrix 2 with respect to matrix 1",2);
     auto unscrambled_2_Coef = unscramble_Coef( match_1_2,basis2,mat_2_Coef);
 
     this->mat_2_Coef = unscrambled_2_Coef;
 
-    auto match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
+    vector<int> match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
 
     auto unscrambled_P_Coef = unscramble_Coef(match_1_P,basisP,mat_P_Coef);
     
@@ -663,10 +663,10 @@ void TransferComplex::unscramble(
   }else{
 
     // Stores the rows in P that match 1
-    auto match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
+    vector<int> match_1_P = coord_1_mat.matchCol(coord_P_mat,sig_fig);
 
     // Stores the rows in P that match 2
-    auto match_2_P = coord_2_mat.matchCol(coord_P_mat,sig_fig);
+    vector<int> match_2_P = coord_2_mat.matchCol(coord_P_mat,sig_fig);
 
     LOG("Unscrambling dimer matrix with respect to matrix 1 and 2",2);
     auto unscrambled_P_Coef = unscramble_Coef(
@@ -687,7 +687,7 @@ void TransferComplex::unscramble(
   }
 }
 
-double TransferComplex::calcJ(map<string,string> orbitaltype, map<string,int> orbnum){
+double TransferComplex::calcJ(map<string,string> orbitaltype, const map<string,int> & orbnum){
 
   if(unscrambled==false){
     cerr << "WARNING unable to automatically line up basis functions of"
@@ -701,7 +701,7 @@ double TransferComplex::calcJ(map<string,string> orbitaltype, map<string,int> or
 
   
   string HOMO_OR_LUMO = orbitaltype["mon1"]; 
-  int MO = orbnum["mon1"];
+  int MO = orbnum.at("mon1");
   if(HOMO_OR_LUMO.compare("HOMO")==0){
     if(MO>0) {
       throw invalid_argument("Having specified HOMO the MO"
@@ -731,7 +731,7 @@ double TransferComplex::calcJ(map<string,string> orbitaltype, map<string,int> or
   }
  
   HOMO_OR_LUMO = orbitaltype["mon2"];
-  MO = orbnum["mon2"];
+  MO = orbnum.at("mon2");
   if(HOMO_OR_LUMO.compare("HOMO")==0){
     if(MO>0) {
       throw invalid_argument("Having specified HOMO the MO"
