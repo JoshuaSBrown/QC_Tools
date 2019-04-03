@@ -4,6 +4,7 @@ dist: xenial
 addons:
   apt:
     update: true
+    packages: lcov
 
 language: cpp
 
@@ -42,3 +43,11 @@ script:
   - mkdir build
   - cd build
   - ${DEPS_DIR}/cmake/bin/cmake -DENABLE_REGRESSION_TESTS=ON -DENABLE_TESTS=ON .. && make && ctest --verbose
+  - ./scripts/build.sh
+
+after_success:
+  - lcov --capture --directory . --output-file coverage.info
+  - lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter system-files
+  - lcov --list coverage.info # debug info
+  # Uploading report to CodeCov
+  - bash <(curl -s https://codecov.io/bash) -t "e0045700-7ee0-41a6-a907-70f6a530f431"
