@@ -76,17 +76,17 @@ class Parameters {
     void setPun2(const std::string & pun2);
     void setPunP(const std::string & punP);
 
-    void setSpinP(const std::string spin) { spinP=spin; }
-    void setSpin1(const std::string spin) { spin1=spin; }
-    void setSpin2(const std::string spin) { spin2=spin; }
+    void setSpinP(const std::string & spin) { spinP=spin; }
+    void setSpin1(const std::string & spin) { spin1=spin; }
+    void setSpin2(const std::string & spin) { spin2=spin; }
 
-    void setOrbTypeP(const std::string orb) { orb_typeP = orb; }
-    void setOrbType1(const std::string orb) { orb_type1 = orb; }
-    void setOrbType2(const std::string orb) { orb_type2 = orb; }
+    void setOrbTypeP(const std::string & orb) { orb_typeP = orb; }
+    void setOrbType1(const std::string & orb) { orb_type1 = orb; }
+    void setOrbType2(const std::string & orb) { orb_type2 = orb; }
 
-    void setOrbNumP(const int num) { orb_numP = num; }
-    void setOrbNum1(const int num) { orb_num1 = num; }
-    void setOrbNum2(const int num) { orb_num2 = num; }
+    void setOrbNumP(const int & num) { orb_numP = num; }
+    void setOrbNum1(const int & num) { orb_num1 = num; }
+    void setOrbNum2(const int & num) { orb_num2 = num; }
     void setCounterPoise(bool cp) { counterPoise = cp; }
     void setCitation(bool cite) { citation = cite; }
 };

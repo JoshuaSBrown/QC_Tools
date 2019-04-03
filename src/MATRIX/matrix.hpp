@@ -71,7 +71,7 @@ class Matrix {
     // sf is the number of significant figures that will be checked to ensure 
     // the same value
     std::vector<int> matchRow(Matrix mat,int sf);
-    std::vector<int> matchCol(Matrix mat,int sf);
+    std::vector<int> matchCol(const Matrix & mat,int sf);
 };	
 
 std::ostream &operator<<(std::ostream &out, Matrix &mat); 
