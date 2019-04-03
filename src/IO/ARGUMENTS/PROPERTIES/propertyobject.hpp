@@ -27,7 +27,7 @@ class PropertyObject{
       return false; 
     }
    
-    void setPropOption_(std::string option, T val) {
+    void setPropOption_(std::string option,const T & val) {
     
       if(options_.count(option)==0){
         T * opt = new T(val);

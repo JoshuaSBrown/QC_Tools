@@ -17,7 +17,7 @@ class PropertySisterFile :
     void checkExt(const std::string &) const;
   public:
     PropertySisterFile(void);
-    void setPropOption(std::string option,std::string var);
+    void setPropOption(std::string option,const std::string & var);
     void setPropOption(std::string option,std::vector<std::string> var);
     bool propValid(const std::string & fileNamePath);
 };

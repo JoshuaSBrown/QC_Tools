@@ -82,7 +82,7 @@ Matrix &operator*(Matrix &mat1,const Matrix &mat2);
 //vector in a 2 dimensional matrix where
 //everything but the diagonal is assigned
 //a 0
-Matrix Matrix_diag( Matrix mat );
+Matrix Matrix_diag(const Matrix & mat );
 
 //Copies a matrix and returns the new
 //matrix

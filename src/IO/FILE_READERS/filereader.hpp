@@ -30,7 +30,7 @@ class FileReader{
     virtual void validFileName_() {};
     void checkSections_();
     void readSection_(std::string tag);
-    std::string startSection_(std::string tag);
+    std::string startSection_(const std::string & tag);
     std::string fileExt_();
     bool fileExist_(); 
     // Private attributes

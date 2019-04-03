@@ -14,7 +14,7 @@ using namespace std;
 
 namespace catnip {
 
-Matrix Matrix_diag(Matrix mat){
+Matrix Matrix_diag(const Matrix & mat){
 
 	if(mat.get_cols()>1 && mat.get_rows()>1){
 		throw invalid_argument("ERROR Matrix_diag can only create a diagonal "
@@ -26,23 +26,19 @@ Matrix Matrix_diag(Matrix mat){
       "from a 3d matrix, it must be passed a vector.\n");
 	}
 
-	int i;
-	int len;
-	double val;
-
 	if(mat.get_cols()>mat.get_rows()){
-		len = mat.get_cols();
+		int len = mat.get_cols();
 		Matrix mat2(len,len);
-		for(i=1;i<=len;i++){
-			val = mat.get_elem(1,i);
+		for(int i=1;i<=len;i++){
+			double val = mat.get_elem(1,i);
 			mat2.set_elem(val,i,i);
 		}
  		return mat2;
 	}else{
-		len = mat.get_rows();
+		int len = mat.get_rows();
 		Matrix mat2(len,len);
-		for(i=1;i<=len;i++){
-			val = mat.get_elem(i,1);
+		for(int i=1;i<=len;i++){
+			double val = mat.get_elem(i,1);
 			mat2.set_elem(val,i,i);
 		}
  		return mat2;

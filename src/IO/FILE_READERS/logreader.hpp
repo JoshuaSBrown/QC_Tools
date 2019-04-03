@@ -18,7 +18,7 @@ class LogReader : public FileReader {
     orb_cont getOrbitalInfo() { return orb_; }
     Matrix * getOverlapMatrix() { return S_; }
     std::vector<double> getOE(std::string orb_type) { return OREnergies[orb_type];}
-    int getHOMOLevel(std::string orb_type) { return homoLevel[orb_type]; }
+    int getHOMOLevel(const std::string & orb_type) { return homoLevel[orb_type]; }
     std::vector<int> getBasisFuncCount();
     std::vector<std::vector<double>> getCoords() { return xyz; }
   private:
@@ -31,7 +31,7 @@ class LogReader : public FileReader {
     static void OrbitalEnergiesBetaSectionReader(void *);
     static void CoordSectionReader(void *);
 
-    void ReadOrbEnergies(std::string orb_type);
+    void ReadOrbEnergies(const std::string & orb_type);
     // Contains the information as so:
     // each element in the map refers to an atom and its type C, H, N etc
     // The first element of the second map contains the orbital type

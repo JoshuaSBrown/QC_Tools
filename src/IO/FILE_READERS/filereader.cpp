@@ -83,7 +83,7 @@ void FileReader::readSection_(string tag){
   sectionReaders_[tag](ptr); 
 }
 
-string FileReader::startSection_(string line){
+string FileReader::startSection_(const string & line){
   for( pair<const string,set<string>> & tag_and_header : sectionHeaders_ ){
     for( const string & header : tag_and_header.second){
       if(foundSubStrInStr(line,header)) {

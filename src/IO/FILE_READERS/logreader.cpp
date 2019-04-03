@@ -217,7 +217,7 @@ void LogReader::OverlapSectionReader(void * ptr){
   return;
 }
 
-void LogReader::ReadOrbEnergies(string orb_type){
+void LogReader::ReadOrbEnergies(const string & orb_type){
 
   LOG("Reading Orbital Energies from .log file",1);
   string line;
