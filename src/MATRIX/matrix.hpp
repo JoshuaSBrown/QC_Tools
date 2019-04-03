@@ -76,7 +76,7 @@ class Matrix {
 
 std::ostream &operator<<(std::ostream &out, Matrix &mat); 
 
-Matrix &operator*(Matrix &mat1, Matrix &mat2); 
+Matrix &operator*(Matrix &mat1,const Matrix &mat2); 
 
 //Takes a vector and diagonalized the 
 //vector in a 2 dimensional matrix where
@@ -86,13 +86,13 @@ Matrix Matrix_diag( Matrix mat );
 
 //Copies a matrix and returns the new
 //matrix
-Matrix Matrix_copy( Matrix mat );
+Matrix Matrix_copy(const Matrix & mat );
 
 //Add two matrices together to create a third
 //mat1 will always appear above mat2 in the rows
 //of the matrix that is returned.
 Matrix Matrix_concatenate_rows( Matrix mat1, Matrix mat2 );
-Matrix Matrix_concatenate_cols( Matrix mat1, Matrix mat2 );
+Matrix Matrix_concatenate_cols( const Matrix & mat1,const Matrix & mat2 );
 
 }
 

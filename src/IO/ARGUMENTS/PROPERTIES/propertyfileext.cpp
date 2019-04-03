@@ -29,12 +29,12 @@ PropertyFileExt::PropertyFileExt(set<string> exts){
   setPropOption_("ALLOWED_FILE_EXT",exts_);  
 }
 
-vector<string> PropertyFileExt::getOpts_(void){
+vector<string> PropertyFileExt::getOpts_(void) const{
   vector<string> options{"ALLOWED_FILE_EXT"};
   return options;
 }
 
-void PropertyFileExt::extSupported(string ext){
+void PropertyFileExt::extSupported(const string & ext) const{
   checkExt(ext);
   auto exts_ = getPropOption("ALLOWED_FILE_EXT"); 
   for(auto ext_ : exts_ ){
@@ -48,7 +48,7 @@ void PropertyFileExt::extSupported(string ext){
   throw invalid_argument(err);
 }
 
-void PropertyFileExt::checkExt(string ext){
+void PropertyFileExt::checkExt(const string & ext) const{
   if(ext.compare("")==0){
     return;
   }else if(ext[0]=='*'){
@@ -73,7 +73,7 @@ void PropertyFileExt::setPropOption(std::string option,std::string var){
   PropertyObject::setPropOption(option,vars);
 }
 
-bool PropertyFileExt::propValid(string fileNamePath){
+bool PropertyFileExt::propValid(const string & fileNamePath){
   string fileName = lastStringInPath(fileNamePath);
   string ext = grabStrAfterLastOccuranceInclusive(fileName,".");
   extSupported(ext);

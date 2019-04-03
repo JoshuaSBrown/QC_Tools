@@ -8,9 +8,9 @@ fi
 
 echo "PATH "$path
 
-red=`tput setaf 1`
-green=`tput setaf 2`
-reset=`tput sgr0`
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+reset=$(tput sgr0)
 count_fails=0
 
 ${path}/test_io -h > test_script.out
@@ -42,7 +42,7 @@ if [ $? -eq 0 ]; then
   echo "${green}[SUCCESS]${reset} ${path}/test_io -l_P ${path}/../../GAUSSIANFILES/30/30_pair.log  -l_1 ${path}/../../GAUSSIANFILES/30/ref.log -l_2 ${path}/../../GAUSSIANFILES/30/30_2.log"
 else
   echo "${red}[FAILURE]${reset} ${path}/test_io -l_P ${path}/../../GAUSSIANFILES/30/30_pair.log  -l_1 ${path}/../../GAUSSIANFILES/30/ref.log -l_2 ${path}/../../GAUSSIANFILES/30/30_2.log"
-  count_fails=$(($count_fails+1))
+  count_fails=$((count_fails+1))
 fi
 
 exit $count_fails

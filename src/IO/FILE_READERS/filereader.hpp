@@ -15,7 +15,7 @@ struct FilePackage{
 
 class FileReader{
   public:
-    FileReader(std::string fileName);    
+    FileReader(const std::string & fileName) : fileName_(fileName) {};    
     std::string getExt();
 
     void read();
@@ -44,7 +44,7 @@ class FileReader{
     std::string fileName_;
     std::ifstream fid_;
     std::streampos pos_;
-    bool fileOpen_;
+    bool fileOpen_ = false;
 };
 
 }

@@ -16,17 +16,17 @@ PropertyFileExist::PropertyFileExist(int fileMustExist){
   setPropOption_("FILE_MUST_EXIST",fileMustExist);
 }
 
-vector<string> PropertyFileExist::getOpts_(void){
+vector<string> PropertyFileExist::getOpts_(void) const{
   vector<string> options{"FILE_MUST_EXIST","FILE_DOES_EXIST"};
   return options;
 }
 
-bool PropertyFileExist::fileExist(string fileNamePath){
+bool PropertyFileExist::fileExist(const string & fileNamePath) const {
   struct stat buf;
   return (stat(fileNamePath.c_str(),&buf)==0);
 }
 
-bool PropertyFileExist::propValid(string fileNamePath){
+bool PropertyFileExist::propValid(const string & fileNamePath){
   if(getPropOption("FILE_MUST_EXIST")){
     if(!fileExist(fileNamePath)){
       string err = ""+fileNamePath+" does not exist";
@@ -42,7 +42,7 @@ bool PropertyFileExist::propValid(string fileNamePath){
 }
 
 
-void PropertyFileExist::postCheck(void){
+void PropertyFileExist::postCheck(void) const{
   auto must_exist = getPropOption("FILE_MUST_EXIST");
   auto exist = getPropOption("FILE_DOES_EXIST"); 
   if(must_exist && exist==0){

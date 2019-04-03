@@ -41,7 +41,7 @@ class TransferComplex {
             Matrix coord_1_mat,
             Matrix coord_2_mat,
             Matrix coord_P_mat,
-            std::vector<int> basisP,
+            const std::vector<int> & basisP,
             std::vector<int> basis2);
 
     // Orbital type and a map of the corresponding number
@@ -78,7 +78,7 @@ Matrix organize_P_Coef(std::vector<int> matchDimerA,
 // Unscramble the coefficients of the dimer matrix
 // Assumes that the match vectors describe swaps looking at a single
 // instance of the dimerCoef matrix
-Matrix * unscramble_Coef(std::vector<int> matchDimerA, std::vector<int> matchDimerB, std::vector<int> basisFuncDimer, Matrix * dimerCoef);
+Matrix * unscramble_Coef(const std::vector<int> & matchDimerA, std::vector<int> matchDimerB, const std::vector<int> & basisFuncDimer, Matrix * dimerCoef);
 
 Matrix * unscramble_Coef(std::vector<int> matchDimerA, 
   std::vector<int> basisFuncDimer, Matrix * dimerCoef);

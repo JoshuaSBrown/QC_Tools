@@ -29,7 +29,7 @@ void PunReader::registerSections_(){
   FileReader::registerSections_();
 }
 
-Matrix * PunReader::getCoefsMatrix(string orb_type){
+Matrix * PunReader::getCoefsMatrix(const string & orb_type){
   if(coefs.count(orb_type)!=1){
     throw invalid_argument("Coefficients for spin "+orb_type+" were not found");
   }
@@ -60,7 +60,7 @@ vector<double> PunReader::readGausCoefLine(string line){
   return values;
 }
 
-void PunReader::ReadCoef(string orb_type){
+void PunReader::ReadCoef(const string & orb_type){
 
   LOG("Reading atomic orbital coefficients from .pun file.",1);
   string pattern = " MO OE";

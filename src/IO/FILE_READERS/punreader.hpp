@@ -12,7 +12,7 @@ namespace catnip {
 class PunReader : public FileReader {
   public:
     PunReader(std::string str);     
-    Matrix * getCoefsMatrix(std::string orb_type); 
+    Matrix * getCoefsMatrix(const std::string & orb_type); 
     bool restrictedShell() { return coefs.size()==1; }
 
   private:
@@ -22,7 +22,7 @@ class PunReader : public FileReader {
     static void OrbitalCoefAlphaSectionReader(void *);
     static void OrbitalCoefBetaSectionReader(void *);
 
-    void ReadCoef(std::string orb_type);
+    void ReadCoef(const std::string & orb_type);
     std::vector<double> readGausCoefLine(std::string line);
     
     std::map<std::string,Matrix *> coefs;

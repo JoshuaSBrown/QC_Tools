@@ -8,12 +8,12 @@ namespace catnip {
 
 class PropertyInt : public PropertyObject<int,int> {
   private:
-    void intValid(int val);
-    std::string getName_(void) { return "PROPERTY_INT";}
-    std::vector<std::string> getOpts_(void);
+    void intValid(const int & val) const;
+    std::string getName_(void) const { return "PROPERTY_INT";}
+    std::vector<std::string> getOpts_(void) const;
   public:
     PropertyInt(void);
-    bool propValid(int value) { intValid(value); return true;}
+    bool propValid(const int & value) { intValid(value); return true;}
 };
 
 }

@@ -9,10 +9,6 @@ using namespace std;
 
 // Public member functions
 
-FileReader::FileReader(string fileName){
-  fileName_ = fileName;
-}
-
 string FileReader::getExt(){
   return fileExt_();
 }

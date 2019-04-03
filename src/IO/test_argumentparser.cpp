@@ -117,6 +117,7 @@ int main(void){
       excep = true;
     }
     assert(excep);
+    cout << "Except thrown: " << excep << endl;
   }
 
   cerr << "Testing: get" << endl;

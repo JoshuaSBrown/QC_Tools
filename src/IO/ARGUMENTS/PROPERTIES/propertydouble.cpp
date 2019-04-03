@@ -11,12 +11,12 @@ PropertyDouble::PropertyDouble(){
   setPropOption_("MAX",numeric_limits<double>::max());
 }
 
-vector<string> PropertyDouble::getOpts_(void){
+vector<string> PropertyDouble::getOpts_(void) const{
   vector<string> options{"MIN","MAX"};
   return options;
 }
 
-void PropertyDouble::doubleValid(double val){
+void PropertyDouble::doubleValid(const double & val){
   if(val<getPropOption("MIN")){
     string err = "The value is smaller than allowed "+to_string(val)+" the "
       "minimum allowed value is "+to_string(getPropOption("MIN"));

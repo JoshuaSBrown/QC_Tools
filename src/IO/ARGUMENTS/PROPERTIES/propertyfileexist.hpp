@@ -9,14 +9,14 @@ namespace catnip {
 
 class PropertyFileExist : public PropertyObject<std::string,int> {
   private:
-    bool fileExist(std::string);
-    std::string getName_(void) { return "PROPERTY_FILE_EXIST"; }
-    std::vector<std::string> getOpts_(void);
+    bool fileExist(const std::string &) const;
+    std::string getName_(void) const { return "PROPERTY_FILE_EXIST"; }
+    std::vector<std::string> getOpts_(void) const;
   public:
     PropertyFileExist(void);
     PropertyFileExist(int fileMustExist);
-    bool propValid(std::string fileName);
-    void postCheck(void);
+    bool propValid(const std::string & fileName);
+    void postCheck(void) const;
 };
 
 }

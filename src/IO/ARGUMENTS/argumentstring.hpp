@@ -9,7 +9,7 @@ namespace catnip {
 
 class ArgumentString : public ArgumentObject<std::string> {
   private:
-    std::string getName_(void) { return "ARGUMENT_STRING"; }
+    std::string getName_(void) const { return "ARGUMENT_STRING"; }
     void registerProperties_(void);
   public:
     ArgumentString(void);
