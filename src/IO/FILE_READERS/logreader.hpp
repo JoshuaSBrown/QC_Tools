@@ -14,13 +14,13 @@ typedef std::map<std::pair<int,std::string>,std::map<std::string,std::vector<dou
 
 class LogReader : public FileReader {
   public:
-    LogReader(std::string str);     
-    orb_cont getOrbitalInfo() { return orb_; }
-    Matrix * getOverlapMatrix() { return S_; }
-    std::vector<double> getOE(std::string orb_type) { return OREnergies[orb_type];}
-    int getHOMOLevel(const std::string & orb_type) { return homoLevel[orb_type]; }
+    LogReader(const std::string & str);     
+    orb_cont getOrbitalInfo() const { return orb_; }
+    Matrix * getOverlapMatrix() const { return S_; }
+    std::vector<double> getOE(const std::string & orb_type) const { return OREnergies.at(orb_type);}
+    int getHOMOLevel(const std::string & orb_type) const { return homoLevel.at(orb_type); }
     std::vector<int> getBasisFuncCount();
-    std::vector<std::vector<double>> getCoords() { return xyz; }
+    std::vector<std::vector<double>> getCoords() const { return xyz; }
   private:
     virtual void registerSections_();
     virtual void validFileName_();

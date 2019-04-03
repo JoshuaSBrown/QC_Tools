@@ -14,7 +14,7 @@
 using namespace catnip;
 using namespace std;
 
-PunReader::PunReader(string fileName) : FileReader(fileName){
+PunReader::PunReader(const string & fileName) : FileReader(fileName){
   validFileName_();
   registerSections_();
 }
@@ -43,7 +43,7 @@ void PunReader::validFileName_(){
   }
 }
 
-vector<double> PunReader::readGausCoefLine(string line){
+vector<double> PunReader::readGausCoefLine(const string & line){
   vector<double> values;
 
   int indent=0;

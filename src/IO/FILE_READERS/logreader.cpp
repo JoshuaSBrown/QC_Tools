@@ -14,7 +14,7 @@
 using namespace catnip;
 using namespace std;
 
-LogReader::LogReader(string fileName) : FileReader(fileName){
+LogReader::LogReader(const string & fileName) : FileReader(fileName){
   validFileName_();
   registerSections_();
 }
