@@ -5,7 +5,7 @@
 #include <fstream>
 #include <exception>
 #include <cassert>
-#include "propertystringchoice.hpp"
+#include "../libcatnip/io/arguments/properties/propertystringchoice.hpp"
 
 using namespace catnip;
 using namespace std;

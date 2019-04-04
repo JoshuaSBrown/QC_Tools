@@ -1,5 +1,5 @@
 
-#include "argumentfile.hpp"
+#include "../libcatnip/io/arguments/argumentfile.hpp"
 #include <cassert>
 
 using namespace catnip;

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <exception>
 #include <cassert>
-#include "propertydouble.hpp"
+#include "../libcatnip/io/arguments/properties/propertydouble.hpp"
 
 using namespace catnip;
 using namespace std;

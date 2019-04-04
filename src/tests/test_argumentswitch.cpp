@@ -1,5 +1,5 @@
 
-#include "argumentswitch.hpp"
+#include "../libcatnip/io/arguments/argumentswitch.hpp"
 #include <cassert>
 #include <limits>
 

@@ -6,8 +6,8 @@
 #include <sstream>
 #include <cassert>
 
-#include "logreader.hpp"
-#include "../io.hpp"
+#include "../libcatnip/io/file_readers/logreader.hpp"
+#include "../libcatnip/io/io.hpp"
 
 using namespace catnip;
 using namespace std;

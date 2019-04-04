@@ -1,12 +1,12 @@
 
-#include "io.hpp"
 
 #include <string>
 #include <vector>
 #include <iostream>
 #include <cassert>
-#include "../MATRIX/matrix.hpp"
-#include "argumentparser.hpp"
+#include "../libcatnip/matrix.hpp"
+#include "../libcatnip/io/argumentparser.hpp"
+#include "../libcatnip/io/io.hpp"
 
 using namespace catnip;
 using namespace std;

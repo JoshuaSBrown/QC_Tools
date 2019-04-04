@@ -5,7 +5,7 @@
 #include <fstream>
 #include <exception>
 #include <cassert>
-#include "propertysisterfile.hpp"
+#include "../libcatnip/io/arguments/properties/propertysisterfile.hpp"
 
 using namespace catnip;
 using namespace std;

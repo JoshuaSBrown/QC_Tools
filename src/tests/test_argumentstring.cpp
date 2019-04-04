@@ -1,5 +1,5 @@
 
-#include "argumentstring.hpp"
+#include "../libcatnip/io/arguments/argumentstring.hpp"
 #include <cassert>
 #include <limits>
 

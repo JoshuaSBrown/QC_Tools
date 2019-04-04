@@ -4,7 +4,7 @@
 #include <iostream>
 #include <exception>
 #include <cassert>
-#include "propertyfileext.hpp"
+#include "../libcatnip/io/arguments/properties/propertyfileext.hpp"
 
 using namespace catnip;
 using namespace std;

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <exception>
 #include <cassert>
-#include "propertyswitch.hpp"
+#include "../libcatnip/io/arguments/properties/propertyswitch.hpp"
 
 using namespace catnip;
 using namespace std;

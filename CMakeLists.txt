@@ -10,10 +10,28 @@ set( calcJ_AUTHOR_INITIALS "\"J. S.\"" )
 set( calcJ_TITLE "\"CATNIP\"")
 set( calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
 
+option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" OFF)
 option(ENABLE_REGRESSION_TESTS "Enable Regression tests" OFF)
 option(ENABLE_TESTS "Enable tests" OFF)
-if (${ENABLE_TESTS})
+
+if(ENABLE_REGRESSION_TESTS)
+  if(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
+    message("GAUSSIANFILES found will not download")
+    set(DOWNLOAD_TUTORIAL_FILES OFF)
+  else(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
+    message("GAUSSIANFILES not found will download")
+    set(DOWNLOAD_TUTORIAL_FILES ON)
+  endif(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
+endif()
+
+if(DOWNLOAD_TUTORIAL_FILES)
+  message("Downloading gaussian tutorial files")
+  execute_process(COMMAND ${PROJECT_SOURCE_DIR}/travis/test_suite_install "${PROJECT_SOURCE_DIR}" )
+endif()
+
+if(ENABLE_TESTS OR ENABLE_REGRESSION_TESTS)
   enable_testing()
+  add_subdirectory("${PROJECT_SOURCE_DIR}/src/tests")
 endif()
 # Configure header file to pass some of the CMake settings
 # to the source code
@@ -43,12 +61,15 @@ if (${ENABLE_REGRESSION_TESTS})
     DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
   file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" 
     DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-
-  file( COPY "${PROJECT_SOURCE_DIR}/src/IO/testfile.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/src/IO")
-  file( COPY "${PROJECT_SOURCE_DIR}/src/IO/testfile.log" 
-    DESTINATION "${PROJECT_BINARY_DIR}/src/IO")
 endif()
+
+if (${ENABLE_TESTS})
+  file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.pun" 
+    DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
+  file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.log" 
+    DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
+endif()
+
 
 # Add the binary tree to the search path for include files
 # so that we will find calcJconfig.hpp
@@ -98,7 +119,7 @@ target_link_libraries(calc_J libcatnip)
 
 if(BASH_PROGRAM)
   if(${ENABLE_REGRESSION_TESTS})
-  add_test(test_calc_J_script ${BASH_PROGRAM} ${CMAKE_CURRENT_SOURCE_DIR}/src/test_script_calc_J.sh ${CMAKE_SOURCE_DIR})
+  add_test(test_calc_J_script ${BASH_PROGRAM} ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_script_calc_J.sh ${CMAKE_SOURCE_DIR})
   endif(${ENABLE_REGRESSION_TESTS})
 endif(BASH_PROGRAM)
 

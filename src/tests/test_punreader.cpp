@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <cassert>
-#include "punreader.hpp"
+#include "../libcatnip/io/file_readers/punreader.hpp"
 
 using namespace catnip;
 using namespace std;

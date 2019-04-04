@@ -1,12 +1,12 @@
 
-#include "argumentparser.hpp"
 
 #include <string>
 #include <vector>
 #include <iostream>
 #include <cassert>
-#include "../MATRIX/matrix.hpp"
-#include "../STRING_SUPPORT/string_support.hpp"
+#include "../libcatnip/io/argumentparser.hpp"
+#include "../libcatnip/matrix.hpp"
+#include "../libcatnip/string_support.hpp"
 
 using namespace catnip;
 using namespace std;
