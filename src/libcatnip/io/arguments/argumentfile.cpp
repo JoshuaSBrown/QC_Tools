@@ -1,8 +1,8 @@
 
 #include "argumentfile.hpp"
-#include "PROPERTIES/propertyfileexist.hpp"
-#include "PROPERTIES/propertyfileext.hpp"
-#include "PROPERTIES/propertysisterfile.hpp"
+#include "properties/propertyfileexist.hpp"
+#include "properties/propertyfileext.hpp"
+#include "properties/propertysisterfile.hpp"
 #include <iostream>
 
 using namespace catnip;

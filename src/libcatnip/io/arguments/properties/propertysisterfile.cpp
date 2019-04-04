@@ -2,7 +2,7 @@
 #include <sys/stat.h>
 #include <stdexcept>
 #include "propertysisterfile.hpp"
-#include "../../../STRING_SUPPORT/string_support.hpp"
+#include "../../../string_support.hpp"
 
 using namespace catnip;
 using namespace std;

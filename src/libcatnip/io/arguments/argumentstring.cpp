@@ -1,7 +1,7 @@
 
 #include "argumentstring.hpp"
-#include "PROPERTIES/propertystring.hpp"
-#include "PROPERTIES/propertystringchoice.hpp"
+#include "properties/propertystring.hpp"
+#include "properties/propertystringchoice.hpp"
 #include <iostream>
 
 using namespace catnip;

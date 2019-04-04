@@ -1,6 +1,6 @@
 
 #include "argumentint.hpp"
-#include "PROPERTIES/propertyint.hpp"
+#include "properties/propertyint.hpp"
 #include <iostream>
 
 using namespace catnip;

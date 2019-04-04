@@ -1,6 +1,6 @@
 
 #include "argumentdouble.hpp"
-#include "PROPERTIES/propertydouble.hpp"
+#include "properties/propertydouble.hpp"
 #include <iostream>
 
 using namespace catnip;

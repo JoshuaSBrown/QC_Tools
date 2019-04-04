@@ -7,8 +7,8 @@
 #include <exception>
 #include <map>
 #include <iostream>
-#include "../../STRING_SUPPORT/string_support.hpp"
-#include "PROPERTIES/propertyobject.hpp"
+#include "../../string_support.hpp"
+#include "properties/propertyobject.hpp"
 
 namespace catnip{
 // The template is simply for specifying the type of the argument coming

@@ -1,6 +1,6 @@
 
 #include "argumentswitch.hpp"
-#include "PROPERTIES/propertyswitch.hpp"
+#include "properties/propertyswitch.hpp"
 #include <iostream>
 
 using namespace catnip;

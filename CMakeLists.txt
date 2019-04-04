@@ -18,8 +18,8 @@ endif()
 # Configure header file to pass some of the CMake settings
 # to the source code
 configure_file(
-  "${PROJECT_SOURCE_DIR}/src/calcJconfig.hpp.in"
-  "${PROJECT_SOURCE_DIR}/src/calcJconfig.hpp"
+  "${PROJECT_SOURCE_DIR}/src/libcatnip/calcJconfig.hpp.in"
+  "${PROJECT_SOURCE_DIR}/src/libcatnip/calcJconfig.hpp"
   )
 
 # Find bash it is important for testing using scripts
