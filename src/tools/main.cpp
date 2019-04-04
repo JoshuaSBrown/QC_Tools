@@ -12,16 +12,16 @@
 #include <sys/stat.h>
 #include <math.h>
 
-#include "MATRIX/matrix.hpp"
-#include "IO/io.hpp"
-#include "IO/argumentparser.hpp"
-#include "QC_FUNCTIONS/qc_functions.hpp"
-#include "PARAMETERS/parameters.hpp"
-#include "LOG/log.hpp"
-#include "IO/FILE_READERS/punreader.hpp"
-#include "IO/FILE_READERS/logreader.hpp"
+#include "../libcatnip/matrix.hpp"
+#include "../libcatnip/io/io.hpp"
+#include "../libcatnip/io/argumentparser.hpp"
+#include "../libcatnip/qc_functions.hpp"
+#include "../libcatnip/parameters.hpp"
+#include "../libcatnip/log.hpp"
+#include "../libcatnip/io/file_readers/punreader.hpp"
+#include "../libcatnip/io/file_readers/logreader.hpp"
 
-#include "calcJconfig.hpp"
+#include "../libcatnip/calcJconfig.hpp"
 
 using namespace catnip;
 using namespace std;
