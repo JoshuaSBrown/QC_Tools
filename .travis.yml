@@ -44,9 +44,9 @@ script:
   - cd build
   - ${DEPS_DIR}/cmake/bin/cmake -DENABLE_REGRESSION_TESTS=ON -DENABLE_TESTS=ON .. && make && ctest --verbose
   - chmod +x ./../scripts/build.sh
-  - ./../scripts/build.sh
 
 after_success:
+  - ./../scripts/build.sh
   - lcov --capture --directory . --output-file coverage.info
   - lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter system-files
   - lcov --list coverage.info # debug info

@@ -30,34 +30,24 @@ add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
 
 SET( CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic -Werror")
 
-# Code Coverage Configuration
-add_library(coverage_config INTERFACE)
-
-option(CODE_COVERAGE "Enable coverage reporting" OFF)
-if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  # Add required flags (GCC & LLVM/Clang)
-  target_compile_options(coverage_config INTERFACE
-    -O0        # no optimization
-    -g         # generate debug info
-    --coverage # sets all required flags
-  )
-#  if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
-#    target_link_options(coverage_config INTERFACE --coverage)
-#  else()
-    target_link_libraries(coverage_config INTERFACE --coverage)
-    #  endif()
-endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 
 if (${ENABLE_REGRESSION_TESTS})
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
+    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" 
+    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
 
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" 
+    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" 
+    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" 
+    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
 
-  file( COPY "${PROJECT_SOURCE_DIR}/src/IO/testfile.pun" DESTINATION "${PROJECT_BINARY_DIR}/src/IO")
-  file( COPY "${PROJECT_SOURCE_DIR}/src/IO/testfile.log" DESTINATION "${PROJECT_BINARY_DIR}/src/IO")
+  file( COPY "${PROJECT_SOURCE_DIR}/src/IO/testfile.pun" 
+    DESTINATION "${PROJECT_BINARY_DIR}/src/IO")
+  file( COPY "${PROJECT_SOURCE_DIR}/src/IO/testfile.log" 
+    DESTINATION "${PROJECT_BINARY_DIR}/src/IO")
 endif()
 
 # Add the binary tree to the search path for include files
@@ -89,6 +79,32 @@ add_subdirectory(src/PARAMETERS)
 add_subdirectory(src/QC_FUNCTIONS)
 
 add_executable(calc_J src/main.cpp)
+
+# Code Coverage Configuration
+#add_library(coverage_config INTERFACE)
+
+#option(CODE_COVERAGE "Enable coverage reporting" OFF)
+if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  message("Building with code coverage")
+  list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
+  include(CodeCoverage)
+  APPEND_COVERAGE_COMPILER_FLAGS()
+  SETUP_TARGET_FOR_COVERAGE_LCOV(NAME calc_J_coverage EXECUTABLE calc_J)
+  # Add required flags (GCC & LLVM/Clang)
+  #  target_compile_options(calc_J BEFORE INTERFACE
+  #  -O0        # no optimization
+  #  -g         # generate debug info
+  #  --coverage # sets all required flags
+  #)
+#  if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
+#    target_link_options(coverage_config INTERFACE --coverage)
+#  else()
+#  target_link_libraries(calc_J INTERFACE --coverage)
+    #  endif()
+
+endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+
+
 target_link_libraries(calc_J QC_FUNCTIONS_SRC IO_SRC FILE_READERS_SRC PARAMETERS_SRC ARGUMENTS_SRC PROPERTIES_SRC MATRIX_SRC STRING_SUPPORT_SRC)
 
 if(BASH_PROGRAM)
