@@ -5,8 +5,8 @@
 #include <memory>
 
 #include "io.hpp"
-#include "../STRING_SUPPORT/string_support.hpp"
-#include "../PARAMETERS/parameters.hpp"
+#include "../string_support.hpp"
+#include "../parameters.hpp"
 
 using namespace std;
 

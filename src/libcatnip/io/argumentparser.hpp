@@ -4,14 +4,14 @@
 #include <map>
 #include <set>
 #include <utility>
-#include "../MATRIX/matrix.hpp"
-#include "../PARAMETERS/parameters.hpp"
+#include "../matrix.hpp"
+#include "../parameters.hpp"
 
-#include "ARGUMENTS/argumentswitch.hpp"
-#include "ARGUMENTS/argumentdouble.hpp"
-#include "ARGUMENTS/argumentint.hpp"
-#include "ARGUMENTS/argumentstring.hpp"
-#include "ARGUMENTS/argumentfile.hpp"
+#include "arguments/argumentswitch.hpp"
+#include "arguments/argumentdouble.hpp"
+#include "arguments/argumentint.hpp"
+#include "arguments/argumentstring.hpp"
+#include "arguments/argumentfile.hpp"
 
 namespace catnip {
 

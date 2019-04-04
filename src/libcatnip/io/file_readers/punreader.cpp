@@ -7,8 +7,8 @@
 #include <fstream>
 #include <sstream>
 
-#include "../../STRING_SUPPORT/string_support.hpp"
-#include "../../LOG/log.hpp"
+#include "../../string_support.hpp"
+#include "../../log.hpp"
 #include "punreader.hpp"
 
 using namespace catnip;

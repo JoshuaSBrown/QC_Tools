@@ -5,8 +5,8 @@
 #include <set>
 #include <utility>
 #include <memory>
-#include "../MATRIX/matrix.hpp"
-#include "../PARAMETERS/parameters.hpp"
+#include "../matrix.hpp"
+#include "../parameters.hpp"
 #include "argumentparser.hpp"
 
 namespace catnip {

@@ -1,7 +1,7 @@
 #include <sys/stat.h>
 #include <set>
 #include <iostream>
-#include "../../STRING_SUPPORT/string_support.hpp"
+#include "../../string_support.hpp"
 #include "filereader.hpp"
 
 using namespace catnip;

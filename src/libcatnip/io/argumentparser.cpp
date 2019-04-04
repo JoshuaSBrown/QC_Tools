@@ -7,7 +7,7 @@
 
 #include "argumentparser.hpp"
 
-#include "../STRING_SUPPORT/string_support.hpp"
+#include "../string_support.hpp"
 #include "../calcJconfig.hpp"
 
 using namespace catnip;

@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "../../MATRIX/matrix.hpp"
+#include "../../matrix.hpp"
 #include "filereader.hpp"
 // Gaussian log file reader
 

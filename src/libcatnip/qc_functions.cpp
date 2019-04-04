@@ -8,10 +8,10 @@
 #include <unordered_map>
 #include <cmath>
 
-#include "../IO/io.hpp"
-#include "../MATRIX/matrix.hpp"
-#include "../CONSTANTS/constants.hpp"
-#include "../LOG/log.hpp"
+#include "io/io.hpp"
+#include "matrix.hpp"
+#include "constants.hpp"
+#include "log.hpp"
 #include "qc_functions.hpp"
 
 using namespace std;

@@ -7,7 +7,7 @@
 #include <vector>
 #include <map>
 
-#include "../MATRIX/matrix.hpp"
+#include "matrix.hpp"
 
 namespace catnip{
 
