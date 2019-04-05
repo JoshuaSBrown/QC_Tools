@@ -4,7 +4,6 @@ dist: xenial
 addons:
   apt:
     update: true
-    packages: lcov
 
 language: cpp
 
@@ -12,23 +11,27 @@ compiler:
   - gcc
   - clang
 
+jobs:
+  include:
+    - stage: deploy
+      compiler: gcc
+      script: ./travis/deploy.sh
+      apt:
+        packages: gcov
+        packages: lcov
+
 before_install:
   - pwd
-    #- curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-    #  - python get-pip.py
   - pip install --user --upgrade pip
   - pip install --user gdown
-    #  - openssl aes-256-cbc -K $encrypted_93e1b7320130_key -iv $encrypted_93e1b7320130_iv -in travis/.gdrive/token_v2.json.enc -out travis/.gdrive/token_v2.json -d
   - ls
   - ls travis
-    #  - ls travis/.gdrive
   - chmod +x travis/test_suite_install
-  - ./travis/test_suite_install 
+  - chmod +x travis/deploy.sh
 
 install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
-  
   - |
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       CMAKE_URL="http://www.cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz"
@@ -42,13 +45,4 @@ install:
 script:
   - mkdir build
   - cd build
-  - ${DEPS_DIR}/cmake/bin/cmake -DENABLE_REGRESSION_TESTS=ON -DENABLE_TESTS=ON .. && make && ctest --verbose
-  - chmod +x ./../scripts/build.sh
-  - ./../scripts/build.sh
-
-after_success:
-  - lcov --capture --directory . --output-file coverage.info
-  - lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter system-files
-  - lcov --list coverage.info # debug info
-  # Uploading report to CodeCov
-  - bash <(curl -s https://codecov.io/bash) -t "e0045700-7ee0-41a6-a907-70f6a530f431"
+  - ${DEPS_DIR}/cmake/bin/cmake -DENABLE_INTEGRATION_TESTS=ON -DENABLE_TESTS=ON .. && make && ctest --verbose
