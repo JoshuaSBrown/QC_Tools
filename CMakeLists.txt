@@ -1,38 +1,48 @@
 cmake_minimum_required (VERSION 2.8)
 project (calc_J)
 
-# The version number
-set( calcJ_VERSION_MAJOR 1 )
-set( calcJ_VERSION_MINOR 8 )
-set( calcJ_YEAR_PUBLISHED 2018 )
-set( calcJ_AUTHOR_SURNAME "\"Brown\"" )
-set( calcJ_AUTHOR_INITIALS "\"J. S.\"" )
-set( calcJ_TITLE "\"CATNIP\"")
-set( calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
-set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
-set(COMMON_LIBRARIES stdc++ m)
-# Prevents multiple file extensions from being appended one after the other
-# important for using gcov .o.gcno or .cpp.gcno now will be .gcno
-set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
-
+##############################################################################
+# Defining options 
+##############################################################################
 option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" OFF)
 option(ENABLE_INTEGRATION_TESTS "Enable integration tests" OFF)
 option(ENABLE_TESTS "Enable tests" OFF)
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
+##############################################################################
+# Defining settings 
+##############################################################################
+set(calcJ_VERSION_MAJOR 1 )
+set(calcJ_VERSION_MINOR 8 )
+set(calcJ_YEAR_PUBLISHED 2018 )
+set(calcJ_AUTHOR_SURNAME "\"Brown\"" )
+set(calcJ_AUTHOR_INITIALS "\"J. S.\"" )
+set(calcJ_TITLE "\"CATNIP\"")
+set(calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
+set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+set(COMMON_LIBRARIES stdc++ m)
+set(LOG_LEVEL 0 CACHE INT "Choose the log level" )
+# Prevents multiple file extensions from being appended one after the other
+# important for using gcov .o.gcno or .cpp.gcno now will be .gcno
+set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic -Werror")
+
+##############################################################################
+# Configuring header file with cmake variables 
+##############################################################################
 # Configure header file to pass some of the CMake settings to the source code
 configure_file(
   "${PROJECT_SOURCE_DIR}/src/libcatnip/calcJconfig.hpp.in"
   "${PROJECT_SOURCE_DIR}/src/libcatnip/calcJconfig.hpp"
   )
 
+##############################################################################
+# Finding dependencies 
+##############################################################################
 # Find bash it is important for testing using scripts
 find_program (BASH_PROGRAM bash)
 find_library (GCOV gcov)
-SET( LOG_LEVEL 0 CACHE INT "Choose the log level" )
 add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
-
-SET( CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic -Werror")
 
 ##############################################################################
 # Setting up testing 
@@ -78,6 +88,9 @@ if (ENABLE_TESTS)
     DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
 endif()
 
+##############################################################################
+# Compiling build tree/paths 
+##############################################################################
 # Add the binary tree to the search path for include files
 # so that we will find calcJconfig.hpp
 include_directories("${PROJECT_BINARY_DIR}/src")
@@ -95,6 +108,9 @@ link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/libcatnip")
 
+##############################################################################
+# Creating calc_J and setting up code coverage if on  
+##############################################################################
 add_executable(calc_J src/tools/main.cpp)
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   target_link_libraries(calc_J gcov)
