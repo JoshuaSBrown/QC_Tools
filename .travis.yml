@@ -4,7 +4,7 @@ dist: xenial
 addons:
   apt:
     update: true
-    packages: lcov
+    packages: gcov
 
 language: cpp
 
@@ -14,14 +14,10 @@ compiler:
 
 before_install:
   - pwd
-    #- curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-    #  - python get-pip.py
   - pip install --user --upgrade pip
   - pip install --user gdown
-    #  - openssl aes-256-cbc -K $encrypted_93e1b7320130_key -iv $encrypted_93e1b7320130_iv -in travis/.gdrive/token_v2.json.enc -out travis/.gdrive/token_v2.json -d
   - ls
   - ls travis
-    #  - ls travis/.gdrive
   - chmod +x travis/test_suite_install
   - ./travis/test_suite_install 
 
@@ -42,7 +38,7 @@ install:
 script:
   - mkdir build
   - cd build
-  - ${DEPS_DIR}/cmake/bin/cmake -DENABLE_REGRESSION_TESTS=ON -DENABLE_TESTS=ON .. && make && ctest --verbose
+  - ${DEPS_DIR}/cmake/bin/cmake -DENABLE_INTEGRATION_TESTS=ON -DENABLE_TESTS=ON .. && make && ctest --verbose
   - chmod +x ./../scripts/build.sh
 
 after_success:
