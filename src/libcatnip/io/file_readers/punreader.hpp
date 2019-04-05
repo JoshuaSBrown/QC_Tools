@@ -11,7 +11,7 @@ namespace catnip {
 
 class PunReader : public FileReader {
   public:
-    PunReader(const std::string & str);     
+    explicit PunReader(const std::string & str);
     Matrix * getCoefsMatrix(const std::string & orb_type); 
     bool restrictedShell() { return coefs.size()==1; }
 

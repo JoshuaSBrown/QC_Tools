@@ -687,7 +687,7 @@ void TransferComplex::unscramble(
   }
 }
 
-double TransferComplex::calcJ(map<string,string> orbitaltype, const map<string,int> & orbnum){
+double TransferComplex::calcJ(const map<string,string> & orbitaltype, const map<string,int> & orbnum){
 
   if(unscrambled==false){
     cerr << "WARNING unable to automatically line up basis functions of"
@@ -700,7 +700,7 @@ double TransferComplex::calcJ(map<string,string> orbitaltype, const map<string,i
   Matrix mat2coef;
 
   
-  string HOMO_OR_LUMO = orbitaltype["mon1"]; 
+  string HOMO_OR_LUMO = orbitaltype.at("mon1"); 
   int MO = orbnum.at("mon1");
   if(HOMO_OR_LUMO.compare("HOMO")==0){
     if(MO>0) {
@@ -730,7 +730,7 @@ double TransferComplex::calcJ(map<string,string> orbitaltype, const map<string,i
     throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
   }
  
-  HOMO_OR_LUMO = orbitaltype["mon2"];
+  HOMO_OR_LUMO = orbitaltype.at("mon2");
   MO = orbnum.at("mon2");
   if(HOMO_OR_LUMO.compare("HOMO")==0){
     if(MO>0) {

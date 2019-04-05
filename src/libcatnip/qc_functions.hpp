@@ -53,7 +53,7 @@ class TransferComplex {
     //    monomer1 LUMO-3
     //    monomer2 HOMO
     double calcJ(
-      std::map<std::string,std::string> orbitaltype,
+      const std::map<std::string,std::string> & orbitaltype,
       const std::map<std::string,int> & orbitalnum);
 };
 
