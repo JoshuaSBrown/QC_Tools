@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Make codecoverage build script executable
-chmod +x scripts/build.sh
+chmod +x scripts/build.bash
 mkdir build
 cd build
 cmake -DENABLE_INTEGRATION_TESTS=ON -DENABLE_TESTS=ON -DCODE_COVERAGE=ON ../

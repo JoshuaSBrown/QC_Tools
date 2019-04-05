@@ -15,7 +15,7 @@ jobs:
   include:
     - stage: deploy
       compiler: gcc
-      script: ./travis/deploy.sh
+      script: ./travis/deploy.bash
       apt:
         packages: gcov
         packages: lcov
