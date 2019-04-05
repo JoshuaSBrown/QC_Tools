@@ -10,7 +10,7 @@ set( calcJ_AUTHOR_INITIALS "\"J. S.\"" )
 set( calcJ_TITLE "\"CATNIP\"")
 set( calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
 set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
-
+set(COMMON_LIBRARIES stdc++ m)
 # Prevents multiple file extensions from being appended one after the other
 # important for using gcov .o.gcno or .cpp.gcno now will be .gcno
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
@@ -100,5 +100,5 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   target_link_libraries(calc_J gcov)
   set_source_files_properties( src/tools/main.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS})
 endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-target_link_libraries(calc_J libcatnip)
+target_link_libraries(calc_J libcatnip ${COMMON_LIBRARIES})
 install( TARGETS calc_J DESTINATION bin)
