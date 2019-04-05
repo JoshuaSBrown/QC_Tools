@@ -19,46 +19,41 @@ list( APPEND UNIT_TEST_SOURCE_FILES
   test_qc_functions
   test_string_support)
 
-link_libraries(gcov)
-
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
-  foreach(PROG IN LISTS UNIT_TEST_SOURCE_FILES)
-    list( APPEND UNIT_TEST unit_${PROG}) 
-  endforeach(PROG)
+  link_libraries(gcov)
 endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
 
-if(${ENABLE_TESTS})
+if(ENABLE_TESTS)
   foreach(PROG IN LISTS UNIT_TEST_SOURCE_FILES)
-
     add_executable(unit_${PROG} ${PROG}.cpp)
     if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
-      set_source_files_properties( ${PROG}.cpp PROPERTIES COMPILE_FLAGS "-fprofile-arcs -ftest-coverage" )
-      #      target_link_libraries(unit_${PROG} ${GCOV_LIB})
+      set_source_files_properties( ${PROG}.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS} )
     endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
     target_link_libraries(unit_${PROG} libcatnip)
     add_test(unit_${PROG} unit_${PROG})
-
-    #    if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    #  include(${PROJECT_SOURCE_DIR}/CodeCoverage)
-    #  SETUP_TARGET_FOR_COVERAGE_LCOV(NAME coverage_${PROG} EXECUTABLE ctest DEPENDENCIES unit_${PROG})
-    #endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   endforeach(PROG)
+endif(ENABLE_TESTS)
 
-endif(${ENABLE_TESTS})
-
-if(${ENABLE_REGRESSION_TESTS})
+if(ENABLE_INTEGRATION_TESTS)
 
   foreach(PROG 
       test_logreader
       test_punreader)
 
-    add_executable(regression_${PROG} ${PROG}.cpp)
-    target_link_libraries(regression_${PROG} libcatnip)
-    add_test(regression_${PROG} regression_${PROG})
+    add_executable(integration${PROG} ${PROG}.cpp)
+    if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
+      set_source_files_properties( ${PROG}.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS})
+    endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
+
+    target_link_libraries(integration${PROG} libcatnip)
+    add_test(integration${PROG} integration${PROG})
 
   endforeach(PROG)
 
   add_executable(test_io test_io.cpp)
+  if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
+    set_source_files_properties( test_io.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS})
+  endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
   target_link_libraries(test_io libcatnip)
   add_test(regression_test_io test_io -p_P "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30/30_pair.pun" -p_1 "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30/ref.pun" -p_2 "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30/30_2.pun")
 
@@ -73,4 +68,7 @@ if(${ENABLE_REGRESSION_TESTS})
 
   endif(BASH_PROGRAM)
 
-endif(${ENABLE_REGRESSION_TESTS})
+endif(ENABLE_INTEGRATION_TESTS)
+
+
+
