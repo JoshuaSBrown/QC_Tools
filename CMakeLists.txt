@@ -16,7 +16,7 @@ set(COMMON_LIBRARIES stdc++ m)
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 
 option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" OFF)
-option(ENABLE_INTEGRATION_TESTS "Enable Regression tests" OFF)
+option(ENABLE_INTEGRATION_TESTS "Enable integration tests" OFF)
 option(ENABLE_TESTS "Enable tests" OFF)
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
