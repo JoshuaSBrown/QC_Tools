@@ -21,10 +21,8 @@ cd release_packages
 git clone https://github.com/JoshuaSBrown/QC_Tools.git
 rm -rf QC_Tools/.git
 rm -rf QC_Tools/.clang-format
-rm -rf QC_Tools/travis
 rm -rf QC_Tools/.travis.yml
 rm -rf QC_Tools/docs
-rm -rf QC_Tools/scripts
 MAJOR_VERSION=$(grep VERSION_MAJOR QC_Tools/CMakeLists.txt| grep -oP '\(\K[^\)]+' | awk '{print $2}')
 MINOR_VERSION=$(grep VERSION_MINOR QC_Tools/CMakeLists.txt | grep -oP '\(\K[^\)]+' | awk '{print $2}')
 zip -r calc_J_${MAJOR_VERSION}.${MINOR_VERSION}_source.zip QC_Tools
