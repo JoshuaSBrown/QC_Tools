@@ -57,7 +57,7 @@ unordered_map<int, pair<double, string>> findRank(Matrix &Orb_E_Alpha,
 }
 
 // Essentially calculates the transfer integral
-double calculate_transfer_integral(Matrix mat_1_Coef, Matrix mat_2_Coef,
+double calculate_transfer_integral(Matrix mat_1_Coef, const Matrix & mat_2_Coef,
                                    Matrix mat_P_Coef, Matrix mat_S,
                                    const Matrix &mat_P_OE, bool counterPoise_) {
 
@@ -175,7 +175,7 @@ list<Matrix *> splitMatrixIntoList(const vector<int> &subMatrixDimension,
 }
 
 list<Matrix *> splitCoefsUpByAtoms(vector<int> basisFuncP, Matrix *Coefs,
-                                   string ColRow) {
+                                   const string & ColRow) {
   return splitMatrixIntoList(basisFuncP, Coefs, ColRow);
 }
 
@@ -415,7 +415,7 @@ Matrix *createNewMatrix(list<Matrix *> &p_atom_mat_coef, int rows, int cols,
 
 // unscramble the coefficients
 Matrix *unscramble_Coef(const std::vector<int> &matchDimerA,
-                        std::vector<int> matchDimerB,
+                        const std::vector<int> &matchDimerB,
                         const std::vector<int> &basisFuncP, Matrix *dimerCoef) {
 
   // Let's reduce the complexity of the problem by instead of working
@@ -451,7 +451,7 @@ Matrix *unscramble_Coef(const std::vector<int> &matchDimerA,
 }
 
 // unscramble the coefficients
-Matrix *unscramble_Coef(std::vector<int> matchDimerB,
+Matrix *unscramble_Coef(const std::vector<int> &matchDimerB,
                         std::vector<int> basisFuncB, Matrix *Coef) {
 
   // Let's reduce the complexity of the problem by instead of working
@@ -483,7 +483,7 @@ Matrix *unscramble_Coef(std::vector<int> matchDimerB,
 
 // Similar to the above function but we will be moving both the rows
 // and columns
-Matrix *unscramble_S(std::vector<int> matchDimerA,
+Matrix *unscramble_S(const std::vector<int> &matchDimerA,
                      const std::vector<int> &matchDimerB,
                      std::vector<int> basisFuncP, Matrix *S) {
 

@@ -68,7 +68,7 @@ Matrix Matrix_copy(const Matrix &mat) {
   return mat2;
 }
 
-Matrix Matrix_concatenate_rows(Matrix mat1, Matrix mat2) {
+Matrix Matrix_concatenate_rows(Matrix mat1,const Matrix & mat2) {
 
   // For this function to work both mat1 and mat2 must have
   // the same number of columns and shelves
@@ -303,7 +303,6 @@ Matrix::Matrix(const int r) {
     cerr << " you have r " << r << endl;
     exit(1);
   }
-  int i;
   if (r == 0) {
     rows = 0;
     cols = 0;
@@ -315,7 +314,7 @@ Matrix::Matrix(const int r) {
     shel = 1;
 
     elem = new double[rows];
-    for (i = 1; i <= rows; i++) {
+    for (int i = 1; i <= rows; i++) {
       elem[i - 1] = 0;
     }
   }
@@ -835,7 +834,7 @@ void Matrix::move_col(int c_from, int c_to) {
   set_col(col, c_to);
 }
 
-vector<int> Matrix::matchRow(Matrix mat, int sf) {
+vector<int> Matrix::matchRow(const Matrix & mat, int sf) {
   if (mat.get_shel() != 1 || this->get_shel() != 1) {
     cerr << "ERROR shel should be 1" << endl;
     exit(1);

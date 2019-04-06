@@ -50,7 +50,7 @@ class TransferComplex {
 std::unordered_map<int, std::pair<double, std::string>> findRank(
     Matrix& Orb_E_Alpha, Matrix& Orb_E_Beta);
 
-double calculate_transfer_integral(Matrix mat_1_Coef, Matrix mat_2_Coef,
+double calculate_transfer_integral(Matrix mat_1_Coef, const Matrix & mat_2_Coef,
                                    Matrix mat_P_Coef, Matrix mat_S,
                                    const Matrix& mat_P_OE, bool counterPoise_);
 
@@ -64,16 +64,16 @@ Matrix organize_P_Coef(std::vector<int> matchDimerA,
 // Assumes that the match vectors describe swaps looking at a single
 // instance of the dimerCoef matrix
 Matrix* unscramble_Coef(const std::vector<int>& matchDimerA,
-                        std::vector<int> matchDimerB,
+                        const std::vector<int>& matchDimerB,
                         const std::vector<int>& basisFuncDimer,
                         Matrix* dimerCoef);
 
-Matrix* unscramble_Coef(std::vector<int> matchDimerA,
+Matrix* unscramble_Coef(const std::vector<int>& matchDimerA,
                         std::vector<int> basisFuncDimer, Matrix* dimerCoef);
 
 // Reorganize the dimer overlap matrix to line up with the monomer
 // coefficients.
-Matrix* unscramble_S(std::vector<int> matchDimerA,
+Matrix* unscramble_S(const std::vector<int>& matchDimerA,
                      const std::vector<int>& matchDimerB,
                      std::vector<int> basisFuncDimer, Matrix* S);
 

@@ -15,10 +15,10 @@ class Matrix {
 
  public:
   // constructors
-  Matrix(void);
-  Matrix(std::vector<double>);
-  Matrix(std::vector<int>);
-  Matrix(std::vector<std::vector<double>>);
+  explicit Matrix(void);
+  explicit Matrix(std::vector<double>);
+  explicit Matrix(std::vector<int>);
+  explicit Matrix(std::vector<std::vector<double>>);
   Matrix(const int r);
   Matrix(const int r, const int c);
   Matrix(const int r, const int c, const int s);
@@ -71,7 +71,7 @@ class Matrix {
   // passed in, -1 means there is no match
   // sf is the number of significant figures that will be checked to ensure
   // the same value
-  std::vector<int> matchRow(Matrix mat, int sf);
+  std::vector<int> matchRow(const Matrix & mat, int sf);
   std::vector<int> matchCol(const Matrix &mat, const int sf) const;
 };
 
@@ -92,7 +92,7 @@ Matrix Matrix_copy(const Matrix &mat);
 // Add two matrices together to create a third
 // mat1 will always appear above mat2 in the rows
 // of the matrix that is returned.
-Matrix Matrix_concatenate_rows(Matrix mat1, Matrix mat2);
+Matrix Matrix_concatenate_rows(Matrix mat1,const Matrix & mat2);
 Matrix Matrix_concatenate_cols(const Matrix &mat1, const Matrix &mat2);
 
 }  // namespace catnip
