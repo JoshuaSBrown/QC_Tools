@@ -1,7 +1,6 @@
 FROM debian:stretch
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends make=4.1 cmake=3.10.2 gcc-c++ git=3.17.1 file=5.32 redhat-lsb-core
+RUN apt-get update && apt-get install -y --no-install-recommends make cmake gcc-c++ git file edhat-lsb-core && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN git clone https://github.com/JoshuaSBrown/QC_Tools.git                          
 RUN mkdir -p QC_Tools/build_test
 RUN mkdir -p QC_Tools/build
