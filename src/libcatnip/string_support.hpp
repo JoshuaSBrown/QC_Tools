@@ -12,7 +12,7 @@ std::vector<std::string> splitSt(std::string input);
 
 // Given a path name this function finds the last part
 // in the path which should be associated with the path
-// /director/structure/File.cc 
+// /director/structure/File.cc
 // passing this path into the function will return File.cc
 std::string lastStringInPath(std::string input);
 
@@ -43,7 +43,7 @@ std::string trimmed(std::string s);
 
 void removeSpace(std::string s);
 
-// Grab everything after the first occurance of a string. 
+// Grab everything after the first occurance of a string.
 std::string grabStrAfterFirstOccurance(std::string s, std::string occ);
 
 std::string grabStrAfterLastOccurance(std::string s, std::string occ);
@@ -58,11 +58,10 @@ std::string grabStrBeforeLastOccurance(std::string s, std::string occ);
 std::string grabStrBeforeLastOccuranceInclusive(std::string s, std::string occ);
 
 // Determine if the sub string exists within the string
-bool foundSubStrInStr(std::string s,std::string sub_s);
+bool foundSubStrInStr(std::string s, std::string sub_s);
 
 // Determine if whole string is alphabetical characters
 bool isAlphabetical(std::string s);
 
-}
-#endif // _CATNIP_STRING_SUPPORT_HPP_
-
+}  // namespace catnip
+#endif  // _CATNIP_STRING_SUPPORT_HPP_

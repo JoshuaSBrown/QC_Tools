@@ -1,36 +1,34 @@
 
+#include "../libcatnip/io/arguments/properties/propertyswitch.hpp"
+#include <cassert>
+#include <exception>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <exception>
-#include <cassert>
-#include "../libcatnip/io/arguments/properties/propertyswitch.hpp"
 
 using namespace catnip;
 using namespace std;
 
-int main(void){
+int main(void) {
 
   cerr << "Testing: PropertySwitch" << endl;
   cerr << "Testing: constructor" << endl;
-  {
-    PropertySwitch propSwitch;
-  }
- 
+  { PropertySwitch propSwitch; }
+
   cerr << "Testing: getPropertyName" << endl;
   {
     PropertySwitch propSwitch;
-    string name = propSwitch.getPropertyName(); 
-    assert(name.compare("PROPERTY_SWITCH")==0);
+    string name = propSwitch.getPropertyName();
+    assert(name.compare("PROPERTY_SWITCH") == 0);
   }
- 
+
   cerr << "Testing: getPropertyOptions" << endl;
   {
 
     PropertySwitch propSwitch;
-    auto options = propSwitch.getPropertyOptions(); 
+    auto options = propSwitch.getPropertyOptions();
     string opt = options.at(0);
-    assert(opt.compare("DEFAULT")==0);
+    assert(opt.compare("DEFAULT") == 0);
   }
 
   cerr << "Testing: propValid" << endl;
@@ -43,17 +41,17 @@ int main(void){
     valid = propSwitch.propValid();
     assert(valid);
     bool excep = false;
-    try{
+    try {
       propSwitch.propValid(-1);
-    }catch(...){
+    } catch (...) {
       excep = true;
     }
     assert(excep);
 
     excep = false;
-    try{
+    try {
       propSwitch.propValid(2);
-    }catch(...){
+    } catch (...) {
       excep = true;
     }
     assert(excep);
@@ -70,24 +68,21 @@ int main(void){
     assert(valid);
     valid = propSwitch.propValid("1");
     assert(valid);
-    
-
   }
 
   cerr << "Testing: setPropOption" << endl;
   {
     PropertySwitch propSwitch;
-    propSwitch.setPropOption("DEFAULT","ON");
-    propSwitch.setPropOption("DEFAULT","OFF");
-//    propSwitch.propValid(0);
-//    bool excep = false;
-//    try {
-//      propSwitch.propValid(-1);
-//    } catch (...) {
-//      excep = true;
-//    }
-//    assert(excep);
-
-  } 
+    propSwitch.setPropOption("DEFAULT", "ON");
+    propSwitch.setPropOption("DEFAULT", "OFF");
+    //    propSwitch.propValid(0);
+    //    bool excep = false;
+    //    try {
+    //      propSwitch.propValid(-1);
+    //    } catch (...) {
+    //      excep = true;
+    //    }
+    //    assert(excep);
+  }
   return 0;
 }

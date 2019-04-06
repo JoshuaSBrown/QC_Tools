@@ -1,15 +1,15 @@
 
+#include "../libcatnip/io/arguments/properties/propertyfileexist.hpp"
+#include <cassert>
+#include <exception>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <exception>
-#include <cassert>
-#include "../libcatnip/io/arguments/properties/propertyfileexist.hpp"
 
 using namespace catnip;
 using namespace std;
 
-int main(void){
+int main(void) {
 
   cerr << "Testing: PropertyFileExist" << endl;
   cerr << "Testing: constructor" << endl;
@@ -22,7 +22,7 @@ int main(void){
   {
     PropertyFileExist propFileExist;
     string name = propFileExist.getPropertyName();
-    assert(name.compare("PROPERTY_FILE_EXIST")==0);
+    assert(name.compare("PROPERTY_FILE_EXIST") == 0);
   }
 
   cerr << "Testing: getPropertyOptions" << endl;
@@ -31,7 +31,7 @@ int main(void){
     PropertyFileExist propFileExist;
     auto options = propFileExist.getPropertyOptions();
     string opt = options.at(0);
-    assert(opt.compare("FILE_MUST_EXIST")==0);
+    assert(opt.compare("FILE_MUST_EXIST") == 0);
   }
 
   cerr << "Testing: propValid" << endl;
@@ -42,15 +42,15 @@ int main(void){
 
     bool valid = propFileExist1.propValid("test_propertyfileexist.cpp");
     assert(valid);
-  
+
     bool excep = false;
-    try {  
+    try {
       valid = propFileExist2.propValid("fake");
-    } catch(...){
+    } catch (...) {
       excep = true;
     }
     assert(excep);
-    
+
     valid = propFileExist3.propValid("testfile.pun");
     assert(valid);
   }
@@ -62,9 +62,9 @@ int main(void){
 
     bool fileExist = propFileExist1.getPropOption("FILE_MUST_EXIST");
     assert(fileExist);
-    
+
     fileExist = propFileExist2.getPropOption("FILE_MUST_EXIST");
-    assert(fileExist==false);
+    assert(fileExist == false);
   }
 
   return 0;

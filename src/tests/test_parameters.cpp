@@ -2,9 +2,9 @@
 
 using namespace catnip;
 
-int main(void){
+int main(void) {
 
   Parameters Par;
-    
+
   return 0;
 }

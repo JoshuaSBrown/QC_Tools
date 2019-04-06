@@ -1,27 +1,25 @@
 
+#include "../libcatnip/io/arguments/properties/propertydouble.hpp"
+#include <cassert>
+#include <exception>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <exception>
-#include <cassert>
-#include "../libcatnip/io/arguments/properties/propertydouble.hpp"
 
 using namespace catnip;
 using namespace std;
 
-int main(void){
+int main(void) {
 
   cerr << "Testing: PropertyDouble" << endl;
   cerr << "Testing: constructor" << endl;
-  {
-    PropertyDouble propDouble;
-  }
+  { PropertyDouble propDouble; }
 
   cerr << "Testing: getPropertyName" << endl;
   {
     PropertyDouble propDouble;
     string name = propDouble.getPropertyName();
-    assert(name.compare("PROPERTY_DOUBLE")==0);
+    assert(name.compare("PROPERTY_DOUBLE") == 0);
   }
 
   cerr << "Testing: getPropertyOptions" << endl;
@@ -30,11 +28,11 @@ int main(void){
     PropertyDouble propDouble;
     auto options = propDouble.getPropertyOptions();
     string opt = options.at(0);
-    assert(opt.compare("MIN")==0);
+    assert(opt.compare("MIN") == 0);
     opt = options.at(1);
-    assert(opt.compare("MAX")==0);
+    assert(opt.compare("MAX") == 0);
   }
- 
+
   cerr << "Testing: propValid" << endl;
   {
     PropertyDouble propDouble;
@@ -46,7 +44,7 @@ int main(void){
   {
     PropertyDouble propDouble;
     double val = -1.2;
-    propDouble.setPropOption("MIN",val);
+    propDouble.setPropOption("MIN", val);
     propDouble.propValid(0.0);
     bool excep = false;
     try {
@@ -60,11 +58,11 @@ int main(void){
     excep = false;
     try {
       val = 3.5;
-      propDouble.setPropOption("MAXimum",val);
-    } catch (...){
+      propDouble.setPropOption("MAXimum", val);
+    } catch (...) {
       excep = true;
     }
     assert(excep);
-  } 
+  }
   return 0;
 }

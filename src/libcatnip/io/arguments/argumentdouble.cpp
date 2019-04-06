@@ -6,13 +6,9 @@
 using namespace catnip;
 using namespace std;
 
-ArgumentDouble::ArgumentDouble(void){
-  registerProperties_();
-}
+ArgumentDouble::ArgumentDouble(void) { registerProperties_(); }
 
-void ArgumentDouble::registerProperties_(void){
-  PropertyDouble * prop_double = new PropertyDouble();
+void ArgumentDouble::registerProperties_(void) {
+  PropertyDouble* prop_double = new PropertyDouble();
   double_propobjs_.push_back(prop_double);
 }
-
-

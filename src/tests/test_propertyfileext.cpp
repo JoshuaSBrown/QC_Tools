@@ -1,15 +1,15 @@
 
+#include "../libcatnip/io/arguments/properties/propertyfileext.hpp"
+#include <cassert>
+#include <exception>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <exception>
-#include <cassert>
-#include "../libcatnip/io/arguments/properties/propertyfileext.hpp"
 
 using namespace catnip;
 using namespace std;
 
-int main(void){
+int main(void) {
 
   cerr << "Testing: PropertyFileExt" << endl;
   cerr << "Testing: constructor" << endl;
@@ -20,12 +20,12 @@ int main(void){
     bool excep = false;
     try {
       PropertyFileExt propFileExt4("ffda.fd");
-    } catch(...) {
+    } catch (...) {
       excep = true;
     }
     assert(excep);
 
-    set<string> exts = {".png",".gjf"};
+    set<string> exts = {".png", ".gjf"};
     PropertyFileExt propFileExt5(exts);
   }
 
@@ -33,7 +33,7 @@ int main(void){
   {
     PropertyFileExt propFileExt;
     string name = propFileExt.getPropertyName();
-    assert(name.compare("PROPERTY_FILE_EXT")==0);
+    assert(name.compare("PROPERTY_FILE_EXT") == 0);
   }
 
   cerr << "Testing: getPropertyOptions" << endl;
@@ -42,7 +42,7 @@ int main(void){
     PropertyFileExt propFileExt;
     auto options = propFileExt.getPropertyOptions();
     string opt = options.at(0);
-    assert(opt.compare("ALLOWED_FILE_EXT")==0);
+    assert(opt.compare("ALLOWED_FILE_EXT") == 0);
   }
 
   cerr << "Testing: propValid" << endl;
@@ -51,9 +51,9 @@ int main(void){
     bool valid = propFileExt.propValid("dir/file.jpg");
     assert(valid);
     bool excep = false;
-    try{
+    try {
       propFileExt.propValid("dir/file.jp");
-    }catch(...){
+    } catch (...) {
       excep = true;
     }
     assert(excep);
@@ -64,20 +64,19 @@ int main(void){
     valid = propFileExt2.propValid("dir/file.jp");
     assert(valid);
 
-    set<string> exts = {".png",".gjf"};
+    set<string> exts = {".png", ".gjf"};
     PropertyFileExt propFileExt3(exts);
     valid = propFileExt3.propValid("Dir2/Path/File.png");
     assert(valid);
     valid = propFileExt3.propValid("Dir2/Path/File.gjf");
     assert(valid);
     excep = false;
-    try{
+    try {
       propFileExt3.propValid("dir/file.com");
-    }catch(...){
+    } catch (...) {
       excep = true;
     }
     assert(excep);
-
   }
   return 0;
 }
