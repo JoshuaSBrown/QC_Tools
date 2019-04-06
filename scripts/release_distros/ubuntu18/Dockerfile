@@ -1,6 +1,10 @@
 FROM ubuntu:bionic
 
 RUN apt-get update && apt-get install -y apt-utils ca-certificates make cmake gcc g++ git file lsb-release && apt-get clean &&  rm -rf /var/lib/apt/lists/*
+RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"                 
+RUN chmod +x get-pip.py                                                         
+RUN ./get-pip.py                                                                
+RUN pip install gdown  
 RUN git clone https://github.com/JoshuaSBrown/QC_Tools.git
 RUN mkdir -p QC_Tools/build_test
 RUN mkdir -p QC_Tools/build
