@@ -8,6 +8,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 
 namespace catnip {
@@ -198,7 +199,7 @@ class ArgumentObject {
     return opts_values;
   }
 
-  std::string getPropertyValues(std::string property, std::string option) {
+  std::string getPropertyValues(std::string property,const std::string & option) {
     for (auto prop : int_propobjs_) {
       if (property.compare(prop->getPropertyName()) == 0) {
         auto vec_opt = prop->getPropertyOptions();
@@ -300,7 +301,7 @@ class ArgumentObject {
   }
 
   void setArgPropertyOpt(std::string property, std::string option,
-                         std::set<std::string> val) {
+                         const std::set<std::string> & val) {
     bool setval = false;
     for (auto prop = string_set_propobjs_.begin();
          prop != string_set_propobjs_.end(); ++prop) {
@@ -323,7 +324,7 @@ class ArgumentObject {
   }
 
   void setArgPropertyOpt(std::string property, std::string option,
-                         std::vector<std::string> val) {
+                         const std::vector<std::string> & val) {
     bool setval = false;
     for (auto prop : string_vec_propobjs_) {
       if (property.compare(prop->getPropertyName()) == 0) {
@@ -344,8 +345,8 @@ class ArgumentObject {
     }
   }
 
-  void setArgPropertyOpt(std::string property, std::string option,
-                         std::string val) {
+  void setArgPropertyOpt(std::string property,const std::string & option,
+                         const std::string & val) {
     bool setval = false;
     for (auto prop : string_propobjs_) {
       if (property.compare(prop->getPropertyName()) == 0) {
@@ -377,7 +378,7 @@ class ArgumentObject {
     }
   }
 
-  void setArgPropertyOpt(std::string property, std::string option, int val) {
+  void setArgPropertyOpt(std::string property, const std::string & option, int val) {
     bool setval = false;
     for (auto prop : int_propobjs_) {
 

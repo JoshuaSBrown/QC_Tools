@@ -14,7 +14,7 @@ class PropertyFileExist : public PropertyObject<std::string, int> {
   std::vector<std::string> getOpts_(void) const;
 
  public:
-  PropertyFileExist(void);
+  explicit PropertyFileExist(void);
   PropertyFileExist(int fileMustExist);
   bool propValid(const std::string &fileName);
   void postCheck(void) const;

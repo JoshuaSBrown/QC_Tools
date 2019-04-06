@@ -16,8 +16,8 @@ class PropertyFileExt
   std::vector<std::string> getOpts_(void) const;
 
  public:
-  PropertyFileExt(void);
-  PropertyFileExt(std::string ext);
+  explicit PropertyFileExt(void);
+  explicit PropertyFileExt(std::string ext);
   PropertyFileExt(std::set<std::string> exts);
   bool propValid(const std::string &fileNamePath);
   void setPropOption(std::string option, std::string var);

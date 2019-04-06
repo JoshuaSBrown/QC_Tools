@@ -52,13 +52,13 @@ class ArgumentParser {
   // 1 - short flag
   // 2 - long flag
   // 3 - description
-  ArgumentParser(std::set<std::vector<std::string>> flags);
+  explicit ArgumentParser(std::set<std::vector<std::string>> flags);
 
   // Set Defaults for the flags in the case that they are not found
-  void setFlagDefaultValue(std::string flag, int val);
-  void setFlagDefaultValue(std::string flag, size_t val);
-  void setFlagDefaultValue(std::string flag, double val);
-  void setFlagDefaultValue(std::string flag, std::string val);
+  void setFlagDefaultValue(std::string flag,const int & val);
+  void setFlagDefaultValue(std::string flag,const size_t & val);
+  void setFlagDefaultValue(std::string flag,const double & val);
+  void setFlagDefaultValue(std::string flag,const std::string & val);
 
   // Add a argument without setting any of the values
   void addFlagArg(std::string flag, std::string argname);

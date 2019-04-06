@@ -200,22 +200,22 @@ void ArgumentParser::addFlagArg(string flag, string argname) {
   }
 }
 
-void ArgumentParser::setFlagDefaultValue(string flag, int val) {
+void ArgumentParser::setFlagDefaultValue(string flag,const int & val) {
   int_values_[flag] = val;
   defaults_set_[flag] = true;
 }
 
-void ArgumentParser::setFlagDefaultValue(string flag, size_t val) {
+void ArgumentParser::setFlagDefaultValue(string flag,const size_t & val) {
   size_t_values_[flag] = val;
   defaults_set_[flag] = true;
 }
 
-void ArgumentParser::setFlagDefaultValue(string flag, double val) {
+void ArgumentParser::setFlagDefaultValue(string flag,const double & val) {
   double_values_[flag] = val;
   defaults_set_[flag] = true;
 }
 
-void ArgumentParser::setFlagDefaultValue(string flag, string val) {
+void ArgumentParser::setFlagDefaultValue(string flag,const string & val) {
   string_values_[flag] = val;
   defaults_set_[flag] = true;
 }

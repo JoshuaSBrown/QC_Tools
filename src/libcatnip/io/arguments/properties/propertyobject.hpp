@@ -61,7 +61,7 @@ class PropertyObject {
   std::vector<std::string> getPropertyOptions(void) const { return getOpts_(); }
 
   // Setup the valid options associated with the parameter
-  void setPropOption(std::string option, T val) {
+  void setPropOption(std::string option, const T & val) {
     if (!propOptionValid_(option)) {
       throw std::invalid_argument("Property option is unrecognized " + option);
     }
