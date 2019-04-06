@@ -10,6 +10,8 @@ else
   exit 1
 fi
 
+pip install --user --upgrade pip
+pip install --user gdown
 gdown https://drive.google.com/uc?id=1rCsj_jpMyE0S0cokFJDyBSA0aPNiIHNb
 
 unzip "GAUSSIANFILES.zip"
