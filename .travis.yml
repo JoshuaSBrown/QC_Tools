@@ -22,11 +22,9 @@ jobs:
 
 before_install:
   - pwd
-  - pip install --user --upgrade pip
-  - pip install --user gdown
   - ls
   - ls travis
-  - chmod +x travis/test_suite_install
+  - chmod +x travis/test_suite_install.bash
   - chmod +x travis/deploy.bash
 
 install:
