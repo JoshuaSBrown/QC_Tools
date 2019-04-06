@@ -54,7 +54,7 @@ vector<string> splitSt(string input) {
   return values;
 }
 
-string lastStringInPath(string input) {
+string lastStringInPath(const string& input) {
   size_t found;
   string line;
   line = input;

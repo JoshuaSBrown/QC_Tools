@@ -14,7 +14,7 @@ std::vector<std::string> splitSt(std::string input);
 // in the path which should be associated with the path
 // /director/structure/File.cc
 // passing this path into the function will return File.cc
-std::string lastStringInPath(std::string input);
+std::string lastStringInPath(const std::string& input);
 
 // Grab Path only leave off the file name
 std::string getPath(std::string input);

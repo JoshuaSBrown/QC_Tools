@@ -57,8 +57,8 @@ unordered_map<int, pair<double, string>> findRank(Matrix &Orb_E_Alpha,
 }
 
 // Essentially calculates the transfer integral
-double calculate_transfer_integral(Matrix mat_1_Coef, const Matrix & mat_2_Coef,
-                                   Matrix mat_P_Coef, Matrix mat_S,
+double calculate_transfer_integral(const Matrix & mat_1_Coef, const Matrix & mat_2_Coef,
+                                   Matrix mat_P_Coef,const Matrix & mat_S,
                                    const Matrix &mat_P_OE, bool counterPoise_) {
 
   Matrix mat_1_Coefinv = mat_1_Coef.invert();
@@ -174,7 +174,7 @@ list<Matrix *> splitMatrixIntoList(const vector<int> &subMatrixDimension,
   return list_matrix;
 }
 
-list<Matrix *> splitCoefsUpByAtoms(vector<int> basisFuncP, Matrix *Coefs,
+list<Matrix *> splitCoefsUpByAtoms(const vector<int> & basisFuncP, Matrix *Coefs,
                                    const string & ColRow) {
   return splitMatrixIntoList(basisFuncP, Coefs, ColRow);
 }
@@ -452,7 +452,7 @@ Matrix *unscramble_Coef(const std::vector<int> &matchDimerA,
 
 // unscramble the coefficients
 Matrix *unscramble_Coef(const std::vector<int> &matchDimerB,
-                        std::vector<int> basisFuncB, Matrix *Coef) {
+                        const std::vector<int> &basisFuncB, Matrix *Coef) {
 
   // Let's reduce the complexity of the problem by instead of working
   // with the basis functions lets just work with the atoms. We can do
@@ -537,7 +537,7 @@ Matrix *unscramble_S(const std::vector<int> &matchDimerA,
 // is being used and thus we do not need to match with both monomer A and
 // monomer B but only need to match with A.
 Matrix *unscramble_S(const std::vector<int> &matchDimerA,
-                     std::vector<int> basisFuncP, Matrix *S) {
+                     const std::vector<int> &basisFuncP, Matrix *S) {
 
   Matrix *S_new;
   {
@@ -623,10 +623,11 @@ TransferComplex::TransferComplex(Matrix *mat1Coef, Matrix *mat2Coef,
   mat_P_OE = matPOE;
 }
 
-void TransferComplex::unscramble(const Matrix &coord_1_mat, Matrix coord_2_mat,
+void TransferComplex::unscramble(const Matrix &coord_1_mat,
+                                 const Matrix &coord_2_mat,
                                  const Matrix &coord_P_mat,
                                  const std::vector<int> &basisP,
-                                 std::vector<int> basis2) {
+                                 const std::vector<int> &basis2) {
 
   unscrambled = true;
 
