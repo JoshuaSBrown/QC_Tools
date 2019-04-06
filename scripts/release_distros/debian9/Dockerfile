@@ -1,6 +1,6 @@
 FROM debian:stretch
 
-RUN apt-get update && apt-get install -y --no-install-recommends make cmake gcc-c++ git file edhat-lsb-core && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends make cmake gcc git file lsb-core && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN git clone https://github.com/JoshuaSBrown/QC_Tools.git                          
 RUN mkdir -p QC_Tools/build_test
 RUN mkdir -p QC_Tools/build
