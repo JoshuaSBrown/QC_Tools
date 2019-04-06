@@ -27,7 +27,7 @@ before_install:
   - ls
   - ls travis
   - chmod +x travis/test_suite_install
-  - chmod +x travis/deploy.sh
+  - chmod +x travis/deploy.bash
 
 install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
