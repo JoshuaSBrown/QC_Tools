@@ -15,7 +15,7 @@ jobs:
   include:
     - stage: deploy
       compiler: gcc
-      script: ./travis/deploy.bash
+      script: ./scripts/deploy.bash
       apt:
         packages: gcov
         packages: lcov
@@ -23,9 +23,9 @@ jobs:
 before_install:
   - pwd
   - ls
-  - ls travis
-  - chmod +x travis/test_suite_install.bash
-  - chmod +x travis/deploy.bash
+  - ls scripts
+  - chmod +x scripts/test_suite_install.bash
+  - chmod +x scripts/deploy.bash
 
 install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
