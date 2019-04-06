@@ -19,7 +19,7 @@ class Matrix {
   explicit Matrix(std::vector<double>);
   explicit Matrix(std::vector<int>);
   explicit Matrix(std::vector<std::vector<double>>);
-  Matrix(const int r);
+  explicit Matrix(const int r);
   Matrix(const int r, const int c);
   Matrix(const int r, const int c, const int s);
 

@@ -34,7 +34,7 @@ if [ $? -eq 0 ]; then
   echo "${green}[SUCCESS]${reset} ${path}/test_io -p_P ${path}/../../GAUSSIANFILES/30/30_pair.pun  -p_1 ${path}/../../GAUSSIANFILES/30/ref.pun     -p_2 ${path}/../../GAUSSIANFILES/30/30_2.pun"
 else
   echo "${red}[FAILURE]${reset} ${path}/test_io -p_P ${path}/../../GAUSSIANFILES/30/30_pair.pun  -p_1 ${path}/../../GAUSSIANFILES/30/ref.pun     -p_2 ${path}/../../GAUSSIANFILES/30/30_2.pun"
-  count_fails=$(($count_fails+1))
+  count_fails=$((count_fails+1))
 fi
 
 ${path}/test_io -l_P ${path}/../../GAUSSIANFILES/30/30_pair.log  -l_1 ${path}/../../GAUSSIANFILES/30/ref.log -l_2 ${path}/../../GAUSSIANFILES/30/30_2.log >> test_script.out

@@ -218,7 +218,7 @@ if [ $? -eq 0 ]; then
   fi
 else
   echo "${red}[FAILURE]${reset} ${exec_command}"
-  count_fails=$(($count_fails+1))
+  count_fails=$((count_fails+1))
 fi
 echo $data >> $fileOut
 
