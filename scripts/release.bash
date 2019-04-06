@@ -13,8 +13,11 @@ for distro in $distros; do
   rm ${directory}/release_distros/${distro}/package_release.bash
 done
 
-mkdir temp_release_zip
-cd temp_release_zip
+cd ${directory}
+
+binaries=$(find "$(pwd -P)" | grep tar.gz)
+mkdir release_packages
+cd release_packages
 git clone https://github.com/JoshuaSBrown/QC_Tools.git
 rm -rf QC_Tools/.git
 rm -rf QC_Tools/.clang-format
@@ -28,3 +31,8 @@ zip -r calc_J_${MAJOR_VERSION}.${MINOR_VERSION}_source.zip QC_Tools
 tar -zcvf calc_J_${MAJOR_VERSION}.${MINOR_VERSION}_source.tar.gz QC_Tools
 rm -rf QC_Tools
 
+for binary in ${binaries}
+do
+  echo "$binary"
+  mv $binary .
+done

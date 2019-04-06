@@ -18,6 +18,7 @@ RUN make
 # VERSION of calc_J                                                             
 # 64 or 32 bit architecture                                                     
 # Remove the comma from version 
+WORKDIR /
 COPY package_release.bash .
 RUN chmod +x ./package_release.bash
 RUN ./package_release.bash
