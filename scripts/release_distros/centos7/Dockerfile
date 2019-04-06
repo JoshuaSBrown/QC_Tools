@@ -9,7 +9,6 @@ WORKDIR /QC_Tools/build_test
 RUN cmake -DENABLE_TESTS=ON -DENABLE_INTEGRATION_TESTS=ON ../ 
 RUN make
 RUN make test
-
 # Build optimized release version
 WORKDIR /QC_Tools/build
 RUN cmake -DCMAKE_BUILD_TYPE=Release ../

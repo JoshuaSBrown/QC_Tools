@@ -1,7 +1,7 @@
 #!/bin/bash
 
 directory=$(pwd)
-distros="centos7 fedora28 ubuntu18"
+distros="centos7 fedora28 ubuntu18 debian9"
 for distro in $distros; do
   cd ${directory}/release_distros/${distro}
   pwd
