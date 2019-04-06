@@ -1,0 +1,18 @@
+// Configured options and settings for calcJ
+
+#ifndef CATNIP_CONFIG_HPP
+#define CATNIP_CONFIG_HPP
+
+#include <string>
+
+namespace catnip {
+const int calcJ_VERSION_MAJOR = @calcJ_VERSION_MAJOR@;
+const int calcJ_VERSION_MINOR = @calcJ_VERSION_MINOR@;
+const int calcJ_YEAR_PUBLISHED = @calcJ_YEAR_PUBLISHED@;
+const std::string calcJ_AUTHOR_SURNAME = @calcJ_AUTHOR_SURNAME@;
+const std::string calcJ_AUTHOR_INITIALS = @calcJ_AUTHOR_INITIALS@;
+const std::string calcJ_TITLE = @calcJ_TITLE@;
+const std::string calcJ_URL = @calcJ_URL@;
+}  // namespace catnip
+
+#endif  // CATNIP_CONFIG_HPP
