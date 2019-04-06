@@ -1,6 +1,6 @@
 FROM ubuntu:bionic
 
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils ca-certificates make cmake gcc git file lsb-release && apt-get clean &&  rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y apt-utils ca-certificates make cmake gcc g++ git file lsb-release && apt-get clean &&  rm -rf /var/lib/apt/lists/*
 RUN git clone https://github.com/JoshuaSBrown/QC_Tools.git
 RUN mkdir -p QC_Tools/build_test
 RUN mkdir -p QC_Tools/build
