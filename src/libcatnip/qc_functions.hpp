@@ -78,7 +78,7 @@ Matrix* unscramble_S(const std::vector<int>& matchDimerA,
                      const std::vector<int>& basisFuncDimer, Matrix* S);
 
 Matrix* unscramble_S(const std::vector<int>& matchDimerA,
-                     std::vector<int> basisFuncDimer, Matrix* S);
+                     const std::vector<int>& basisFuncDimer, Matrix* S);
 
 Matrix* unscramble_OE(std::vector<int> matchDimerA,
                       std::vector<int> matchDimerB,

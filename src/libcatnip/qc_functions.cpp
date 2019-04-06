@@ -485,7 +485,7 @@ Matrix *unscramble_Coef(const std::vector<int> &matchDimerB,
 // and columns
 Matrix *unscramble_S(const std::vector<int> &matchDimerA,
                      const std::vector<int> &matchDimerB,
-                     std::vector<int> basisFuncP, Matrix *S) {
+                     const std::vector<int> &basisFuncP, Matrix *S) {
 
   Matrix *S_new;
   {

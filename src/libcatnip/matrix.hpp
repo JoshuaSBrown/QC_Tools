@@ -46,8 +46,8 @@ class Matrix {
   double get_elem(const int r, const int c) const;
   double get_elem(const int r, const int c, const int s) const;
   double *get_elem_ptr(const int r, const int c) const;
-  std::vector<double> get_col(int c);
-  std::vector<double> get_row(int r);
+  std::vector<double> get_col(int c) const;
+  std::vector<double> get_row(int r) const;
 
   // WARNING This is not a swap row operation
   // All rows are shifted to make way
@@ -77,7 +77,7 @@ class Matrix {
 
 std::ostream &operator<<(std::ostream &out, Matrix &mat);
 
-Matrix &operator*(Matrix &mat1, const Matrix &mat2);
+Matrix &operator*(const Matrix &mat1, const Matrix &mat2);
 
 // Takes a vector and diagonalized the
 // vector in a 2 dimensional matrix where

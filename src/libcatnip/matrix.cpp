@@ -201,7 +201,7 @@ std::ostream &operator<<(std::ostream &out, Matrix &mat) {
   return out;
 }
 
-Matrix &operator*(Matrix &mat1, const Matrix &mat2) {
+Matrix &operator*(const Matrix &mat1, const Matrix &mat2) {
 
   if (mat1.get_shel() != 1 || mat2.get_shel() != 1) {
     printf(
@@ -509,7 +509,7 @@ void Matrix::set_rows(int r) {
   }
 }
 
-vector<double> Matrix::get_col(int c) {
+vector<double> Matrix::get_col(int c) const{
   vector<double> col_data;
   for (int i = 1; i <= rows; i++) {
     col_data.push_back(elem[index(i, c, 1)]);
@@ -517,7 +517,7 @@ vector<double> Matrix::get_col(int c) {
   return col_data;
 }
 
-vector<double> Matrix::get_row(int r) {
+vector<double> Matrix::get_row(int r) const {
   vector<double> row_data;
   for (int i = 1; i <= cols; i++) {
     row_data.push_back(elem[index(r, i, 1)]);
