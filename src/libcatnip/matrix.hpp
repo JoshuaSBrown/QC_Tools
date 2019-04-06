@@ -62,10 +62,10 @@ class Matrix {
   void swap_row(int r_from, int r_to);
   void swap_col(int c_from, int c_to);
 
-  Matrix getCol(int c);
-  Matrix getRow(int r);
+  Matrix getCol(int c) const;
+  Matrix getRow(int r) const;
   // Basically switches the rows and columns
-  Matrix invert(void);
+  Matrix invert(void) const;
   // Responsible for matching the rows between two matrices they do not need
   // Returns which row in the current matrix matches which row in the one
   // passed in, -1 means there is no match

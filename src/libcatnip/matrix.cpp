@@ -890,7 +890,7 @@ vector<int> Matrix::matchCol(const Matrix &mat, const int sf) const {
   return m_vec;
 }
 
-Matrix Matrix::invert() {
+Matrix Matrix::invert() const{
 
   if (this->get_shel() != 1) {
     printf("ERROR Matrix_Invert only allowed for 1d and 2d arrays not 3d\n");
@@ -908,7 +908,7 @@ Matrix Matrix::invert() {
   return *mat2;
 }
 
-Matrix Matrix::getRow(int R) {
+Matrix Matrix::getRow(int R) const{
 
   if (this->get_rows() < R) {
     printf("ERROR Matrix_getRow cannot return R %d", R);
@@ -927,7 +927,7 @@ Matrix Matrix::getRow(int R) {
   return mat2;
 }
 
-Matrix Matrix::getCol(int C) {
+Matrix Matrix::getCol(int C) const {
 
   if (this->get_cols() < C) {
     printf("ERROR Matrix_getCol cannot return C %d", C);
