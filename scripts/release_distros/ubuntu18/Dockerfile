@@ -1,6 +1,6 @@
 FROM ubuntu:bionic
 
-RUN apt-get update && apt-get install -y python curl zip unzip apt-utils ca-certificates make cmake gcc g++ git file lsb-release && apt-get clean &&  rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y bc python curl zip unzip apt-utils ca-certificates make cmake gcc g++ git file lsb-release && apt-get clean &&  rm -rf /var/lib/apt/lists/*
 RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"                 
 RUN chmod +x get-pip.py                                                         
 RUN ./get-pip.py                                                                
