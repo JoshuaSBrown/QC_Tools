@@ -1,6 +1,6 @@
 FROM ubuntu:bionic
 
-RUN apt-get update && apt-get install -y apt-utils ca-certificates make cmake gcc g++ git file lsb-release && apt-get clean &&  rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y bc python curl zip unzip apt-utils ca-certificates make cmake gcc g++ git file lsb-release && apt-get clean &&  rm -rf /var/lib/apt/lists/*
 RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"                 
 RUN chmod +x get-pip.py                                                         
 RUN ./get-pip.py                                                                
@@ -9,12 +9,12 @@ RUN git clone https://github.com/JoshuaSBrown/QC_Tools.git
 RUN mkdir -p QC_Tools/build_test
 RUN mkdir -p QC_Tools/build
 # Build with tests and then test
-WORKDIR /QC_Tools/build_test
+WORKDIR /QC_Tools/build
 RUN cmake -DENABLE_TESTS=ON -DENABLE_INTEGRATION_TESTS=ON ../
 RUN make
-RUN make test
+RUN make ARGS="-V" test
 # Build optimized release version
-WORKDIR /QC_Tools/build
+RUN rm -rf *
 RUN cmake -DCMAKE_BUILD_TYPE=Release ../
 RUN make
 # VERSION of calc_J                                                             
