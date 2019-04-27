@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 
+#include <Eigen/Dense>
 #include "../../log.hpp"
 #include "../../string_support.hpp"
 #include "logreader.hpp"
@@ -164,18 +165,25 @@ void LogReader::OverlapSectionReader(void *ptr) {
   }
 
   // Create a matrix and place all the current values in there
-  Matrix *mat_S = new Matrix(countCoef, countCoef);
+  
+  //Matrix *mat_S = new Matrix(countCoef, countCoef);
+  Eigen::MatrixXd matrix_S(countCoef,countCoef);
   for (size_t row_ind = 0; row_ind < first_coefs.size(); ++row_ind) {
-    vector<double> row = first_coefs.at(row_ind);
-    size_t col_ind = 1;
-    for (auto val : row) {
-      mat_S->set_elem(val, row_ind + 1, col_ind);
+//    vector<double> row = first_coefs.at(row_ind);
+    matrix_S.row(row_ind) << first_coefs.at(row_ind);
+ //   size_t col_ind = 1;
+//    size_t col_ind = 0;
+ //   for (double & val : row) {
+ //     mat_S->set_elem(val, row_ind + 1, col_ind);
+  //    matrix_S(row_ind,col_ind) = val;
       // Because diagonally symetric
-      if (row_ind + 1 != col_ind) {
-        mat_S->set_elem(val, col_ind, row_ind + 1);
-      }
-      ++col_ind;
-    }
+//      if (row_ind + 1 != col_ind) {
+   //   if (row_ind != col_ind) {
+        //mat_S->set_elem(val, col_ind, row_ind + 1);
+   //     matrix_S(col_ind,row_ind) = val;
+    //  }
+    //  ++col_ind;
+    //}
   }
 
   int sectionReads = countCoef / 5;
@@ -193,19 +201,23 @@ void LogReader::OverlapSectionReader(void *ptr) {
       istringstream iss(line);
       string dummy;
       iss >> dummy;
-      int localCoefCount = 1;
+      //int localCoefCount = 1;
+      int localCoefCount = 0;
       while (!iss.eof()) {
         string s_coef;
         iss >> s_coef;
         string val = grabStrBeforeFirstOccurance(s_coef, "D");
         string expon = grabStrAfterFirstOccurance(s_coef, "D");
         double value = stod(val) * pow(10.0, stod(expon));
-        mat_S->set_elem(value, sectionCoef + 1,
-                        currentSectionStart + localCoefCount);
-        if ((sectionCoef + 1) != (currentSectionStart + localCoefCount)) {
-
-          mat_S->set_elem(value, currentSectionStart + localCoefCount,
-                          sectionCoef + 1);
+       
+        //mat_S->set_elem(value, sectionCoef + 1,
+        //                currentSectionStart + localCoefCount);
+        matrix_S(sectionCoef,currentSectionStart + localCoefCount) = value;
+        //if ((sectionCoef + 1) != (currentSectionStart + localCoefCount)) {
+        if ((sectionCoef) != (currentSectionStart + localCoefCount)) {
+          matrix_S(currentSectionStart + localCoefCount,sectionCoef) = value;
+          //mat_S->set_elem(value, currentSectionStart + localCoefCount,
+          //               sectionCoef + 1);
         }
         ++localCoefCount;
       }

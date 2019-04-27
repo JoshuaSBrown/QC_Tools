@@ -4,8 +4,10 @@
 
 #include <vector>
 
-#include "../../matrix.hpp"
+//#include "../../matrix.hpp"
 #include "filereader.hpp"
+
+#include <Eigen/Dense>
 // Gaussian log file reader
 
 namespace catnip {
@@ -18,7 +20,7 @@ class LogReader : public FileReader {
  public:
   explicit LogReader(const std::string &str);
   orb_cont getOrbitalInfo() const { return orb_; }
-  Matrix *getOverlapMatrix() const { return S_; }
+  Eigen::MatrixXd getOverlapMatrix() const { return S_; }
   std::vector<double> getOE(const std::string &orb_type) const {
     return OREnergies.at(orb_type);
   }
@@ -48,7 +50,8 @@ class LogReader : public FileReader {
   std::map<std::string, int> homoLevel;
   orb_cont orb_;
   // Overlap matrix
-  Matrix *S_;
+  //Matrix *S_;
+  Eigen::MatrixXd S_;
   std::map<std::string, std::vector<double>> OREnergies;
 
   std::vector<std::vector<double>> xyz;

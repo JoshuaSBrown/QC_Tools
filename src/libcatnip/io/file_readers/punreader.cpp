@@ -11,6 +11,8 @@
 #include "../../string_support.hpp"
 #include "punreader.hpp"
 
+#include <Eigen/Dense>
+
 using namespace catnip;
 using namespace std;
 
@@ -29,12 +31,12 @@ void PunReader::registerSections_() {
   FileReader::registerSections_();
 }
 
-Matrix *PunReader::getCoefsMatrix(const string &orb_type) {
+MatrixXd PunReader::getCoefsMatrix(const string &orb_type) {
   if (coefs.count(orb_type) != 1) {
     throw invalid_argument("Coefficients for spin " + orb_type +
                            " were not found");
   }
-  return coefs[orb_type];
+  return *(coefs[orb_type]);
 }
 
 void PunReader::validFileName_() {
@@ -93,8 +95,15 @@ void PunReader::ReadCoef(const string &orb_type) {
     allCoefsRead = !(foundSubStrInStr(line, orb_type));
   }
 
-  Matrix *Coefs = new Matrix(v_vec);
-  coefs[orb_type] = Coefs;
+  //Matrix *Coefs = new Matrix(v_vec);
+  coefs[orb_type] = unique_ptr<Eigen:::MatrixXd>(Eigen::MatrixXd Coefs(v_vec.size(),v_vec.at(0).size()));
+
+  size_t row_count = 0;
+  for( vector<double> & row : v_vec) {
+    coefs[orb_type]->row(row_count) = row;
+    ++row_count;
+  }
+  //coefs[orb_type] = Coefs;
   LOG("Success reading atomic orbital coefficients from .pun file.", 2);
 }
 
