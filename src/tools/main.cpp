@@ -17,11 +17,13 @@
 #include "../libcatnip/io/file_readers/punreader.hpp"
 #include "../libcatnip/io/io.hpp"
 #include "../libcatnip/log.hpp"
-#include "../libcatnip/matrix.hpp"
+//#include "../libcatnip/matrix.hpp"
 #include "../libcatnip/parameters.hpp"
 #include "../libcatnip/qc_functions.hpp"
 
 #include "../libcatnip/calcJconfig.hpp"
+
+#include <Eigen/Dense>
 
 using namespace catnip;
 using namespace std;
@@ -77,23 +79,31 @@ int main(int argc, const char *argv[]) {
   // No need to worry about beta orbitals
 
   {
-    Matrix *mat_S = lr_P.getOverlapMatrix();
+    //Matrix *mat_S = lr_P.getOverlapMatrix();
+    Eigen::MatrixXd mat_S = lr_P.getOverlapMatrix();
 
-    Matrix *mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
-    auto vec_P_OE = lr_P.getOE(par->getSpinP());
-    Matrix *mat_P_OE = new Matrix(vec_P_OE);
+    //Matrix *mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
+    Eigen::MatrixXd mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
+    
+    //auto vec_P_OE = lr_P.getOE(par->getSpinP());
+    Eigen::MatrixXd mat_P_OE = Eigen::MatrixXd(lr_P.getOE(par->getSpinP()));
+    //Matrix *mat_P_OE = new Matrix(vec_P_OE);
 
     int HOMO1 = lr_1.getHOMOLevel(par->getSpin1());
     LOG("Getting " + par->getSpin1() + " of monomer 1", 2);
-    Matrix *mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
-    auto vec_1_OE = lr_1.getOE(par->getSpin1());
-    Matrix *mat_1_OE = new Matrix(vec_1_OE);
+    Eigen::MatrixXd mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
+    //Matrix *mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
+    //auto vec_1_OE = lr_1.getOE(par->getSpin1());
+    //Matrix *mat_1_OE = new Matrix(vec_1_OE);
+    Eigen::MatrixXd mat_1_OE = Eigen::MatrixXd(vec_1_OE);
 
     int HOMO2 = lr_2.getHOMOLevel(par->getSpin2());
     LOG("Getting " + par->getSpin2() + " of monomer 2", 2);
-    Matrix *mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
-    auto vec_2_OE = lr_2.getOE(par->getSpin2());
-    Matrix *mat_2_OE = new Matrix(vec_2_OE);
+    //Matrix *mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
+    Eigen::MatrixXd mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
+    //auto vec_2_OE = lr_2.getOE(par->getSpin2());
+    //Matrix *mat_2_OE = new Matrix(vec_2_OE);
+    Eigen::MatrixXd mat_2_OE = Eigen::MatrixXd(vec_2_OE);
 
     // Unscramble dimer coef and energies first need to see how the dimer
     // and monomer coefficients line up. To determine how the ceofficients
@@ -103,18 +113,18 @@ int main(int argc, const char *argv[]) {
     // the position of the atoms in the monomer unit and the positions of
     // the atoms in the dimer we can determine how the coefficients need
     // to be rearranged.
-    auto coord_P = lr_P.getCoords();
-    auto coord_1 = lr_1.getCoords();
-    auto coord_2 = lr_2.getCoords();
+    vector<vector<double>> coord_P = lr_P.getCoords();
+    vector<vector<double>> coord_1 = lr_1.getCoords();
+    vector<vector<double>> coord_2 = lr_2.getCoords();
 
     // Convert coords to matrices
-    Matrix coord_P_mat(coord_P);
-    Matrix coord_1_mat(coord_1);
-    Matrix coord_2_mat(coord_2);
+    MatrixXd coord_P_mat(coord_P);
+    MatrixXd coord_1_mat(coord_1);
+    MatrixXd coord_2_mat(coord_2);
 
-    auto basis_P = lr_P.getBasisFuncCount();
-    auto basis_1 = lr_1.getBasisFuncCount();
-    auto basis_2 = lr_2.getBasisFuncCount();
+    int basis_P = lr_P.getBasisFuncCount();
+    int basis_1 = lr_1.getBasisFuncCount();
+    int basis_2 = lr_2.getBasisFuncCount();
 
     int MO1 = mat_1_OE->get_rows();
     int MO2 = mat_2_OE->get_rows();
