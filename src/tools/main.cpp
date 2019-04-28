@@ -86,8 +86,8 @@ int main(int argc, const char *argv[]) {
     Eigen::MatrixXd mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
     
     //auto vec_P_OE = lr_P.getOE(par->getSpinP());
-    Eigen::MatrixXd mat_P_OE = Eigen::MatrixXd(lr_P.getOE(par->getSpinP()));
-    //Matrix *mat_P_OE = new Matrix(vec_P_OE);
+    Eigen::VectorXd vec_P_OE = Eigen::VectorXd(lr_P.getOE(par->getSpinP()));
+    //Matrix *vec_P_OE = new Matrix(vec_P_OE);
 
     int HOMO1 = lr_1.getHOMOLevel(par->getSpin1());
     LOG("Getting " + par->getSpin1() + " of monomer 1", 2);
@@ -134,7 +134,7 @@ int main(int argc, const char *argv[]) {
 
     LOG("Creating transfercomplex", 1);
     TransferComplex TC(mat_1_Coef, mat_2_Coef, mat_P_Coef, Orbs1, Orbs2, mat_S,
-                       mat_P_OE, par->getCounterPoise());
+                       vec_P_OE, par->getCounterPoise());
 
     // Set the transfer complex to counterpoise if it is the case.
 
@@ -178,7 +178,9 @@ int main(int argc, const char *argv[]) {
     orbitalnums["mon2"] = par->getOrbNum2();
 
     LOG("Calculating transfer integral", 1);
-    TC.calcJ(orbitaltypes, orbitalnums);
+    TC.calcJ();
+    TC.printTransferIntegral(orbitaltypes, orbitalnums);
+
   }
 
   return 0;

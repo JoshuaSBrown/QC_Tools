@@ -18,28 +18,33 @@ using namespace std;
 
 namespace catnip {
 
-unordered_map<int, pair<double, string>> findRank(Matrix &Orb_E_Alpha,
-                                                  Matrix &Orb_E_Beta) {
+unordered_map<int, pair<double, string>> findRank(Eigen::VectorXd &Orb_E_Alpha,
+                                                  Eigen::VectorXd &Orb_E_Beta) {
 
   vector<pair<double, string>> all;
 
-  auto m_a = Orb_E_Alpha.getCol(1);
+  //auto m_a = Orb_E_Alpha.getCol(1);
 
-  for (int ind = 1; ind <= m_a.get_rows(); ind++) {
+  /*for (int ind = 1; ind <= m_a.get_rows(); ind++) {
     auto val = m_a.get_elem(ind);
     pair<double, string> pr(val, "Alpha");
     all.push_back(pr);
+  }*/
+  for( double & val : Orb_E_Alpha){
+    all.push_back(pair<double, string>(val,"Alpha"));
   }
 
-  if (Orb_E_Beta.get_cols() > 0) {
-    auto m_b = Orb_E_Beta.getCol(1);
-
-    for (int ind = 1; ind <= m_b.get_rows(); ind++) {
-      auto val = m_b.get_elem(ind);
-      pair<double, string> pr(val, "Beta");
-      all.push_back(pr);
+  //if (Orb_E_Beta.get_cols() > 0) {
+  //  auto m_b = Orb_E_Beta.getCol(1);
+  
+  //  for (int ind = 1; ind <= m_b.get_rows(); ind++) {
+    for( double & val : Orb_E_Beta ){ 
+      //auto val = m_b.get_elem(ind);
+      //pair<double, string> pr(val, "Beta");
+      //all.push_back(pr);
+      all.push_back(pair<double, string>(val, "Beta"));
     }
-  }
+ // }
   // Sort the vectors
   sort(all.begin(), all.end(),
        [](const pair<double, string> &P1, const pair<double, string> &P2)
@@ -57,45 +62,61 @@ unordered_map<int, pair<double, string>> findRank(Matrix &Orb_E_Alpha,
 }
 
 // Essentially calculates the transfer integral
-double calculate_transfer_integral(const Matrix & mat_1_Coef, const Matrix & mat_2_Coef,
-                                   Matrix mat_P_Coef,const Matrix & mat_S,
-                                   const Matrix &mat_P_OE, bool counterPoise_) {
+void TransferComplex::calculate_transfer_integral_() {
 
-  Matrix mat_1_Coefinv = mat_1_Coef.invert();
-  Matrix mat_2_Coefinv = mat_2_Coef.invert();
-  Matrix mat_P_Coefinv = mat_P_Coef.invert();
+  //Matrix mat_1_Coefinv = mat_1_Coef.invert();
+  //Matrix mat_2_Coefinv = mat_2_Coef.invert();
+  //Matrix mat_P_Coefinv = mat_P_Coef.invert();
 
-  Matrix zetaA;
-  Matrix zetaB;
+  auto dimension = mat_1_Coef.rows()+mat_2_Coef.rows();
+  Eigen::MatrixXd zetaA(dimension,dimension);
+  Eigen::MatrixXd zetaB(dimension,dimension);
   if (counterPoise_) {
     LOG("Creating zeta matrices from coefficients assuming counterpoise", 2);
-    zetaA = (mat_1_Coefinv);
-    zetaB = (mat_2_Coefinv);
+    //zetaA = (mat_1_Coefinv);
+    //zetaB = (mat_2_Coefinv);
+    zetaA = mat_1_Coef();
+    zetaB = mat_2_Coef();
   } else {
     LOG("Creating zeta matrices from coefficients", 2);
-    Matrix zerosA(mat_1_Coefinv.get_rows(), 1, mat_1_Coefinv.get_shel());
-    Matrix zerosB(mat_2_Coefinv.get_rows(), 1, mat_2_Coefinv.get_shel());
-    zetaA = Matrix_concatenate_rows(mat_1_Coefinv, zerosB);
-    zetaB = Matrix_concatenate_rows(zerosA, mat_2_Coefinv);
+   // Matrix zerosA(mat_1_Coefinv.get_rows(), 1, mat_1_Coefinv.get_shel());
+    //Matrix zerosB(mat_2_Coefinv.get_rows(), 1, mat_2_Coefinv.get_shel());
+    //zetaA = Matrix_concatenate_rows(mat_1_Coefinv, zerosB);
+    //zetaB = Matrix_concatenate_rows(zerosA, mat_2_Coefinv);
+    //zetaA.resize(mat_1_Coef.rows()+mat_2_Coef.rows(),1);
+    //zetaB.resize(mat_1_Coef.rows()+mat_2_Coef.rows(),1);
+    zetaA << mat_1_Coef(), Eigen::MatrixXd.Zeros(mat_1_Coef.rows(),mat_2_Coef.cols()); 
+    zetaA << Eigen::MatrixXd.Zeros(mat_2_Coef.rows(),mat_1_Coef.cols()), mat_2_Coef(); 
   }
-  Matrix zetaAinv = zetaA.invert();
-  Matrix zetaBinv = zetaB.invert();
+  //Matrix zetaAinv = zetaA.invert();
+  //Matrix zetaBinv = zetaB.invert();
 
-  LOG("Creating intermediate matrix", 3);
-  Matrix Inter = mat_S * mat_P_Coefinv;
+  //LOG("Creating intermediate matrix", 3);
+  //Matrix Inter = mat_S * mat_P_Coefinv;
+  //MatrixXd Inter = mat_S * mat_P_Coefinv;
 
   LOG("Creating gamma and beta matrices", 2);
-  Matrix gammaA = zetaAinv * Inter;
-  Matrix gammaB = zetaBinv * Inter;
+  //Matrix gammaA = zetaAinv * Inter;
+  //Matrix gammaB = zetaBinv * Inter;
+  Eigen::MatrixXd gammaA = zetaA * mat_S * mat_P_Coef.transpose(); 
+  Eigen::MatrixXd gammaB = zetaB * mat_S * mat_P_Coef.transpose(); 
 
-  Matrix gammaA_inv = gammaA.invert();
-  Matrix gammaB_inv = gammaB.invert();
+  //Matrix gammaA_inv = gammaA.invert();
+  //Matrix gammaB_inv = gammaB.invert();
 
   LOG("Calculating S_AB", 2);
-  Matrix S_AB = gammaB * gammaA_inv;
+  //Matrix S_AB = gammaB * gammaA_inv;
+  Eigen::MatrixXd S_AB = gammaB * gammaA.transpose();
+  Eigen::MatrixXd S_AB_inv_sqrt = S_AB.operatorInverseSqrt();
 
-  Matrix Energy = Matrix_diag(mat_P_OE);
-  Matrix J_AB = gammaB * (Energy * gammaA_inv);
+  //Matrix Energy = Matrix_diag(mat_P_OE);
+  Eigen::MatrixXd Energy = vec_P_OE.asDiagona();
+
+  Eigen::MatrixXd Hamiltonian = mat_P_Coef * mat_S * mat_P_Coef.transpose();
+ 
+  Eigen::MatrixXd Hamiltonian_eff = S_AB_inv_sqrt * Hamiltonian * S_AB_inv_sqrt.transpose();  
+  
+/*  Matrix J_AB = gammaB * (Energy * gammaA_inv);
 
   Matrix e_B = gammaB * (Energy * gammaB_inv);
   Matrix e_A = gammaA * (Energy * gammaA_inv);
@@ -113,11 +134,184 @@ double calculate_transfer_integral(const Matrix & mat_1_Coef, const Matrix & mat
   cout << "e_b   " << e_b * hartreeToeV << " eV\n";
   cout << "S_ab  " << S_ab << "\n";
   cout << "J_eff " << J_eff * hartreeToeV << " eV\n";
-
   return J_eff;
+*/
 }
 
-// Split a matrix up into a list of smaller matrices. The marix can be split
+void TransferComplex::printTransferIntegral(
+    const map<string, string> &orbitaltype,
+    const map<string, int> &orbnum) const {
+
+  //Matrix mat1coef;
+  //Matrix mat2coef;
+
+  string HOMO_OR_LUMO_A = orbitaltype.at("mon1");
+  int MO_A = orbnum.at("mon1");
+  if (HOMO_OR_LUMO_A.compare("HOMO") == 0) {
+    if (MO_A > 0) {
+      throw invalid_argument(
+          "Having specified HOMO the MO_A"
+          " value is in reference to the HOMO and must be a negative number");
+    }
+    // Number of orbitals that are choices
+    if (MO_A <= (-1 * Orbs1.second)) {
+      string err = "You are trying to access HOMO" + to_string(MO_A) +
+                   " but there "
+                   "are only " +
+                   to_string(Orbs1.second) + " HOMO orbitals";
+      throw invalid_argument(err);
+    }
+    //mat1coef = mat_1_Coef->getRow(Orbs1.second + MO_A);
+  } else if (HOMO_OR_LUMO_A.compare("LUMO") == 0) {
+    if (MO_A < 0) {
+      throw invalid_argument(
+          "Having specified LUMO the MO_A"
+          " value is in reference to the LUMO and must be a positive number");
+    }
+    int allowed_LUMO = Orbs1.first - Orbs1.second;
+    if (MO_A >= allowed_LUMO) {
+      string err = "You are trying to access LUMO+" + to_string(MO_A) +
+                   " but there "
+                   "are only " +
+                   to_string(allowed_LUMO) + " LUMO orbitals";
+      throw invalid_argument(err);
+    }
+    //mat1coef = mat_1_Coef->getRow(Orbs1.second + MO + 1);
+  } else {
+    throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
+  }
+
+  string HOMO_OR_LUMO_B = orbitaltype.at("mon2");
+  int MO_B = orbnum.at("mon2");
+  if (HOMO_OR_LUMO_B.compare("HOMO") == 0) {
+    if (MO_B > 0) {
+      throw invalid_argument(
+          "Having specified HOMO the MO_B"
+          " value is in reference to the HOMO and must be a negative number");
+    }
+    if (MO_B <= (-1 * Orbs2.second)) {
+      string err = "You are trying to access HOMO" + to_string(MO_B) +
+                   " but there "
+                   "are only " +
+                   to_string(Orbs2.second) + " HOMO orbitals";
+      throw invalid_argument(err);
+    }
+    //mat2coef = mat_2_Coef->getRow(Orbs2.second + MO_B);
+  } else if (HOMO_OR_LUMO_B.compare("LUMO") == 0) {
+    if (MO_B < 0) {
+      throw invalid_argument(
+          "Having specified LUMO the MO_B"
+          " value is in reference to the LUMO and must be a positive number");
+    }
+    int allowed_LUMO = Orbs2.first - Orbs2.second;
+    if (MO_B >= allowed_LUMO) {
+      string err = "You are trying to access LUMO+" + to_string(MO_B) +
+                   " but there "
+                   "are only " +
+                   to_string(allowed_LUMO) + " LUMO orbitals";
+      throw invalid_argument(err);
+    }
+    //mat2coef = mat_2_Coef->getRow(Orbs2.second + MO_B + 1);
+  } else {
+    throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
+  }
+
+  printTransferIntegral_(
+      pair<string,int>(HOMO_OR_LUMO_A,MO_A),
+      pair<string,int>(HOMO_OR_LUMO_B,MO_B));
+}
+// Find the transfer integral between two orbitals. 
+// pair<string,int> string - Either HOMO or LUMO
+//                  int    - is the orbital number HOMO-3 LUMO+5
+void TransferComplex::printTransferIntegral_(pair<string,int> Orbital1, pair<string,int> Orbital2) const {
+
+  int obrital1_num = 0;
+  int obrital2_num = 0;
+  if(orbital1.first.compare("HOMO")==0){
+    assert(orbitalValid_(Orbital1)==true); 
+    orbital1_num = Orbital1.second;
+  }else if(orbital2.first.compare("LUMO")==0){
+    assert(orbitalValid_(Orbital2)==true); 
+    orbital2_num = Orbital2.second;
+  }
+  double J_ab = Hamiltonian(orbital1_num,orbital2_num);
+  double e_a = Hamiltonaian(orbital1_num,orbital1_num);
+  double e_b = Hamiltonaian(orbital2_num,orbital2_num);
+  double S_ab = S_AB(orbital1_num,orbital2_num); 
+  double J_eff = Hamiltonaian_eff(orbital1_num,orbital2_num);
+  cout << "J_ab  " << J_ab * hartreeToeV << " eV\n";
+  cout << "e_a   " << e_a * hartreeToeV << " eV\n";
+  cout << "e_b   " << e_b * hartreeToeV << " eV\n";
+  cout << "S_ab  " << S_ab << "\n";
+  cout << "J_eff " << J_eff * hartreeToeV << " eV\n";
+}
+
+void TransferComplex::printAll() const {
+
+  int column_width = 8;
+  cout << "Effective Hamiltonian" << endl;
+  cout << setw(column_width+2) << ""; 
+  for(int orbital_num = 0;orbital_num<Hamiltonian.cols();++orbital_num){
+    string column_label = "";
+    if(orbital_num<HOMO_Orb_){
+      column_label+=string("HOMO");
+      if(orbital_num!=(HOMO_Orb_-1)){
+        column_label+=string("-")+to_string(HOMO_Orb-orbital_num-1);
+      }
+    }else {
+      column_label+=string("LUMO");
+      if(orbital_num!=LUMO_Orb_){
+        column_label+=string("+")+to_string(orbital_num-LUMO_Orb_);
+      }
+    } 
+    cout << "| " << setw(column_width) << column_label << " ";
+  }
+  cout << "|" << endl; 
+ 
+  for(int orbital_num = 0;orbital_num<Hamiltonian.rows();++orbital_num){
+    string column_label = "";
+    if(orbital_num<HOMO_Orb_){
+      column_label+=string("HOMO");
+      if(orbital_num!=(HOMO_Orb_-1)){
+        column_label+=string("-")+to_string(HOMO_Orb-orbital_num-1);
+      }
+    }else {
+      column_label+=string("LUMO");
+      if(orbital_num!=LUMO_Orb_){
+        column_label+=string("+")+to_string(orbital_num-LUMO_Orb_);
+      }
+    } 
+    cout << setw(column_width+2) << column_label;
+    for(int orbital_num2 = 0;orbital_num2<Hamiltonian.cols();++orbital2_num){
+      cout << "| " << setw(column_width) << Hamiltonian_eff(orbital_num2,orbital_num2) << " ";
+    }
+    cout << "|" << endl; 
+  }
+ 
+}
+
+bool TransferComplex::orbitalValid_(const std::pair<std::string, int> & orbital) const{
+  if(orbital.first.compare("HOMO")==0){
+    if(orbital.second>0){
+      cerr << "HOMO orbital number is not negative or 0" << endl;
+      return false;  
+    }
+    if(orbital.second<=(-1*HOMO_Orb_)){
+      cerr << "HOMO orbital does not exst " << orbital.second << endl;
+      return false;
+    }
+  }else if(orbital.first.compare("LUMO")==0){
+    if(orbital.second<0){
+      cerr << "LUMO orbital number is not positive or 0" << endl; return false;  
+    }
+    if(orbital.second>(Hamiltonian_eff.rows()-LUMO_Orb_)){
+      cerr << "LUMO orbital does not exst " << orbital.second << endl;
+      return false;
+    }
+  }
+  return true;
+} 
+// Split a matrix up into a list of smaller matrices. The matrix can be split
 // in columns or in rows. The number of rows/cols in each smaller matrix is
 // held in the vector<int> subMatrixDimension
 //
@@ -136,36 +330,34 @@ double calculate_transfer_integral(const Matrix & mat_1_Coef, const Matrix & mat
 //   1 2         3
 //   3 4         5
 //
-list<Matrix *> splitMatrixIntoList(const vector<int> &subMatrixDimension,
-                                   const Matrix *const mat,
+list<MatrixXd> splitMatrixIntoList(const vector<int> &subMatrixDimension,
+                                   const MatrixXd const mat,
                                    const string &ColRowSplit) {
 
-  list<Matrix *> list_matrix;
+  list<MatrixXd> list_matrix;
   int num_sub_matrices = subMatrixDimension.size();
   if (ColRowSplit.compare("Columns") == 0) {
     int col = 0;
-    for (auto i = 1; i <= num_sub_matrices; ++i) {
-      Matrix *mat_new =
-          new Matrix(mat->get_rows(), subMatrixDimension.at(i - 1));
-      for (auto k = 1; k <= mat->get_rows(); ++k) {
-        for (auto j = 1; j <= subMatrixDimension.at(i - 1); ++j) {
-          mat_new->set_elem(mat->get_elem(k, col + j), k, j);
+    for (int i = 0; i < num_sub_matrices; ++i) {
+      MatrixXd mat_new(mat.rows(), subMatrixDimension.at(i));
+      for (auto k = 0; k < mat.rows(); ++k) {
+        for (auto j = 0; j < subMatrixDimension.at(i); ++j) {
+          mat_new(k,j) = mat(k, col + j);
         }
       }
-      col += subMatrixDimension.at(i - 1);
+      col += subMatrixDimension.at(i);
       list_matrix.push_back(mat_new);
     }
   } else if (ColRowSplit.compare("Rows") == 0) {
     int row = 0;
-    for (auto i = 1; i <= num_sub_matrices; ++i) {
-      Matrix *mat_new =
-          new Matrix(subMatrixDimension.at(i - 1), mat->get_cols());
-      for (auto k = 1; k <= mat->get_cols(); ++k) {
-        for (auto j = 1; j <= subMatrixDimension.at(i - 1); ++j) {
-          mat_new->set_elem(mat->get_elem(row + j, k), j, k);
+    for (auto i = 0; i < num_sub_matrices; ++i) {
+      MatrixXd mat_new(subMatrixDimension.at(i), mat.cols());
+      for (auto k = 0; k < mat->get_cols(); ++k) {
+        for (auto j = 0; j < subMatrixDimension.at(i); ++j) {
+          mat_new(j,k) = mat(row + j, k);
         }
       }
-      row += subMatrixDimension.at(i - 1);
+      row += subMatrixDimension.at(i);
       list_matrix.push_back(mat_new);
     }
   } else {
@@ -174,7 +366,7 @@ list<Matrix *> splitMatrixIntoList(const vector<int> &subMatrixDimension,
   return list_matrix;
 }
 
-list<Matrix *> splitCoefsUpByAtoms(const vector<int> & basisFuncP, Matrix *Coefs,
+list<MatrixXd> splitCoefsUpByAtoms(const vector<int> & basisFuncP, MatrixXd Coefs,
                                    const string & ColRow) {
   return splitMatrixIntoList(basisFuncP, Coefs, ColRow);
 }
@@ -483,13 +675,13 @@ Matrix *unscramble_Coef(const std::vector<int> &matchDimerB,
 
 // Similar to the above function but we will be moving both the rows
 // and columns
-Matrix *unscramble_S(const std::vector<int> &matchDimerA,
+Eigen::MatrixXd unscramble_S(const std::vector<int> &matchDimerA,
                      const std::vector<int> &matchDimerB,
-                     const std::vector<int> &basisFuncP, Matrix *S) {
+                     const std::vector<int> &basisFuncP, const MatrixXd & S) {
 
-  Matrix *S_new;
+  Eigen::MatrixXd S_new(S.rows(),S.cols());
   {
-    list<Matrix *> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Columns");
+    list<MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Columns");
 
     vector<pair<int, int>> monAmatch;
     for (unsigned i = 1; i <= matchDimerA.size(); ++i) {
@@ -511,7 +703,7 @@ Matrix *unscramble_S(const std::vector<int> &matchDimerA,
   S = S_new;
 
   {
-    list<Matrix *> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Rows");
+    list<MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Rows");
 
     vector<pair<int, int>> monAmatch;
     for (unsigned i = 1; i <= matchDimerA.size(); ++i) {
@@ -541,7 +733,7 @@ Matrix *unscramble_S(const std::vector<int> &matchDimerA,
 
   Matrix *S_new;
   {
-    list<Matrix *> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Columns");
+    list<MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Columns");
 
     vector<pair<int, int>> monAmatch;
     for (unsigned i = 1; i <= matchDimerA.size(); ++i) {
@@ -557,7 +749,7 @@ Matrix *unscramble_S(const std::vector<int> &matchDimerA,
   S = S_new;
 
   {
-    list<Matrix *> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Rows");
+    list<MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Rows");
 
     vector<pair<int, int>> monAmatch;
     for (unsigned i = 1; i <= matchDimerA.size(); ++i) {
@@ -574,16 +766,12 @@ Matrix *unscramble_S(const std::vector<int> &matchDimerA,
   return S_new;
 }
 
-}  // namespace catnip
+TransferComplex::TransferComplex(Eigen::MatrixXd mat1Coef, Eigen::MatrixXd mat2Coef,
+                                 Eigen::MatrixXd matPCoef, std::pair<int, int> MOs1,
+                                 std::pair<int, int> MOs2, Eigen::MatrixXd matS,
+                                 Eigen::VectorXd vecPOE, bool cp) {
 
-using namespace catnip;
-
-TransferComplex::TransferComplex(Matrix *mat1Coef, Matrix *mat2Coef,
-                                 Matrix *matPCoef, std::pair<int, int> MOs1,
-                                 std::pair<int, int> MOs2, Matrix *matS,
-                                 Matrix *matPOE, bool cp) {
-
-  unscrambled = false;
+  unscrambled_ = false;
   counterPoise_ = cp;
   // Consistency check
   if (matS->get_cols() != matPCoef->get_cols()) {
@@ -620,16 +808,16 @@ TransferComplex::TransferComplex(Matrix *mat1Coef, Matrix *mat2Coef,
   Orbs1 = MOs1;
   Orbs2 = MOs2;
   mat_S = matS;
-  mat_P_OE = matPOE;
+  vec_P_OE = vecPOE;
 }
 
-void TransferComplex::unscramble(const Matrix &coord_1_mat,
-                                 const Matrix &coord_2_mat,
-                                 const Matrix &coord_P_mat,
+void TransferComplex::unscramble(const Eigen::MatrixXd &coord_1_mat,
+                                 const Eigen::MatrixXd &coord_2_mat,
+                                 const Eigen::MatrixXd &coord_P_mat,
                                  const std::vector<int> &basisP,
                                  const std::vector<int> &basis2) {
 
-  unscrambled = true;
+  unscrambled_ = true;
 
   const int sig_fig = 4;
 
@@ -673,10 +861,9 @@ void TransferComplex::unscramble(const Matrix &coord_1_mat,
   }
 }
 
-double TransferComplex::calcJ(const map<string, string> &orbitaltype,
-                              const map<string, int> &orbnum) {
+double TransferComplex::calcJ() {
 
-  if (unscrambled == false) {
+  if (unscrambled_ == false) {
     cerr << "WARNING unable to automatically line up basis functions of"
             " monomers with dimers, you better make sure they correctly"
             " line up or run the calculations again with the correct "
@@ -684,80 +871,7 @@ double TransferComplex::calcJ(const map<string, string> &orbitaltype,
          << endl;
   }
 
-  Matrix mat1coef;
-  Matrix mat2coef;
-
-  string HOMO_OR_LUMO = orbitaltype.at("mon1");
-  int MO = orbnum.at("mon1");
-  if (HOMO_OR_LUMO.compare("HOMO") == 0) {
-    if (MO > 0) {
-      throw invalid_argument(
-          "Having specified HOMO the MO"
-          " value is in reference to the HOMO and must be a negative number");
-    }
-    // Number of orbitals that are choices
-    if (MO <= (-1 * Orbs1.second)) {
-      string err = "You are trying to access HOMO" + to_string(MO) +
-                   " but there "
-                   "are only " +
-                   to_string(Orbs1.second) + " HOMO orbitals";
-      throw invalid_argument(err);
-    }
-    mat1coef = mat_1_Coef->getRow(Orbs1.second + MO);
-  } else if (HOMO_OR_LUMO.compare("LUMO") == 0) {
-    if (MO < 0) {
-      throw invalid_argument(
-          "Having specified LUMO the MO"
-          " value is in reference to the LUMO and must be a positive number");
-    }
-    int allowed_LUMO = Orbs1.first - Orbs1.second;
-    if (MO >= allowed_LUMO) {
-      string err = "You are trying to access LUMO+" + to_string(MO) +
-                   " but there "
-                   "are only " +
-                   to_string(allowed_LUMO) + " LUMO orbitals";
-      throw invalid_argument(err);
-    }
-    mat1coef = mat_1_Coef->getRow(Orbs1.second + MO + 1);
-  } else {
-    throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
-  }
-
-  HOMO_OR_LUMO = orbitaltype.at("mon2");
-  MO = orbnum.at("mon2");
-  if (HOMO_OR_LUMO.compare("HOMO") == 0) {
-    if (MO > 0) {
-      throw invalid_argument(
-          "Having specified HOMO the MO"
-          " value is in reference to the HOMO and must be a negative number");
-    }
-    if (MO <= (-1 * Orbs2.second)) {
-      string err = "You are trying to access HOMO" + to_string(MO) +
-                   " but there "
-                   "are only " +
-                   to_string(Orbs2.second) + " HOMO orbitals";
-      throw invalid_argument(err);
-    }
-    mat2coef = mat_2_Coef->getRow(Orbs2.second + MO);
-  } else if (HOMO_OR_LUMO.compare("LUMO") == 0) {
-    if (MO < 0) {
-      throw invalid_argument(
-          "Having specified LUMO the MO"
-          " value is in reference to the LUMO and must be a positive number");
-    }
-    int allowed_LUMO = Orbs2.first - Orbs2.second;
-    if (MO >= allowed_LUMO) {
-      string err = "You are trying to access LUMO+" + to_string(MO) +
-                   " but there "
-                   "are only " +
-                   to_string(allowed_LUMO) + " LUMO orbitals";
-      throw invalid_argument(err);
-    }
-    mat2coef = mat_2_Coef->getRow(Orbs2.second + MO + 1);
-  } else {
-    throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
-  }
-
-  return calculate_transfer_integral(mat1coef, mat2coef, *mat_P_Coef, *mat_S,
-                                     *mat_P_OE, counterPoise_);
+  return calculate_transfer_integral_();
 }
+
+}  // namespace catnip

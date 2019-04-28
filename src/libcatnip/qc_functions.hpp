@@ -7,82 +7,139 @@
 #include <unordered_map>
 #include <vector>
 
-#include "matrix.hpp"
+//#include "matrix.hpp"
+#include <Eigen/Dense>
 
 namespace catnip {
 
 class TransferComplex {
- private:
-  Matrix* mat_1_Coef;
-  Matrix* mat_2_Coef;
-  Matrix* mat_P_Coef;
-  // Stores the number of Molecular orbitals
-  // and the HOMO for both monomer 1 and 2
-  std::pair<int, int> Orbs1;
-  std::pair<int, int> Orbs2;
-  Matrix* mat_S;
-  Matrix* mat_P_OE;
-  // If unscrambaling is required
-  bool unscrambled;
-  bool counterPoise_;
+  private:
+    Eigen::MatrixXd mat_1_Coef;
+    Eigen::MatrixXd mat_2_Coef;
+    Eigen::MatrixXd mat_P_Coef;
+    // Stores the number of Molecular orbitals
+    // and the HOMO for both monomer 1 and 2
+    std::pair<int, int> Orbs1;
+    std::pair<int, int> Orbs2;
 
- public:
-  TransferComplex(Matrix* mat1Coef, Matrix* mat2Coef, Matrix* matPCoef,
-                  std::pair<int, int> MOs1, std::pair<int, int> MOs2,
-                  Matrix* matS, Matrix* matPOE, bool cp);
+    /**
+     * \brief basis function overlap matrix
+     **/
+    Eigen::MatrixXd mat_S;
+    /**
+     * \brief Molecular orbital overlap matrix
+     **/
+    Eigen::MatrixXd S_AB;
 
-  void unscramble(const Matrix& coord_1_mat, const Matrix& coord_2_mat,
-                  const Matrix& coord_P_mat, const std::vector<int>& basisP,
-                  const std::vector<int>& basis2);
+    /**
+     * \brief Non orthonormalized Hamiltonian matrix
+     **/
+    Eigen::MatrixXd Hamiltonian;
 
-  // Orbital type and a map of the corresponding number
-  // E.g.
-  // orbital type    orbital number
-  // "mon1" "LUMO"    "mon1" -3
-  // "mon2" "HOMO"    "mon2"  0
-  //
-  //    monomer1 LUMO-3
-  //    monomer2 HOMO
-  double calcJ(const std::map<std::string, std::string>& orbitaltype,
-               const std::map<std::string, int>& orbitalnum);
+    /**
+     * \brief Orthonormalized Hamiltonian Matrix
+     **/
+    Eigen::MatrixXd Hamiltonian_eff;
+
+    int HOMO_Orb_;
+    int LUMO_Orb_;
+    Eigen::VectorXd vec_P_OE;
+    // If unscrambaling is required
+    bool unscrambled_;
+    bool counterPoise_;
+
+    /*
+     * \brief Determine if the provided orbital is valid
+     **/
+    bool orbitalValid_(const std::pair<std::string,int> & orbital) const;
+
+    void calculate_transfer_integral_(
+        const Eigen::MatrixXd & mat_1_Coef, 
+        const Eigen::MatrixXd & mat_2_Coef,
+        Eigen::MatrixXd mat_P_Coef,
+        const Eigen::MatrixXd & mat_S,
+        const Eigen::VectorXd& vec_P_OE, 
+        bool counterPoise_);
+
+    void printTransferIntegral_(std::pair<std::string,int> Orbital1,
+                               std::pair<std::string,int> Orbital2) const;
+  public:
+    TransferComplex(
+        Eigen::MatrixXd mat1Coef, 
+        Eigen::MatrixXd mat2Coef, 
+        Eigen::MatrixXd matPCoef,
+        std::pair<int, int> MOs1, 
+        std::pair<int, int> MOs2,
+        Eigen::MatrixXd matS, 
+        Eigen::VectorXd vecPOE, 
+        bool cp);
+
+    void unscramble(
+        const Eigen::MatrixXd& coord_1_mat, 
+        const Eigen::MatrixXd& coord_2_mat,
+        const Eigen::MatrixXd& coord_P_mat, 
+        const std::vector<int>& basisP,
+        const std::vector<int>& basis2);
+
+    // Orbital type and a map of the corresponding number
+    // E.g.
+    // orbital type    orbital number
+    // "mon1" "LUMO"    "mon1" -3
+    // "mon2" "HOMO"    "mon2"  0
+    //
+    //    monomer1 LUMO-3
+    //    monomer2 HOMO
+    double calcJ(const std::map<std::string, std::string>& orbitaltype,
+        const std::map<std::string, int>& orbitalnum);
+
+    /**
+     * \brief Print the transfer integral specified
+     **/
+    void printTransferIntegral(std::pair<std::string,int> Orbital1,
+                               std::pair<std::string,int> Orbital2) const;
+
+    /**
+     * \brief Print All info in matrix form
+     **/
+    void printAll() const;
 };
 
 std::unordered_map<int, std::pair<double, std::string>> findRank(
-    Matrix& Orb_E_Alpha, Matrix& Orb_E_Beta);
+    Eigen::VectorXd& Orb_E_Alpha, Eigen::VectorXd& Orb_E_Beta);
 
-double calculate_transfer_integral(const Matrix & mat_1_Coef, const Matrix & mat_2_Coef,
-                                   Matrix mat_P_Coef,const Matrix & mat_S,
-                                   const Matrix& mat_P_OE, bool counterPoise_);
+/*double calculate_transfer_integral(const Eigen::MatrixXd & mat_1_Coef, const Eigen::MatrixXd & mat_2_Coef,
+                                   Eigen::MatrixXd mat_P_Coef,const Eigen::MatrixXd & mat_S,
+                                   const Eigen::VectorXd& vec_P_OE, bool counterPoise_);*/
 
 // Reorganize the dimer coefficients to match up with the monomers
-Matrix organize_P_Coef(std::vector<int> matchDimerA,
+Eigen::MatrixXd organize_P_Coef(std::vector<int> matchDimerA,
                        std::vector<int> matchDimerB,
                        std::vector<int> basisFuncA, std::vector<int> basisFuncB,
-                       std::vector<int> basisFuncDimer, Matrix dimerCoef);
+                       std::vector<int> basisFuncDimer, Eigen::MatrixXd dimerCoef);
 
 // Unscramble the coefficients of the dimer matrix
 // Assumes that the match vectors describe swaps looking at a single
 // instance of the dimerCoef matrix
-Matrix* unscramble_Coef(const std::vector<int>& matchDimerA,
+Eigen::MatrixXd unscramble_Coef(const std::vector<int>& matchDimerA,
                         const std::vector<int>& matchDimerB,
                         const std::vector<int>& basisFuncDimer,
-                        Matrix* dimerCoef);
+                        Eigen::MatrixXd dimerCoef);
 
-Matrix* unscramble_Coef(const std::vector<int>& matchDimerA,
-                        const std::vector<int>& basisFuncDimer, Matrix* dimerCoef);
+Eigen::MatrixXd unscramble_Coef(const std::vector<int>& matchDimerA,
+                        const std::vector<int>& basisFuncDimer, Eigen::MatrixXd dimerCoef);
 
 // Reorganize the dimer overlap matrix to line up with the monomer
 // coefficients.
-Matrix* unscramble_S(const std::vector<int>& matchDimerA,
+Eigen::MatrixXd unscramble_S(const std::vector<int>& matchDimerA,
                      const std::vector<int>& matchDimerB,
-                     const std::vector<int>& basisFuncDimer, Matrix* S);
+                     const std::vector<int>& basisFuncDimer, Eigen::MatrixXd S);
 
-Matrix* unscramble_S(const std::vector<int>& matchDimerA,
-                     const std::vector<int>& basisFuncDimer, Matrix* S);
+Eigen::MatrixXd unscramble_S(const std::vector<int>& matchDimerA,
+                     const std::vector<int>& basisFuncDimer, Eigen::MatrixXd S);
 
-Matrix* unscramble_OE(std::vector<int> matchDimerA,
+Eigen::MatrixXd unscramble_OE(std::vector<int> matchDimerA,
                       std::vector<int> matchDimerB,
-                      std::vector<int> basisFuncDimer, Matrix* OE);
+                      std::vector<int> basisFuncDimer, Eigen::VectorXd OE);
 
 }  // namespace catnip
 #endif  // _CATNIP_QC_FUNCTIONS_HPP
