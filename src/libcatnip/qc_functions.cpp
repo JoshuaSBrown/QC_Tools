@@ -23,32 +23,16 @@ unordered_map<int, pair<double, string>> findRank(Eigen::VectorXd &Orb_E_Alpha,
 
   vector<pair<double, string>> all;
 
-  //auto m_a = Orb_E_Alpha.getCol(1);
-
-  /*for (int ind = 1; ind <= m_a.get_rows(); ind++) {
-    auto val = m_a.get_elem(ind);
-    pair<double, string> pr(val, "Alpha");
-    all.push_back(pr);
-  }*/
   for( double & val : Orb_E_Alpha){
     all.push_back(pair<double, string>(val,"Alpha"));
   }
 
-  //if (Orb_E_Beta.get_cols() > 0) {
-  //  auto m_b = Orb_E_Beta.getCol(1);
-  
-  //  for (int ind = 1; ind <= m_b.get_rows(); ind++) {
-    for( double & val : Orb_E_Beta ){ 
-      //auto val = m_b.get_elem(ind);
-      //pair<double, string> pr(val, "Beta");
-      //all.push_back(pr);
-      all.push_back(pair<double, string>(val, "Beta"));
-    }
- // }
-  // Sort the vectors
+  for( double & val : Orb_E_Beta ){ 
+    all.push_back(pair<double, string>(val, "Beta"));
+  }
   sort(all.begin(), all.end(),
-       [](const pair<double, string> &P1, const pair<double, string> &P2)
-           -> bool { return P1.first < P2.first; });
+      [](const pair<double, string> &P1, const pair<double, string> &P2)
+      -> bool { return P1.first < P2.first; });
   // Now that they are sorted we are going to update the ranks
   int rank = 1;
 
@@ -64,86 +48,39 @@ unordered_map<int, pair<double, string>> findRank(Eigen::VectorXd &Orb_E_Alpha,
 // Essentially calculates the transfer integral
 void TransferComplex::calculate_transfer_integral_() {
 
-  //Matrix mat_1_Coefinv = mat_1_Coef.invert();
-  //Matrix mat_2_Coefinv = mat_2_Coef.invert();
-  //Matrix mat_P_Coefinv = mat_P_Coef.invert();
-
   auto dimension = mat_1_Coef.rows()+mat_2_Coef.rows();
   Eigen::MatrixXd zetaA(dimension,dimension);
   Eigen::MatrixXd zetaB(dimension,dimension);
   if (counterPoise_) {
     LOG("Creating zeta matrices from coefficients assuming counterpoise", 2);
-    //zetaA = (mat_1_Coefinv);
-    //zetaB = (mat_2_Coefinv);
     zetaA = mat_1_Coef();
     zetaB = mat_2_Coef();
   } else {
     LOG("Creating zeta matrices from coefficients", 2);
-   // Matrix zerosA(mat_1_Coefinv.get_rows(), 1, mat_1_Coefinv.get_shel());
-    //Matrix zerosB(mat_2_Coefinv.get_rows(), 1, mat_2_Coefinv.get_shel());
-    //zetaA = Matrix_concatenate_rows(mat_1_Coefinv, zerosB);
-    //zetaB = Matrix_concatenate_rows(zerosA, mat_2_Coefinv);
-    //zetaA.resize(mat_1_Coef.rows()+mat_2_Coef.rows(),1);
-    //zetaB.resize(mat_1_Coef.rows()+mat_2_Coef.rows(),1);
-    zetaA << mat_1_Coef(), Eigen::MatrixXd.Zeros(mat_1_Coef.rows(),mat_2_Coef.cols()); 
-    zetaA << Eigen::MatrixXd.Zeros(mat_2_Coef.rows(),mat_1_Coef.cols()), mat_2_Coef(); 
+    zetaA << mat_1_Coef(), Eigen::MatrixXd::Zeros(mat_1_Coef.rows(),mat_2_Coef.cols()); 
+    zetaA << Eigen::MatrixXd::Zeros(mat_2_Coef.rows(),mat_1_Coef.cols()), mat_2_Coef(); 
   }
-  //Matrix zetaAinv = zetaA.invert();
-  //Matrix zetaBinv = zetaB.invert();
-
-  //LOG("Creating intermediate matrix", 3);
-  //Matrix Inter = mat_S * mat_P_Coefinv;
-  //MatrixXd Inter = mat_S * mat_P_Coefinv;
 
   LOG("Creating gamma and beta matrices", 2);
-  //Matrix gammaA = zetaAinv * Inter;
-  //Matrix gammaB = zetaBinv * Inter;
   Eigen::MatrixXd gammaA = zetaA * mat_S * mat_P_Coef.transpose(); 
   Eigen::MatrixXd gammaB = zetaB * mat_S * mat_P_Coef.transpose(); 
 
-  //Matrix gammaA_inv = gammaA.invert();
-  //Matrix gammaB_inv = gammaB.invert();
 
   LOG("Calculating S_AB", 2);
-  //Matrix S_AB = gammaB * gammaA_inv;
   Eigen::MatrixXd S_AB = gammaB * gammaA.transpose();
   Eigen::MatrixXd S_AB_inv_sqrt = S_AB.operatorInverseSqrt();
 
-  //Matrix Energy = Matrix_diag(mat_P_OE);
   Eigen::MatrixXd Energy = vec_P_OE.asDiagona();
 
   Eigen::MatrixXd Hamiltonian = mat_P_Coef * mat_S * mat_P_Coef.transpose();
  
   Eigen::MatrixXd Hamiltonian_eff = S_AB_inv_sqrt * Hamiltonian * S_AB_inv_sqrt.transpose();  
   
-/*  Matrix J_AB = gammaB * (Energy * gammaA_inv);
-
-  Matrix e_B = gammaB * (Energy * gammaB_inv);
-  Matrix e_A = gammaA * (Energy * gammaA_inv);
-
-  double J_ab = J_AB.get_elem(1, 1);
-  double e_b = e_B.get_elem(1, 1);
-  double e_a = e_A.get_elem(1, 1);
-  double S_ab = S_AB.get_elem(1, 1);
-
-  double J_eff = (J_ab - 1 / ((double)2) * (e_b + e_a) * S_ab);
-  J_eff = J_eff / ((double)(1 - pow(S_ab, 2)));
-
-  cout << "J_ab  " << J_ab * hartreeToeV << " eV\n";
-  cout << "e_a   " << e_a * hartreeToeV << " eV\n";
-  cout << "e_b   " << e_b * hartreeToeV << " eV\n";
-  cout << "S_ab  " << S_ab << "\n";
-  cout << "J_eff " << J_eff * hartreeToeV << " eV\n";
-  return J_eff;
-*/
 }
 
 void TransferComplex::printTransferIntegral(
     const map<string, string> &orbitaltype,
     const map<string, int> &orbnum) const {
-
-  //Matrix mat1coef;
-  //Matrix mat2coef;
 
   string HOMO_OR_LUMO_A = orbitaltype.at("mon1");
   int MO_A = orbnum.at("mon1");
@@ -161,7 +98,6 @@ void TransferComplex::printTransferIntegral(
                    to_string(Orbs1.second) + " HOMO orbitals";
       throw invalid_argument(err);
     }
-    //mat1coef = mat_1_Coef->getRow(Orbs1.second + MO_A);
   } else if (HOMO_OR_LUMO_A.compare("LUMO") == 0) {
     if (MO_A < 0) {
       throw invalid_argument(
@@ -176,7 +112,6 @@ void TransferComplex::printTransferIntegral(
                    to_string(allowed_LUMO) + " LUMO orbitals";
       throw invalid_argument(err);
     }
-    //mat1coef = mat_1_Coef->getRow(Orbs1.second + MO + 1);
   } else {
     throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
   }
@@ -196,7 +131,6 @@ void TransferComplex::printTransferIntegral(
                    to_string(Orbs2.second) + " HOMO orbitals";
       throw invalid_argument(err);
     }
-    //mat2coef = mat_2_Coef->getRow(Orbs2.second + MO_B);
   } else if (HOMO_OR_LUMO_B.compare("LUMO") == 0) {
     if (MO_B < 0) {
       throw invalid_argument(
@@ -211,7 +145,6 @@ void TransferComplex::printTransferIntegral(
                    to_string(allowed_LUMO) + " LUMO orbitals";
       throw invalid_argument(err);
     }
-    //mat2coef = mat_2_Coef->getRow(Orbs2.second + MO_B + 1);
   } else {
     throw invalid_argument("orbitals must be referred to as HOMO or LUMO");
   }
@@ -330,16 +263,17 @@ bool TransferComplex::orbitalValid_(const std::pair<std::string, int> & orbital)
 //   1 2         3
 //   3 4         5
 //
-list<MatrixXd> splitMatrixIntoList(const vector<int> &subMatrixDimension,
-                                   const MatrixXd const mat,
-                                   const string &ColRowSplit) {
+list<Eigen::MatrixXd> splitMatrixIntoList(
+    const vector<int> &subMatrixDimension,
+    const Eigen::MatrixXd const mat,
+    const string &ColRowSplit) {
 
-  list<MatrixXd> list_matrix;
+  list<Eigen::MatrixXd> list_matrix;
   int num_sub_matrices = subMatrixDimension.size();
   if (ColRowSplit.compare("Columns") == 0) {
     int col = 0;
     for (int i = 0; i < num_sub_matrices; ++i) {
-      MatrixXd mat_new(mat.rows(), subMatrixDimension.at(i));
+      Eigen::MatrixXd mat_new(mat.rows(), subMatrixDimension.at(i));
       for (auto k = 0; k < mat.rows(); ++k) {
         for (auto j = 0; j < subMatrixDimension.at(i); ++j) {
           mat_new(k,j) = mat(k, col + j);
@@ -351,8 +285,8 @@ list<MatrixXd> splitMatrixIntoList(const vector<int> &subMatrixDimension,
   } else if (ColRowSplit.compare("Rows") == 0) {
     int row = 0;
     for (auto i = 0; i < num_sub_matrices; ++i) {
-      MatrixXd mat_new(subMatrixDimension.at(i), mat.cols());
-      for (auto k = 0; k < mat->get_cols(); ++k) {
+      Eigen::MatrixXd mat_new(subMatrixDimension.at(i), mat.cols());
+      for (auto k = 0; k < mat.cols(); ++k) {
         for (auto j = 0; j < subMatrixDimension.at(i); ++j) {
           mat_new(j,k) = mat(row + j, k);
         }
@@ -366,7 +300,7 @@ list<MatrixXd> splitMatrixIntoList(const vector<int> &subMatrixDimension,
   return list_matrix;
 }
 
-list<MatrixXd> splitCoefsUpByAtoms(const vector<int> & basisFuncP, MatrixXd Coefs,
+list<Eigen::MatrixXd> splitCoefsUpByAtoms(const vector<int> & basisFuncP, Eigen::MatrixXd Coefs,
                                    const string & ColRow) {
   return splitMatrixIntoList(basisFuncP, Coefs, ColRow);
 }
@@ -521,77 +455,77 @@ void refreshSwapOrder(vector<pair<int, int>> &monAmatch) {
 // then actually implements the swaps by exchanging the matrices in the list.
 void updateSwapLists(vector<pair<int, int>> &monBmatch,
                      vector<pair<int, int>> &monAmatch,
-                     list<Matrix *> &p_atom_mat_coef) {
+                     list<Eigen::MatrixXd> &p_atom_mat_coef) {
 
   for (auto p : monBmatch) {
     if (p.first != p.second) {
       auto it = p_atom_mat_coef.begin();
-      Matrix *temp = *(next(it, p.first - 1));
-      *(next(it, p.first - 1)) = *(next(it, p.second - 1));
-      *(next(it, p.second - 1)) = temp;
+      Eigen::MatrixXd & temp = *(next(it, p.first));
+      *(next(it, p.first)) = *(next(it, p.second));
+      *(next(it, p.second)) = temp;
     }
   }
   for (auto p : monAmatch) {
     if (p.first != p.second) {
       auto it = p_atom_mat_coef.begin();
-      Matrix *temp = *(next(it, p.first - 1));
-      *(next(it, p.first - 1)) = *(next(it, p.second - 1));
-      *(next(it, p.second - 1)) = temp;
+      Eigen::MatrixXd & temp = *(next(it, p.first));
+      *(next(it, p.first)) = *(next(it, p.second));
+      *(next(it, p.second)) = temp;
     }
   }
   return;
 }
 void updateSwapLists(vector<pair<int, int>> &monAmatch,
-                     list<Matrix *> &atom_mat_coef) {
+                     list<Eigen::MatrixXd> &atom_mat_coef) {
 
   for (auto p : monAmatch) {
     if (p.first != p.second) {
       auto it = atom_mat_coef.begin();
-      Matrix *temp = *(next(it, p.first - 1));
-      *(next(it, p.first - 1)) = *(next(it, p.second - 1));
-      *(next(it, p.second - 1)) = temp;
+      Eigen::MatrixXd & temp = *(next(it, p.first));
+      *(next(it, p.first)) = *(next(it, p.second));
+      *(next(it, p.second)) = temp;
     }
   }
   return;
 }
 
-Matrix *mergeListOfMatrices(list<Matrix *> &matrix_list, const int rows,
+Eigen::MatrixXd mergeListOfMatrices(list<Eigen::MatrixXd> &matrix_list, const int rows,
                             const int cols, const string &ColRowMerge) {
 
-  Matrix *full_matrix = new Matrix(rows, cols);
+  Eigen::MatrixXd full_matrix(rows, cols);
   if (ColRowMerge.compare("Columns") == 0) {
     int col = 0;
     for (auto it = matrix_list.begin(); it != matrix_list.end(); ++it) {
-      Matrix *mat_ptr = *it;
-      int row = 1;
+      Eigen::MatrixXd & mat = *it;
+      int row = 0;
       if (col > cols)
         throw runtime_error("Your new matrix is not large enough");
-      for (auto i = 1; i <= mat_ptr->get_rows(); ++i) {
+      for (auto i = 0; i < mat.rows(); ++i) {
         if (row > rows)
           throw runtime_error("Your new matrix is not large enough");
-        for (auto j = 1; j <= mat_ptr->get_cols(); ++j) {
-          full_matrix->set_elem(mat_ptr->get_elem(i, j), row, j + col);
+        for (auto j = 0; j < mat.cols(); ++j) {
+          full_matrix(row,j+col) = mat(i, j);
         }
         ++row;
       }
-      col += mat_ptr->get_cols();
+      col += mat.cols();
     }
   } else if (ColRowMerge.compare("Rows") == 0) {
     int row = 0;
     for (auto it = matrix_list.begin(); it != matrix_list.end(); ++it) {
-      Matrix *mat_ptr = *it;
-      int col = 1;
+      Matrix *mat = *it;
+      int col = 0;
       if (row > rows)
         throw runtime_error("Your new matrix is not large enough");
-      for (auto j = 1; j <= mat_ptr->get_cols(); ++j) {
+      for (auto j = 0; j < mat.cols(); ++j) {
         if (col > cols)
           throw runtime_error("Your new matrix is not large enough");
-        for (auto i = 1; i <= mat_ptr->get_rows(); ++i) {
-          full_matrix->set_elem(mat_ptr->get_elem(i, j), row + i, col);
+        for (auto i = 0; i < mat.rows(); ++i) {
+          full_matrix(row + i, col) = mat(i, j);
         }
         ++col;
       }
-      row += mat_ptr->get_rows();
+      row += mat.rows();
     }
   } else {
     throw invalid_argument("Unrecognized merge type for list of matrices");
@@ -600,22 +534,24 @@ Matrix *mergeListOfMatrices(list<Matrix *> &matrix_list, const int rows,
 }
 
 // This function
-Matrix *createNewMatrix(list<Matrix *> &p_atom_mat_coef, int rows, int cols,
+Eigen::MatrixXd createNewMatrix(list<Eigen::MatrixXd> &p_atom_mat_coef, int rows, int cols,
                         const string &ColRow) {
   return mergeListOfMatrices(p_atom_mat_coef, rows, cols, ColRow);
 }
 
 // unscramble the coefficients
-Matrix *unscramble_Coef(const std::vector<int> &matchDimerA,
-                        const std::vector<int> &matchDimerB,
-                        const std::vector<int> &basisFuncP, Matrix *dimerCoef) {
+Eigen::MatrixXd unscramble_Coef(
+    const std::vector<int> &matchDimerA,
+    const std::vector<int> &matchDimerB,
+    const std::vector<int> &basisFuncP, 
+    const Eigen::MatrixXd & dimerCoef) {
 
   // Let's reduce the complexity of the problem by instead of working
   // with the basis functions lets just work with the atoms. We can do
   // this by treating all the basis functions associated with a single
   // atom as a block.
 
-  list<Matrix *> p_atom_mat_coef =
+  list<Eigen::MatrixXd> p_atom_mat_coef =
       splitCoefsUpByAtoms(basisFuncP, dimerCoef, "Columns");
 
   // Place all of monomer A atom basis functions on the left side of the
@@ -625,33 +561,36 @@ Matrix *unscramble_Coef(const std::vector<int> &matchDimerA,
   // Second int is the col in the dimer the atom is presently at
 
   vector<pair<int, int>> monAmatch;
-  for (unsigned i = 1; i <= matchDimerA.size(); ++i) {
-    pair<int, int> pr(i, matchDimerA.at(i - 1));
+  for (unsigned i = 0; i < matchDimerA.size(); ++i) {
+    pair<int, int> pr(i, matchDimerA.at(i));
     monAmatch.push_back(pr);
   }
   vector<pair<int, int>> monBmatch;
-  for (unsigned i = 1; i <= matchDimerB.size(); ++i) {
-    pair<int, int> pr(i + monAmatch.size(), matchDimerB.at(i - 1));
+  for (unsigned i = 0; i < matchDimerB.size(); ++i) {
+    pair<int, int> pr(i + monAmatch.size(), matchDimerB.at(i));
     monBmatch.push_back(pr);
   }
 
   refreshSwapOrder(monBmatch, monAmatch);
   updateSwapLists(monBmatch, monAmatch, p_atom_mat_coef);
-  Matrix *dimerCoef_new = createNewMatrix(
-      p_atom_mat_coef, dimerCoef->get_rows(), dimerCoef->get_cols(), "Columns");
+  Eigen::MatrixXd dimerCoef_new = createNewMatrix(
+      p_atom_mat_coef, dimerCoef.rows(), dimerCoef.cols(), "Columns");
+
   return dimerCoef_new;
 }
 
 // unscramble the coefficients
-Matrix *unscramble_Coef(const std::vector<int> &matchDimerB,
-                        const std::vector<int> &basisFuncB, Matrix *Coef) {
+Eigen::MatrixXd unscramble_Coef(
+    const std::vector<int> &matchDimerB,
+    const std::vector<int> &basisFuncB,
+    const Eigen::MatrixXd & Coef) {
 
   // Let's reduce the complexity of the problem by instead of working
   // with the basis functions lets just work with the atoms. We can do
   // this by treating all the basis functions associated with a single
   // atom as a block.
 
-  list<Matrix *> atom_mat_coef =
+  list<MatrixXd> atom_mat_coef =
       splitCoefsUpByAtoms(basisFuncB, Coef, "Columns");
 
   // Place all of monomer A atom basis functions on the left side of the
@@ -661,15 +600,15 @@ Matrix *unscramble_Coef(const std::vector<int> &matchDimerB,
   // Second int is the col in the dimer the atom is presently at
 
   vector<pair<int, int>> monBmatch;
-  for (unsigned i = 1; i <= matchDimerB.size(); ++i) {
-    pair<int, int> pr(i, matchDimerB.at(i - 1));
+  for (unsigned i = 0; i < matchDimerB.size(); ++i) {
+    pair<int, int> pr(i, matchDimerB.at(i));
     monBmatch.push_back(pr);
   }
 
   refreshSwapOrder(monBmatch);
   updateSwapLists(monBmatch, atom_mat_coef);
-  Matrix *Coef_new = createNewMatrix(atom_mat_coef, Coef->get_rows(),
-                                     Coef->get_cols(), "Columns");
+  Eigen::MatrixXd Coef_new = createNewMatrix(atom_mat_coef, Coef.rows(),
+                                     Coef.cols(), "Columns");
   return Coef_new;
 }
 
@@ -677,48 +616,49 @@ Matrix *unscramble_Coef(const std::vector<int> &matchDimerB,
 // and columns
 Eigen::MatrixXd unscramble_S(const std::vector<int> &matchDimerA,
                      const std::vector<int> &matchDimerB,
-                     const std::vector<int> &basisFuncP, const MatrixXd & S) {
+                     const std::vector<int> &basisFuncP, 
+                     const Eigen::MatrixXd & S) {
 
   Eigen::MatrixXd S_new(S.rows(),S.cols());
   {
-    list<MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Columns");
+    list<Eigen::MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Columns");
 
     vector<pair<int, int>> monAmatch;
-    for (unsigned i = 1; i <= matchDimerA.size(); ++i) {
-      pair<int, int> pr(i, matchDimerA.at(i - 1));
+    for (unsigned i = 0; i < matchDimerA.size(); ++i) {
+      pair<int, int> pr(i, matchDimerA.at(i));
       monAmatch.push_back(pr);
     }
     vector<pair<int, int>> monBmatch;
-    for (unsigned i = 1; i <= matchDimerB.size(); ++i) {
-      pair<int, int> pr(i + monAmatch.size(), matchDimerB.at(i - 1));
+    for (unsigned i = 0; i < matchDimerB.size(); ++i) {
+      pair<int, int> pr(i + monAmatch.size(), matchDimerB.at(i));
       monBmatch.push_back(pr);
     }
 
     refreshSwapOrder(monBmatch, monAmatch);
     updateSwapLists(monBmatch, monAmatch, p_atom_mat_S);
     S_new =
-        createNewMatrix(p_atom_mat_S, S->get_rows(), S->get_cols(), "Columns");
+        createNewMatrix(p_atom_mat_S, S.rows(), S.cols(), "Columns");
   }
 
   S = S_new;
 
   {
-    list<MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Rows");
+    list<Eigen::MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Rows");
 
     vector<pair<int, int>> monAmatch;
-    for (unsigned i = 1; i <= matchDimerA.size(); ++i) {
-      pair<int, int> pr(i, matchDimerA.at(i - 1));
+    for (unsigned i = 0; i < matchDimerA.size(); ++i) {
+      pair<int, int> pr(i, matchDimerA.at(i));
       monAmatch.push_back(pr);
     }
     vector<pair<int, int>> monBmatch;
-    for (unsigned i = 1; i <= matchDimerB.size(); ++i) {
-      pair<int, int> pr(i + monAmatch.size(), matchDimerB.at(i - 1));
+    for (unsigned i = 0; i < matchDimerB.size(); ++i) {
+      pair<int, int> pr(i + monAmatch.size(), matchDimerB.at(i));
       monBmatch.push_back(pr);
     }
 
     refreshSwapOrder(monBmatch, monAmatch);
     updateSwapLists(monBmatch, monAmatch, p_atom_mat_S);
-    S_new = createNewMatrix(p_atom_mat_S, S->get_rows(), S->get_cols(), "Rows");
+    S_new = createNewMatrix(p_atom_mat_S, S.rows(), S.cols(), "Rows");
   }
 
   // Return the correctly swapped dimerCoef
@@ -728,38 +668,38 @@ Eigen::MatrixXd unscramble_S(const std::vector<int> &matchDimerA,
 // Same as the above function but here we are assuming counterpoise correction
 // is being used and thus we do not need to match with both monomer A and
 // monomer B but only need to match with A.
-Matrix *unscramble_S(const std::vector<int> &matchDimerA,
-                     const std::vector<int> &basisFuncP, Matrix *S) {
+Eigen::MatrixXd unscramble_S(const std::vector<int> &matchDimerA,
+                     const std::vector<int> &basisFuncP, Eigen::MatrixXd & S) {
 
-  Matrix *S_new;
+  MatrixXd & S_new(S.rows(),S.cols());
   {
-    list<MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Columns");
+    list<Eigen::MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Columns");
 
     vector<pair<int, int>> monAmatch;
-    for (unsigned i = 1; i <= matchDimerA.size(); ++i) {
-      pair<int, int> pr(i, matchDimerA.at(i - 1));
+    for (unsigned i = 0; i < matchDimerA.size(); ++i) {
+      pair<int, int> pr(i, matchDimerA.at(i));
       monAmatch.push_back(pr);
     }
     refreshSwapOrder(monAmatch);
     updateSwapLists(monAmatch, p_atom_mat_S);
     S_new =
-        createNewMatrix(p_atom_mat_S, S->get_rows(), S->get_cols(), "Columns");
+        createNewMatrix(p_atom_mat_S, S.rows(), S.cols(), "Columns");
   }
 
   S = S_new;
 
   {
-    list<MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Rows");
+    list<Eigen::MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Rows");
 
     vector<pair<int, int>> monAmatch;
-    for (unsigned i = 1; i <= matchDimerA.size(); ++i) {
-      pair<int, int> pr(i, matchDimerA.at(i - 1));
+    for (unsigned i = 0; i < matchDimerA.size(); ++i) {
+      pair<int, int> pr(i, matchDimerA.at(i));
       monAmatch.push_back(pr);
     }
 
     refreshSwapOrder(monAmatch);
     updateSwapLists(monAmatch, p_atom_mat_S);
-    S_new = createNewMatrix(p_atom_mat_S, S->get_rows(), S->get_cols(), "Rows");
+    S_new = createNewMatrix(p_atom_mat_S, S.rows(), S.cols(), "Rows");
   }
 
   // Return the correctly swapped dimerCoef
@@ -774,28 +714,28 @@ TransferComplex::TransferComplex(Eigen::MatrixXd mat1Coef, Eigen::MatrixXd mat2C
   unscrambled_ = false;
   counterPoise_ = cp;
   // Consistency check
-  if (matS->get_cols() != matPCoef->get_cols()) {
+  if (matS.cols() != matPCoef.cols()) {
     throw invalid_argument(
         "The overlap matrix must have the same number "
         "of basis functions as the dimer");
   }
   if (cp) {
-    if (mat1Coef->get_cols() != matPCoef->get_cols()) {
+    if (mat1Coef.cols() != matPCoef.cols()) {
       throw invalid_argument(
           "Counter poise correction requires that the"
           " monomers have the same number of coefficients as the dimer. "
           "Your monomer 1 does not");
     }
-    if (mat2Coef->get_cols() != matPCoef->get_cols()) {
+    if (mat2Coef.cols() != matPCoef.cols()) {
       throw invalid_argument(
           "Counter poise correction requires that the"
           " monomers have the same number of coefficients as the dimer. "
           "Your monomer 2 does not");
     }
   } else {
-    int total_cols = mat1Coef->get_cols() + mat2Coef->get_cols();
+    int total_cols = mat1Coef.cols() + mat2Coef.cols();
 
-    if (total_cols > matPCoef->get_cols()) {
+    if (total_cols > matPCoef.cols()) {
       throw invalid_argument(
           "Counter poise has not been specified and your "
           "monomers have more basis function cols than your dimer");

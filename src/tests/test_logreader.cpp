@@ -25,7 +25,7 @@ int main(void) {
     auto orb_info = lr.getOrbitalInfo();
 
     auto Soverlap = lr.getOverlapMatrix();
-    cout << Soverlap->get_rows() << endl;
+    cout << Soverlap.rows() << endl;
     auto Alpha = lr.getOE("Alpha");
 
     auto basisFuncCount = lr.getBasisFuncCount();
