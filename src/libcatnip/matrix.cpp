@@ -1,0 +1,80 @@
+
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <Eigen/Dense>
+
+#include "matrix.hpp"
+
+using namespace std;
+
+namespace catnip {
+
+string double_tos(double f, int nd) {
+  ostringstream ostr;
+  int tens = stod("1" + string(nd, '0'));
+  ostr << round(f * tens) / tens;
+  return ostr.str();
+}
+
+vector<int> matchRow(const Matrix & mat1, const Matrix & mat2, const int sf) {
+
+  if (mat1.cols() != mat2.cols()) {
+    throw invalid_argument(
+        "match function only works when matrices have same number of columns");
+  }
+  vector<int> m_vec(mat1.rows(), -1);
+
+  for (int i = 0; i < mat1.rows(); ++i) {
+    for (int ii = 0; ii < mat2.rows(); ++ii) {
+      bool match = true;
+      for (int j = 0; j < mat1.cols(); ++j) {
+        string val1 = double_tos(mat1(i, j), sf);
+        string val2 = double_tos(mat2(ii, j), sf);
+        if (val1.compare(val2) != 0) {
+          match = false;
+          break;
+        }
+      }
+      if (match) m_vec.at(i) = ii;
+    }
+  }
+  return m_vec;
+}
+
+vector<int> matchCol(const Eigen::MatrixXd & mat1,
+    const Eigen::MatrixXd &mat2, 
+    const int sf) {
+
+  if (mat1.rows() != mat2.rows()) {
+    throw invalid_argument(
+        "match function only works when matrices have same number of rows");
+  }
+  vector<int> m_vec(mat1.cols(), -1);
+
+  for (int i = 0; i < mat1.cols(); ++i) {
+    for (int ii = 0; ii < mat2.cols(); ++ii) {
+      bool match = true;
+      for (int j = 0; j < mat1.rows(); ++j) {
+        string val1 = double_tos(mat1(j, i), sf);
+        string val2 = double_tos(mat2(j, ii), sf);
+        if (val1.compare(val2) != 0) {
+          match = false;
+          break;
+        }
+      }
+      if (match) m_vec.at(i) = ii;
+    }
+  }
+  return m_vec;
+}
+
+
+
+
+
+
+
+
+}
