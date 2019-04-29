@@ -8,7 +8,7 @@
 #include <vector>
 
 //#include "matrix.hpp"
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 namespace catnip {
 
@@ -53,16 +53,10 @@ class TransferComplex {
      **/
     bool orbitalValid_(const std::pair<std::string,int> & orbital) const;
 
-    void calculate_transfer_integral_(
-        const Eigen::MatrixXd & mat_1_Coef, 
-        const Eigen::MatrixXd & mat_2_Coef,
-        Eigen::MatrixXd mat_P_Coef,
-        const Eigen::MatrixXd & mat_S,
-        const Eigen::VectorXd& vec_P_OE, 
-        bool counterPoise_);
+    void calculate_transfer_integral_();
 
-    void printTransferIntegral_(std::pair<std::string,int> Orbital1,
-                               std::pair<std::string,int> Orbital2) const;
+    void printTransferIntegral_(const std::pair<std::string,int> & Orbital1,
+                                const std::pair<std::string,int> & Orbital2) const;
   public:
     TransferComplex(
         Eigen::MatrixXd mat1Coef, 
@@ -89,14 +83,14 @@ class TransferComplex {
     //
     //    monomer1 LUMO-3
     //    monomer2 HOMO
-    double calcJ(const std::map<std::string, std::string>& orbitaltype,
+    void calcJ(const std::map<std::string, std::string>& orbitaltype,
         const std::map<std::string, int>& orbitalnum);
 
     /**
      * \brief Print the transfer integral specified
      **/
-    void printTransferIntegral(std::pair<std::string,int> Orbital1,
-                               std::pair<std::string,int> Orbital2) const;
+    void printTransferIntegral(const std::pair<std::string,int> & Orbital1,
+                               const std::pair<std::string,int> & Orbital2) const;
 
     /**
      * \brief Print All info in matrix form

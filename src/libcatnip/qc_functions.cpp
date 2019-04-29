@@ -14,21 +14,23 @@
 #include "matrix.hpp"
 #include "qc_functions.hpp"
 
-using namespace std;
-
+#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/Eigenvalues>
 namespace catnip {
+
+  using namespace std;
 
 unordered_map<int, pair<double, string>> findRank(Eigen::VectorXd &Orb_E_Alpha,
                                                   Eigen::VectorXd &Orb_E_Beta) {
 
   vector<pair<double, string>> all;
 
-  for( double & val : Orb_E_Alpha){
-    all.push_back(pair<double, string>(val,"Alpha"));
+  for( int i = 0; i<Orb_E_Alpha.size();++i){
+    all.push_back(pair<double, string>(Orb_E_Alpha(i),"Alpha"));
   }
 
-  for( double & val : Orb_E_Beta ){ 
-    all.push_back(pair<double, string>(val, "Beta"));
+  for( int i = 0; i<Orb_E_Beta.size();++i){
+    all.push_back(pair<double, string>(Orb_E_Beta(i), "Beta"));
   }
   sort(all.begin(), all.end(),
       [](const pair<double, string> &P1, const pair<double, string> &P2)
@@ -53,12 +55,12 @@ void TransferComplex::calculate_transfer_integral_() {
   Eigen::MatrixXd zetaB(dimension,dimension);
   if (counterPoise_) {
     LOG("Creating zeta matrices from coefficients assuming counterpoise", 2);
-    zetaA = mat_1_Coef();
-    zetaB = mat_2_Coef();
+    zetaA = mat_1_Coef;
+    zetaB = mat_2_Coef;
   } else {
     LOG("Creating zeta matrices from coefficients", 2);
-    zetaA << mat_1_Coef(), Eigen::MatrixXd::Zeros(mat_1_Coef.rows(),mat_2_Coef.cols()); 
-    zetaA << Eigen::MatrixXd::Zeros(mat_2_Coef.rows(),mat_1_Coef.cols()), mat_2_Coef(); 
+    zetaA << mat_1_Coef, Eigen::MatrixXd::Zero(mat_1_Coef.rows(),mat_2_Coef.cols()); 
+    zetaA << Eigen::MatrixXd::Zero(mat_2_Coef.rows(),mat_1_Coef.cols()), mat_2_Coef; 
   }
 
   LOG("Creating gamma and beta matrices", 2);
@@ -67,14 +69,19 @@ void TransferComplex::calculate_transfer_integral_() {
 
 
   LOG("Calculating S_AB", 2);
-  Eigen::MatrixXd S_AB = gammaB * gammaA.transpose();
-  Eigen::MatrixXd S_AB_inv_sqrt = S_AB.operatorInverseSqrt();
+  S_AB.resize(gammaB.rows(),gammaA.cols());
+  S_AB = gammaB * gammaA.transpose();
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigen_solver(S_AB);
+  Eigen::MatrixXd S_AB_inv_sqrt = eigen_solver.operatorInverseSqrt();
 
-  Eigen::MatrixXd Energy = vec_P_OE.asDiagona();
+  auto Energy = Eigen::MatrixXd::Identity(vec_P_OE.size(),vec_P_OE.size());
+  Energy *= vec_P_OE.transpose(); 
 
-  Eigen::MatrixXd Hamiltonian = mat_P_Coef * mat_S * mat_P_Coef.transpose();
- 
-  Eigen::MatrixXd Hamiltonian_eff = S_AB_inv_sqrt * Hamiltonian * S_AB_inv_sqrt.transpose();  
+  Hamiltonian.resize(mat_S.rows(),mat_S.cols());
+  Hamiltonian = mat_P_Coef * mat_S * mat_P_Coef.transpose();
+
+  Hamiltonian_eff.resize(Hamiltonian.rows(),Hamiltonian.cols());
+  Hamiltonian_eff = S_AB_inv_sqrt * Hamiltonian * S_AB_inv_sqrt.transpose();  
   
 }
 
@@ -156,7 +163,9 @@ void TransferComplex::printTransferIntegral(
 // Find the transfer integral between two orbitals. 
 // pair<string,int> string - Either HOMO or LUMO
 //                  int    - is the orbital number HOMO-3 LUMO+5
-void TransferComplex::printTransferIntegral_(pair<string,int> Orbital1, pair<string,int> Orbital2) const {
+void TransferComplex::printTransferIntegral_(
+    const pair<string,int> Orbital1,
+    const pair<string,int> Orbital2) const {
 
   int obrital1_num = 0;
   int obrital2_num = 0;
@@ -168,8 +177,8 @@ void TransferComplex::printTransferIntegral_(pair<string,int> Orbital1, pair<str
     orbital2_num = Orbital2.second;
   }
   double J_ab = Hamiltonian(orbital1_num,orbital2_num);
-  double e_a = Hamiltonaian(orbital1_num,orbital1_num);
-  double e_b = Hamiltonaian(orbital2_num,orbital2_num);
+  double e_a = Hamiltonian(orbital1_num,orbital1_num);
+  double e_b = Hamiltonian(orbital2_num,orbital2_num);
   double S_ab = S_AB(orbital1_num,orbital2_num); 
   double J_eff = Hamiltonaian_eff(orbital1_num,orbital2_num);
   cout << "J_ab  " << J_ab * hartreeToeV << " eV\n";
@@ -742,12 +751,17 @@ TransferComplex::TransferComplex(Eigen::MatrixXd mat1Coef, Eigen::MatrixXd mat2C
     }
   }
 
+  mat_1_Coef.resize(mat1Coef.rows(),mat1Coef.cols());
   mat_1_Coef = mat1Coef;
+  mat_2_Coef.resize(mat2Coef.rows(),mat2Coef.cols());
   mat_2_Coef = mat2Coef;
+  mat_P_Coef.resize(matPCoef.rows(),matPCoef.cols());
   mat_P_Coef = matPCoef;
   Orbs1 = MOs1;
   Orbs2 = MOs2;
+  mat_S.resize(matS.rows(),matS.cols());
   mat_S = matS;
+  vec_P_OE.resize(vecPOE.size());
   vec_P_OE = vecPOE;
 }
 
@@ -801,7 +815,7 @@ void TransferComplex::unscramble(const Eigen::MatrixXd &coord_1_mat,
   }
 }
 
-double TransferComplex::calcJ() {
+void TransferComplex::calcJ() {
 
   if (unscrambled_ == false) {
     cerr << "WARNING unable to automatically line up basis functions of"
@@ -811,7 +825,7 @@ double TransferComplex::calcJ() {
          << endl;
   }
 
-  return calculate_transfer_integral_();
+  calculate_transfer_integral_();
 }
 
 }  // namespace catnip

@@ -1,6 +1,5 @@
 #ifndef _CATNIP_IO_HPP
 #define _CATNIP_IO_HPP
-#include "../matrix.hpp"
 #include "../parameters.hpp"
 #include "argumentparser.hpp"
 #include <map>

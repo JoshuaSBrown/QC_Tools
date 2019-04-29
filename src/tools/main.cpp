@@ -17,13 +17,12 @@
 #include "../libcatnip/io/file_readers/punreader.hpp"
 #include "../libcatnip/io/io.hpp"
 #include "../libcatnip/log.hpp"
-//#include "../libcatnip/matrix.hpp"
 #include "../libcatnip/parameters.hpp"
 #include "../libcatnip/qc_functions.hpp"
 
 #include "../libcatnip/calcJconfig.hpp"
 
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 using namespace catnip;
 using namespace std;

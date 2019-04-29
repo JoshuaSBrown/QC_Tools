@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 #include "matrix.hpp"
 
@@ -18,7 +18,7 @@ string double_tos(double f, int nd) {
   return ostr.str();
 }
 
-vector<int> matchRow(const Matrix & mat1, const Matrix & mat2, const int sf) {
+vector<int> matchRow(const Eigen::MatrixXd & mat1, const Eigen::MatrixXd & mat2, const int sf) {
 
   if (mat1.cols() != mat2.cols()) {
     throw invalid_argument(

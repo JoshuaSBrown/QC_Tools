@@ -2,9 +2,10 @@
 #ifndef MATRIX_HELPER_HPP
 #define MATRIX_HELPER_HPP
 
-namespace catnip {
 #include <vector>
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
+
+namespace catnip {
 
   /** 
    * Responsible for matching the rows between two matrices Returns which row
