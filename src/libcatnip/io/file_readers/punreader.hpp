@@ -1,13 +1,12 @@
-
+#pragma once
 #ifndef _CATNIP_PUNREADER_HPP_
 #define _CATNIP_PUNREADER_HPP_
 
 #include <memory>
 #include <vector>
 
-//#include "../../matrix.hpp"
 #include "filereader.hpp"
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 // Gaussian fort.7/.pun file reader
 namespace catnip {
 

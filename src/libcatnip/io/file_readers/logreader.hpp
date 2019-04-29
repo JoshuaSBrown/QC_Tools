@@ -1,13 +1,14 @@
-
+#pragma once
 #ifndef _CATNIP_LOGREADER_HPP_
 #define _CATNIP_LOGREADER_HPP_
 
+#include <map>
+#include <string>
 #include <vector>
 
-//#include "../../matrix.hpp"
 #include "filereader.hpp"
 
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Core>
 // Gaussian log file reader
 
 namespace catnip {
@@ -21,8 +22,8 @@ class LogReader : public FileReader {
   explicit LogReader(const std::string &str);
   orb_cont getOrbitalInfo() const { return orb_; }
   Eigen::MatrixXd getOverlapMatrix() const { return S_; }
-  std::vector<double> getOE(const std::string &orb_type) const {
-    return OREnergies.at(orb_type);
+  Eigen::VectorXd getOE(const std::string &orb_type) {
+    return Eigen::Map<Eigen::VectorXd>(OREnergies.at(orb_type).data(),OREnergies.at(orb_type).size());
   }
   int getHOMOLevel(const std::string &orb_type) const {
     return homoLevel.at(orb_type);

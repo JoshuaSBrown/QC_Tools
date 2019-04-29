@@ -46,5 +46,6 @@ namespace catnip {
       const Eigen::MatrixXd &mat2, 
       const int sig_fig);
 
+  Eigen::MatrixXd convert(std::vector<std::vector<double>> coords);
 } // namespace catnip
 #endif // MATRIX_HELPER_HPP

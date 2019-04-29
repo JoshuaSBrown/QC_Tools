@@ -1,3 +1,4 @@
+#pragma once
 #ifndef _CATNIP_QC_FUNCTIONS_HPP
 #define _CATNIP_QC_FUNCTIONS_HPP
 
@@ -83,14 +84,14 @@ class TransferComplex {
     //
     //    monomer1 LUMO-3
     //    monomer2 HOMO
-    void calcJ(const std::map<std::string, std::string>& orbitaltype,
-        const std::map<std::string, int>& orbitalnum);
+    void calcJ();
 
     /**
      * \brief Print the transfer integral specified
      **/
-    void printTransferIntegral(const std::pair<std::string,int> & Orbital1,
-                               const std::pair<std::string,int> & Orbital2) const;
+    void printTransferIntegral(
+        const std::map<std::string,std::string> & orbital_type,
+        const std::map<std::string,int> & orbnum) const;
 
     /**
      * \brief Print All info in matrix form
@@ -101,10 +102,6 @@ class TransferComplex {
 std::unordered_map<int, std::pair<double, std::string>> findRank(
     Eigen::VectorXd& Orb_E_Alpha, Eigen::VectorXd& Orb_E_Beta);
 
-/*double calculate_transfer_integral(const Eigen::MatrixXd & mat_1_Coef, const Eigen::MatrixXd & mat_2_Coef,
-                                   Eigen::MatrixXd mat_P_Coef,const Eigen::MatrixXd & mat_S,
-                                   const Eigen::VectorXd& vec_P_OE, bool counterPoise_);*/
-
 // Reorganize the dimer coefficients to match up with the monomers
 Eigen::MatrixXd organize_P_Coef(std::vector<int> matchDimerA,
                        std::vector<int> matchDimerB,
@@ -114,22 +111,37 @@ Eigen::MatrixXd organize_P_Coef(std::vector<int> matchDimerA,
 // Unscramble the coefficients of the dimer matrix
 // Assumes that the match vectors describe swaps looking at a single
 // instance of the dimerCoef matrix
-Eigen::MatrixXd unscramble_Coef(const std::vector<int>& matchDimerA,
-                        const std::vector<int>& matchDimerB,
-                        const std::vector<int>& basisFuncDimer,
-                        Eigen::MatrixXd dimerCoef);
+Eigen::MatrixXd unscramble_Coef(
+    const std::vector<int>& matchDimerA,
+    const std::vector<int>& matchDimerB,
+    const std::vector<int>& basisFuncDimer,
+    const Eigen::MatrixXd & dimerCoef);
 
-Eigen::MatrixXd unscramble_Coef(const std::vector<int>& matchDimerA,
-                        const std::vector<int>& basisFuncDimer, Eigen::MatrixXd dimerCoef);
+Eigen::MatrixXd unscramble_Coef(
+    const std::vector<int>& matchDimerA,
+    const std::vector<int>& basisFuncDimer,
+    const Eigen::MatrixXd & dimerCoef);
 
 // Reorganize the dimer overlap matrix to line up with the monomer
 // coefficients.
-Eigen::MatrixXd unscramble_S(const std::vector<int>& matchDimerA,
-                     const std::vector<int>& matchDimerB,
-                     const std::vector<int>& basisFuncDimer, Eigen::MatrixXd S);
+/**
+ *
+ * Note S must not be a reference because it is altered during the unscrambling
+ **/
+Eigen::MatrixXd unscramble_S(
+    const std::vector<int>& matchDimerA,
+    const std::vector<int>& matchDimerB,
+    const std::vector<int>& basisFuncDimer,
+    Eigen::MatrixXd S);
 
-Eigen::MatrixXd unscramble_S(const std::vector<int>& matchDimerA,
-                     const std::vector<int>& basisFuncDimer, Eigen::MatrixXd S);
+/**
+ *
+ * Note S must not be a reference because it is altered during the unscrambling
+ **/
+Eigen::MatrixXd unscramble_S(
+    const std::vector<int>& matchDimerA,
+    const std::vector<int>& basisFuncDimer,
+    Eigen::MatrixXd S);
 
 Eigen::MatrixXd unscramble_OE(std::vector<int> matchDimerA,
                       std::vector<int> matchDimerB,

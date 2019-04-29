@@ -19,10 +19,10 @@
 #include "../libcatnip/log.hpp"
 #include "../libcatnip/parameters.hpp"
 #include "../libcatnip/qc_functions.hpp"
-
+#include "../libcatnip/matrix.hpp"
 #include "../libcatnip/calcJconfig.hpp"
 
-#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/Core>
 
 using namespace catnip;
 using namespace std;
@@ -92,17 +92,17 @@ int main(int argc, const char *argv[]) {
     LOG("Getting " + par->getSpin1() + " of monomer 1", 2);
     Eigen::MatrixXd mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
     //Matrix *mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
-    //auto vec_1_OE = lr_1.getOE(par->getSpin1());
+    Eigen::VectorXd vec_1_OE = lr_1.getOE(par->getSpin1());
     //Matrix *mat_1_OE = new Matrix(vec_1_OE);
-    Eigen::MatrixXd mat_1_OE = Eigen::MatrixXd(vec_1_OE);
+    //Eigen::MatrixXd mat_1_OE = vec_1_OE.asDiagonal();
 
     int HOMO2 = lr_2.getHOMOLevel(par->getSpin2());
     LOG("Getting " + par->getSpin2() + " of monomer 2", 2);
     //Matrix *mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
     Eigen::MatrixXd mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
-    //auto vec_2_OE = lr_2.getOE(par->getSpin2());
+    Eigen::VectorXd vec_2_OE = lr_2.getOE(par->getSpin2());
     //Matrix *mat_2_OE = new Matrix(vec_2_OE);
-    Eigen::MatrixXd mat_2_OE = Eigen::MatrixXd(vec_2_OE);
+    //Eigen::MatrixXd mat_2_OE = vec_2_OE.asDiagonal();
 
     // Unscramble dimer coef and energies first need to see how the dimer
     // and monomer coefficients line up. To determine how the ceofficients
@@ -117,16 +117,16 @@ int main(int argc, const char *argv[]) {
     vector<vector<double>> coord_2 = lr_2.getCoords();
 
     // Convert coords to matrices
-    MatrixXd coord_P_mat(coord_P);
-    MatrixXd coord_1_mat(coord_1);
-    MatrixXd coord_2_mat(coord_2);
+    Eigen::MatrixXd coord_P_mat = convert(coord_P);
+    Eigen::MatrixXd coord_1_mat = convert(coord_1);
+    Eigen::MatrixXd coord_2_mat = convert(coord_2);
 
-    int basis_P = lr_P.getBasisFuncCount();
-    int basis_1 = lr_1.getBasisFuncCount();
-    int basis_2 = lr_2.getBasisFuncCount();
+    vector<int> basis_P = lr_P.getBasisFuncCount();
+    vector<int> basis_1 = lr_1.getBasisFuncCount();
+    vector<int> basis_2 = lr_2.getBasisFuncCount();
 
-    int MO1 = mat_1_OE->get_rows();
-    int MO2 = mat_2_OE->get_rows();
+    int MO1 = static_cast<int>(vec_1_OE.size());
+    int MO2 = static_cast<int>(vec_2_OE.size());
 
     pair<int, int> Orbs1 = {MO1, HOMO1};
     pair<int, int> Orbs2 = {MO2, HOMO2};

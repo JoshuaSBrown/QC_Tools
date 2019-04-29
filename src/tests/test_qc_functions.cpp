@@ -1,5 +1,5 @@
-//#include "../libcatnip/matrix.hpp"
 #include "../libcatnip/qc_functions.hpp"
+#include "../libcatnip/matrix.hpp"
 #include <cassert>
 #include <iostream>
 #include <vector>

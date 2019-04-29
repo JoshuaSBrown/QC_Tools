@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <list>
 #include <sstream>
@@ -74,8 +75,7 @@ void TransferComplex::calculate_transfer_integral_() {
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigen_solver(S_AB);
   Eigen::MatrixXd S_AB_inv_sqrt = eigen_solver.operatorInverseSqrt();
 
-  auto Energy = Eigen::MatrixXd::Identity(vec_P_OE.size(),vec_P_OE.size());
-  Energy *= vec_P_OE.transpose(); 
+  Eigen::MatrixXd Energy = Eigen::MatrixXd::Identity(vec_P_OE.size(),vec_P_OE.size());
 
   Hamiltonian.resize(mat_S.rows(),mat_S.cols());
   Hamiltonian = mat_P_Coef * mat_S * mat_P_Coef.transpose();
@@ -164,23 +164,23 @@ void TransferComplex::printTransferIntegral(
 // pair<string,int> string - Either HOMO or LUMO
 //                  int    - is the orbital number HOMO-3 LUMO+5
 void TransferComplex::printTransferIntegral_(
-    const pair<string,int> Orbital1,
-    const pair<string,int> Orbital2) const {
+    const pair<string,int>& orbital1,
+    const pair<string,int>& orbital2) const {
 
-  int obrital1_num = 0;
-  int obrital2_num = 0;
+  int orbital1_num = 0;
+  int orbital2_num = 0;
   if(orbital1.first.compare("HOMO")==0){
-    assert(orbitalValid_(Orbital1)==true); 
-    orbital1_num = Orbital1.second;
+    assert(orbitalValid_(orbital1)==true); 
+    orbital1_num = orbital1.second;
   }else if(orbital2.first.compare("LUMO")==0){
-    assert(orbitalValid_(Orbital2)==true); 
-    orbital2_num = Orbital2.second;
+    assert(orbitalValid_(orbital2)==true); 
+    orbital2_num = orbital2.second;
   }
   double J_ab = Hamiltonian(orbital1_num,orbital2_num);
   double e_a = Hamiltonian(orbital1_num,orbital1_num);
   double e_b = Hamiltonian(orbital2_num,orbital2_num);
   double S_ab = S_AB(orbital1_num,orbital2_num); 
-  double J_eff = Hamiltonaian_eff(orbital1_num,orbital2_num);
+  double J_eff = Hamiltonian_eff(orbital1_num,orbital2_num);
   cout << "J_ab  " << J_ab * hartreeToeV << " eV\n";
   cout << "e_a   " << e_a * hartreeToeV << " eV\n";
   cout << "e_b   " << e_b * hartreeToeV << " eV\n";
@@ -198,7 +198,7 @@ void TransferComplex::printAll() const {
     if(orbital_num<HOMO_Orb_){
       column_label+=string("HOMO");
       if(orbital_num!=(HOMO_Orb_-1)){
-        column_label+=string("-")+to_string(HOMO_Orb-orbital_num-1);
+        column_label+=string("-")+to_string(HOMO_Orb_-orbital_num-1);
       }
     }else {
       column_label+=string("LUMO");
@@ -215,7 +215,7 @@ void TransferComplex::printAll() const {
     if(orbital_num<HOMO_Orb_){
       column_label+=string("HOMO");
       if(orbital_num!=(HOMO_Orb_-1)){
-        column_label+=string("-")+to_string(HOMO_Orb-orbital_num-1);
+        column_label+=string("-")+to_string(HOMO_Orb_-orbital_num-1);
       }
     }else {
       column_label+=string("LUMO");
@@ -224,7 +224,7 @@ void TransferComplex::printAll() const {
       }
     } 
     cout << setw(column_width+2) << column_label;
-    for(int orbital_num2 = 0;orbital_num2<Hamiltonian.cols();++orbital2_num){
+    for(int orbital_num2 = 0;orbital_num2<Hamiltonian.cols();++orbital_num2){
       cout << "| " << setw(column_width) << Hamiltonian_eff(orbital_num2,orbital_num2) << " ";
     }
     cout << "|" << endl; 
@@ -274,7 +274,7 @@ bool TransferComplex::orbitalValid_(const std::pair<std::string, int> & orbital)
 //
 list<Eigen::MatrixXd> splitMatrixIntoList(
     const vector<int> &subMatrixDimension,
-    const Eigen::MatrixXd const mat,
+    const Eigen::MatrixXd mat,
     const string &ColRowSplit) {
 
   list<Eigen::MatrixXd> list_matrix;
@@ -522,7 +522,7 @@ Eigen::MatrixXd mergeListOfMatrices(list<Eigen::MatrixXd> &matrix_list, const in
   } else if (ColRowMerge.compare("Rows") == 0) {
     int row = 0;
     for (auto it = matrix_list.begin(); it != matrix_list.end(); ++it) {
-      Matrix *mat = *it;
+      Eigen::MatrixXd mat = *it;
       int col = 0;
       if (row > rows)
         throw runtime_error("Your new matrix is not large enough");
@@ -592,14 +592,14 @@ Eigen::MatrixXd unscramble_Coef(
 Eigen::MatrixXd unscramble_Coef(
     const std::vector<int> &matchDimerB,
     const std::vector<int> &basisFuncB,
-    const Eigen::MatrixXd & Coef) {
+    const Eigen::MatrixXd &Coef) {
 
   // Let's reduce the complexity of the problem by instead of working
   // with the basis functions lets just work with the atoms. We can do
   // this by treating all the basis functions associated with a single
   // atom as a block.
 
-  list<MatrixXd> atom_mat_coef =
+  list<Eigen::MatrixXd> atom_mat_coef =
       splitCoefsUpByAtoms(basisFuncB, Coef, "Columns");
 
   // Place all of monomer A atom basis functions on the left side of the
@@ -623,10 +623,11 @@ Eigen::MatrixXd unscramble_Coef(
 
 // Similar to the above function but we will be moving both the rows
 // and columns
-Eigen::MatrixXd unscramble_S(const std::vector<int> &matchDimerA,
-                     const std::vector<int> &matchDimerB,
-                     const std::vector<int> &basisFuncP, 
-                     const Eigen::MatrixXd & S) {
+Eigen::MatrixXd unscramble_S(
+    const std::vector<int> &matchDimerA,
+    const std::vector<int> &matchDimerB,
+    const std::vector<int> &basisFuncP, 
+    Eigen::MatrixXd S) {
 
   Eigen::MatrixXd S_new(S.rows(),S.cols());
   {
@@ -677,10 +678,12 @@ Eigen::MatrixXd unscramble_S(const std::vector<int> &matchDimerA,
 // Same as the above function but here we are assuming counterpoise correction
 // is being used and thus we do not need to match with both monomer A and
 // monomer B but only need to match with A.
-Eigen::MatrixXd unscramble_S(const std::vector<int> &matchDimerA,
-                     const std::vector<int> &basisFuncP, Eigen::MatrixXd & S) {
+Eigen::MatrixXd unscramble_S(
+    const std::vector<int> &matchDimerA,
+    const std::vector<int> &basisFuncP,
+    Eigen::MatrixXd S) {
 
-  MatrixXd & S_new(S.rows(),S.cols());
+  Eigen::MatrixXd S_new(S.rows(),S.cols());
   {
     list<Eigen::MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Columns");
 
@@ -778,16 +781,16 @@ void TransferComplex::unscramble(const Eigen::MatrixXd &coord_1_mat,
   // If dealing with counter poise correction may also need to unscramble
   // the basis functions of the monomers
   if (counterPoise_) {
-    vector<int> match_1_2 = coord_1_mat.matchCol(coord_2_mat, sig_fig);
+    vector<int> match_1_2 = matchCol(coord_1_mat,coord_2_mat, sig_fig);
 
     LOG("Counter Poise unscrambling matrix 2 with respect to matrix 1", 2);
-    auto unscrambled_2_Coef = unscramble_Coef(match_1_2, basis2, mat_2_Coef);
+    Eigen::MatrixXd unscrambled_2_Coef = unscramble_Coef(match_1_2, basis2, mat_2_Coef);
 
     this->mat_2_Coef = unscrambled_2_Coef;
 
-    vector<int> match_1_P = coord_1_mat.matchCol(coord_P_mat, sig_fig);
+    vector<int> match_1_P = matchCol(coord_1_mat,coord_P_mat, sig_fig);
 
-    auto unscrambled_P_Coef = unscramble_Coef(match_1_P, basisP, mat_P_Coef);
+    Eigen::MatrixXd unscrambled_P_Coef = unscramble_Coef(match_1_P, basisP, mat_P_Coef);
 
     this->mat_P_Coef = unscrambled_P_Coef;
 
@@ -798,13 +801,13 @@ void TransferComplex::unscramble(const Eigen::MatrixXd &coord_1_mat,
   } else {
 
     // Stores the rows in P that match 1
-    vector<int> match_1_P = coord_1_mat.matchCol(coord_P_mat, sig_fig);
+    vector<int> match_1_P = matchCol(coord_1_mat,coord_P_mat, sig_fig);
 
     // Stores the rows in P that match 2
-    vector<int> match_2_P = coord_2_mat.matchCol(coord_P_mat, sig_fig);
+    vector<int> match_2_P = matchCol(coord_2_mat,coord_P_mat, sig_fig);
 
     LOG("Unscrambling dimer matrix with respect to matrix 1 and 2", 2);
-    auto unscrambled_P_Coef =
+    Eigen::MatrixXd unscrambled_P_Coef =
         unscramble_Coef(match_1_P, match_2_P, basisP, mat_P_Coef);
 
     this->mat_P_Coef = unscrambled_P_Coef;

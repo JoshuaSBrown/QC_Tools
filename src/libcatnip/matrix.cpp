@@ -3,14 +3,12 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/Core>
 
 #include "matrix.hpp"
 
 using namespace std;
-
-namespace catnip {
-
+namespace catnip { 
 string double_tos(double f, int nd) {
   ostringstream ostr;
   int tens = stod("1" + string(nd, '0'));
@@ -70,11 +68,13 @@ vector<int> matchCol(const Eigen::MatrixXd & mat1,
   return m_vec;
 }
 
+Eigen::MatrixXd convert(vector<vector<double>> coords){
 
-
-
-
-
-
+  Eigen::MatrixXd coord_mat(coords.size(),coords.at(0).size());
+  for ( size_t row_ind = 0; row_ind < coords.size();++row_ind){
+    coord_mat.row(row_ind) = Eigen::Map<Eigen::VectorXd>(coords.at(row_ind).data(),coords.at(row_ind).size()); 
+  }
+  return coord_mat;
+}
 
 }

@@ -7,7 +7,7 @@
 #include <sstream>
 #include <string>
 
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Core>
 #include "../../log.hpp"
 #include "../../string_support.hpp"
 #include "logreader.hpp"
@@ -168,22 +168,10 @@ void LogReader::OverlapSectionReader(void *ptr) {
   
   //Matrix *mat_S = new Matrix(countCoef, countCoef);
   Eigen::MatrixXd matrix_S(countCoef,countCoef);
+  
   for (size_t row_ind = 0; row_ind < first_coefs.size(); ++row_ind) {
-//    vector<double> row = first_coefs.at(row_ind);
-    matrix_S.row(row_ind) << first_coefs.at(row_ind);
- //   size_t col_ind = 1;
-//    size_t col_ind = 0;
- //   for (double & val : row) {
- //     mat_S->set_elem(val, row_ind + 1, col_ind);
-  //    matrix_S(row_ind,col_ind) = val;
-      // Because diagonally symetric
-//      if (row_ind + 1 != col_ind) {
-   //   if (row_ind != col_ind) {
-        //mat_S->set_elem(val, col_ind, row_ind + 1);
-   //     matrix_S(col_ind,row_ind) = val;
-    //  }
-    //  ++col_ind;
-    //}
+    Eigen::Map<Eigen::VectorXd> eigen_vec((first_coefs.at(row_ind).data()),first_coefs.at(row_ind).size());
+    matrix_S.row(row_ind) = eigen_vec;
   }
 
   int sectionReads = countCoef / 5;
@@ -210,14 +198,9 @@ void LogReader::OverlapSectionReader(void *ptr) {
         string expon = grabStrAfterFirstOccurance(s_coef, "D");
         double value = stod(val) * pow(10.0, stod(expon));
        
-        //mat_S->set_elem(value, sectionCoef + 1,
-        //                currentSectionStart + localCoefCount);
         matrix_S(sectionCoef,currentSectionStart + localCoefCount) = value;
-        //if ((sectionCoef + 1) != (currentSectionStart + localCoefCount)) {
         if ((sectionCoef) != (currentSectionStart + localCoefCount)) {
           matrix_S(currentSectionStart + localCoefCount,sectionCoef) = value;
-          //mat_S->set_elem(value, currentSectionStart + localCoefCount,
-          //               sectionCoef + 1);
         }
         ++localCoefCount;
       }
@@ -227,7 +210,7 @@ void LogReader::OverlapSectionReader(void *ptr) {
     currentSectionStart += 5;
     getline(LR_ptr->fid_, line);
   }
-  LR_ptr->S_ = mat_S;
+  LR_ptr->S_ = matrix_S;
   LOG("Success reading Overlap coefficients from .log file", 2);
   return;
 }
@@ -253,7 +236,7 @@ void LogReader::ReadOrbEnergies(const string &orb_type) {
 
       auto vec_str = splitSt(line);
       for (size_t inc = 4; inc < vec_str.size(); inc++) {
-        OREnergies[orb_type].push_back((double)atof(vec_str.at(inc).c_str()));
+        OREnergies[orb_type].push_back(stod(vec_str.at(inc)));
         if (occFound) homoLevel[orb_type]++;
       }
     } else {

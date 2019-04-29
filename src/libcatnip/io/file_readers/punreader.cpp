@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -11,7 +12,7 @@
 #include "../../string_support.hpp"
 #include "punreader.hpp"
 
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Core>
 
 using namespace catnip;
 using namespace std;
@@ -31,7 +32,7 @@ void PunReader::registerSections_() {
   FileReader::registerSections_();
 }
 
-MatrixXd PunReader::getCoefsMatrix(const string &orb_type) {
+Eigen::MatrixXd PunReader::getCoefsMatrix(const string &orb_type) {
   if (coefs.count(orb_type) != 1) {
     throw invalid_argument("Coefficients for spin " + orb_type +
                            " were not found");
@@ -95,15 +96,12 @@ void PunReader::ReadCoef(const string &orb_type) {
     allCoefsRead = !(foundSubStrInStr(line, orb_type));
   }
 
-  //Matrix *Coefs = new Matrix(v_vec);
-  coefs[orb_type] = unique_ptr<Eigen:::MatrixXd>(Eigen::MatrixXd Coefs(v_vec.size(),v_vec.at(0).size()));
-
-  size_t row_count = 0;
-  for( vector<double> & row : v_vec) {
-    coefs[orb_type]->row(row_count) = row;
-    ++row_count;
+  coefs[orb_type] = unique_ptr<Eigen::MatrixXd>(new Eigen::MatrixXd(v_vec.size(),v_vec.at(0).size()));
+  for( size_t row_ind=0; row_ind<v_vec.size();++row_ind){
+    Eigen::Map<Eigen::VectorXd> eigen_vec(v_vec.at(row_ind).data(),v_vec.at(row_ind).size());
+    coefs[orb_type]->row(row_ind) = eigen_vec;
   }
-  //coefs[orb_type] = Coefs;
+
   LOG("Success reading atomic orbital coefficients from .pun file.", 2);
 }
 
