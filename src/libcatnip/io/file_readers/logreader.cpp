@@ -77,6 +77,7 @@ void LogReader::AOFunctionSectionReader(void *ptr) {
     while (!iss.eof()) {
       string Tot_Alpha_Beta_Spin;
       iss >> Tot_Alpha_Beta_Spin;
+      trim(Tot_Alpha_Beta_Spin);
       orbVals.push_back(stod(Tot_Alpha_Beta_Spin));
     }
     LR_ptr->orb_[make_pair(atom_num, elemType)][orbType] = orbVals;
@@ -116,7 +117,6 @@ void LogReader::AOFunctionSectionReader(void *ptr) {
     }
 
     ++atom_num;
-    // getline(LR_ptr->fid_,line);
     if (foundSubStrInStr(line, end_pattern)) {
       sectionEnd = true;
     }
@@ -166,14 +166,13 @@ void LogReader::OverlapSectionReader(void *ptr) {
 
   // Create a matrix and place all the current values in there
   
-  //Matrix *mat_S = new Matrix(countCoef, countCoef);
   Eigen::MatrixXd matrix_S(countCoef,countCoef);
-  
-  for (size_t row_ind = 0; row_ind < first_coefs.size(); ++row_ind) {
-    Eigen::Map<Eigen::VectorXd> eigen_vec((first_coefs.at(row_ind).data()),first_coefs.at(row_ind).size());
-    matrix_S.row(row_ind) = eigen_vec;
-  }
 
+  for (size_t row_ind = 0; row_ind < first_coefs.size(); ++row_ind) {
+    Eigen::Map<Eigen::RowVectorXd> eigen_row((first_coefs.at(row_ind).data()),first_coefs.at(row_ind).size());
+    matrix_S.block(row_ind,0,1,eigen_row.size()) = eigen_row;
+    matrix_S.block(0,row_ind,eigen_row.size(),1) = eigen_row.transpose();
+  }
   int sectionReads = countCoef / 5;
   if (countCoef % 5 > 0) {
     ++sectionReads;
@@ -189,7 +188,6 @@ void LogReader::OverlapSectionReader(void *ptr) {
       istringstream iss(line);
       string dummy;
       iss >> dummy;
-      //int localCoefCount = 1;
       int localCoefCount = 0;
       while (!iss.eof()) {
         string s_coef;
@@ -197,7 +195,6 @@ void LogReader::OverlapSectionReader(void *ptr) {
         string val = grabStrBeforeFirstOccurance(s_coef, "D");
         string expon = grabStrAfterFirstOccurance(s_coef, "D");
         double value = stod(val) * pow(10.0, stod(expon));
-       
         matrix_S(sectionCoef,currentSectionStart + localCoefCount) = value;
         if ((sectionCoef) != (currentSectionStart + localCoefCount)) {
           matrix_S(currentSectionStart + localCoefCount,sectionCoef) = value;
@@ -210,6 +207,7 @@ void LogReader::OverlapSectionReader(void *ptr) {
     currentSectionStart += 5;
     getline(LR_ptr->fid_, line);
   }
+  
   LR_ptr->S_ = matrix_S;
   LOG("Success reading Overlap coefficients from .log file", 2);
   return;

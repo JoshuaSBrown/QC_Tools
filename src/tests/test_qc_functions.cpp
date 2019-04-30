@@ -74,7 +74,7 @@ int main(void) {
     assert(matchA.at(1) == 4);
 
     assert(matchB.at(0) == 0);
-    assert(matchB.at(1) == 4);
+    assert(matchB.at(1) == 3);
     assert(matchB.at(2) == 2);
 
     vector<int> basisFuncDimer;

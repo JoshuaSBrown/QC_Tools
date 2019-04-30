@@ -402,9 +402,9 @@ int main(void) {
     // at random
     cout << "row  1  1 1.000 " << overlap(0,0) << endl;
     assert(overlap(0,0)==1);
-    cout << "row  1 46 0.01427 " << overlap(0,45) << endl;
+    cout << "row  1 46 0.0142782 " << overlap(0,45) << endl;
     assert(overlap(0,45)==0.0142782);
-    cout << "row 46  1 0.01427 " << overlap(45,0) << endl;
+    cout << "row 46  1 0.0142782 " << overlap(45,0) << endl;
     assert(overlap(45,0)==0.0142782);
     cout << "row 46 46 1.000 " << overlap(45,45) << endl;
     assert(overlap(45,45)==1);
