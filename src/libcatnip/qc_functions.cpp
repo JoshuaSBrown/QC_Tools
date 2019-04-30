@@ -469,7 +469,7 @@ void updateSwapLists(vector<pair<int, int>> &monBmatch,
   for (auto p : monBmatch) {
     if (p.first != p.second) {
       auto it = p_atom_mat_coef.begin();
-      Eigen::MatrixXd & temp = *(next(it, p.first));
+      Eigen::MatrixXd temp = *(next(it, p.first));
       *(next(it, p.first)) = *(next(it, p.second));
       *(next(it, p.second)) = temp;
     }
@@ -477,7 +477,7 @@ void updateSwapLists(vector<pair<int, int>> &monBmatch,
   for (auto p : monAmatch) {
     if (p.first != p.second) {
       auto it = p_atom_mat_coef.begin();
-      Eigen::MatrixXd & temp = *(next(it, p.first));
+      Eigen::MatrixXd temp = *(next(it, p.first));
       *(next(it, p.first)) = *(next(it, p.second));
       *(next(it, p.second)) = temp;
     }
@@ -505,7 +505,9 @@ Eigen::MatrixXd mergeListOfMatrices(list<Eigen::MatrixXd> &matrix_list, const in
   if (ColRowMerge.compare("Columns") == 0) {
     int col = 0;
     for (auto it = matrix_list.begin(); it != matrix_list.end(); ++it) {
-      Eigen::MatrixXd & mat = *it;
+      Eigen::MatrixXd mat = *it;
+      cout << "Cycling columns to merge" << endl;
+      cout << mat << endl;
       int row = 0;
       if (col > cols)
         throw runtime_error("Your new matrix is not large enough");
@@ -523,6 +525,7 @@ Eigen::MatrixXd mergeListOfMatrices(list<Eigen::MatrixXd> &matrix_list, const in
     int row = 0;
     for (auto it = matrix_list.begin(); it != matrix_list.end(); ++it) {
       Eigen::MatrixXd mat = *it;
+      cout << "Cycling rows " << endl;
       int col = 0;
       if (row > rows)
         throw runtime_error("Your new matrix is not large enough");
@@ -539,6 +542,7 @@ Eigen::MatrixXd mergeListOfMatrices(list<Eigen::MatrixXd> &matrix_list, const in
   } else {
     throw invalid_argument("Unrecognized merge type for list of matrices");
   }
+  cout << full_matrix << endl;
   return full_matrix;
 }
 
@@ -579,9 +583,23 @@ Eigen::MatrixXd unscramble_Coef(
     pair<int, int> pr(i + monAmatch.size(), matchDimerB.at(i));
     monBmatch.push_back(pr);
   }
+  cout << "Contents of list before swap" << endl;
+  for( Eigen::MatrixXd & mat : p_atom_mat_coef ){
+    cout << mat << "\n" << endl;
+  }
 
   refreshSwapOrder(monBmatch, monAmatch);
+  cout << "Contents of list before update" << endl;
+  for( Eigen::MatrixXd & mat : p_atom_mat_coef ){
+    cout << mat << "\n" << endl;
+  }
+
   updateSwapLists(monBmatch, monAmatch, p_atom_mat_coef);
+  cout << "Contents of list" << endl;
+  for( Eigen::MatrixXd & mat : p_atom_mat_coef ){
+    cout << mat << "\n" << endl;
+  }
+
   Eigen::MatrixXd dimerCoef_new = createNewMatrix(
       p_atom_mat_coef, dimerCoef.rows(), dimerCoef.cols(), "Columns");
 
@@ -632,7 +650,10 @@ Eigen::MatrixXd unscramble_S(
   Eigen::MatrixXd S_new(S.rows(),S.cols());
   {
     list<Eigen::MatrixXd> p_atom_mat_S = splitCoefsUpByAtoms(basisFuncP, S, "Columns");
-
+    cout << "List of split matrices" << endl;
+    for( Eigen::MatrixXd & mat : p_atom_mat_S ){
+      cout << mat << "\n" << endl;
+    }
     vector<pair<int, int>> monAmatch;
     for (unsigned i = 0; i < matchDimerA.size(); ++i) {
       pair<int, int> pr(i, matchDimerA.at(i));
