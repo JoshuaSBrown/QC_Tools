@@ -141,12 +141,12 @@ int main(void) {
     {
       ofstream fid;
       fid.open(test_file);
-      fid << "*** Overlap ***                                                             " << endl;
-      fid << "                1             2             3             4             5    " << endl;
-      fid << "      1  0.100000D+01                                                        " << endl;
-      fid << "      2  0.219059D+00  0.100000D+01                                          " << endl;
-      fid << "      3  0.000000D+00  0.000000D+00  0.100000D+01                            " << endl;
-      fid << "      4  0.000000D+00  0.000000D+00  0.000000D+00  0.100000D+01              " << endl;
+      fid << " *** Overlap ***                                                             " << endl;
+      fid << "                1             2             3             4             5" << endl;
+      fid << "      1  0.100000D+01" << endl;
+      fid << "      2  0.219059D+00  0.100000D+01" << endl;
+      fid << "      3  0.000000D+00  0.000000D+00  0.100000D+01" << endl;
+      fid << "      4  0.000000D+00  0.000000D+00  0.000000D+00  0.100000D+01" << endl;
       fid << "      5  0.000000D+00  0.000000D+00  0.000000D+00  0.000000D+00  0.100000D+01" << endl;
       fid << "      6  0.184261D+00  0.812273D+00  0.000000D+00  0.000000D+00  0.000000D+00" << endl;
       fid << "      7  0.000000D+00  0.000000D+00  0.569754D+00  0.000000D+00  0.000000D+00" << endl;
@@ -395,11 +395,18 @@ int main(void) {
 
     Eigen::MatrixXd overlap = lr.getOverlapMatrix(); 
 
+    cout << "Overlap Matrix rows " << overlap.rows() << " cols " << overlap.cols() << endl;
+    assert(overlap.rows()==46);
+    assert(overlap.cols()==46);
     // We will test the corners of the overlap matrix and a few elements 
     // at random
+    cout << "row  1  1 1.000 " << overlap(0,0) << endl;
     assert(overlap(0,0)==1);
-    assert(overlap(0,45)==0.01427);
-    assert(overlap(45,0)==0.01427);
+    cout << "row  1 46 0.01427 " << overlap(0,45) << endl;
+    assert(overlap(0,45)==0.0142782);
+    cout << "row 46  1 0.01427 " << overlap(45,0) << endl;
+    assert(overlap(45,0)==0.0142782);
+    cout << "row 46 46 1.000 " << overlap(45,45) << endl;
     assert(overlap(45,45)==1);
 
     assert(overlap(10,6)==0.588690);
@@ -427,7 +434,8 @@ int main(void) {
     for (auto c : basisFuncCount) {
       cout << c << endl;
     }
-    auto xyz = lr.getCoords();
+
+    vector<vector<double>> xyz = lr.getCoords();
     auto x = xyz.at(0);
     auto y = xyz.at(1);
     auto z = xyz.at(2);
