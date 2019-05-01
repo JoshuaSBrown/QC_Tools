@@ -20,8 +20,8 @@ class TransferComplex {
     Eigen::MatrixXd mat_P_Coef;
     // Stores the number of Molecular orbitals
     // and the HOMO for both monomer 1 and 2
-    std::pair<int, int> Orbs1;
-    std::pair<int, int> Orbs2;
+    //std::pair<int, int> Orbs1;
+    //std::pair<int, int> Orbs2;
 
     /**
      * \brief basis function overlap matrix
@@ -42,9 +42,11 @@ class TransferComplex {
      **/
     Eigen::MatrixXd Hamiltonian_eff;
 
-    int HOMO_Orb_;
-    int LUMO_Orb_;
-    Eigen::VectorXd vec_P_OE;
+    int HOMO_A_;
+    int HOMO_B_;
+    //int HOMO_Orb_;
+    //int LUMO_Orb_;
+    Eigen::RowVectorXd vec_P_OE;
     // If unscrambaling is required
     bool unscrambled_;
     bool counterPoise_;
@@ -63,8 +65,8 @@ class TransferComplex {
         Eigen::MatrixXd mat1Coef, 
         Eigen::MatrixXd mat2Coef, 
         Eigen::MatrixXd matPCoef,
-        std::pair<int, int> MOs1, 
-        std::pair<int, int> MOs2,
+        const int HOMO_A, 
+        const int HOMO_B,
         Eigen::MatrixXd matS, 
         Eigen::VectorXd vecPOE, 
         bool cp);

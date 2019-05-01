@@ -125,14 +125,8 @@ int main(int argc, const char *argv[]) {
     vector<int> basis_1 = lr_1.getBasisFuncCount();
     vector<int> basis_2 = lr_2.getBasisFuncCount();
 
-    int MO1 = static_cast<int>(vec_1_OE.size());
-    int MO2 = static_cast<int>(vec_2_OE.size());
-
-    pair<int, int> Orbs1 = {MO1, HOMO1};
-    pair<int, int> Orbs2 = {MO2, HOMO2};
-
     LOG("Creating transfercomplex", 1);
-    TransferComplex TC(mat_1_Coef, mat_2_Coef, mat_P_Coef, Orbs1, Orbs2, mat_S,
+    TransferComplex TC(mat_1_Coef, mat_2_Coef, mat_P_Coef, HOMO1, HOMO2, mat_S,
                        vec_P_OE, par->getCounterPoise());
 
     // Set the transfer complex to counterpoise if it is the case.
@@ -179,7 +173,6 @@ int main(int argc, const char *argv[]) {
     LOG("Calculating transfer integral", 1);
     TC.calcJ();
     TC.printTransferIntegral(orbitaltypes, orbitalnums);
-
   }
 
   return 0;
