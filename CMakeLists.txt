@@ -12,8 +12,8 @@ option(CODE_COVERAGE "Enable coverage reporting" OFF)
 ##############################################################################
 # Defining settings 
 ##############################################################################
-set(calcJ_VERSION_MAJOR 1 )
-set(calcJ_VERSION_MINOR 8 )
+set(calcJ_VERSION_MAJOR 2 )
+set(calcJ_VERSION_MINOR 0 )
 set(calcJ_YEAR_PUBLISHED 2018 )
 set(calcJ_AUTHOR_SURNAME "\"Brown\"" )
 set(calcJ_AUTHOR_INITIALS "\"J. S.\"" )
