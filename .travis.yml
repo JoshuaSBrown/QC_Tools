@@ -4,6 +4,7 @@ dist: xenial
 addons:
   apt:
     update: true
+    packages: eigen
 
 language: cpp
 
