@@ -17,6 +17,7 @@ jobs:
       compiler: gcc
       script: ./scripts/deploy.bash
       apt:
+        packages: eigen
         packages: gcov
         packages: lcov
 
