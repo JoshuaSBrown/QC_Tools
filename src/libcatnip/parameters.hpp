@@ -29,7 +29,7 @@ class Parameters {
 
   bool citation;
   bool counterPoise;
-
+  bool all;
  public:
   Parameters()
       : log1_(""),
@@ -47,7 +47,8 @@ class Parameters {
         orb_numP(0),
         orb_num1(0),
         orb_num2(0),
-        counterPoise(false){};
+        counterPoise(false),
+        all(false) {};
 
   std::string getLog1() const { return log1_; }
   std::string getLog2() const { return log2_; }
@@ -68,6 +69,7 @@ class Parameters {
   int getOrbNum1() const { return orb_num1; }
   int getOrbNum2() const { return orb_num2; }
   bool getCounterPoise() const { return counterPoise; }
+  bool getPrintSwitch() const { return all; }
   bool getCitation() const { return citation; }
 
   void setLog1(const std::string& log1);
@@ -89,6 +91,7 @@ class Parameters {
   void setOrbNum1(const int& num) { orb_num1 = num; }
   void setOrbNum2(const int& num) { orb_num2 = num; }
   void setCounterPoise(bool cp) { counterPoise = cp; }
+  void setPrintSwitch(bool print_all) { all = print_all; }
   void setCitation(bool cite) { citation = cite; }
 };
 

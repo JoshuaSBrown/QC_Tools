@@ -172,7 +172,11 @@ int main(int argc, const char *argv[]) {
 
     LOG("Calculating transfer integral", 1);
     TC.calcJ();
-    TC.printTransferIntegral(orbitaltypes, orbitalnums);
+    if(par->getPrintSwitch()){
+      TC.printAll();
+    }else{
+      TC.printTransferIntegral(orbitaltypes, orbitalnums);
+    }
   }
 
   return 0;
