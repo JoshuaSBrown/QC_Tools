@@ -215,48 +215,93 @@ void TransferComplex::printTransferIntegral_(
 
 void TransferComplex::printAll() const {
 
-  int HOMO_AB = HOMO_A_+HOMO_B_;
-  int LUMO_AB = HOMO_AB+1;
-  int column_width = 8;
+  int column_width = 14;
   cout << "Effective Hamiltonian" << endl;
-  cout << setw(column_width+2) << ""; 
-  for(int orbital_num = 0;orbital_num<Hamiltonian.cols();++orbital_num){
-    string column_label = "";
-    if(orbital_num<HOMO_AB){
-      column_label+=string("HOMO");
-      if(orbital_num!=(HOMO_AB-1)){
-        column_label+=string("-")+to_string(HOMO_AB-orbital_num-1);
-      }
-    }else {
-      column_label+=string("LUMO");
-      if(orbital_num!=LUMO_AB){
-        column_label+=string("+")+to_string(orbital_num-LUMO_AB);
-      }
-    } 
-    cout << "| " << setw(column_width) << column_label << " ";
-  }
-  cout << "|" << endl; 
- 
-  for(int orbital_num = 0;orbital_num<Hamiltonian.rows();++orbital_num){
-    string column_label = "";
-    if(orbital_num<HOMO_AB){
-      column_label+=string("HOMO");
-      if(orbital_num!=(HOMO_AB-1)){
-        column_label+=string("-")+to_string(HOMO_AB-orbital_num-1);
-      }
-    }else {
-      column_label+=string("LUMO");
-      if(orbital_num!=LUMO_AB){
-        column_label+=string("+")+to_string(orbital_num-LUMO_AB);
-      }
-    } 
-    cout << setw(column_width+2) << column_label;
-    for(int orbital_num2 = 0;orbital_num2<Hamiltonian.cols();++orbital_num2){
-      cout << "| " << setw(column_width) << Hamiltonian_eff(orbital_num2,orbital_num2) << " ";
+
+  int col_offset = mat_1_Coef.cols();
+  int start_col = 0;
+  int end_col = 5;
+  while(start_col<Hamiltonian.cols()){
+  
+    cout << setw(column_width-2) << left << ""; 
+    if(end_col>Hamiltonian.cols()){
+      end_col = Hamiltonian.cols();
     }
-    cout << "|" << endl; 
-  }
- 
+    for(int orbital_num = start_col;orbital_num<end_col;++orbital_num){
+      string column_label = "";
+      if(orbital_num<HOMO_A_ || (orbital_num>=col_offset && orbital_num<(HOMO_B_+col_offset))){
+        if(orbital_num<col_offset){
+          column_label=string("A HOMO");
+        }else{
+          column_label=string("B HOMO");
+        }
+        if(orbital_num!=(HOMO_A_-1) && orbital_num!=(col_offset+HOMO_B_-1)){
+          if(orbital_num<col_offset){
+            column_label+=to_string(orbital_num+1-HOMO_A_);
+          }else {
+            column_label+=to_string(orbital_num+1-col_offset-HOMO_B_);
+          }
+        }
+      }else {
+        if((orbital_num>=HOMO_A_ && orbital_num<col_offset) || orbital_num>(col_offset+HOMO_B_)){
+          if(orbital_num<col_offset){
+            column_label=string("A LUMO");
+          }else{
+            column_label=string("B LUMO");
+          }
+          if(orbital_num!=(HOMO_A_) && orbital_num!=(col_offset+HOMO_B_)){
+            if(orbital_num<col_offset){
+              column_label+=string("+")+to_string(orbital_num-HOMO_A_);
+            }else{
+              column_label+=string("+")+to_string(orbital_num-col_offset-HOMO_B_);
+            }
+          }
+        }
+      } 
+      cout << " | " << setw(column_width) << right << column_label;
+    }
+    cout << " |" << endl; 
+
+    for(int orbital_num = 0;orbital_num<Hamiltonian.rows();++orbital_num){
+      string column_label = "";
+      if(orbital_num<HOMO_A_ || (orbital_num>=col_offset && orbital_num<(HOMO_B_+col_offset))){
+        if(orbital_num<col_offset){
+          column_label=string("A HOMO");
+        }else{
+          column_label=string("B HOMO");
+        }
+        if(orbital_num!=(HOMO_A_-1) && orbital_num!=(col_offset+HOMO_B_-1)){
+          if(orbital_num<col_offset){
+            column_label+=to_string(orbital_num+1-HOMO_A_);
+          }else {
+            column_label+=to_string(orbital_num+1-col_offset-HOMO_B_);
+          }
+        }
+      }else {
+        if(orbital_num < col_offset){
+          column_label=string("A LUMO");
+        }else{
+          column_label=string("B LUMO");
+        }
+        if(orbital_num!=(HOMO_A_) && orbital_num!=(col_offset+HOMO_B_)){
+          if(orbital_num<col_offset){
+            column_label+=string("+")+to_string(orbital_num-HOMO_A_);
+          }else{
+            column_label+=string("+")+to_string(orbital_num-col_offset-HOMO_B_);
+          }
+        }
+      } 
+      cout << " " << setw(column_width-3) << left << column_label << " ";
+      for(int orbital_num2 = start_col;orbital_num2<end_col;++orbital_num2){
+        cout << "| "<< right  << scientific << std::setprecision(6)  << setw(column_width) << Hamiltonian_eff(orbital_num,orbital_num2) << " ";
+      }
+      cout << "|" << endl; 
+    }
+
+    start_col+=5;
+    end_col+=5;
+    cout << endl;
+  } 
 }
 
 bool TransferComplex::orbitalValid_(const std::pair<std::string, int> & orbital) const{
