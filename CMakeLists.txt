@@ -42,10 +42,10 @@ configure_file(
 # Find bash it is important for testing using scripts
 find_program (BASH_PROGRAM bash)
 find_library (GCOV gcov)
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-if (TARGET Eigen3::Eigen)
-  message("-- Eigen found")
-endif(TARGET Eigen3::Eigen)
+#find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+#if (TARGET Eigen3::Eigen)
+#  message("-- Eigen found")
+#endif(TARGET Eigen3::Eigen)
 add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
 
 ##############################################################################
@@ -120,5 +120,5 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   target_link_libraries(calc_J gcov)
   set_source_files_properties( src/tools/main.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS})
 endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-target_link_libraries(calc_J libcatnip ${COMMON_LIBRARIES} Eigen3::Eigen)
+target_link_libraries(calc_J libcatnip ${COMMON_LIBRARIES})
 install( TARGETS calc_J DESTINATION bin)
