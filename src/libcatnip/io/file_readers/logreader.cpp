@@ -145,9 +145,12 @@ void LogReader::OverlapSectionReader(void *ptr) {
     getline(LR_ptr->fid_, line);
     istringstream iss(line);
     iss >> countC;
+    if( line.find("Kinetic")!=string::npos){
+      break;
+    }
     int countCint = stoi(countC);
     if (countCint != (countCoef + 1)) {
-      endFirstSection = true;
+      break;
     } else {
       ++countCoef;
       vector<double> row;
@@ -165,7 +168,7 @@ void LogReader::OverlapSectionReader(void *ptr) {
   }
 
   // Create a matrix and place all the current values in there
-  
+ 
   Eigen::MatrixXd matrix_S(countCoef,countCoef);
 
   for (size_t row_ind = 0; row_ind < first_coefs.size(); ++row_ind) {
