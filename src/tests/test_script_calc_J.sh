@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -eq 0 ]; then
-    path="./../"
+    path="./.."
 else
     path=$1
 fi
@@ -29,7 +29,7 @@ findJeff() {
   echo "Num array "${#values[@]}
   for (( i=0; i < ${#values[@]}; i++ ))
   do
-    if [ "${values[$i]}" == "J_eff" ]
+    if [ "${values[$i]}" == "J_ab_eff_single" ]
     then
       J_val=${values[$i+1]}
       break

@@ -51,9 +51,9 @@ unordered_map<int, pair<double, string>> findRank(Eigen::VectorXd &Orb_E_Alpha,
 // Essentially calculates the transfer integral
 void TransferComplex::calculate_transfer_integral_() {
 
-  auto dimension = mat_1_Coef.rows()+mat_2_Coef.rows();
-  Eigen::MatrixXd zetaA(mat_1_Coef.cols(),dimension);
-  Eigen::MatrixXd zetaB(mat_2_Coef.cols(),dimension);
+  auto dimension = mat_1_Coef.cols()+mat_2_Coef.cols();
+  Eigen::MatrixXd zetaA(mat_1_Coef.rows(),dimension);
+  Eigen::MatrixXd zetaB(mat_2_Coef.rows(),dimension);
   if (counterPoise_) {
 
     LOG("Creating zeta matrices from coefficients assuming counterpoise", 2);
@@ -65,12 +65,12 @@ void TransferComplex::calculate_transfer_integral_() {
     zetaB << Eigen::MatrixXd::Zero(mat_2_Coef.rows(),mat_1_Coef.cols()), mat_2_Coef; 
   }
 
-  Eigen::MatrixXd zeta(dimension,dimension);
   LOG("Creating gamma and beta matrices", 2);
   Eigen::MatrixXd gammaA = zetaA * mat_S * mat_P_Coef.transpose(); 
   Eigen::MatrixXd gammaB = zetaB * mat_S * mat_P_Coef.transpose(); 
 
-  Eigen::MatrixXd gamma(dimension,dimension);
+  assert(gammaA.cols() == gammaB.cols() && "Column count between gamma A and B must be consistent");
+  Eigen::MatrixXd gamma(gammaA.rows()+gammaB.rows(),gammaA.cols());
   gamma << gammaB, gammaA;
 
   LOG("Calculating S_AB", 2);
