@@ -222,6 +222,26 @@ else
 fi
 echo $data >> $fileOut
 
+# Note the only difference in this test is that we have switched p_1 and p_2 
+# because the program auto matches the right basis function coordinates with 
+# the right atoms you should end up with the same numbers. 
+exec_command="${path}/build/calc_J -p_P ${path}/GAUSSIANFILES/CuBr2_Py/CuBr2-Py.pun -p_2 ${path}/GAUSSIANFILES/CuBr2_Py/CuBr2.pun -p_1 ${path}/GAUSSIANFILES/CuBr2_Py/Py.pun"
+data=$(${exec_command})
+if [ $? -eq 0 ]; then
+  findJeff 
+  if (( $(bc <<< "$J_val > -0.0055" ) )) && (( $(bc <<< "$J_val < -0.0053" ) ))
+  then
+    echo "${green}[SUCCESS]${reset} ${exec_command}" 
+  else
+    echo "${red}[FAILURE]${reset} ${exec_command} expected output -0.00542741"
+    echo "actual output $J_val"
+    count_fails=$(($count_fails+1))
+  fi
+else
+  echo "${red}[FAILURE]${reset} ${exec_command}"
+  count_fails=$((count_fails+1))
+fi
+echo $data >> $fileOut
 
 # The following commands should not work 
 

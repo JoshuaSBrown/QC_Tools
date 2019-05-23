@@ -62,13 +62,13 @@ class TransferComplex {
                                 const std::pair<std::string,int> & Orbital2) const;
   public:
     TransferComplex(
-        Eigen::MatrixXd mat1Coef, 
-        Eigen::MatrixXd mat2Coef, 
-        Eigen::MatrixXd matPCoef,
-        const int HOMO_A, 
+        const Eigen::MatrixXd & mat1Coef, 
+        const Eigen::MatrixXd & mat2Coef, 
+        const Eigen::MatrixXd & matPCoef,
+        const int HOMO_A,
         const int HOMO_B,
-        Eigen::MatrixXd matS, 
-        Eigen::VectorXd vecPOE, 
+        const Eigen::MatrixXd & matS, 
+        const Eigen::VectorXd & vecPOE, 
         bool cp);
 
     void unscramble(
@@ -141,10 +141,10 @@ Eigen::MatrixXd unscramble_S(
     const std::vector<int>& matchDimerA,
     const std::vector<int>& basisFuncDimer,
     Eigen::MatrixXd S);
-
+/*
 Eigen::MatrixXd unscramble_OE(std::vector<int> matchDimerA,
                       std::vector<int> matchDimerB,
-                      std::vector<int> basisFuncDimer, Eigen::VectorXd OE);
+                      std::vector<int> basisFuncDimer, Eigen::VectorXd OE);*/
 
 }  // namespace catnip
 #endif  // _CATNIP_QC_FUNCTIONS_HPP

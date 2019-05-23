@@ -44,31 +44,18 @@ void TransferComplex::calculate_transfer_integral_() {
 
   assert(gammaA.cols() == gammaB.cols() && "Column count between gamma A and B must be consistent");
   Eigen::MatrixXd gamma(gammaA.rows()+gammaB.rows(),gammaA.cols());
-  gamma << gammaB, gammaA;
+  gamma << gammaA, gammaB;
 
-  std::cout << "Gamma Matrix" << std::endl;
-  std::cout << gamma << std::endl;
   LOG("Calculating S_AB", 2);
   S_AB.resize(dimension,dimension);
   S_AB = gamma * gamma.transpose();
   
-  std::cout << "Overlap Matrix" << std::endl; 
-  std::cout << S_AB << std::endl;
-  /// Find out if S_AB is invertible
-  if(S_AB.determinant()==0){
-    throw invalid_argument("Error the determinant of the Molecular Orbital Overlap matrix is 0, this means it is not invertible and thus Symmetric orthogonalization cannot be applied.");
-  }
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigen_solver(S_AB);
   Eigen::MatrixXd S_AB_inv_sqrt = eigen_solver.operatorInverseSqrt();
 
   Hamiltonian.resize(mat_S.rows(),mat_S.cols());
   Hamiltonian = gamma * vec_P_OE.asDiagonal() * gamma.transpose();
 
-  std::cout << "Inverse overlap Matrix" << std::endl;
-  std::cout << S_AB_inv_sqrt << std::endl; 
-
-  std::cout << "Hamiltonian Matrix" << std::endl;
-  std::cout << Hamiltonian << std::endl; 
   Hamiltonian_eff = S_AB_inv_sqrt * Hamiltonian * S_AB_inv_sqrt;  
 }
 
@@ -175,7 +162,7 @@ void TransferComplex::printTransferIntegral_(
   double e_a = Hamiltonian(orbital1_num,orbital1_num);
   double e_b = Hamiltonian(orbital2_num,orbital2_num);
   double S_ab = S_AB(orbital1_num,orbital2_num); 
-  
+ 
   cout << "\nPre-Orthonormalization" << endl;
   cout << "J_ab             " << J_ab * hartreeToeV << " eV\n";
   cout << "e_a              " << e_a * hartreeToeV << " eV\n";
@@ -197,6 +184,7 @@ void TransferComplex::printTransferIntegral_(
   cout << "J_ab_eff_all    " << J_eff * hartreeToeV << " eV\n";
   cout << "e_a_eff_all     " << e_a_eff * hartreeToeV << " eV\n";
   cout << "e_b_eff_all     " << e_b_eff * hartreeToeV << " eV\n" << endl;
+
 }
 
 void TransferComplex::printAll() const {
@@ -778,10 +766,14 @@ Eigen::MatrixXd unscramble_S(
   return S_new;
 }
 
-TransferComplex::TransferComplex(Eigen::MatrixXd mat1Coef, Eigen::MatrixXd mat2Coef,
-                                 Eigen::MatrixXd matPCoef, const int HOMO_A,
-                                 const int HOMO_B, Eigen::MatrixXd matS,
-                                 Eigen::VectorXd vecPOE, bool cp) {
+TransferComplex::TransferComplex(
+    const Eigen::MatrixXd & mat1Coef, 
+    const Eigen::MatrixXd & mat2Coef,
+    const Eigen::MatrixXd & matPCoef, 
+    const int HOMO_A, 
+    const int HOMO_B, 
+    const Eigen::MatrixXd & matS,
+    const Eigen::VectorXd & vecPOE, bool cp) {
 
   unscrambled_ = false;
   counterPoise_ = cp;
@@ -849,10 +841,6 @@ void TransferComplex::unscramble(const Eigen::MatrixXd &coord_1_mat,
     this->mat_2_Coef = unscrambled_2_Coef;
 
     vector<int> match_1_P = matchCol(coord_1_mat,coord_P_mat, sig_fig);
-    cout << "Matching coord1 with pair" << endl;
-    for( const int & val : match_1_P ) {
-      cout << val << endl;
-    }
 
     this->mat_P_Coef = unscramble_Coef(match_1_P, basisP, mat_P_Coef);
 
@@ -863,23 +851,12 @@ void TransferComplex::unscramble(const Eigen::MatrixXd &coord_1_mat,
     // Stores the rows in P that match 1
     vector<int> match_1_P = matchCol(coord_1_mat,coord_P_mat, sig_fig);
 
-    cout << "Matching coord1 with pair" << endl;
-    for( const int & val : match_1_P ) {
-      cout << val << endl;
-    }
     // Stores the rows in P that match 2
     vector<int> match_2_P = matchCol(coord_2_mat,coord_P_mat, sig_fig);
-    cout << "Matching coord2 with pair" << endl;
-    for( const int & val : match_2_P ) {
-      cout << val << endl;
-    }
 
     LOG("Unscrambling dimer matrix with respect to matrix 1 and 2", 2);
     this->mat_P_Coef =
         unscramble_Coef(match_1_P, match_2_P, basisP, mat_P_Coef);
-
-    cout << "Unscrambled P Coef" << endl;
-    cout << mat_P_Coef << endl;
 
     this->mat_S = unscramble_S(match_1_P, match_2_P, basisP, mat_S);
 
