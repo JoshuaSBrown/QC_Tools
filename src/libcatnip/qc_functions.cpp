@@ -73,16 +73,29 @@ void TransferComplex::calculate_transfer_integral_() {
   Eigen::MatrixXd gamma(gammaA.rows()+gammaB.rows(),gammaA.cols());
   gamma << gammaB, gammaA;
 
+  std::cout << "Gamma Matrix" << std::endl;
+  std::cout << gamma << std::endl;
   LOG("Calculating S_AB", 2);
   S_AB.resize(dimension,dimension);
   S_AB = gamma * gamma.transpose();
   
+  std::cout << "Overlap Matrix" << std::endl; 
+  std::cout << S_AB << std::endl;
+  /// Find out if S_AB is invertible
+  if(S_AB.determinant()==0){
+    throw invalid_argument("Error the determinant of the Molecular Orbital Overlap matrix is 0, this means it is not invertible and thus Symmetric orthogonalization cannot be applied.");
+  }
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigen_solver(S_AB);
   Eigen::MatrixXd S_AB_inv_sqrt = eigen_solver.operatorInverseSqrt();
 
   Hamiltonian.resize(mat_S.rows(),mat_S.cols());
   Hamiltonian = gamma * vec_P_OE.asDiagonal() * gamma.transpose();
-  
+
+  std::cout << "Inverse overlap Matrix" << std::endl;
+  std::cout << S_AB_inv_sqrt << std::endl; 
+
+  std::cout << "Hamiltonian Matrix" << std::endl;
+  std::cout << Hamiltonian << std::endl; 
   Hamiltonian_eff = S_AB_inv_sqrt * Hamiltonian * S_AB_inv_sqrt;  
 }
 
