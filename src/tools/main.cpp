@@ -131,6 +131,10 @@ int main(int argc, const char *argv[]) {
 
     // Set the transfer complex to counterpoise if it is the case.
 
+    cout << "Printing number of basis funct per atom in pair " << endl;
+    for ( const int & val : basis_P ){
+      cout << val << endl;
+    }
     // If the basis function search returns 0 for any of the components then
     // we cannot automatically determine what the transfer integral is
     if (basis_1.size() != 0 && basis_2.size() != 0 && basis_P.size() != 0) {

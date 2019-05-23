@@ -101,9 +101,6 @@ class TransferComplex {
     void printAll() const;
 };
 
-std::unordered_map<int, std::pair<double, std::string>> findRank(
-    Eigen::VectorXd& Orb_E_Alpha, Eigen::VectorXd& Orb_E_Beta);
-
 // Reorganize the dimer coefficients to match up with the monomers
 Eigen::MatrixXd organize_P_Coef(std::vector<int> matchDimerA,
                        std::vector<int> matchDimerB,

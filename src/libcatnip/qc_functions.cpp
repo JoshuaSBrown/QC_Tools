@@ -21,33 +21,6 @@ namespace catnip {
 
   using namespace std;
 
-unordered_map<int, pair<double, string>> findRank(Eigen::VectorXd &Orb_E_Alpha,
-                                                  Eigen::VectorXd &Orb_E_Beta) {
-
-  vector<pair<double, string>> all;
-
-  for( int i = 0; i<Orb_E_Alpha.size();++i){
-    all.push_back(pair<double, string>(Orb_E_Alpha(i),"Alpha"));
-  }
-
-  for( int i = 0; i<Orb_E_Beta.size();++i){
-    all.push_back(pair<double, string>(Orb_E_Beta(i), "Beta"));
-  }
-  sort(all.begin(), all.end(),
-      [](const pair<double, string> &P1, const pair<double, string> &P2)
-      -> bool { return P1.first < P2.first; });
-  // Now that they are sorted we are going to update the ranks
-  int rank = 1;
-
-  unordered_map<int, pair<double, string>> rank_map;
-
-  for (auto pr : all) {
-    rank_map[rank] = pr;
-    rank++;
-  }
-  return rank_map;
-}
-
 // Essentially calculates the transfer integral
 void TransferComplex::calculate_transfer_integral_() {
 
@@ -876,32 +849,40 @@ void TransferComplex::unscramble(const Eigen::MatrixXd &coord_1_mat,
     this->mat_2_Coef = unscrambled_2_Coef;
 
     vector<int> match_1_P = matchCol(coord_1_mat,coord_P_mat, sig_fig);
+    cout << "Matching coord1 with pair" << endl;
+    for( const int & val : match_1_P ) {
+      cout << val << endl;
+    }
 
-    Eigen::MatrixXd unscrambled_P_Coef = unscramble_Coef(match_1_P, basisP, mat_P_Coef);
+    this->mat_P_Coef = unscramble_Coef(match_1_P, basisP, mat_P_Coef);
 
-    this->mat_P_Coef = unscrambled_P_Coef;
-
-    auto unscrambled_S = unscramble_S(match_1_P, basisP, mat_S);
-
-    this->mat_S = unscrambled_S;
+    this->mat_S = unscramble_S(match_1_P, basisP, mat_S);
 
   } else {
 
     // Stores the rows in P that match 1
     vector<int> match_1_P = matchCol(coord_1_mat,coord_P_mat, sig_fig);
 
+    cout << "Matching coord1 with pair" << endl;
+    for( const int & val : match_1_P ) {
+      cout << val << endl;
+    }
     // Stores the rows in P that match 2
     vector<int> match_2_P = matchCol(coord_2_mat,coord_P_mat, sig_fig);
+    cout << "Matching coord2 with pair" << endl;
+    for( const int & val : match_2_P ) {
+      cout << val << endl;
+    }
 
     LOG("Unscrambling dimer matrix with respect to matrix 1 and 2", 2);
-    Eigen::MatrixXd unscrambled_P_Coef =
+    this->mat_P_Coef =
         unscramble_Coef(match_1_P, match_2_P, basisP, mat_P_Coef);
 
-    this->mat_P_Coef = unscrambled_P_Coef;
+    cout << "Unscrambled P Coef" << endl;
+    cout << mat_P_Coef << endl;
 
-    auto unscrambled_S = unscramble_S(match_1_P, match_2_P, basisP, mat_S);
+    this->mat_S = unscramble_S(match_1_P, match_2_P, basisP, mat_S);
 
-    this->mat_S = unscrambled_S;
   }
 }
 
