@@ -8,6 +8,10 @@
 [![Build Status](https://travis-ci.org/JoshuaSBrown/QC_Tools.svg?branch=master)](https://travis-ci.org/JoshuaSBrown/QC_Tools)
 [![codecov](https://codecov.io/gh/JoshuaSBrown/QC_Tools/branch/master/graph/badge.svg)](https://codecov.io/gh/JoshuaSBrown/QC_Tools)
 
+# Updates
+
+Message to users: Version 2.0 is in the works, it will provide a more accurate technique for calculating charge transfer integrals. 
+
 ## Documentation
 
  * [Home](https://github.com/JoshuaSBrown/QC_Tools/wiki)
