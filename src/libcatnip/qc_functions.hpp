@@ -18,10 +18,6 @@ class TransferComplex {
     Eigen::MatrixXd mat_1_Coef;
     Eigen::MatrixXd mat_2_Coef;
     Eigen::MatrixXd mat_P_Coef;
-    // Stores the number of Molecular orbitals
-    // and the HOMO for both monomer 1 and 2
-    //std::pair<int, int> Orbs1;
-    //std::pair<int, int> Orbs2;
 
     /**
      * \brief basis function overlap matrix
@@ -44,8 +40,7 @@ class TransferComplex {
 
     int HOMO_A_;
     int HOMO_B_;
-    //int HOMO_Orb_;
-    //int LUMO_Orb_;
+
     Eigen::RowVectorXd vec_P_OE;
     // If unscrambaling is required
     bool unscrambled_;
@@ -141,10 +136,6 @@ Eigen::MatrixXd unscramble_S(
     const std::vector<int>& matchDimerA,
     const std::vector<int>& basisFuncDimer,
     Eigen::MatrixXd S);
-/*
-Eigen::MatrixXd unscramble_OE(std::vector<int> matchDimerA,
-                      std::vector<int> matchDimerB,
-                      std::vector<int> basisFuncDimer, Eigen::VectorXd OE);*/
 
 }  // namespace catnip
 #endif  // _CATNIP_QC_FUNCTIONS_HPP
