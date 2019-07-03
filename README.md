@@ -10,7 +10,7 @@
 
 # Updates
 
-Message to users: Version 2.0 is in the works, it will provide a more accurate technique for calculating charge transfer integrals. 
+Message to users: Version 2.0 is in the works, will provide additional functionality. 
 
 ## Documentation
 
