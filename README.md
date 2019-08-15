@@ -35,7 +35,7 @@ CATNIP is meant to make difficult calculations accessible to the masses. The foc
  
 I welcome feedback and contributors. If you have suggestions for integrating CATNIP with other programs please do not hesitate to create an issue or contact me on gitter. You can do this by clicking on the gitter badge.
 
-If you run into a problem feel free to create an issue on [github](https://github.com/JoshuaSBrown/QC_Tools/issues), if I do not respond promptly feel free to reach out again. Often responses get filtered to my spam folder or I simply do not see them.
+If you run into a problem feel free to create an issue on [github](https://github.com/JoshuaSBrown/QC_Tools/issues), just be sure to give me enough information to reproduce the error, otherwise I won't be able to fix it. If I do not respond promptly feel free to reach out again. Often responses get filtered to my spam folder or I simply do not see them.
 
 ## Citing
 
