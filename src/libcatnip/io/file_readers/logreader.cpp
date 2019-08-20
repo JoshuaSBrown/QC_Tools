@@ -17,7 +17,7 @@ using namespace std;
 /** 
  * \brief Specifically designed to split up energies in the log file
  **/
-vector<string> splitStEnergies(string line){
+vector<string> splitStEnergies(const string & line){
   vector<string> items = splitSt(line); 
   if(items.size()==9) return items;
 
