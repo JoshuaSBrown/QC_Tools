@@ -43,6 +43,8 @@ If you use CATNIP to get values for a paper it would be nice if you cited it. To
 
 ```calc_J -cite```
 
+It would also be nice if you starred the repo... if you find it useful.
+
 ## Acknowledgements and Relevant Papers
 
 [1]	B. Baumeier, J. Kirkpatrick, and D. Andrienko, “Density-functional based determination of intermolecular charge transfer properties for large-scale morphologies,” Phys. Chem. Chem. Phys., vol. 12, no. 36, p. 11103, 2010.  
@@ -56,3 +58,4 @@ The author would like to acknowledge insightful correspondence with E. F. Valeev
 * dwaipayanroni
 * rdft4e
 * ivorever
+* Caleb Wehrmann
