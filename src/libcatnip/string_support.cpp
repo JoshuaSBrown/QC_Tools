@@ -41,7 +41,7 @@ void rtrim_(string &s) {
 }
 
 // Split a string up by spaces
-vector<string> splitSt(string input) {
+vector<string> splitSt(const string & input) {
   istringstream iss(input);
   list<string> tokens;
   copy(istream_iterator<string>(iss), istream_iterator<string>(),
