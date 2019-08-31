@@ -1,3 +1,5 @@
+![CATNIPLOGO](docs/images/CATNIPLong.png)
+
 # QC_Tools or CATNIP - ChArge TraNsfer Integral Package
 
 ## Badges
