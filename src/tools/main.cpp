@@ -78,31 +78,21 @@ int main(int argc, const char *argv[]) {
   // No need to worry about beta orbitals
 
   {
-    //Matrix *mat_S = lr_P.getOverlapMatrix();
     Eigen::MatrixXd mat_S = lr_P.getOverlapMatrix();
 
-    //Matrix *mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
     Eigen::MatrixXd mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
     
-    //auto vec_P_OE = lr_P.getOE(par->getSpinP());
     Eigen::VectorXd vec_P_OE = Eigen::VectorXd(lr_P.getOE(par->getSpinP()));
-    //Matrix *vec_P_OE = new Matrix(vec_P_OE);
 
     int HOMO1 = lr_1.getHOMOLevel(par->getSpin1());
     LOG("Getting " + par->getSpin1() + " of monomer 1", 2);
     Eigen::MatrixXd mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
-    //Matrix *mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
     Eigen::VectorXd vec_1_OE = lr_1.getOE(par->getSpin1());
-    //Matrix *mat_1_OE = new Matrix(vec_1_OE);
-    //Eigen::MatrixXd mat_1_OE = vec_1_OE.asDiagonal();
 
     int HOMO2 = lr_2.getHOMOLevel(par->getSpin2());
     LOG("Getting " + par->getSpin2() + " of monomer 2", 2);
-    //Matrix *mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
     Eigen::MatrixXd mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
     Eigen::VectorXd vec_2_OE = lr_2.getOE(par->getSpin2());
-    //Matrix *mat_2_OE = new Matrix(vec_2_OE);
-    //Eigen::MatrixXd mat_2_OE = vec_2_OE.asDiagonal();
 
     // Unscramble dimer coef and energies first need to see how the dimer
     // and monomer coefficients line up. To determine how the ceofficients
