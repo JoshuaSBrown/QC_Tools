@@ -7,6 +7,7 @@ project (calc_J)
 option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" OFF)
 option(ENABLE_INTEGRATION_TESTS "Enable integration tests" OFF)
 option(ENABLE_TESTS "Enable tests" OFF)
+option(ENABLE_PROFILING "Enable profiling" OFF)
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
 ##############################################################################
@@ -26,7 +27,6 @@ set(LOG_LEVEL 0 CACHE INT "Choose the log level" )
 # important for using gcov .o.gcno or .cpp.gcno now will be .gcno
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic -Werror")
-
 ##############################################################################
 # Configuring header file with cmake variables 
 ##############################################################################
@@ -48,6 +48,14 @@ find_library (GCOV gcov)
 #endif(TARGET Eigen3::Eigen)
 add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
 
+##############################################################################
+# Setting up profiling 
+##############################################################################
+if(ENABLE_PROFILING)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
+endif()
 ##############################################################################
 # Setting up testing 
 ##############################################################################
