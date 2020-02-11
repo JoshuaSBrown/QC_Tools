@@ -15,6 +15,56 @@
 using namespace catnip;
 using namespace std;
 
+/** 
+ * \brief Specifically designed to split up energies in the log file
+ **/
+vector<string> splitStEnergies(const string & line){
+  vector<string> items = splitSt(line); 
+  if(items.size()==9) return items;
+
+  // There should normally be 5 energies listed per line in a log file, if
+  // there are fewer it may be the case that there are no spaces between
+  // the doubles on the same line e.g. 
+  // col 1 col 2  col 3       col4  col 5     col 6     col 7      col 8    col 9
+  // Alpha occ.   eigenvalues --  -101.56324-101.56318-101.56026-101.56021-101.55975  
+
+  vector<string> items2;
+  std::string delimiter = "-";
+
+  for( size_t inc=0; inc<items.size(); ++inc){ 
+    string s = items.at(inc);
+    if(inc<4){
+      items2.push_back(s);
+    }else{
+      size_t pos = s.find(delimiter);
+      if(pos==std::string::npos){
+        items2.push_back(s);
+      }else{
+        while (pos != std::string::npos) {
+          string token = s.substr(0,pos);
+          if(pos==0){
+            string temp_s = s;
+            temp_s.erase(0,delimiter.length());
+            pos = temp_s.find(delimiter);
+            if( pos == std::string::npos){
+              token = s;
+              pos = s.length();
+            }else{
+              token = s.substr(0,pos+delimiter.length()); 
+            }
+            s.erase(0, delimiter.length());
+          }
+          s.erase(0, pos);
+          items2.push_back(token);
+          pos = s.find(delimiter);
+        }
+      }
+    }
+    
+  }
+  return items2;
+}
+
 LogReader::LogReader(const string &fileName) : FileReader(fileName) {
   validFileName_();
   registerSections_();
@@ -235,7 +285,7 @@ void LogReader::ReadOrbEnergies(const string &orb_type) {
 
     if (occFound || virtFound) {
 
-      auto vec_str = splitSt(line);
+      auto vec_str = splitStEnergies(line);
       for (size_t inc = 4; inc < vec_str.size(); inc++) {
         OREnergies[orb_type].push_back(stod(vec_str.at(inc)));
         if (occFound) homoLevel[orb_type]++;

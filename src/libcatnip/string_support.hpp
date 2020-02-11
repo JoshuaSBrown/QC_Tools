@@ -8,7 +8,7 @@
 namespace catnip {
 
 // Split a std::string up by spaces
-std::vector<std::string> splitSt(std::string input);
+std::vector<std::string> splitSt(const std::string & input);
 
 // Given a path name this function finds the last part
 // in the path which should be associated with the path

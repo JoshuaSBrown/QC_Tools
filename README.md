@@ -1,3 +1,5 @@
+![CATNIPLOGO](docs/images/CATNIPLong.png)
+
 # QC_Tools or CATNIP - ChArge TraNsfer Integral Package
 
 ## Badges
@@ -7,6 +9,10 @@
 [![Github All Releases](https://img.shields.io/github/downloads/JoshuaSBrown/QC_Tools/total.svg)]()
 [![Build Status](https://travis-ci.org/JoshuaSBrown/QC_Tools.svg?branch=master)](https://travis-ci.org/JoshuaSBrown/QC_Tools)
 [![codecov](https://codecov.io/gh/JoshuaSBrown/QC_Tools/branch/master/graph/badge.svg)](https://codecov.io/gh/JoshuaSBrown/QC_Tools)
+
+# Updates
+
+Message to users: Version 2.0 is in the works, will provide additional functionality. 
 
 ## Documentation
 
@@ -31,13 +37,15 @@ CATNIP is meant to make difficult calculations accessible to the masses. The foc
  
 I welcome feedback and contributors. If you have suggestions for integrating CATNIP with other programs please do not hesitate to create an issue or contact me on gitter. You can do this by clicking on the gitter badge.
 
-If you run into a problem feel free to create an issue on [github](https://github.com/JoshuaSBrown/QC_Tools/issues), if I do not respond promptly feel free to reach out again. Often responses get filtered to my spam folder or I simply do not see them.
+If you run into a problem feel free to create an issue on [github](https://github.com/JoshuaSBrown/QC_Tools/issues), just be sure to give me enough information to reproduce the error, otherwise I won't be able to fix it. If I do not respond promptly feel free to reach out again. Often responses get filtered to my spam folder or I simply do not see them.
 
 ## Citing
 
 If you use CATNIP to get values for a paper it would be nice if you cited it. To know how to cite it you can simply pass the folloing -cite flag to `calc_J` as:
 
 ```calc_J -cite```
+
+It would also be nice if you starred the repo... if you find it useful.
 
 ## Acknowledgements and Relevant Papers
 
@@ -52,3 +60,4 @@ The author would like to acknowledge insightful correspondence with E. F. Valeev
 * dwaipayanroni
 * rdft4e
 * ivorever
+* Caleb Wehrmann
