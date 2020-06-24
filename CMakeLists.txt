@@ -74,10 +74,9 @@ if(DOWNLOAD_TUTORIAL_FILES)
   execute_process(COMMAND ${PROJECT_SOURCE_DIR}/scripts/test_suite_install.bash "${PROJECT_SOURCE_DIR}" )
 endif()
 
-#if(ENABLE_TESTS OR ENABLE_INTEGRATION_TESTS)
-#  enable_testing()
-#  add_subdirectory("${PROJECT_SOURCE_DIR}/src/tests")
-#endif()
+if(ENABLE_UNIT_TESTING OR ENABLE_INTEGRATION_TESTING)
+  enable_testing()
+endif()
 
 if (ENABLE_INTEGRATION_TESTING)
   file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
