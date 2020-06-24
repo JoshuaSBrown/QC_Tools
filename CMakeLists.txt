@@ -5,8 +5,8 @@ project (calc_J)
 # Defining options 
 ##############################################################################
 option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" OFF)
-option(ENABLE_INTEGRATION_TESTS "Enable integration tests" OFF)
-option(ENABLE_TESTS "Enable tests" OFF)
+option(ENABLE_INTEGRATION_TESTING "Enable integration tests" OFF)
+option(ENABLE_UNIT_TESTING "Enable tests" OFF)
 option(ENABLE_PROFILING "Enable profiling" OFF)
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
@@ -26,7 +26,7 @@ set(LOG_LEVEL 0 CACHE INT "Choose the log level" )
 # Prevents multiple file extensions from being appended one after the other
 # important for using gcov .o.gcno or .cpp.gcno now will be .gcno
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic -Werror")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -Werror")
 ##############################################################################
 # Configuring header file with cmake variables 
 ##############################################################################
@@ -59,7 +59,7 @@ endif()
 ##############################################################################
 # Setting up testing 
 ##############################################################################
-if(ENABLE_INTEGRATION_TESTS)
+if(ENABLE_INTEGRATION_TESTING)
   if(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
     message("GAUSSIANFILES found will not download")
     set(DOWNLOAD_TUTORIAL_FILES OFF)
@@ -74,12 +74,12 @@ if(DOWNLOAD_TUTORIAL_FILES)
   execute_process(COMMAND ${PROJECT_SOURCE_DIR}/scripts/test_suite_install.bash "${PROJECT_SOURCE_DIR}" )
 endif()
 
-if(ENABLE_TESTS OR ENABLE_INTEGRATION_TESTS)
-  enable_testing()
-  add_subdirectory("${PROJECT_SOURCE_DIR}/src/tests")
-endif()
+#if(ENABLE_TESTS OR ENABLE_INTEGRATION_TESTS)
+#  enable_testing()
+#  add_subdirectory("${PROJECT_SOURCE_DIR}/src/tests")
+#endif()
 
-if (ENABLE_INTEGRATION_TESTS)
+if (ENABLE_INTEGRATION_TESTING)
   file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
     DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
   file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" 
@@ -93,7 +93,7 @@ if (ENABLE_INTEGRATION_TESTS)
     DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
 endif()
 
-if (ENABLE_TESTS)
+if (ENABLE_UNIT_TESTING)
   file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.pun" 
     DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
   file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.log" 
@@ -105,28 +105,15 @@ endif()
 ##############################################################################
 # Add the binary tree to the search path for include files
 # so that we will find calcJconfig.hpp
-include_directories("${PROJECT_BINARY_DIR}/src")
-include_directories("${PROJECT_SOURCE_DIR}/src/libcatnip")
-include_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments/properties")
-include_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments")
-include_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/file_readers")
-include_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io")
+#target_include_directories(calc_J "${PROJECT_BINARY_DIR}/src")
+#target_link_directories(calc_J "${PROJECT_BINARY_DIR}/src")
 
-link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments/properties")
-link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments")
-link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/file_readers")
-link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io")
-link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip")
+#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments/properties")
+#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments")
+#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/file_readers")
+#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io")
+#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip")
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/src/libcatnip")
+add_subdirectory("${PROJECT_SOURCE_DIR}/src")
 
-##############################################################################
-# Creating calc_J and setting up code coverage if on  
-##############################################################################
-add_executable(calc_J src/tools/main.cpp)
-if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  target_link_libraries(calc_J gcov)
-  set_source_files_properties( src/tools/main.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS})
-endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-target_link_libraries(calc_J libcatnip ${COMMON_LIBRARIES})
-install( TARGETS calc_J DESTINATION bin)
+

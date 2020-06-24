@@ -22,7 +22,7 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   link_libraries(gcov)
 endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
 
-if(ENABLE_TESTS)
+if(ENABLE_UNIT_TESTING)
   foreach(PROG IN LISTS UNIT_TEST_SOURCE_FILES)
     add_executable(unit_${PROG} ${PROG}.cpp)
     if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
@@ -31,9 +31,9 @@ if(ENABLE_TESTS)
     target_link_libraries(unit_${PROG} libcatnip)
     add_test(unit_${PROG} unit_${PROG})
   endforeach(PROG)
-endif(ENABLE_TESTS)
+endif(ENABLE_UNIT_TESTING)
 
-if(ENABLE_INTEGRATION_TESTS)
+if(ENABLE_INTEGRATION_TESTING)
 
   foreach(PROG 
       test_logreader
@@ -67,7 +67,7 @@ if(ENABLE_INTEGRATION_TESTS)
 
   endif(BASH_PROGRAM)
 
-endif(ENABLE_INTEGRATION_TESTS)
+endif(ENABLE_INTEGRATION_TESTING)
 
 
 
