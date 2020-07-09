@@ -115,8 +115,11 @@ int main(void) {
     //         atm1   atm1   atm2   atm2
 
     cerr << "Before passing in" << endl;
+    cerr << "MatchA" << endl;
     for (auto it : matchA) cerr << it << endl;
+    cerr << "MatchB" << endl;
     for (auto it : matchB) cerr << it << endl;
+    cerr << "Basis Functions of Dimer" << endl;
     for (auto it : basisFuncDimer) cerr << it << endl;
     // If we correct the dimer coefficient matrix to line up with the
     // coefficients of the monomers it should look like this
