@@ -3,9 +3,10 @@
 #ifndef _CATNIP_ATOM_HPP
 #define _CATNIP_ATOM_HPP
 
-
+// Private local includes
 #include "elements.hpp"
 
+// Third party includes
 #include <eigen3/Eigen/Dense>
 
 namespace catnip {

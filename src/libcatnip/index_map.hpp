@@ -2,6 +2,9 @@
 
 #include "transfer_complex.hpp"
 
+#pragma once
+#ifndef _CATNIP_INDEX_MAP_HPP
+#define _CATNIP_INDEX_MAP_HPP
 #include "atom.hpp"
 #include "atom_group.hpp"
 
@@ -26,3 +29,4 @@ namespace catnip {
 
 
 }  // namespace catnip
+#endif // _CATNIP_INDEX_MAP_HPP

@@ -1,3 +1,7 @@
+
+#pragma once
+#ifndef _CATNIP_ELEMENTS_HPP
+#define _CATNIP_ELEMENTS_HPP
 #include <algorithm>
 #include <cctype>
 #include <map>
@@ -403,4 +407,4 @@ namespace catnip {
   };
 
 }
-
+#endif // _CATNIP_ELEMENTS_HPP

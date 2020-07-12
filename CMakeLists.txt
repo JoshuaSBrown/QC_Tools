@@ -4,9 +4,10 @@ project (calc_J)
 ##############################################################################
 # Defining options 
 ##############################################################################
-option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" OFF)
-option(ENABLE_INTEGRATION_TESTING "Enable integration tests" OFF)
-option(ENABLE_UNIT_TESTING "Enable tests" OFF)
+option(ENABLE_TESTS "Enable testing" Off)
+option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" ${ENABLE_TESTS})
+option(ENABLE_INTEGRATION_TESTING "Enable integration tests" ${ENABLE_TESTS})
+option(ENABLE_UNIT_TESTING "Enable tests" ${ENABLE_TESTS})
 option(ENABLE_PROFILING "Enable profiling" OFF)
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
@@ -22,7 +23,7 @@ set(calcJ_TITLE "\"CATNIP\"")
 set(calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
 set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 set(COMMON_LIBRARIES stdc++ m)
-set(LOG_LEVEL 0 CACHE INT "Choose the log level" )
+set(LOG_LEVEL 0 CACHE STRING "Choose the log level" )
 # Prevents multiple file extensions from being appended one after the other
 # important for using gcov .o.gcno or .cpp.gcno now will be .gcno
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
@@ -64,14 +65,10 @@ if(ENABLE_INTEGRATION_TESTING)
     message("GAUSSIANFILES found will not download")
     set(DOWNLOAD_TUTORIAL_FILES OFF)
   else(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
-    message("GAUSSIANFILES not found will download")
-    set(DOWNLOAD_TUTORIAL_FILES ON)
-  endif(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
-endif()
+    message("GAUSSIANFILES not found will attempt to download")
 
-if(DOWNLOAD_TUTORIAL_FILES)
-  message("Downloading gaussian tutorial files")
-  execute_process(COMMAND ${PROJECT_SOURCE_DIR}/scripts/test_suite_install.bash "${PROJECT_SOURCE_DIR}" )
+    include(${PROJECT_SOURCE_DIR}/cmake/InstallGdown.cmake)
+  endif(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
 endif()
 
 if(ENABLE_UNIT_TESTING OR ENABLE_INTEGRATION_TESTING)

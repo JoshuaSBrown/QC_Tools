@@ -28,7 +28,6 @@ namespace catnip {
   // Searches the init row for the provided row and returns the group it is
   // in as well as its current index
   std::pair<int,int> IndexMap::findLocation(int row){
-    std::pair<int,int> group_row;
     for( std::pair<int,std::vector<int>> group_rows : row_col_init){
       int row_ind = 0;
       for ( int row_ : group_rows.second ){
@@ -38,6 +37,7 @@ namespace catnip {
         ++row_ind;
       } 
     }
+    return std::pair<int,int>();
   }
 
 }  // namespace catnip

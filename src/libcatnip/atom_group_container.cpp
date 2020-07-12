@@ -65,7 +65,7 @@ namespace catnip {
 
 
   void AtomGroupContainer::add( AtomGroup atom_group ) {
-    if( isUniqueGroup(atom_group) ){
+    if( isUniqueGroup_(atom_group) ){
       atom_groups_.push_back(atom_group);
     }
     group_types_uptodate_ = false;
@@ -146,6 +146,7 @@ namespace catnip {
         all_paired_atoms.push_back(atom_match);
       }
     }
+    return all_paired_atoms;
   }
 
   void AtomGroupContainer::assignBasisFunctionCount(
