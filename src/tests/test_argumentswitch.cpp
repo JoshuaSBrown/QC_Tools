@@ -1,4 +1,6 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 #include "../libcatnip/io/arguments/argumentswitch.hpp"
 #include <cassert>
 #include <limits>
@@ -6,7 +8,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Argument Switch","[unit]") {
 
   cerr << "Testing: argumentswitch" << endl;
   cerr << "Testing: constructor" << endl;
@@ -71,5 +73,4 @@ int main(void) {
     assert(opt_def_val);
   }
 
-  return 0;
 }

@@ -1,4 +1,7 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
+
 #include "../libcatnip/io/arguments/properties/propertyfileext.hpp"
 #include <cassert>
 #include <exception>
@@ -9,7 +12,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Property File Extension","[unit]") {
 
   cerr << "Testing: PropertyFileExt" << endl;
   cerr << "Testing: constructor" << endl;
@@ -78,5 +81,4 @@ int main(void) {
     }
     assert(excep);
   }
-  return 0;
 }

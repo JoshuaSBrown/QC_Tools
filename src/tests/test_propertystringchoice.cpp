@@ -1,4 +1,6 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 #include "../libcatnip/io/arguments/properties/propertystringchoice.hpp"
 #include <cassert>
 #include <exception>
@@ -10,7 +12,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Property String Choice","[unit]") {
   cerr << "Testing: PropertyStringChoice" << endl;
   cerr << "Testing: constructor" << endl;
   { PropertyStringChoice propStrChoice; }
@@ -95,5 +97,4 @@ int main(void) {
     string on = *(choice_on.begin());
     assert(on.compare("true") == 0);
   }
-  return 0;
 }

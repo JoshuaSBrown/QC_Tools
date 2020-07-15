@@ -1,4 +1,6 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 
 #include "../libcatnip/io/argumentparser.hpp"
 #include "../libcatnip/matrix.hpp"
@@ -11,7 +13,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Argument Parser","[unit]")  {
 
   cerr << "Testing: ArgumentParser" << endl;
   cerr << "Testing: constructor" << endl;
@@ -190,5 +192,4 @@ int main(void) {
     assert(sisFileNamePath.compare("testfile.log") == 0);
   }
 
-  return 0;
 }

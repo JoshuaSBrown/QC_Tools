@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8)
-project (calc_J)
+cmake_minimum_required (VERSION 3.0)
+project (calc_J VERSION 2.0.0)
 
 ##############################################################################
 # Defining options 
@@ -14,9 +14,9 @@ option(CODE_COVERAGE "Enable coverage reporting" OFF)
 ##############################################################################
 # Defining settings 
 ##############################################################################
-set(calcJ_VERSION_MAJOR 2 )
-set(calcJ_VERSION_MINOR 0 )
-set(calcJ_YEAR_PUBLISHED 2018 )
+#set(calcJ_VERSION_MAJOR 2 )
+#set(calcJ_VERSION_MINOR 0 )
+set(calcJ_YEAR_PUBLISHED 2020 )
 set(calcJ_AUTHOR_SURNAME "\"Brown\"" )
 set(calcJ_AUTHOR_INITIALS "\"J. S.\"" )
 set(calcJ_TITLE "\"CATNIP\"")
@@ -41,7 +41,6 @@ configure_file(
 # Finding dependencies 
 ##############################################################################
 # Find bash it is important for testing using scripts
-find_program (BASH_PROGRAM bash)
 find_library (GCOV gcov)
 #find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 #if (TARGET Eigen3::Eigen)
@@ -62,54 +61,49 @@ endif()
 ##############################################################################
 if(ENABLE_INTEGRATION_TESTING)
   if(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
-    message("GAUSSIANFILES found will not download")
+    message(STATUS "GAUSSIANFILES found will not download")
     set(DOWNLOAD_TUTORIAL_FILES OFF)
   else(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
-    message("GAUSSIANFILES not found will attempt to download")
-
+    message(STATUS "GAUSSIANFILES not found will attempt to download")
     include(${PROJECT_SOURCE_DIR}/cmake/InstallGdown.cmake)
   endif(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
 endif()
 
 if(ENABLE_UNIT_TESTING OR ENABLE_INTEGRATION_TESTING)
+  find_package(Catch2 2.11.1)
+  if( NOT Catch2 )
+    include(${PROJECT_SOURCE_DIR}/cmake/InstallCatch2.cmake)
+  else()
+    message(STATUS "found system installed Catch2 will not download")
+  endif()
   enable_testing()
+  include(ParseAndAddCatchTests)
+
+  if (ENABLE_INTEGRATION_TESTING)
+    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
+      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" 
+      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+
+    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" 
+      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" 
+      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" 
+      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+  endif()
+
+  if (ENABLE_UNIT_TESTING)
+    file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.pun" 
+      DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
+    file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.log" 
+      DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
+  endif()
+
 endif()
-
-if (ENABLE_INTEGRATION_TESTING)
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
-
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-endif()
-
-if (ENABLE_UNIT_TESTING)
-  file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
-  file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.log" 
-    DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
-endif()
-
 ##############################################################################
 # Compiling build tree/paths 
 ##############################################################################
-# Add the binary tree to the search path for include files
-# so that we will find calcJconfig.hpp
-#target_include_directories(calc_J "${PROJECT_BINARY_DIR}/src")
-#target_link_directories(calc_J "${PROJECT_BINARY_DIR}/src")
-
-#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments/properties")
-#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments")
-#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/file_readers")
-#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io")
-#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip")
-
 add_subdirectory("${PROJECT_SOURCE_DIR}/src")
 
 

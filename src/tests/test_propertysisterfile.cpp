@@ -1,4 +1,7 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
+
 #include "../libcatnip/io/arguments/properties/propertysisterfile.hpp"
 #include <cassert>
 #include <exception>
@@ -10,7 +13,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Property Sister File","[unit]") {
   fstream fs;
   fs.open("testfile.pun", ios::out);
   fs.close();
@@ -110,5 +113,4 @@ int main(void) {
     assert(file_path_name.at(0).compare("testfile.pun") == 0);
     assert(fileExist.at(0).compare("true") == 0);
   }
-  return 0;
 }

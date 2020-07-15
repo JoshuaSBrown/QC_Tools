@@ -1,9 +1,10 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 #include "../libcatnip/log.hpp"
 
 using namespace catnip;
 
-int main(void) {
+TEST_CASE("Log","[unit]") {
   LOG("Testing log message", 1);
-  return 0;
 }

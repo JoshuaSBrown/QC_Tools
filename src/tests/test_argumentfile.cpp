@@ -1,11 +1,13 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 #include "../libcatnip/io/arguments/argumentfile.hpp"
 #include <cassert>
 
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Argument File","[unit]") {
 
   cerr << "Testing: argumentfile" << endl;
   cerr << "Testing: constructor" << endl;
@@ -159,5 +161,4 @@ int main(void) {
     cerr << "extensions " << str_exts << endl;
   }
 
-  return 0;
 }

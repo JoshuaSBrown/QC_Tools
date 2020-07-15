@@ -1,4 +1,6 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 #include "../libcatnip/io/file_readers/punreader.hpp"
 #include <cassert>
 #include <iostream>
@@ -9,7 +11,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Pun Reader","[unit]") {
 
   cerr << "Testing: PunReader Constructor" << endl;
   { PunReader pr("file.pun"); }
@@ -23,5 +25,4 @@ int main(void) {
     assert(m.rows() == 92);
     assert(pr.restrictedShell());
   }
-  return 0;
 }
