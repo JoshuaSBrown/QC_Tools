@@ -5,6 +5,8 @@ list( APPEND UNIT_TEST_SOURCE_FILES
   test_argumentparser
   test_argumentstring
   test_argumentswitch
+  test_atom
+  test_elements
   test_log
   test_parameters
   test_propertydouble

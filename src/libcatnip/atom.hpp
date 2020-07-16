@@ -25,13 +25,17 @@ namespace catnip {
 
       int getBasisFuncCount() const noexcept { return basis_func_count_; }
 
-      bool equal( Atom & atm2 ) const {
+      bool operator==( const Atom & atm2 ) const {
         if ( element_ == atm2.element_ ){
           if ( xyz_.isApprox(atm2.xyz_)) {
             return true;
           }
         }
         return false;
+      }
+
+      bool operator!=( const Atom & atm2 ) const {
+        return !(*this == atm2);
       }
   };
 

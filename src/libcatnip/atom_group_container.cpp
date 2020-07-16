@@ -51,7 +51,7 @@ namespace catnip {
     std::unordered_map<int,int> paired_atoms;  
     for ( size_t ind1 = 0; ind1 < grp1.size(); ++ind1){
       for (size_t ind2 = 0; ind2 < grp2.size(); ++ind2){
-        if ( grp1.at(ind1)->equal(*grp2.at(ind2)) ){
+        if ( *(grp1.at(ind1)) == *(grp2.at(ind2)) ){
           if ( paired_atoms.count(ind1) ) {
             throw std::runtime_error("Atom in complex has already been paired with an atom in the component, you have two or more atoms in a component that are redundant with an atom in the complex");
           }
