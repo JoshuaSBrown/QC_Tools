@@ -7,6 +7,7 @@ list( APPEND UNIT_TEST_SOURCE_FILES
   test_argumentswitch
   test_atom
   test_atom_group
+  test_atom_group_container
   test_elements
   test_index_map
   test_log

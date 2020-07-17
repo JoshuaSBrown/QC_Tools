@@ -46,7 +46,7 @@ namespace catnip {
    */
   class AtomGroup {
     private: 
-      GroupType type_ = GroupType::Unknown;
+      GroupType type_ = GroupType::Unassigned;
       std::string name_;
       std::vector<std::shared_ptr<Atom>> atoms_;
     public:

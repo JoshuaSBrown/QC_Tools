@@ -17,7 +17,7 @@ TEST_CASE("Atom Group","[unit]") {
 
   AtomGroup atom_grp("CH2");
   
-  REQUIRE(atom_grp.getType() == GroupType::Unknown );
+  REQUIRE(atom_grp.getType() == GroupType::Unassigned );
   REQUIRE(atom_grp.getName() == "CH2");
 
   Atom atom1(Element::H, 0.0, 0.0, 0.0);

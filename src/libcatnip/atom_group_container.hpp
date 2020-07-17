@@ -32,12 +32,13 @@ namespace catnip {
       /**
        * @brief Checks to makes sure the group is unique
        *
+       * Does not compare atom addresses just the atoms in the group the size
+       * Ignores the atom group name in the comparison
        * @param atom_group
        *
        * @return 
        */
-      bool isUniqueGroup_( AtomGroup atom_group );
-
+      bool isUniqueGroup_( const AtomGroup & atom_group ) const;
 
       /**
        * @brief Match the indices of the first atom group with any that share 
@@ -67,25 +68,18 @@ namespace catnip {
       size_t size() const noexcept { return  atom_groups_.size(); }
 
       /**
-       * @brief This algorithm determines if a complex exists
-       *
-       * This algorithm does not compare the atoms in the complex with the
-       * atoms in the components, so it is not a rigourous algorithm but should
-       * be sufficient for our purposes.
-       *
-       * Only a single atom group can be the complex
+       * @brief This algorithm assignes a group type to each each of the groups 
        */
       void assignGroupTypes();
 
       /**
-       * @brief Determine if a complex exists within the atom groups
-       *
-       * Only a single atom group can be a complex
+       * @brief Determine if a specified group type exists within the atom groups
        *
        * @return 
        */
-      bool complexExists() const;
+      bool exists(GroupType type) const;
 
+      GroupType getType(int index) const { return atom_groups_.at(index).getType(); }
       /**
        * @brief If a complex exists and we know the number of basis functions
        * associated with each atom in the complex we can assign the basis function

@@ -10,6 +10,7 @@
 // Standard includes
 #include <exception>
 #include <iterator>
+#include <iostream>
 #include <memory>
 #include <numeric>
 #include <string>
@@ -67,9 +68,54 @@ namespace catnip {
   }
 
 
+  bool AtomGroupContainer::isUniqueGroup_( const AtomGroup & atom_group ) const {
+    // Step 1 check the size of the atom group 
+    if(atom_groups_.size() == 0) return true;
+
+    for ( const AtomGroup & grp : atom_groups_ ){
+      if ( grp.size() == atom_group.size() ){
+        std::vector<bool> matchs(grp.size(),false);
+        // Determine if a match is found
+        for ( const auto & atm : atom_group ) {
+          size_t index = 0;
+          for ( bool matched : matchs ){
+            if ( not matched ){
+              // Compare atoms 
+              if ( *atm == *(grp.at(index)) ){
+                matchs.at(index) = true;
+                break;
+              }
+            } 
+            ++index;
+          }
+          // If an atom was not matched it means that there is at least one 
+          // difference, and so we do not need to cycle through the other
+          // atoms in this particular group 
+          if(index == grp.size()) break;
+        } 
+        // Count the number of matches in the vector if all of the elements match
+        // then the atom group is not unique
+        for ( bool match : matchs ) {
+          if ( match == false ) break;
+        } 
+        return false;
+      }
+    }
+    return true;
+  }
+  // As soon as we add a new atom group it should invalidate the labels on 
+  // all the other groups
   void AtomGroupContainer::add( AtomGroup atom_group ) {
+    std::cout << "Adding group " << atom_group.getName() << std::endl; 
     if( isUniqueGroup_(atom_group) ){
+      std::cout << "Is unique" << std::endl;
       atom_groups_.push_back(atom_group);
+    } else {
+      return;
+    }
+
+    for ( AtomGroup & grp : atom_groups_ ){
+      grp.setType(GroupType::Unassigned);
     }
     group_types_uptodate_ = false;
     index_of_complex_ = -1;
@@ -104,14 +150,24 @@ namespace catnip {
     std::map<int,std::vector<int>> grp_indices;
     int grp_index = 0;
     for ( const AtomGroup & grp : atom_groups_ ){
+      // Initialize
+      grp_indices[grp_index];
       for ( const auto & atom_ptr : grp ){
         for ( const GroupAtomIndex & grp_atm_ind : atm_map[*atom_ptr] ){
           if (grp_atm_ind.grp_ind != grp_index ){
-            grp_indices[grp_index].push_back(grp_atm_ind.grp_ind);
+            // Check that group has not already been added
+            if( grp_indices[grp_index].size() > 0 ){
+              if( grp_indices[grp_index].back() != grp_atm_ind.grp_ind ) {
+                grp_indices[grp_index].push_back(grp_atm_ind.grp_ind);
+              }
+            }else {
+              grp_indices[grp_index].push_back(grp_atm_ind.grp_ind);
+            }
           }
         } 
       }
       ++grp_index;
+
     }
     return grp_indices;
   }
@@ -122,6 +178,7 @@ namespace catnip {
       ) {
     for ( std::pair<int,std::vector<int>> grp_groups : grp_indices){
       if(grp_groups.second.size() == 0) {
+        std::cout << "Empty makeing unit, does not share atoms" << std::endl;
         atom_groups_.at(grp_groups.first).setType(GroupType::Unit);
       }
     }
@@ -142,6 +199,8 @@ namespace catnip {
       std::vector<int> candidate_components = grp_indices.at(potential_complex); 
       bool candidate_components_valid = true;
       for ( const int & candidate_component : candidate_components){
+        std::cout << "Candiate component " << candidate_component << std::endl;
+        std::cout << "number of other groups sharing atoms " << grp_indices.at(candidate_component).size() << std::endl;
         if ( grp_indices.at(candidate_component).size() != 1){
           candidate_components_valid = false;
           break; // these are not components, and potential complex is not a complex
@@ -164,15 +223,30 @@ namespace catnip {
 // where there is overlap, the group and index of where the overlap occurs 
   void AtomGroupContainer::assignGroupTypes(){
 
+    std::cout << "Assigning group types" << std::endl;
     std::unordered_map<Atom,std::vector<GroupAtomIndex>> atm_map = mapAtomsToGroups( atom_groups_ );
+
+    std::cout << "Size of atom map " << atm_map.size() << std::endl;
     // For each atom in a group find out how many other groups share the atoms
     // First index is the group index the vector stores the other groups that
     // share atoms
     const std::map<int,std::vector<int>> grp_indices = calculateConnectedGroups(atm_map, atom_groups_ );
 
+    for ( const auto & pr : grp_indices ) {
+      std::cout << "group " << pr.first << std::endl;
+      for ( auto ind : pr.second ){
+        std::cout << "Atoms shared with group " << ind << std::endl;
+      }
+    }
     // Calculate which groups do not share atoms with other groups these are units
     identifyAtomGroupsOfUnitType(grp_indices, atom_groups_);
 
+    for ( const auto & pr : grp_indices ) {
+      std::cout << "group " << pr.first << std::endl;
+      for ( auto ind : pr.second ){
+        std::cout << "Atoms shared with group " << ind << std::endl;
+      }
+    }
     identifyAtomGroupsOfComponentComplexAndUnknownTypes(grp_indices,atom_groups_ );
   }
 
@@ -202,12 +276,12 @@ namespace catnip {
     return max_num_basis;
   }
 
-  bool AtomGroupContainer::complexExists() const {
+  bool AtomGroupContainer::exists(GroupType type) const {
     // First check that all the group types have been assigned
-    if ( group_types_uptodate_ == false ){
-      throw std::runtime_error("Cannot determine if complex exists group types are not up to date");
+    for ( const AtomGroup & grp : atom_groups_ ){
+      if( grp.getType() == type ) return true;
     }
-    return index_of_complex_ > -1;
+    return false; 
   }
 
   std::vector<AtomGroupContainer::AtomMatch> AtomGroupContainer::matchComponentAtomsToComplex_(){
