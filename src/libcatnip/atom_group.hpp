@@ -1,7 +1,11 @@
 #pragma once
-#ifndef _CATNIP_ATOM_GROUP_HPP
-#define _CATNIP_ATOM_GROUP_HPP
+#ifndef CATNIP_ATOM_GROUP_HPP
+#define CATNIP_ATOM_GROUP_HPP
 
+// Third party libary includes
+#include <eigen3/Eigen/Dense>
+
+// Standard includes
 #include <exception>
 #include <iterator>
 #include <memory>
@@ -9,20 +13,30 @@
 #include <string>
 #include <vector>
 
-#include <eigen3/Eigen/Dense>
-
 namespace catnip {
 
   class Atom;
   
   /**
    * @brief Atom groups can either be a component or a complex
+   *
+   * Component - all atoms in the atom group have a matching atom in the 
+   * complex, but do not share atoms between other components
+   *
+   * Complex - all atoms in this atom group have a matching atom in a component
+   *
+   * Unit - non of the atoms appear in any of the other atom groups
+   *
+   * Unknown - some combination, may or may not have overlapping components
+   *
+   * Unassigned - has not yet been specified
    */
   enum class GroupType {
-    PotentialComponent, // The atoms in all the components == the num atoms in the complex
-    Component, // All atoms in the components have a matching atom in the complex
+    Component, 
     Complex,
-    Unknown
+    Unit,
+    Unknown,
+    Unassigned
   };
 
   /**
@@ -37,15 +51,23 @@ namespace catnip {
       std::vector<std::shared_ptr<Atom>> atoms_;
     public:
       AtomGroup(std::string group_name) : name_(group_name) {};
+    
+      std::string getName() const noexcept { return name_; }
 
       size_t size() const noexcept { return atoms_.size(); }
 
       std::vector<std::shared_ptr<Atom>>::iterator 
         begin() { return atoms_.begin(); }
 
+      std::vector<std::shared_ptr<Atom>>::const_iterator 
+        begin() const { return atoms_.begin(); }
+
       std::vector<std::shared_ptr<Atom>>::iterator 
         end() { return atoms_.end(); }
  
+      std::vector<std::shared_ptr<Atom>>::const_iterator 
+        end() const { return atoms_.end(); }
+
       std::shared_ptr<Atom> at(size_t ind) const {
         return atoms_.at(ind);
       }
@@ -58,26 +80,32 @@ namespace catnip {
         atoms_.insert(atoms_.end(),atoms.begin(),atoms.end());
       } 
 
-      size_t numberOfAtoms() const noexcept {
-        return atoms_.size();
-      }
-
       void setType(const GroupType & type) noexcept {
         type_ = type;
       }
-      GroupType getType() const noexcept { return type_; }
+      const GroupType & getType() const noexcept { return type_; }
 
       /**
        * @brief Find the index of the atom in the group if it exists and return
-       * the index
+       * the index, compares atoms 
        *
        * @param atom
        *
-       * @return index if found -1 if not found 
+       * @return indeces of atoms that match
        */
-      int findIndex(std::shared_ptr<Atom> atom);
+      std::vector<int> find(std::shared_ptr<Atom> atom);
+     
+
+      /**
+       * @brief Finds the exact matching atom in memory by looking at the address
+       *
+       * @param atom
+       *
+       * @return 
+       */
+      std::vector<int> findStrict(std::shared_ptr<Atom> atom);
   };
 
 
 }  // namespace catnip
-#endif  // _CATNIP_ATOM_GROUP_HPP
+#endif  // CATNIP_ATOM_GROUP_HPP

@@ -9,15 +9,23 @@
 // Third party includes
 #include <eigen3/Eigen/Dense>
 
+// Standard includes
+#include <bits/stdc++.h> 
+
 namespace catnip {
 
   class Atom {
     private:
-      Element element_;
+      // Element should not be able to change
+      const Element element_;
       Eigen::Vector3d xyz_;
       int basis_func_count_ = -1;
     public: 
       Atom(Element element, double x, double y, double z) : element_(element), xyz_(x,y,z) {};
+
+      Element getElement() const noexcept { return element_; }
+
+      Eigen::Vector3d getPos() const noexcept { return xyz_; }
 
       void setBasisFuncCount(int count) {
         basis_func_count_ = count;
@@ -39,7 +47,22 @@ namespace catnip {
       }
   };
 
-
+  double round(double N, double n);
 }
 
+namespace std {
+
+  template <>
+    struct hash<catnip::Atom>
+    {
+      std::size_t operator()(const catnip::Atom& atom) const
+      {
+        Eigen::Vector3d pos = atom.getPos();
+        return ((((std::hash<catnip::Element>()(atom.getElement())
+              ^ (hash<double>()(catnip::round(pos(0),4)) << 1)) >> 1)
+          ^ (hash<double>()(catnip::round(pos(1),4)) << 1)) >> 1)
+          ^ (hash<double>()(catnip::round(pos(2),4)) << 1);
+      }
+    };
+}
 #endif // _CATNIP_ATOM_HPP

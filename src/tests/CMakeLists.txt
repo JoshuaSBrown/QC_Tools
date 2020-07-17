@@ -6,7 +6,9 @@ list( APPEND UNIT_TEST_SOURCE_FILES
   test_argumentstring
   test_argumentswitch
   test_atom
+  test_atom_group
   test_elements
+  test_index_map
   test_log
   test_parameters
   test_propertydouble

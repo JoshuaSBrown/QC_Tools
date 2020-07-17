@@ -1,17 +1,20 @@
-
+// Local private includes
 #include "atom_group_container.hpp"
 
 #include "atom.hpp"
 #include "atom_group.hpp"
 
+// Third party includes
+#include <eigen3/Eigen/Dense>
+
+// Standard includes
 #include <exception>
 #include <iterator>
 #include <memory>
 #include <numeric>
 #include <string>
 #include <vector>
-
-#include <eigen3/Eigen/Dense>
+#include <unordered_map>
 
 namespace catnip {
 
@@ -72,35 +75,112 @@ namespace catnip {
     index_of_complex_ = -1;
   }
 
-  void AtomGroupContainer::assignAtomGroupTypes(){
-    if (group_types_uptodate_ ) return;
-    std::vector<size_t> number_atoms;        
-    for( AtomGroup group : atom_groups_){
-      number_atoms.push_back(group.numberOfAtoms());
-    }
-    auto max_elem_it = max_element(number_atoms.begin(),number_atoms.end()); 
-    size_t max_elem = *max_elem_it; 
-    for( AtomGroup group : atom_groups_){
-      group.setType(GroupType::Component);
-    } 
-    size_t number_atoms_excluding_max = std::accumulate(number_atoms.begin(),number_atoms.end(),-1*max_elem);
-    if ( std::count(number_atoms.begin(),number_atoms.end(), max_elem) == 1 &&
-        number_atoms_excluding_max == max_elem ){
-      for( AtomGroup group : atom_groups_){
-        if( group.numberOfAtoms() == max_elem ){
-          group.setType(GroupType::Complex);
-          index_of_complex_ = std::distance(number_atoms.begin(),max_elem_it);
-        } 
+  struct GroupAtomIndex {
+    int atm_ind;
+    int grp_ind; 
+  };
+
+  static std::unordered_map<Atom,std::vector<GroupAtomIndex>> mapAtomsToGroups(
+      const std::vector<AtomGroup> & atom_groups_ ){
+
+    std::unordered_map<Atom,std::vector<GroupAtomIndex>> atm_map;
+    int grp_index = 0;
+    for ( const AtomGroup & grp : atom_groups_ ){
+      int atom_index = 0;
+      for ( auto & atom_ptr : grp ){
+        atm_map[*atom_ptr].push_back(GroupAtomIndex{atom_index,grp_index});
+        ++atom_index;
       }
+      ++grp_index;
     }
-    group_types_uptodate_ = true;
+    return atm_map;
   }
 
-  int AtomGroupContainer::getTotalBasisFunctionCount(const GroupType & type) const {
+  static const std::map<int,std::vector<int>> calculateConnectedGroups(
+      std::unordered_map<Atom,std::vector<GroupAtomIndex>> atm_map,
+      const std::vector<AtomGroup> & atom_groups_ 
+      ){
+
+    std::map<int,std::vector<int>> grp_indices;
+    int grp_index = 0;
+    for ( const AtomGroup & grp : atom_groups_ ){
+      for ( const auto & atom_ptr : grp ){
+        for ( const GroupAtomIndex & grp_atm_ind : atm_map[*atom_ptr] ){
+          if (grp_atm_ind.grp_ind != grp_index ){
+            grp_indices[grp_index].push_back(grp_atm_ind.grp_ind);
+          }
+        } 
+      }
+      ++grp_index;
+    }
+    return grp_indices;
+  }
+
+  static void identifyAtomGroupsOfUnitType(
+      const std::map<int,std::vector<int>> & grp_indices,
+      std::vector<AtomGroup> & atom_groups_ 
+      ) {
+    for ( std::pair<int,std::vector<int>> grp_groups : grp_indices){
+      if(grp_groups.second.size() == 0) {
+        atom_groups_.at(grp_groups.first).setType(GroupType::Unit);
+      }
+    }
+  }
+
+  static void identifyAtomGroupsOfComponentComplexAndUnknownTypes(
+      const std::map<int,std::vector<int>> & grp_indices,
+      std::vector<AtomGroup> & atom_groups_ 
+      ){
+    std::vector<int> potential_complexes;
+    for ( std::pair<int,std::vector<int>> grp_groups : grp_indices){
+      if( grp_groups.second.size() > 1 ){
+        potential_complexes.push_back(grp_groups.first);
+      } 
+    }
+
+    for( const int & potential_complex : potential_complexes){
+      std::vector<int> candidate_components = grp_indices.at(potential_complex); 
+      bool candidate_components_valid = true;
+      for ( const int & candidate_component : candidate_components){
+        if ( grp_indices.at(candidate_component).size() != 1){
+          candidate_components_valid = false;
+          break; // these are not components, and potential complex is not a complex
+        } 
+      }
+      if ( candidate_components_valid){
+        atom_groups_.at(potential_complex).setType(GroupType::Complex);
+        for ( const int & candidate_component : candidate_components){
+          atom_groups_.at(candidate_component).setType(GroupType::Component);
+        }
+      }else{
+        atom_groups_.at(potential_complex).setType(GroupType::Unknown);
+        for ( const int & candidate_component : candidate_components){
+          atom_groups_.at(candidate_component).setType(GroupType::Unknown);
+        }
+      }
+    }
+  }
+// Create a map with an atom as the key and a vector of indices to indicate 
+// where there is overlap, the group and index of where the overlap occurs 
+  void AtomGroupContainer::assignGroupTypes(){
+
+    std::unordered_map<Atom,std::vector<GroupAtomIndex>> atm_map = mapAtomsToGroups( atom_groups_ );
+    // For each atom in a group find out how many other groups share the atoms
+    // First index is the group index the vector stores the other groups that
+    // share atoms
+    const std::map<int,std::vector<int>> grp_indices = calculateConnectedGroups(atm_map, atom_groups_ );
+
+    // Calculate which groups do not share atoms with other groups these are units
+    identifyAtomGroupsOfUnitType(grp_indices, atom_groups_);
+
+    identifyAtomGroupsOfComponentComplexAndUnknownTypes(grp_indices,atom_groups_ );
+  }
+
+  int AtomGroupContainer::getTotalBasisFunctions(const GroupType & type) const {
     int total_num_basis = 0;
     std::vector<int> group_indices = getGroups(type);     
     for ( int ind : group_indices ){
-      AtomGroup group = getGroup(ind);
+      AtomGroup group = atom_groups_.at(ind);
       for( const std::shared_ptr<Atom> & atom_ptr : group ) {
         total_num_basis += atom_ptr->getBasisFuncCount();
       }
@@ -108,11 +188,11 @@ namespace catnip {
     return total_num_basis;
   }
 
-  int AtomGroupContainer::getMaxBasisFunctionCount(const GroupType & type) const {
+  int AtomGroupContainer::getMaxBasisFunctions(const GroupType & type) const {
     int max_num_basis = 0;
     std::vector<int> group_indices = getGroups(type);     
     for ( int ind : group_indices ){
-      AtomGroup group = getGroup(ind);
+      AtomGroup group = atom_groups_.at(ind);
       for( const std::shared_ptr<Atom> & atom_ptr : group ) {
         if( atom_ptr->getBasisFuncCount() > max_num_basis){
           max_num_basis = atom_ptr->getBasisFuncCount();
@@ -149,7 +229,7 @@ namespace catnip {
     return all_paired_atoms;
   }
 
-  void AtomGroupContainer::assignBasisFunctionCount(
+  void AtomGroupContainer::assignBasisFunctions(
       const std::vector<int>& complex_basis_func_count) {
 
     // 1. Check that up to date
@@ -157,7 +237,7 @@ namespace catnip {
       throw std::runtime_error("Cannot assign basis functions to atoms as group types are not up to date!");
     }
     // 2. Check that the number of atoms in the complex is consistent with the number of values provided
-    if ( complex_basis_func_count.size() != atom_groups_.at(index_of_complex_).numberOfAtoms() ){
+    if ( complex_basis_func_count.size() != atom_groups_.at(index_of_complex_).size() ){
       throw std::runtime_error("Cannot assign basis function count to atoms as the basis function count vector is not equal to the number of atoms!");
     }
 
