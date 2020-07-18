@@ -4,7 +4,7 @@
 #define _CATNIP_INDEX_MAP_HPP
 
 // Local private includes
-#include "atom_group_container.hpp"
+#include "atom_system.hpp"
 
 // Standard includes
 #include <map>
@@ -15,13 +15,13 @@ namespace catnip {
   class IndexMap {
     public:
       IndexMap() = default;
-      IndexMap(AtomGroupContainer atom_groups);
+      IndexMap(AtomSystem atm_sys);
       // The component rows and colums in their current locations in  
       // in the full system matrix of the complex
       std::map<int,std::vector<int>> row_col_init;
 
       // Map indicate where the rows and cols should go in the final state
-      // Each int in the vector represents the locatin in the full system matrix
+      // Each int in the vector represents the location in the full system matrix
       std::map<int,std::vector<int>> row_col_final;
 
       // Searches the init row for the provided row and returns the group it is

@@ -25,7 +25,7 @@ namespace catnip {
    *
    * Complex - all atoms in this atom group have a matching atom in a component
    *
-   * Unit - non of the atoms appear in any of the other atom groups
+   * Island - non of the atoms appear in any of the other atom groups
    *
    * Unknown - some combination, may or may not have overlapping components
    *
@@ -34,7 +34,7 @@ namespace catnip {
   enum class GroupType {
     Component, 
     Complex,
-    Unit,
+    Island,
     Unknown,
     Unassigned
   };
@@ -72,6 +72,10 @@ namespace catnip {
         return atoms_.at(ind);
       }
 
+      std::shared_ptr<Atom> & at(size_t ind) {
+        return atoms_.at(ind);
+      }
+
       void add(std::shared_ptr<Atom> atom){
         atoms_.push_back(atom);
       } 
@@ -93,8 +97,7 @@ namespace catnip {
        *
        * @return indeces of atoms that match
        */
-      std::vector<int> find(std::shared_ptr<Atom> atom);
-     
+      std::vector<int> find(std::shared_ptr<Atom> atom) const;
 
       /**
        * @brief Finds the exact matching atom in memory by looking at the address

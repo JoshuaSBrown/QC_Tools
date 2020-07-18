@@ -7,10 +7,10 @@
 
 namespace catnip {
 
-  std::vector<int> AtomGroup::find(std::shared_ptr<Atom> atom) {
+  std::vector<int> AtomGroup::find(std::shared_ptr<Atom> atom) const {
     std::vector<int> indices;
     int index = 0;
-    for ( std::shared_ptr<Atom> & atom_ : atoms_){
+    for ( const std::shared_ptr<Atom> & atom_ : atoms_){
       if ( *atom_ == (*atom)){
         indices.push_back(index);
       }

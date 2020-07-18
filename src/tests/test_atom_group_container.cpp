@@ -46,16 +46,20 @@ TEST_CASE("Atom Group Container","[unit]") {
 
   REQUIRE(atom_grp_cont.size() == 2);
 
-  atom_grp_cont.assignGroupTypes();
+  REQUIRE(atom_grp_cont.getType(0) == GroupType::Unassigned);
+  REQUIRE(atom_grp_cont.getType(1) == GroupType::Unassigned);
+  REQUIRE(atom_grp_cont.isUpToDate() == false);
 
+  atom_grp_cont.assignGroupTypes();
+  REQUIRE(atom_grp_cont.isUpToDate() == true);
   // Because it made a copy these should still be unassigned
   REQUIRE(atom_grp1.getType() == GroupType::Unassigned);
   REQUIRE(atom_grp2.getType() == GroupType::Unassigned);
 
   // These should be changed
-  REQUIRE(atom_grp_cont.getType(0) == GroupType::Unit);
-  REQUIRE(atom_grp_cont.getType(1) == GroupType::Unit);
-  REQUIRE(atom_grp_cont.exists(GroupType::Unit));
+  REQUIRE(atom_grp_cont.getType(0) == GroupType::Island);
+  REQUIRE(atom_grp_cont.getType(1) == GroupType::Island);
+  REQUIRE(atom_grp_cont.exists(GroupType::Island));
 
   // Now we make a third group that has all the atoms of the first two groups
   AtomGroup atom_grp3("O2CH2");
@@ -66,13 +70,13 @@ TEST_CASE("Atom Group Container","[unit]") {
   atom_grp3.add(atom5_ptr);
 
   atom_grp_cont.add(atom_grp3);
+  REQUIRE(atom_grp_cont.isUpToDate() == false);
 
-  REQUIRE(atom_grp_cont.getType(0) == GroupType::Unassigned);
-  REQUIRE(atom_grp_cont.getType(1) == GroupType::Unassigned);
   REQUIRE(atom_grp_cont.getType(2) == GroupType::Unassigned);
   REQUIRE(atom_grp_cont.exists(GroupType::Unassigned));
 
   atom_grp_cont.assignGroupTypes();
+  REQUIRE(atom_grp_cont.isUpToDate() == true);
   REQUIRE(atom_grp_cont.getType(0) == GroupType::Component);
   REQUIRE(atom_grp_cont.getType(1) == GroupType::Component);
   REQUIRE(atom_grp_cont.getType(2) == GroupType::Complex);

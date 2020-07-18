@@ -19,11 +19,13 @@
 
 namespace catnip {
 
-  class Atom;
-
-  /// What we need is a function that will actually create the atom group
-  /// container so that the state is known, basically you need to pass in the
-  /// a vector of the atom groups
+  /**
+   * @brief Allows auto detection of atom groups
+   *
+   * What this means is that if you pass in atom groups and thier state is not
+   * known, this class can automatically detect if they are related, if they
+   * are an island a complex or a component.
+   */
   class AtomGroupContainer {
       std::vector<AtomGroup> atom_groups_;
      
@@ -40,29 +42,25 @@ namespace catnip {
        */
       bool isUniqueGroup_( const AtomGroup & atom_group ) const;
 
-      /**
-       * @brief Match the indices of the first atom group with any that share 
-       * coordinates and the same element in atom group 2
-       *
-       * @param grp1
-       * @param grp2
-       *
-       * @return map returns indices in group two that match group 1 
-       */
-      std::unordered_map<int,int> matchAtoms_( const AtomGroup & grp1, const AtomGroup & grp2) const;
 
-      void assignBasisFuncCountToComplex_(const std::vector<int>& complex_basis_func_count);
-      void assignBasisFuncCountToComponents_();
-
-      struct AtomMatch {
-        int index_component;
-        int index_component_atom;
-        int index_complex_atom;
-      };
-
-      std::vector<AtomMatch> matchComponentAtomsToComplex_();
-      int index_of_complex_ = -1;
     public: 
+
+      // Invalidates groups if non const because cannot ensure that groups are
+      // not changed
+      std::vector<AtomGroup>::iterator 
+        begin() { group_types_uptodate_ = false; return atom_groups_.begin(); }
+
+      std::vector<AtomGroup>::const_iterator 
+        begin() const { return atom_groups_.begin(); }
+
+      // Invalidates groups if non const because cannot ensure that groups are
+      // not changed
+      std::vector<AtomGroup>::iterator 
+        end() { group_types_uptodate_ = false; return atom_groups_.end(); }
+ 
+      std::vector<AtomGroup>::const_iterator 
+        end() const { return atom_groups_.end(); }
+
       void add( AtomGroup atom_group );
 
       size_t size() const noexcept { return  atom_groups_.size(); }
@@ -72,6 +70,8 @@ namespace catnip {
        */
       void assignGroupTypes();
 
+      bool isUpToDate() const noexcept { return group_types_uptodate_; }
+
       /**
        * @brief Determine if a specified group type exists within the atom groups
        *
@@ -80,18 +80,7 @@ namespace catnip {
       bool exists(GroupType type) const;
 
       GroupType getType(int index) const { return atom_groups_.at(index).getType(); }
-      /**
-       * @brief If a complex exists and we know the number of basis functions
-       * associated with each atom in the complex we can assign the basis function
-       * number to each of the atoms
-       *
-       * @param complex_basis_func_count
-       */
-      void assignBasisFunctions(const std::vector<int>& complex_basis_func_count);
 
-      int getTotalBasisFunctions(const GroupType & type) const;
-
-      int getMaxBasisFunctions(const GroupType & type) const;
       /**
        * @brief Get the indices of all the groups of the specified group type
        *
@@ -99,9 +88,14 @@ namespace catnip {
        *
        * @return 
        */
-      std::vector<int> getGroups(const GroupType & type) const;     
+      std::vector<int> getGroups(const GroupType & type) const noexcept;     
 
-      AtomGroup & at(size_t ind) { return  atom_groups_.at(ind);}
+      AtomGroup & at(size_t ind) { 
+        group_types_uptodate_ = false; 
+        return atom_groups_.at(ind);
+      }
+
+      const AtomGroup & at(size_t ind) const { return   atom_groups_.at(ind);}
   };
 
   
