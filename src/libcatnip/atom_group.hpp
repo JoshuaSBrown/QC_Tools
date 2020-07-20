@@ -84,6 +84,10 @@ namespace catnip {
         atoms_.insert(atoms_.end(),atoms.begin(),atoms.end());
       } 
 
+      bool is(const GroupType & type) const noexcept {
+        return type == type_; 
+      }
+
       void setType(const GroupType & type) noexcept {
         type_ = type;
       }
@@ -98,6 +102,16 @@ namespace catnip {
        * @return indeces of atoms that match
        */
       std::vector<int> find(std::shared_ptr<Atom> atom) const;
+
+      /**
+       * @brief Find the index of the atom in the group if it shares the provided
+       * position  
+       *
+       * @param pos
+       *
+       * @return indeces of atoms that match the position
+       */
+      std::vector<int> find(const Eigen::Vector3d pos) const;
 
       /**
        * @brief Finds the exact matching atom in memory by looking at the address

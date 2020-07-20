@@ -2,7 +2,13 @@
 #pragma once
 #ifndef CATNIP_ATOM_SYSTEM_HPP
 #define CATNIP_ATOM_SYSTEM_HPP
+
+// Local private includes
 #include "atom_group_container.hpp"
+
+// Standard includes
+#include <map>
+#include <vector>
 
 namespace catnip {
 
@@ -11,17 +17,26 @@ namespace catnip {
    * change group types
    *
    * It can only be created if there are known group types and there is only
-   * a single complex, and it's components
+   * a single complex, and it's components, 
+   *
+   * Each atom in a component must only be shared with the complex, the atom of
+   * a component is allowed to be of a different element then what is in the 
+   * complex, but must have the same position
    */
   class AtomSystem {
-
+      // Atoms in each component that share the same location with atoms in
+      // the complex but do not share the same element
+      std::map<int,std::vector<std::pair<int,int>>> linked_atoms_;
       AtomGroupContainer atm_grp_cont_;    
     public:
 
       AtomSystem(AtomGroupContainer atm_cont);
 
       /**
-       * @brief assign basis functions to atom group 
+       * @brief assign basis functions to atom group
+       *
+       * Note that atoms that are linked between component and complex must 
+       * have the exact same number of basis functions.
        *
        * @param complex_basis_func_count
        */
@@ -31,7 +46,7 @@ namespace catnip {
        * @brief Determine if there is a conflict between the basis functions
        * you are attempting to assign and the currently assigned basis functions
        *
-       * This is done by comparing the basis functions on atoms that shared
+       * This is done by comparing the basis functions on atoms that are shared
        * between atom groups.
        *
        * @param index
@@ -55,7 +70,7 @@ namespace catnip {
        * @return 
        */
       bool systemComplete() const noexcept;
-  }
+  };
 
 };
 

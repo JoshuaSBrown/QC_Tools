@@ -22,15 +22,15 @@ namespace catnip {
   /****************************************************************************
    * Local private functions
    ****************************************************************************/
-  
-  static void assignBasisFuncs_(
-      int grp_ind,
+
+  static AtomGroup & assignBasisFunctionsToSynchronisedAtoms_(
+      int grp_ind, 
       const std::vector<int>& basis_func_count,
-      AtomGroupContainer & atm_grp_cont) {
-    // Cycle through the atoms in the complex and assign the correct number of
-    // basis functions
+      AtomGroup & grp,
+      AtomGroupContainer & atm_grp_cont ){
+
     int index = 0; 
-    for( std::shared_ptr<Atom> & atom_ptr : atm_grp_cont.at(grp_ind) ){
+    for( std::shared_ptr<Atom> & atom_ptr : grp ){
       if( atom_ptr->getBasisFuncCount() == -1){
         atom_ptr->setBasisFuncCount(basis_func_count.at(index));
       } else if(atom_ptr->getBasisFuncCount() != basis_func_count.at(index) ){
@@ -43,6 +43,95 @@ namespace catnip {
             "atoms in the atom group");
       }
       index++;
+    }
+
+  }
+
+  static void checkLinkedAtomsInComplexForConsistentBasisFunctionCounts(
+      int grp_ind, 
+      const AtomGroup & grp,
+      AtomGroupContainer & atm_grp_cont,
+      std::map<int,std::vector<std::pair<int,int>>> linked_atoms ){
+
+    for ( auto grp_linked_atms : linked_atoms ){ 
+      const AtomGroup & component = atm_grp_cont.at(grp_linked_atms.first);
+      for( std::pair<int,int> linked_atoms : grp_linked_atms.second ){
+        if ( component.at(linked_atoms.first)->getBasisFuncCount() != -1){
+          if ( component.at(linked_atoms.first)->getBasisFuncCount() != grp.at(linked_atoms.second)->getBasisFuncCount()){
+            throw std::runtime_error("There are inconsistencies between the "
+                "the number of basis functions used in a linked atom. Atoms "
+                "in a component must contain the same number of basis "
+                "functions as thier linked atoms in the complex");
+          }
+        }  
+      }
+    }
+  }
+
+  static void checkLinkedAtomsInComponentForConsistentBasisFunctionCounts(
+      int grp_ind, 
+      const AtomGroup & grp,
+      AtomGroupContainer & atm_grp_cont,
+      std::map<int,std::vector<std::pair<int,int>>> linked_atoms 
+      ) {
+
+    std::vector<int> complex_grps = atm_grp_cont.getGroups(GroupType::Complex);
+    assert(complex_grps.size() == 1 && "There must be at least one complex");
+    const AtomGroup & complex_grp = atm_grp_cont.at(complex_grps.at(0));
+    for( std::pair<int,int> linked_atoms : linked_atoms[grp_ind] ){
+      if ( complex_grp.at(linked_atoms.first)->getBasisFuncCount() != -1){
+        if ( complex_grp.at(linked_atoms.first)->getBasisFuncCount() != grp.at(linked_atoms.second)->getBasisFuncCount()){
+          throw std::runtime_error("There are inconsistencies between the "
+              "the number of basis functions used in a linked atom. Atoms "
+              "in a component must contain the same number of basis "
+              "functions as thier linked atoms in the complex");
+        }
+      }
+    }
+  }
+
+  /**
+   * @brief Assigns basis function to atoms in group
+   *
+   * This fucntions should only be called after the atoms have been syncrhonized
+   * between atom groups
+   *
+   * @param grp_ind
+   * @param basis_func_count
+   * @param atm_grp_cont
+   */
+  static void assignBasisFuncs_(
+      int grp_ind,
+      const std::vector<int>& basis_func_count,
+      AtomGroupContainer & atm_grp_cont,
+      std::map<int,std::vector<std::pair<int,int>>> linked_atoms 
+      ) {
+    // Cycle through the atoms in the complex and assign the correct number of
+    // basis functions
+  
+    AtomGroup & grp = atm_grp_cont.at(grp_ind);
+
+    assignBasisFunctionsToSynchronisedAtoms_(
+      grp_ind, 
+      basis_func_count,
+      grp,
+      atm_grp_cont);
+    // Make sure that there are no inconsistencies between the linked atoms
+    if ( atm_grp_cont.at(grp_ind).is(GroupType::Complex)){
+      // If it is a complex
+      checkLinkedAtomsInComplexForConsistentBasisFunctionCounts(
+          grp_ind, 
+          grp,
+          atm_grp_cont,
+          linked_atoms);
+
+    }else {
+      // If it is a component
+      checkLinkedAtomsInComponentForConsistentBasisFunctionCounts(
+          grp_ind, 
+          grp,
+          atm_grp_cont,
+          linked_atoms);
     }
   }
 /*
@@ -87,6 +176,51 @@ namespace catnip {
     }
   }
 
+  // Map 
+  // first int - index of the group
+  // first int of the pair - index of the atom in the component
+  // second int of the pair - index of the linked atom in the complex 
+  static std::map<int,std::vector<std::pair<int,int>>> findNonConsistentAtoms_(
+      AtomGroupContainer & atm_grp_cont) {
+
+    std::map<int,std::vector<std::pair<int,int>>> linked_atoms;
+    // Overwrite any of the pointers in the component that have the same atom
+    // with the complex, with the atom pointer from the complex
+    int complex_index = 
+      atm_grp_cont.getGroups(GroupType::Complex).at(0);
+
+    std::vector<int> component_indices = 
+      atm_grp_cont.getGroups(GroupType::Component);
+
+    AtomGroup & atm_complex = atm_grp_cont.at(complex_index);
+    for ( const int component_ind : component_indices){
+      AtomGroup & atm_grp = atm_grp_cont.at(component_ind);
+      // Cycle atoms in atm_grp 
+      int ind_atm = 0;
+      for ( std::shared_ptr<Atom> & atm : atm_grp){
+        std::vector<int> complex_atm_ind = atm_complex.find(atm->getPos());
+        // This vector must be of size 1
+        if( complex_atm_ind.size() == 1){
+          // If the elements dont' match it is non-consistent 
+          if( atm_complex.at(complex_atm_ind.at(0))->getElement() != atm_grp.at(ind_atm)->getElement() ){
+            linked_atoms[component_ind].push_back(std::pair<int,int>(ind_atm,complex_atm_ind.at(0)));
+          }
+        }else if (complex_atm_ind.size() == 0) {
+          throw std::runtime_error("A component atom did not have a matching "
+              "atom in the complex. The component atom does not have to have "
+              "the same element as the atom in the complex bust must share "
+              "the same position.");
+        } else {
+          throw std::runtime_error("A component atom matches more than a single"
+             " atom in the complex. There appears to be a problem with the "
+             "complex, as more than one atom occupies the same location.");
+        }
+        ++ind_atm;
+      }
+    }
+    return linked_atoms;
+  }
+
   static void synchroniseAtoms_(AtomGroupContainer & atm_grp_cont){
 
     // Overwrite any of the pointers in the component that have the same atom
@@ -128,6 +262,10 @@ namespace catnip {
     atm_grp_cont.assignGroupTypes();
 
     checkValidSystemCriteria_(atm_grp_cont);
+
+    // Searches for atoms that exist in the component that share a position with
+    // an atom in the complex, but are of a different element
+    linked_atoms_ = findNonConsistentAtoms_(atm_grp_cont);
 
     // Make atoms consistent between components and the complex, this is done
     // by making atoms that share the same location point to the same place
