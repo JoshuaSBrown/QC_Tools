@@ -68,11 +68,11 @@ namespace catnip {
       std::vector<std::shared_ptr<Atom>>::const_iterator 
         end() const { return atoms_.end(); }
 
-      std::shared_ptr<Atom> at(size_t ind) const {
+      std::shared_ptr<Atom> & at(size_t ind) {
         return atoms_.at(ind);
       }
 
-      std::shared_ptr<Atom> & at(size_t ind) {
+      const std::shared_ptr<Atom> & at(size_t ind) const {
         return atoms_.at(ind);
       }
 

@@ -2,16 +2,18 @@
 #ifndef _CATNIP_TRANSFER_COMPLEX_HPP
 #define _CATNIP_TRANSFER_COMPLEX_HPP
 
-#include "atom_group_container.hpp"
+// Local private includes
+#include "atom_system.hpp"
 
+// Third party includes
+#include <eigen3/Eigen/Dense>
+
+// Standard includes
 #include <map>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-//#include "matrix.hpp"
-#include <eigen3/Eigen/Dense>
 
 namespace catnip {
 
@@ -44,7 +46,7 @@ class TransferComplex {
 
     TransferComplex(Parameters * params) : params_(params) {};
 
-    void unscramble(AtomGroupContainer atom_groups);
+    void unscramble(AtomSystem atm_sys);
 
     // Orbital type and a map of the corresponding number
     // E.g.

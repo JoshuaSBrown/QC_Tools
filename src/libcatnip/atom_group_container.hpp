@@ -79,7 +79,7 @@ namespace catnip {
        */
       bool exists(GroupType type) const;
 
-      GroupType getType(int index) const { return atom_groups_.at(index).getType(); }
+      const GroupType & getType(int index) const { return atom_groups_.at(index).getType(); }
 
       /**
        * @brief Get the indices of all the groups of the specified group type

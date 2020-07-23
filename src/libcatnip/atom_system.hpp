@@ -28,7 +28,17 @@ namespace catnip {
       // the complex but do not share the same element
       std::map<int,std::vector<std::pair<int,int>>> linked_atoms_;
       AtomGroupContainer atm_grp_cont_;    
+      int index_complex_;
     public:
+
+      struct Link {
+        std::string component_name;
+        int component_ind;
+        int component_atm_ind;
+        std::string complex_name;
+        int complex_ind;
+        int complex_atm_ind;
+      };
 
       AtomSystem(AtomGroupContainer atm_cont);
 
@@ -60,8 +70,23 @@ namespace catnip {
 
       int getMaxBasisFunctions(const GroupType & type) const;
 
-      const AtomGroup & getComplex() const;       
-      std::vector<int> getComponentIndices() const noexcept { atm_grp_cont_.getGroups(GroupType::Component);}
+      const AtomGroup & getComplex() const {
+        return atm_grp_cont_.at(index_complex_); 
+      }       
+
+      std::vector<int> getComponentIndices() const noexcept { 
+        return atm_grp_cont_.getGroups(GroupType::Component);
+      }
+
+
+      /**
+       * @brief Gets atoms that are linked because they share the same position
+       * but don't share the same element 
+       *
+       * @return 
+       */
+      std::vector<Link> getLinkedAtomsWithDifferentElements() const noexcept;
+
       const AtomGroup & at(int ind) const;       
       /**
        * @brief Check that every atom knows how many basis functions are

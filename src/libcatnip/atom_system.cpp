@@ -5,6 +5,7 @@
 #include "atom.hpp"
 
 // Standard includes
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -23,7 +24,7 @@ namespace catnip {
    * Local private functions
    ****************************************************************************/
 
-  static AtomGroup & assignBasisFunctionsToSynchronisedAtoms_(
+  static void assignBasisFunctionsToSynchronisedAtoms_(
       int grp_ind, 
       const std::vector<int>& basis_func_count,
       AtomGroup & grp,
@@ -31,6 +32,7 @@ namespace catnip {
 
     int index = 0; 
     for( std::shared_ptr<Atom> & atom_ptr : grp ){
+      std::cout << "Assigning basis function atom at index " << index << std::endl;
       if( atom_ptr->getBasisFuncCount() == -1){
         atom_ptr->setBasisFuncCount(basis_func_count.at(index));
       } else if(atom_ptr->getBasisFuncCount() != basis_func_count.at(index) ){
@@ -79,8 +81,8 @@ namespace catnip {
     assert(complex_grps.size() == 1 && "There must be at least one complex");
     const AtomGroup & complex_grp = atm_grp_cont.at(complex_grps.at(0));
     for( std::pair<int,int> linked_atoms : linked_atoms[grp_ind] ){
-      if ( complex_grp.at(linked_atoms.first)->getBasisFuncCount() != -1){
-        if ( complex_grp.at(linked_atoms.first)->getBasisFuncCount() != grp.at(linked_atoms.second)->getBasisFuncCount()){
+      if ( complex_grp.at(linked_atoms.second)->getBasisFuncCount() != -1){
+        if ( complex_grp.at(linked_atoms.second)->getBasisFuncCount() != grp.at(linked_atoms.first)->getBasisFuncCount()){
           throw std::runtime_error("There are inconsistencies between the "
               "the number of basis functions used in a linked atom. Atoms "
               "in a component must contain the same number of basis "
@@ -110,7 +112,7 @@ namespace catnip {
     // basis functions
   
     AtomGroup & grp = atm_grp_cont.at(grp_ind);
-
+    std::cout << "Assign to Synchronize atoms" << std::endl;
     assignBasisFunctionsToSynchronisedAtoms_(
       grp_ind, 
       basis_func_count,
@@ -119,6 +121,7 @@ namespace catnip {
     // Make sure that there are no inconsistencies between the linked atoms
     if ( atm_grp_cont.at(grp_ind).is(GroupType::Complex)){
       // If it is a complex
+      std::cout << "Assign to Linked atoms in complex" << std::endl;
       checkLinkedAtomsInComplexForConsistentBasisFunctionCounts(
           grp_ind, 
           grp,
@@ -127,6 +130,7 @@ namespace catnip {
 
     }else {
       // If it is a component
+      std::cout << "Assign to Linked atoms in component" << std::endl;
       checkLinkedAtomsInComponentForConsistentBasisFunctionCounts(
           grp_ind, 
           grp,
@@ -206,10 +210,12 @@ namespace catnip {
             linked_atoms[component_ind].push_back(std::pair<int,int>(ind_atm,complex_atm_ind.at(0)));
           }
         }else if (complex_atm_ind.size() == 0) {
-          throw std::runtime_error("A component atom did not have a matching "
-              "atom in the complex. The component atom does not have to have "
-              "the same element as the atom in the complex bust must share "
-              "the same position.");
+          std::string error_msg = "A component atom did not have a matching "
+              "atom in the complex (" + atm_complex.getName() + "). The "
+              "atom in the component (" + atm_grp.getName() + ") does not have "
+              "to have the same element as the atom in the complex but must "
+              "share the same position.";
+          throw std::runtime_error(error_msg);
         } else {
           throw std::runtime_error("A component atom matches more than a single"
              " atom in the complex. There appears to be a problem with the "
@@ -263,6 +269,9 @@ namespace catnip {
 
     checkValidSystemCriteria_(atm_grp_cont);
 
+    std::vector<int> complex_indices = 
+      atm_grp_cont.getGroups(GroupType::Complex);
+    index_complex_ = complex_indices.at(0);
     // Searches for atoms that exist in the component that share a position with
     // an atom in the complex, but are of a different element
     linked_atoms_ = findNonConsistentAtoms_(atm_grp_cont);
@@ -313,7 +322,7 @@ namespace catnip {
           "atoms in the group!");
     }
 
-    assignBasisFuncs_(index, basis_func_count, atm_grp_cont_);
+    assignBasisFuncs_(index, basis_func_count, atm_grp_cont_, linked_atoms_);
   }
 
   bool AtomSystem::systemComplete() const noexcept {
@@ -327,5 +336,27 @@ namespace catnip {
 
   const AtomGroup & AtomSystem::at(int ind) const {
     return atm_grp_cont_.at(ind); 
+  }
+
+  std::vector<AtomSystem::Link> AtomSystem::getLinkedAtomsWithDifferentElements() const noexcept {
+
+    std::vector<Link> links;
+    std::string complex_name = atm_grp_cont_.at(index_complex_).getName();
+    for ( std::pair<int,std::vector<std::pair<int,int>>> grp_links : linked_atoms_){
+      int component_ind = grp_links.first;
+      std::string component_name = atm_grp_cont_.at(component_ind).getName(); 
+      for ( std::pair<int,int> atm1_atm2 : grp_links.second){
+        Link link{
+          component_name,     // Component name
+          component_ind,      // Component index
+          atm1_atm2.first,    // Component atom index
+          complex_name,       // Complex name
+          index_complex_,     // Complex index
+          atm1_atm2.second }; // Complex atom index
+
+        links.push_back(link);
+      }
+    }
+    return links;
   }
 }

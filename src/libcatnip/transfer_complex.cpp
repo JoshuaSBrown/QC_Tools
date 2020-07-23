@@ -4,18 +4,18 @@
 
 #include "atom.hpp"
 #include "atom_group.hpp"
-#include "index_map.hpp"
+#include "basis_map.hpp"
 #include "swap_engine.hpp"
 
 namespace catnip {
 
-  void TransferComplex::unscramble(AtomGroupContainer atom_groups) {
+  void TransferComplex::unscramble(AtomSystem atom_sys) {
     // We should figure out how all the rows and columns should be
     // rearranged before moving any of the coefficients in the matrix    
-    IndexMap ind_map = IndexMap(atom_groups);
+    BasisMap basis_map = BasisMap(atom_sys);
   
-    size_t total_basis = atom_groups.getTotalBasisFunctions(GroupType::Component); 
-    size_t total_basis_comp = atom_groups.getTotalBasisFunctions(GroupType::Complex); 
+    size_t total_basis = atom_sys.getTotalBasisFunctions(GroupType::Component); 
+    size_t total_basis_comp = atom_sys.getTotalBasisFunctions(GroupType::Complex); 
 
     // If the total number of basis functions in the components is greater than
     // the total number of basis functions in the complex, throw an error
@@ -23,7 +23,7 @@ namespace catnip {
       throw std::runtime_error("Sum of basis functions in components does not equal the number of basis functions in the complex");
     }
 
-    auto swap_eng = SwapEngine(ind_map,total_basis);
+    auto swap_eng = SwapEngine(basis_map);
 
     swap_eng.arrange(*(params_->complex_coefs));
     swap_eng.arrange(*(params_->S_AO));

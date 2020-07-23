@@ -210,6 +210,8 @@ namespace catnip {
     identifyAtomGroupsOfIslandType_(grp_indices, atom_groups_);
 
     identifyAtomGroupsOfComponentComplexAndUnknownTypes_(grp_indices,atom_groups_ );
+
+    group_types_uptodate_ = true;
   }
 
   bool AtomGroupContainer::exists(GroupType type) const {

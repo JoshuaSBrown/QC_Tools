@@ -5,7 +5,7 @@
 
 #include "atom.hpp"
 #include "atom_group.hpp"
-#include "index_map.hpp"
+#include "basis_map.hpp"
 #include "size_type.hpp"
 
 namespace catnip {
@@ -13,14 +13,17 @@ namespace catnip {
   // Swaps rows columns and keeps up with how future swaps should be updated
   class SwapEngine {
     private:
-      Size size_;
-      IndexMap ind_map_;
-      Eigen::MatrixXd scratch_;
+      size_t size_;
+      std::vector<std::pair<int,int>> swap_order_;
 
+      void arrangeRows_(Eigen::MatrixXd & mat);
+      void arrangeCols_(Eigen::MatrixXd & mat);
     public:
-      SwapEngine(IndexMap ind_map, Size size);
+      SwapEngine(BasisMap basis_map);
 
       void arrange(Eigen::MatrixXd & mat);
+      void arrangeRows(Eigen::MatrixXd & mat);
+      void arrangeCols(Eigen::MatrixXd & mat);
   };
 
 

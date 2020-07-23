@@ -8,8 +8,9 @@ list( APPEND UNIT_TEST_SOURCE_FILES
   test_atom
   test_atom_group
   test_atom_group_container
+  test_atom_system
+  test_basis_map
   test_elements
-  test_index_map
   test_log
   test_parameters
   test_propertydouble
@@ -21,7 +22,8 @@ list( APPEND UNIT_TEST_SOURCE_FILES
   test_propertystring
   test_propertyswitch
   test_qc_functions
-  test_string_support)
+  test_string_support
+  test_swap_engine)
 
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
   find_library (GCOV gcov)
