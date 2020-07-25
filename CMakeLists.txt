@@ -22,7 +22,7 @@ set(calcJ_TITLE "\"CATNIP\"")
 set(calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
 set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 set(COMMON_LIBRARIES stdc++ m)
-set(LOG_LEVEL 0 CACHE INT "Choose the log level" )
+set(LOG_LEVEL 0 CACHE STRING "Choose the log level" )
 # Prevents multiple file extensions from being appended one after the other
 # important for using gcov .o.gcno or .cpp.gcno now will be .gcno
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
