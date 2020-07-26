@@ -173,6 +173,12 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   desc = "Print all transfer integrals, in matrix form";
   flag19.push_back(desc);
 
+  vector<string> flag20;
+  flag19.push_back("--input_files");
+  flag19.push_back("-in");
+  desc = "Provide all input files and allow catnip to figure the rest out.";
+  flag19.push_back(desc);
+
   set<vector<string>> flags;
   flags.insert(flag1);
   flags.insert(flag2);
@@ -191,13 +197,23 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   flags.insert(flag17);
   flags.insert(flag18);
   flags.insert(flag19);
+  flags.insert(flag20);
 
   unique_ptr<ArgumentParser> ArgPars(new ArgumentParser(flags));
 
   // Setup rules for handling flags
+  set<string> exts_all{".orb", ".7", ".pun", ".log"};
+  {
+    ArgPars->setFlagArgOpt("--input_files", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
+                           "ALLOWED_FILE_EXT", exts_all);
+    ArgPars->setFlagArgOpt("--input_files", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
+                           "ALLOWED_SISTER_FILE_EXT", exts_all);
+    ArgPars->setFlagArgOpt("--input_files", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
+                           "FILE_MUST_EXIST", 0);
+  }
+
   set<string> exts{".orb", ".7", ".pun"};
   string ext_log = ".log";
-
   // Setting up rules guiding pun files
   {
     ArgPars->setFlagArgOpt("--pun_P", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
@@ -220,6 +236,7 @@ unique_ptr<ArgumentParser> prepareParser(void) {
                            "ALLOWED_SISTER_FILE_EXT", ext_log);
     ArgPars->setFlagArgOpt("--pun_2", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
                            "FILE_MUST_EXIST", 0);
+
   }
 
   set<string> exts_log{".log"};

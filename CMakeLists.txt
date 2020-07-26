@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 3.0)
-project (calc_J VERSION 2.0.0)
+cmake_minimum_required (VERSION 3.14)
+project (catnip)
 
 ##############################################################################
 # Defining options 
@@ -14,13 +14,14 @@ option(CODE_COVERAGE "Enable coverage reporting" OFF)
 ##############################################################################
 # Defining settings 
 ##############################################################################
-#set(calcJ_VERSION_MAJOR 2 )
-#set(calcJ_VERSION_MINOR 0 )
-set(calcJ_YEAR_PUBLISHED 2020 )
-set(calcJ_AUTHOR_SURNAME "\"Brown\"" )
-set(calcJ_AUTHOR_INITIALS "\"J. S.\"" )
-set(calcJ_TITLE "\"CATNIP\"")
-set(calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
+set(catnip_VERSION_MAJOR 2 )
+set(catnip_VERSION_MINOR 0 )
+set(catnip_YEAR_PUBLISHED 2018 )
+set(catnip_AUTHOR_SURNAME "\"Brown\"" )
+set(catnip_AUTHOR_INITIALS "\"J. S.\"" )
+set(catnip_TITLE "\"CATNIP\"")
+set(catnip_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
+
 set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 set(COMMON_LIBRARIES stdc++ m)
 set(LOG_LEVEL 0 CACHE STRING "Choose the log level" )
@@ -33,8 +34,8 @@ set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -Werror")
 ##############################################################################
 # Configure header file to pass some of the CMake settings to the source code
 configure_file(
-  "${PROJECT_SOURCE_DIR}/src/libcatnip/calcJconfig.hpp.in"
-  "${PROJECT_SOURCE_DIR}/src/libcatnip/calcJconfig.hpp"
+  "${PROJECT_SOURCE_DIR}/src/libcatnip/catnip_config.hpp.in"
+  "${PROJECT_SOURCE_DIR}/src/libcatnip/catnip_config.hpp"
   )
 
 ##############################################################################

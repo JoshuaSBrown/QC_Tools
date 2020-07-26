@@ -1,4 +1,3 @@
-
 #pragma once
 #ifndef _CATNIP_SWAP_ENGINE_HPP
 #define _CATNIP_SWAP_ENGINE_HPP
