@@ -13,13 +13,13 @@ option(CODE_COVERAGE "Enable coverage reporting" OFF)
 ##############################################################################
 # Defining settings 
 ##############################################################################
-set(calcJ_VERSION_MAJOR 2 )
-set(calcJ_VERSION_MINOR 0 )
-set(calcJ_YEAR_PUBLISHED 2018 )
-set(calcJ_AUTHOR_SURNAME "\"Brown\"" )
-set(calcJ_AUTHOR_INITIALS "\"J. S.\"" )
-set(calcJ_TITLE "\"CATNIP\"")
-set(calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
+set(catnip_VERSION_MAJOR 2 )
+set(catnip_VERSION_MINOR 0 )
+set(catnip_YEAR_PUBLISHED 2018 )
+set(catnip_AUTHOR_SURNAME "\"Brown\"" )
+set(catnip_AUTHOR_INITIALS "\"J. S.\"" )
+set(catnip_TITLE "\"CATNIP\"")
+set(catnip_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
 set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 set(COMMON_LIBRARIES stdc++ m)
 set(LOG_LEVEL 0 CACHE STRING "Choose the log level" )
@@ -32,8 +32,8 @@ set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -Werror")
 ##############################################################################
 # Configure header file to pass some of the CMake settings to the source code
 configure_file(
-  "${PROJECT_SOURCE_DIR}/src/libcatnip/calcJconfig.hpp.in"
-  "${PROJECT_SOURCE_DIR}/src/libcatnip/calcJconfig.hpp"
+  "${PROJECT_SOURCE_DIR}/src/libcatnip/catnipconfig.hpp.in"
+  "${PROJECT_SOURCE_DIR}/src/libcatnip/catnipconfig.hpp"
   )
 
 ##############################################################################
@@ -103,7 +103,7 @@ endif()
 # Compiling build tree/paths 
 ##############################################################################
 # Add the binary tree to the search path for include files
-# so that we will find calcJconfig.hpp
+# so that we will find catnipconfig.hpp
 #target_include_directories(calc_J "${PROJECT_BINARY_DIR}/src")
 #target_link_directories(calc_J "${PROJECT_BINARY_DIR}/src")
 
