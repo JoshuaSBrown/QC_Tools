@@ -7,6 +7,7 @@
 #include <memory>
 #include <numeric>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <eigen3/Eigen/Dense>
@@ -25,6 +26,16 @@ namespace catnip {
     Unknown
   };
 
+  enum class FileType {
+    pun,
+    log
+  };
+
+  enum class MatrixType {
+    Overlap,
+    Coefficients,
+    MolecularOrbitalEnergies
+  };
   /**
    * @brief Stores the name of the atom group, the group type and the atoms in
    * the group
@@ -35,8 +46,14 @@ namespace catnip {
       GroupType type_ = GroupType::Unknown;
       std::string name_;
       std::vector<std::shared_ptr<Atom>> atoms_;
+      std::unordered_map<FileType,std::string> files_;
+      std::unordered_map<MatrixType,std::unique_ptr<Eigen::MatrixXd>> matrices_;
     public:
       AtomGroup(std::string group_name) : name_(group_name) {};
+
+      void addFile(FileType type, std::string file_name) {
+        files_[type] = file_name;
+      }
 
       size_t size() const noexcept { return atoms_.size(); }
 
