@@ -1,4 +1,6 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 #include "../libcatnip/string_support.hpp"
 #include <cassert>
 #include <iostream>
@@ -8,7 +10,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("String Support","[unit]") {
 
   cerr << "Testing: splitSt" << endl;
   {
@@ -103,5 +105,4 @@ int main(void) {
     assert(str3.compare(str) == 0);
   }
 
-  return 0;
 }

@@ -4,9 +4,10 @@ project (catnip)
 ##############################################################################
 # Defining options 
 ##############################################################################
-option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" OFF)
-option(ENABLE_INTEGRATION_TESTING "Enable integration tests" OFF)
-option(ENABLE_UNIT_TESTING "Enable tests" OFF)
+option(ENABLE_TESTS "Enable testing" Off)
+option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" ${ENABLE_TESTS})
+option(ENABLE_INTEGRATION_TESTING "Enable integration tests" ${ENABLE_TESTS})
+option(ENABLE_UNIT_TESTING "Enable tests" ${ENABLE_TESTS})
 option(ENABLE_PROFILING "Enable profiling" OFF)
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
@@ -20,6 +21,7 @@ set(catnip_AUTHOR_SURNAME "\"Brown\"" )
 set(catnip_AUTHOR_INITIALS "\"J. S.\"" )
 set(catnip_TITLE "\"CATNIP\"")
 set(catnip_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
+
 set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 set(COMMON_LIBRARIES stdc++ m)
 set(LOG_LEVEL 0 CACHE STRING "Choose the log level" )
@@ -40,7 +42,6 @@ configure_file(
 # Finding dependencies 
 ##############################################################################
 # Find bash it is important for testing using scripts
-find_program (BASH_PROGRAM bash)
 find_library (GCOV gcov)
 #find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 #if (TARGET Eigen3::Eigen)
@@ -61,58 +62,49 @@ endif()
 ##############################################################################
 if(ENABLE_INTEGRATION_TESTING)
   if(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
-    message("GAUSSIANFILES found will not download")
+    message(STATUS "GAUSSIANFILES found will not download")
     set(DOWNLOAD_TUTORIAL_FILES OFF)
   else(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
-    message("GAUSSIANFILES not found will download")
-    set(DOWNLOAD_TUTORIAL_FILES ON)
+    message(STATUS "GAUSSIANFILES not found will attempt to download")
+    include(${PROJECT_SOURCE_DIR}/cmake/InstallGdown.cmake)
   endif(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
 endif()
 
-if(DOWNLOAD_TUTORIAL_FILES)
-  message("Downloading gaussian tutorial files")
-  execute_process(COMMAND ${PROJECT_SOURCE_DIR}/scripts/test_suite_install.bash "${PROJECT_SOURCE_DIR}" )
-endif()
-
 if(ENABLE_UNIT_TESTING OR ENABLE_INTEGRATION_TESTING)
+  find_package(Catch2 2.11.1)
+  if( NOT Catch2 )
+    include(${PROJECT_SOURCE_DIR}/cmake/InstallCatch2.cmake)
+  else()
+    message(STATUS "found system installed Catch2 will not download")
+  endif()
   enable_testing()
+  include(ParseAndAddCatchTests)
+
+  if (ENABLE_INTEGRATION_TESTING)
+    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
+      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" 
+      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+
+    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" 
+      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" 
+      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" 
+      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+  endif()
+
+  if (ENABLE_UNIT_TESTING)
+    file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.pun" 
+      DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
+    file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.log" 
+      DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
+  endif()
+
 endif()
-
-if (ENABLE_INTEGRATION_TESTING)
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
-
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-endif()
-
-if (ENABLE_UNIT_TESTING)
-  file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
-  file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.log" 
-    DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
-endif()
-
 ##############################################################################
 # Compiling build tree/paths 
 ##############################################################################
-# Add the binary tree to the search path for include files
-# so that we will find catnipconfig.hpp
-#target_include_directories(calc_J "${PROJECT_BINARY_DIR}/src")
-#target_link_directories(calc_J "${PROJECT_BINARY_DIR}/src")
-
-#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments/properties")
-#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments")
-#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/file_readers")
-#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io")
-#link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip")
-
 add_subdirectory("${PROJECT_SOURCE_DIR}/src")
 
 

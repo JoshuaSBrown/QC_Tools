@@ -5,6 +5,10 @@ list( APPEND UNIT_TEST_SOURCE_FILES
   test_argumentparser
   test_argumentstring
   test_argumentswitch
+  test_atom
+  test_atom_group
+  test_elements
+  test_index_map
   test_log
   test_parameters
   test_propertydouble
@@ -19,7 +23,7 @@ list( APPEND UNIT_TEST_SOURCE_FILES
   test_string_support)
 
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
-  link_libraries(gcov)
+  find_library (GCOV gcov)
 endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
 
 if(ENABLE_UNIT_TESTING)
@@ -28,8 +32,8 @@ if(ENABLE_UNIT_TESTING)
     if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
       set_source_files_properties( ${PROG}.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS} )
     endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
-    target_link_libraries(unit_${PROG} libcatnip)
-    add_test(unit_${PROG} unit_${PROG})
+    target_link_libraries(unit_${PROG} libcatnip Catch2::Catch2)
+    ParseAndAddCatchTests(unit_${PROG})
   endforeach(PROG)
 endif(ENABLE_UNIT_TESTING)
 
@@ -44,7 +48,7 @@ if(ENABLE_INTEGRATION_TESTING)
       set_source_files_properties( ${PROG}.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS})
     endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
 
-    target_link_libraries(integration${PROG} libcatnip)
+    target_link_libraries(integration${PROG} libcatnip Catch2::Catch2)
     add_test(integration${PROG} integration${PROG})
 
   endforeach(PROG)
@@ -60,11 +64,14 @@ if(ENABLE_INTEGRATION_TESTING)
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:test_io> ${CMAKE_CURRENT_SOURCE_DIR})
 
+  find_program (BASH_PROGRAM bash)
   if(BASH_PROGRAM)
     add_test(regression_test_io_script ${BASH_PROGRAM} ${PROJECT_SOURCE_DIR}/src/tests/test_script_io.sh ${CMAKE_CURRENT_SOURCE_DIR})
 
     add_test(integration_test_calc_J_script ${BASH_PROGRAM} ${PROJECT_SOURCE_DIR}/src/tests/test_script_calc_J.sh ${CMAKE_SOURCE_DIR})
 
+  else()
+    message(STATUS "Unable to add integration tests, unable to find bash")
   endif(BASH_PROGRAM)
 
 endif(ENABLE_INTEGRATION_TESTING)

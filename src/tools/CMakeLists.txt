@@ -1,5 +1,5 @@
 add_executable(calcJ calcJ.cpp)
 target_link_libraries(calcJ libcatnip)
-install(TARGETS calcJ EXPORT VOTCA_CSG_Targets RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS calcJ EXPORT CATNIP_Targets RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 add_executable(CATNIP::calcJ ALIAS calcJ)
-set_property(TARGET catnip APPEND PROPERTY BINARIES "calcJ")
+set_property(TARGET libcatnip APPEND PROPERTY BINARIES "calcJ")

@@ -1,10 +1,13 @@
+
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
+
 #include "../libcatnip/parameters.hpp"
 
 using namespace catnip;
 
-int main(void) {
+TEST_CASE("Parameters","[unit]") {
 
   Parameters Par;
 
-  return 0;
 }

@@ -1,3 +1,6 @@
+
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 #include "../libcatnip/qc_functions.hpp"
 #include "../libcatnip/matrix.hpp"
 #include <cassert>
@@ -7,7 +10,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("QC Functions","[unit]") {
 
   cout << "Testing: unscramble_Coef" << endl;
   {
@@ -291,5 +294,4 @@ int main(void) {
       }
     }
   }
-  return 0;
 }

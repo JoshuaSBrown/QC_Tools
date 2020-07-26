@@ -1,4 +1,7 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
+
 #include "../libcatnip/io/arguments/argumentstring.hpp"
 #include <cassert>
 #include <limits>
@@ -6,7 +9,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Argument String","[unit]") {
 
   cerr << "Testing: argumentstring" << endl;
   cerr << "Testing: constructor" << endl;
@@ -122,5 +125,4 @@ int main(void) {
     assert(opt_choices_val);
   }
 
-  return 0;
 }

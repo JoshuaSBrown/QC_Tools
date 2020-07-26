@@ -1,4 +1,7 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
+
 #include "../libcatnip/io/arguments/argumentdouble.hpp"
 #include <cassert>
 #include <limits>
@@ -6,7 +9,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Argument Doubles","[unit]") {
 
   cerr << "Testing: argumentdouble" << endl;
   cerr << "Testing: constructor" << endl;
@@ -87,5 +90,4 @@ int main(void) {
     assert(opt_max_val);
   }
 
-  return 0;
 }

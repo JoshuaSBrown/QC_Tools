@@ -7,4 +7,4 @@ file(GLOB CATNIP_SOURCE_FILES
   io/file_readers/*.cpp)
 
 add_library(libcatnip ${CATNIP_SOURCE_FILES})
-target_include_directories(libcatnip PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(libcatnip PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

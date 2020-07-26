@@ -1,4 +1,6 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 #include "../libcatnip/io/arguments/properties/propertyswitch.hpp"
 #include <cassert>
 #include <exception>
@@ -9,7 +11,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Property Switch","[unit]") {
 
   cerr << "Testing: PropertySwitch" << endl;
   cerr << "Testing: constructor" << endl;
@@ -84,5 +86,4 @@ int main(void) {
     //    }
     //    assert(excep);
   }
-  return 0;
 }

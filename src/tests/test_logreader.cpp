@@ -1,4 +1,6 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -13,7 +15,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Log Reader","[unit]") {
 
   cout << "Testing: LogReader Constructor" << endl;
   { LogReader lr("file.log"); }
@@ -443,5 +445,4 @@ int main(void) {
       cout << x.at(ind) << " " << y.at(ind) << " " << z.at(ind) << endl;
     }
   }
-  return 0;
 }

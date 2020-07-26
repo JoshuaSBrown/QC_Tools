@@ -1,11 +1,11 @@
-#include <algorithm>
+/*#include <algorithm>
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include <functional>
+#include <functional>*/
 #include <iostream>
-#include <locale>
+/*#include <locale>
 #include <math.h>
 #include <sstream>
 #include <string>
@@ -16,11 +16,11 @@
 #include "../libcatnip/io/file_readers/logreader.hpp"
 #include "../libcatnip/io/file_readers/punreader.hpp"
 #include "../libcatnip/io/io.hpp"
-#include "../libcatnip/log.hpp"
 #include "../libcatnip/parameters.hpp"
 #include "../libcatnip/qc_functions.hpp"
-#include "../libcatnip/matrix.hpp"
-#include "../libcatnip/calcJconfig.hpp"
+#include "../libcatnip/matrix.hpp"*/
+#include "libcatnip/catnip_config.hpp"
+#include "libcatnip/log.hpp"
 
 #include <eigen3/Eigen/Core>
 
@@ -48,7 +48,7 @@ int main(int argc, const char *argv[]) {
   cout << "pun file for the dimer is:          " + par->getPunP() + '\n';
 
   // Open the .pun file find the total number of molecular orbitals
-
+/*
   LOG("Reading pun files", 1);
   LOG("Reading pun file: " + par->getPunP(), 2);
   PunReader pr_P(par->getPunP());
@@ -167,6 +167,6 @@ int main(int argc, const char *argv[]) {
       TC.printTransferIntegral(orbitaltypes, orbitalnums);
     }
   }
-
+*/
   return 0;
 }

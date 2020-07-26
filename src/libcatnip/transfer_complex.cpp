@@ -14,8 +14,8 @@ namespace catnip {
     // rearranged before moving any of the coefficients in the matrix    
     IndexMap ind_map = IndexMap(atom_groups);
   
-    size_t total_basis = atom_groups.getTotalBasisFunctionCount(GroupType::Component); 
-    size_t total_basis_comp = atom_groups.getTotalBasisFunctionCount(GroupType::Complex); 
+    size_t total_basis = atom_groups.getTotalBasisFunctions(GroupType::Component); 
+    size_t total_basis_comp = atom_groups.getTotalBasisFunctions(GroupType::Complex); 
 
     // If the total number of basis functions in the components is greater than
     // the total number of basis functions in the complex, throw an error

@@ -1,15 +1,20 @@
 
+#pragma once
+#ifndef _CATNIP_INDEX_MAP_HPP
+#define _CATNIP_INDEX_MAP_HPP
 
-#include "transfer_complex.hpp"
+// Local private includes
+#include "atom_group_container.hpp"
 
-#include "atom.hpp"
-#include "atom_group.hpp"
+// Standard includes
+#include <map>
+#include <vector>
 
 namespace catnip {
 
   class IndexMap {
     public:
-
+      IndexMap() = default;
       IndexMap(AtomGroupContainer atom_groups);
       // The component rows and colums in their current locations in  
       // in the full system matrix of the complex
@@ -26,3 +31,4 @@ namespace catnip {
 
 
 }  // namespace catnip
+#endif // _CATNIP_INDEX_MAP_HPP

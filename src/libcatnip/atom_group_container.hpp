@@ -1,11 +1,14 @@
 #pragma once
-#ifndef _CATNIP_ATOM_GROUP_CONTAINER_HPP
-#define _CATNIP_ATOM_GROUP_CONTAINER_HPP
+#ifndef CATNIP_ATOM_GROUP_CONTAINER_HPP
+#define CATNIP_ATOM_GROUP_CONTAINER_HPP
 
+// Local private includes
 #include "atom_group.hpp"
 
+// Third party includes
 #include <eigen3/Eigen/Dense>
 
+// Standard includes
 #include <exception>
 #include <iterator>
 #include <memory>
@@ -18,10 +21,14 @@ namespace catnip {
 
   class Atom;
 
+  /// What we need is a function that will actually create the atom group
+  /// container so that the state is known, basically you need to pass in the
+  /// a vector of the atom groups
   class AtomGroupContainer {
       std::vector<AtomGroup> atom_groups_;
      
       bool group_types_uptodate_ = false; 
+
       /**
        * @brief Checks to makes sure the group is unique
        *
@@ -57,6 +64,8 @@ namespace catnip {
     public: 
       void add( AtomGroup atom_group );
 
+      size_t size() const noexcept { return  atom_groups_.size(); }
+
       /**
        * @brief This algorithm determines if a complex exists
        *
@@ -66,7 +75,7 @@ namespace catnip {
        *
        * Only a single atom group can be the complex
        */
-      void assignAtomGroupTypes();
+      void assignGroupTypes();
 
       /**
        * @brief Determine if a complex exists within the atom groups
@@ -75,7 +84,7 @@ namespace catnip {
        *
        * @return 
        */
-      bool complexExists() const ;
+      bool complexExists() const;
 
       /**
        * @brief If a complex exists and we know the number of basis functions
@@ -84,11 +93,11 @@ namespace catnip {
        *
        * @param complex_basis_func_count
        */
-      void assignBasisFunctionCount(const std::vector<int>& complex_basis_func_count);
+      void assignBasisFunctions(const std::vector<int>& complex_basis_func_count);
 
-      int getTotalBasisFunctionCount(const GroupType & type) const;
+      int getTotalBasisFunctions(const GroupType & type) const;
 
-      int getMaxBasisFunctionCount(const GroupType & type) const;
+      int getMaxBasisFunctions(const GroupType & type) const;
       /**
        * @brief Get the indices of all the groups of the specified group type
        *
@@ -98,10 +107,10 @@ namespace catnip {
        */
       std::vector<int> getGroups(const GroupType & type) const;     
 
-      AtomGroup getGroup(size_t ind) const { return  atom_groups_.at(ind);}
-
-      
+      AtomGroup & at(size_t ind) { return  atom_groups_.at(ind);}
   };
 
+  
+
 }  // namespace catnip
-#endif  // _CATNIP_ATOM_GROUP_CONTAINER_HPP
+#endif  // CATNIP_ATOM_GROUP_CONTAINER_HPP

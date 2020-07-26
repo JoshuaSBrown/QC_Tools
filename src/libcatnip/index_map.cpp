@@ -5,17 +5,22 @@
 #include "atom.hpp"
 #include "atom_group.hpp"
 
+// Standard includes
+#include <cassert>
+
 namespace catnip {
 
   IndexMap::IndexMap(AtomGroupContainer atom_groups){
     std::vector<int> group_indices = atom_groups.getGroups(GroupType::Component);
     int complex_ind = atom_groups.getGroups(GroupType::Complex).at(0);
-    AtomGroup complex_group = atom_groups.getGroup(complex_ind);
+    AtomGroup complex_group = atom_groups.at(complex_ind);
     int sys_ind = 0;
     for ( int & group_ind : group_indices) {
-      AtomGroup component_group = atom_groups.getGroup(group_ind);
+      AtomGroup component_group = atom_groups.at(group_ind);
       for( std::shared_ptr<Atom> & atom : component_group){
-        int atom_ind = complex_group.findIndex(atom);
+        std::vector<int> atom_indices = complex_group.find(atom);
+        assert(atom_indices.size() == 1);
+        int atom_ind = atom_indices.at(0);
         int num_basis = complex_group.at(atom_ind)->getBasisFuncCount();
         for ( int ind_temp = 0; ind_temp<num_basis; ++ind_temp){
           row_col_final[group_ind].push_back(sys_ind); 
@@ -28,7 +33,6 @@ namespace catnip {
   // Searches the init row for the provided row and returns the group it is
   // in as well as its current index
   std::pair<int,int> IndexMap::findLocation(int row){
-    std::pair<int,int> group_row;
     for( std::pair<int,std::vector<int>> group_rows : row_col_init){
       int row_ind = 0;
       for ( int row_ : group_rows.second ){
@@ -38,6 +42,7 @@ namespace catnip {
         ++row_ind;
       } 
     }
+    return std::pair<int,int>();
   }
 
 }  // namespace catnip

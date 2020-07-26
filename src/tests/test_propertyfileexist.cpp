@@ -1,4 +1,7 @@
 
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
+
 #include "../libcatnip/io/arguments/properties/propertyfileexist.hpp"
 #include <cassert>
 #include <exception>
@@ -9,7 +12,7 @@
 using namespace catnip;
 using namespace std;
 
-int main(void) {
+TEST_CASE("Property File Exists","[unit]") {
 
   cerr << "Testing: PropertyFileExist" << endl;
   cerr << "Testing: constructor" << endl;
@@ -67,5 +70,4 @@ int main(void) {
     assert(fileExist == false);
   }
 
-  return 0;
 }
