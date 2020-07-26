@@ -28,6 +28,14 @@ namespace catnip {
     swap_eng.arrange(*(params_->complex_coefs));
     swap_eng.arrange(*(params_->S_AO));
 
+    auto dimension = mat_1_Coef.cols()+mat_2_Coef.cols();
+    Eigen::MatrixXd zetaA(mat_1_Coef.rows(),dimension);
+    Eigen::MatrixXd zetaB(mat_2_Coef.rows(),dimension);
+    if (params_->counter_poise) {
+
+    } else {
+
+    }
   }
 
   void TransferComplex::calcJ() {};

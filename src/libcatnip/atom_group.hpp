@@ -11,6 +11,7 @@
 #include <memory>
 #include <numeric>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace catnip {
@@ -39,6 +40,11 @@ namespace catnip {
     Unassigned
   };
 
+  enum class MatrixType {
+    Overlap,
+    Coefficients,
+    MolecularOrbitalsEnergies
+  };
   /**
    * @brief Stores the name of the atom group, the group type and the atoms in
    * the group
@@ -48,10 +54,22 @@ namespace catnip {
     private: 
       GroupType type_ = GroupType::Unassigned;
       std::string name_;
+      // Files associated with this atom_group
+      std::vector<std::string> file_names_;
+      // Matries associated with the atom group
+      std::unordered_map<MatrixType,std::unique_ptr<Eigen::MatrixXd>> matrices_;
       std::vector<std::shared_ptr<Atom>> atoms_;
     public:
       AtomGroup(std::string group_name) : name_(group_name) {};
-    
+   
+      void addFile(const std::string file_name) { file_names_.push_back(file_name); }
+      
+      void addMatrix(const MatrixType type, std::unique_ptr<Eigen::MatrixXd> mat) { matrices_[type] = std::move(mat); }
+
+      // Attempt to load overlap matrix hopefully a log file exists which can do
+      // this
+      void loadOverlapMatrix() {};
+
       std::string getName() const noexcept { return name_; }
 
       size_t size() const noexcept { return atoms_.size(); }

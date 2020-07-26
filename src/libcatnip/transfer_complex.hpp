@@ -23,13 +23,17 @@ class TransferComplex {
 
     class Parameters {
       public:
-        const std::vector<std::unique_ptr<Eigen::MatrixXd>> monomers_coefs;
-        const std::unique_ptr<Eigen::MatrixXd> complex_coefs;
+
+        // It actually makes more sense to place these in the atom groups
+        //const std::vector<std::unique_ptr<Eigen::MatrixXd>> monomers_coefs;
+        //const std::unique_ptr<Eigen::MatrixXd> complex_coefs;
         /// Location of each of the homo_orbitals in each of the monomers
-        const std::vector<int> homo_orbitals;
+        //const std::vector<int> homo_orbitals;
         //HOMO_A;
         //const int HOMO_B;
         /// Atomic Orbital overlap matrix
+        
+        // The Overlap matrix can be added simply when it is needed  
         const std::unique_ptr<Eigen::MatrixXd> S_AO;
         const std::unique_ptr<Eigen::VectorXd> complex_orbital_energies;
         /// Counter poise flag
