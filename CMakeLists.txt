@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8)
-project (calc_J)
+cmake_minimum_required (VERSION 3.14)
+project (catnip)
 
 ##############################################################################
 # Defining options 
@@ -32,8 +32,8 @@ set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -Werror")
 ##############################################################################
 # Configure header file to pass some of the CMake settings to the source code
 configure_file(
-  "${PROJECT_SOURCE_DIR}/src/libcatnip/catnipconfig.hpp.in"
-  "${PROJECT_SOURCE_DIR}/src/libcatnip/catnipconfig.hpp"
+  "${PROJECT_SOURCE_DIR}/src/libcatnip/catnip_config.hpp.in"
+  "${PROJECT_SOURCE_DIR}/src/libcatnip/catnip_config.hpp"
   )
 
 ##############################################################################
