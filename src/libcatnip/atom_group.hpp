@@ -67,6 +67,7 @@ namespace catnip {
       std::unordered_map<FileType,std::string> files_;
       std::unordered_map<MatrixType,std::unique_ptr<Eigen::MatrixXd>> matrices_;
     public:
+      AtomGroup() = default;
       AtomGroup(std::string group_name) : name_(group_name) {};
    
       void addFile(const std::string file_name) { file_names_.push_back(file_name); }

@@ -8,6 +8,7 @@
 
 // Standard includes
 #include <map>
+#include <memory>
 #include <vector>
 
 namespace catnip {
@@ -27,7 +28,7 @@ namespace catnip {
       // Atoms in each component that share the same location with atoms in
       // the complex but do not share the same element
       std::map<int,std::vector<std::pair<int,int>>> linked_atoms_;
-      AtomGroupContainer atm_grp_cont_;    
+      std::unique_ptr<AtomGroupContainer> atm_grp_cont_;    
       int index_complex_;
     public:
 
@@ -40,7 +41,7 @@ namespace catnip {
         int complex_atm_ind;
       };
 
-      AtomSystem(AtomGroupContainer atm_cont);
+      AtomSystem(std::unique_ptr<AtomGroupContainer> atm_cont);
 
       /**
        * @brief assign basis functions to atom group
@@ -70,12 +71,12 @@ namespace catnip {
 
       int getMaxBasisFunctions(const GroupType & type) const;
 
-      const AtomGroup & getComplex() const {
-        return atm_grp_cont_.at(index_complex_); 
+      const std::unique_ptr<AtomGroup> & getComplex() const {
+        return atm_grp_cont_->at(index_complex_); 
       }       
 
       std::vector<int> getComponentIndices() const noexcept { 
-        return atm_grp_cont_.getGroups(GroupType::Component);
+        return atm_grp_cont_->getGroups(GroupType::Component);
       }
 
 
@@ -87,7 +88,7 @@ namespace catnip {
        */
       std::vector<Link> getLinkedAtomsWithDifferentElements() const noexcept;
 
-      const AtomGroup & at(int ind) const;       
+      const std::unique_ptr<AtomGroup> & at(int ind) const;       
       /**
        * @brief Check that every atom knows how many basis functions are
        * assigned to it

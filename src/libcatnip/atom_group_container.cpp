@@ -185,7 +185,7 @@ namespace catnip {
     std::cout << "Adding group " << atom_group.getName() << std::endl; 
     if( isUniqueGroup_(atom_group) ){
       std::cout << "Is unique" << std::endl;
-      atom_groups_.push_back(atom_group);
+      atom_groups_.push_back(std::move(atom_group));
     } else {
       return;
     }

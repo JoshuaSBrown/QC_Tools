@@ -27,7 +27,7 @@ namespace catnip {
    * are an island a complex or a component.
    */
   class AtomGroupContainer {
-      std::vector<AtomGroup> atom_groups_;
+      std::vector<std::unique_ptr<AtomGroup>> atom_groups_;
      
       bool group_types_uptodate_ = false; 
 
@@ -47,18 +47,18 @@ namespace catnip {
 
       // Invalidates groups if non const because cannot ensure that groups are
       // not changed
-      std::vector<AtomGroup>::iterator 
+      std::vector<std::unique_ptr<AtomGroup>>::iterator 
         begin() { group_types_uptodate_ = false; return atom_groups_.begin(); }
 
-      std::vector<AtomGroup>::const_iterator 
+      std::vector<std::unique_ptr<AtomGroup>>::const_iterator 
         begin() const { return atom_groups_.begin(); }
 
       // Invalidates groups if non const because cannot ensure that groups are
       // not changed
-      std::vector<AtomGroup>::iterator 
+      std::vector<std::unique_ptr<AtomGroup>>::iterator 
         end() { group_types_uptodate_ = false; return atom_groups_.end(); }
  
-      std::vector<AtomGroup>::const_iterator 
+      std::vector<std::unique_ptr<AtomGroup>>::const_iterator 
         end() const { return atom_groups_.end(); }
 
       void add( AtomGroup atom_group );
@@ -90,12 +90,12 @@ namespace catnip {
        */
       std::vector<int> getGroups(const GroupType & type) const noexcept;     
 
-      AtomGroup & at(size_t ind) { 
+      std::unique_ptr<AtomGroup> & at(size_t ind) { 
         group_types_uptodate_ = false; 
         return atom_groups_.at(ind);
       }
 
-      const AtomGroup & at(size_t ind) const { return   atom_groups_.at(ind);}
+      const std::unique_ptr<AtomGroup> & at(size_t ind) const { return   atom_groups_.at(ind);}
   };
 
   
