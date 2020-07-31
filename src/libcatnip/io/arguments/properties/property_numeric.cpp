@@ -32,21 +32,17 @@ bool PropertyNumeric::propValid(const std::any & val) {
     converted_val = any_cast<double>(val);
   }
 
-  if( options_[Option::MIN].type() != typeid(DefaultValue::DEFAULT) ){
-    // ignore it otherwise, there is no min option 
-    double min_val = any_cast<double>(options_[Option::MIN]);
-    if ( converted_val < min_val ) {
-      string err = "The value provided to the property is less than the minimum allowed.";
-      throw invalid_argument(err);
-    }
+  // ignore it otherwise, there is no min option 
+  double min_val = any_cast<double>(options_[Option::MIN]);
+  if ( converted_val < min_val ) {
+    string err = "The value provided to the property is less than the minimum allowed.";
+    throw invalid_argument(err);
   }
-  if( options_[Option::MAX].type() != typeid(DefaultValue::DEFAULT) ){
-    // ignore it otherwise, there is no min option 
-    double max_val = any_cast<double>(options_[Option::MAX]);
-    if ( converted_val < max_val ) {
-      string err = "The value provided to the property is greater than the maximum allowed.";
-      throw invalid_argument(err);
-    }
+  // ignore it otherwise, there is no min option 
+  double max_val = any_cast<double>(options_[Option::MAX]);
+  if ( converted_val < max_val ) {
+    string err = "The value provided to the property is greater than the maximum allowed.";
+    throw invalid_argument(err);
   }
   return true;
 }

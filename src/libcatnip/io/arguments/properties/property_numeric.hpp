@@ -5,6 +5,7 @@
 #include "propertyobject.hpp"
 
 #include <any>
+#include <limits>
 
 namespace catnip {
 
@@ -15,8 +16,8 @@ class PropertyNumeric : public PropertyObject {
 
  public:
   PropertyNumeric(void) {
-    options_[Option::MIN] = DefaultValue::DEFAULT;
-    options_[Option::MAX] = DefaultValue::DEFAULT; 
+    options_[Option::MIN] = std::numeric_limits<double>::min;
+    options_[Option::MAX] = std::numeric_limits<double>::max; 
   };
 
   virtual std::vector<Option> getPropertyOptions(void) const noexcept final {
