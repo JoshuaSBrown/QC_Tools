@@ -2,6 +2,7 @@
 #ifndef _CATNIP_PROPERTY_OBJECT_HPP
 #define _CATNIP_PROPERTY_OBJECT_HPP
 
+#include <any>
 #include <exception>
 #include <iostream>
 #include <map>
@@ -13,70 +14,61 @@
 
 namespace catnip {
 
-template <typename S, typename T>
+enum class PropertyType {
+  UNKNOWN
+};
+
+enum class Option {
+  NO_OPTIONS
+};
+
 class PropertyObject {
  protected:
   // Map key is the option name and the type "int, double etc"
   // void * points to the correct value for that type
-  std::map<std::string, void *> options_;
+  std::map<Option, std::any> options_;
 
-  bool propOptionValid_(const std::string &option) const {
-    for (const auto &opt : options_) {
-      if (opt.first.compare(option) == 0) return true;
-    }
-    return false;
+  bool propOptionValid_(const Option &option) const {
+    return options_.count(option);
   }
 
-  void setPropOption_(const std::string &option, const T &val) {
-
-    if (options_.count(option) == 0) {
-      T *opt = new T(val);
-      options_[option] = static_cast<void *>(opt);
-    } else {
-      T *opt = static_cast<T *>(options_[option]);
-      *opt = val;
-    }
+  void setPropOption_(const Option &option, const std::any &val) {
+      options_[option] = val;
   }
 
-  virtual std::string getName_(void) const { return "UNKNOWN"; }
+  virtual PropertyType getPropertyType_(void) const noexcept 
+  { return PropertyType::UNKNOWN; }
 
-  virtual std::vector<std::string> getOpts_(void) const {
-    std::vector<std::string> options{"NO_OPTIONS"};
+  virtual std::vector<Option> getOpts_(void) const noexcept {
+    std::vector<Option> options{Option::NO_OPTIONS};
     return options;
   }
 
  public:
   virtual ~PropertyObject(void) {
-    for (auto itr : options_) {
-      T *opt = static_cast<T *>(itr.second);
-      delete opt;
-    }
-    options_.clear();
   }
 
-  virtual bool propValid(const S &value) = 0;
+  virtual bool propValid(const std::any &value) = 0;
 
-  std::string getPropertyName(void) const { return getName_(); }
+  PropertyType getPropertyType(void) const noexcept { return getPropertyType_(); }
 
-  std::vector<std::string> getPropertyOptions(void) const { return getOpts_(); }
+  std::vector<Option> getPropertyOptions(void) const noexcept { return getOpts_(); }
 
   // Setup the valid options associated with the parameter
-  void setPropOption(std::string option, const T & val) {
+  void setPropOption(Option option, const std::any & val) {
     if (!propOptionValid_(option)) {
-      throw std::invalid_argument("Property option is unrecognized " + option);
+      throw std::invalid_argument("Property option is unrecognized.");
     }
     setPropOption_(option, val);
   }
 
-  T getPropOption(const std::string &option) const {
+  template<class T>
+  T getPropOption(const Option &option) const {
     if (!propOptionValid_(option)) {
-      std::string err = "" + option +
-                        " is an unrecognized property option for "
-                        "property " +
-                        getName_();
+      std::string err = " An unrecognized property option was detected.";
       throw std::invalid_argument(err);
     }
-    return *(static_cast<T *>(options_.at(option)));
+    return std::any_cast<T>(options_.at(option));
   }
 
   virtual void postCheck(void) const { return; }
