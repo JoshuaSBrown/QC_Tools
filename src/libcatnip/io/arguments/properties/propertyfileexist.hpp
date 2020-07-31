@@ -7,16 +7,24 @@
 
 namespace catnip {
 
-class PropertyFileExist : public PropertyObject<std::string, int> {
+class PropertyFileExist : public PropertyObject {
  private:
   bool fileExist(const std::string &) const;
-  std::string getName_(void) const { return "PROPERTY_FILE_EXIST"; }
-  std::vector<std::string> getOpts_(void) const;
 
  public:
   explicit PropertyFileExist(void);
-  PropertyFileExist(int fileMustExist);
-  bool propValid(const std::string &fileName);
+  PropertyFileExist(bool fileMustExist);
+
+  virtual bool propValid(const std::any &fileName) final;
+
+  virtual PropertyType getPropertyType() const noexcept final {
+    return PropertyType::FILE_EXISTS;
+  }
+
+  virtual std::vector<Option> getPropertyOptions(void) const noexcept final {
+    return std::vector<Option> {Option::MUST_EXIST,Option::DOES_EXIST};
+  }
+
   void postCheck(void) const;
 };
 
