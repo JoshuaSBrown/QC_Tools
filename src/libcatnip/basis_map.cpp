@@ -29,10 +29,10 @@ namespace catnip {
     // offset_map[2] = 5; // atom3
 
     std::unordered_map<int,int> offset_map;
-    const AtomGroup & complex_grp = atm_sys.getComplex();
+    const std::unique_ptr<AtomGroup> & complex_grp = atm_sys.getComplex();
     int offset = 0;
     int complex_atm_ind = 0;
-    for ( const std::shared_ptr<Atom> & atm_ptr : complex_grp){
+    for ( const std::shared_ptr<Atom> & atm_ptr : *complex_grp){
       offset_map[complex_atm_ind] = offset;
       offset += atm_ptr->getBasisFuncCount();
       ++complex_atm_ind;
@@ -41,13 +41,13 @@ namespace catnip {
     std::vector<int> component_indices = atm_sys.getComponentIndices();
     int sys_ind = 0;
     for ( int & component_ind : component_indices) {
-      const AtomGroup & component_grp = atm_sys.at(component_ind);
-      std::cout << "Component grp " << component_grp.getName() << " component ind " << component_ind << " size " << component_grp.size() << std::endl;
-      for( const std::shared_ptr<Atom> & atm_ptr : component_grp){
-        std::vector<int> atm_indices = complex_grp.find(atm_ptr->getPos());
+      const std::unique_ptr<AtomGroup> & component_grp = atm_sys.at(component_ind);
+      std::cout << "Component grp " << component_grp->getName() << " component ind " << component_ind << " size " << component_grp->size() << std::endl;
+      for( const std::shared_ptr<Atom> & atm_ptr : *component_grp){
+        std::vector<int> atm_indices = complex_grp->find(atm_ptr->getPos());
         assert(atm_indices.size() == 1);
         int atm_ind = atm_indices.at(0);
-        int num_basis = complex_grp.at(atm_ind)->getBasisFuncCount();
+        int num_basis = complex_grp->at(atm_ind)->getBasisFuncCount();
         int complex_offset = offset_map[atm_ind];
 
         for ( int ind_temp = 0; ind_temp<num_basis; ++ind_temp){

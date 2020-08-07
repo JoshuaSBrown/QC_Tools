@@ -6,15 +6,17 @@
 #include <set>
 
 namespace catnip {
-class ArgumentSwitch : public ArgumentObject<std::string> {
- private:
-  std::string getName_(void) const { return "ARGUMENT_SWITCH"; }
-  void registerProperties_(void);
+class ArgumentSwitch : public ArgumentObject {
 
  public:
+
+  virtual ArgumentType getArgumentType(void) const noexcept final {
+    return ArgumentType::SWITCH;
+  }
+
   ArgumentSwitch(void);
-  bool requiresParameter(void) { return false; }
-  bool positive(int val) const { return ((val == 1) ? true : false); }
+  virtual bool requiresParameter(void) final { return false; }
+  bool positive(int val) const noexcept { return ((val == 1) ? true : false); }
   bool positive(std::string val) const;
 };
 

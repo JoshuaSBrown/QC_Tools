@@ -7,37 +7,22 @@
 using namespace catnip;
 using namespace std;
 
-PropertyFileExt::PropertyFileExt(void) {
-  set<string> exts_;
-  exts_.insert("*");
-  setPropOption_("ALLOWED_FILE_EXT", exts_);
-}
-
 PropertyFileExt::PropertyFileExt(string ext) {
   checkExt(ext);
-  set<string> exts_;
-  exts_.insert(ext);
-  setPropOption_("ALLOWED_FILE_EXT", exts_);
+  setPropOption_(Option::ALLOWED_VALUES, ext);
 }
 
 PropertyFileExt::PropertyFileExt(set<string> exts) {
-  set<string> exts_;
-  for (auto ext : exts) {
+  for (const std::string & ext : exts) {
     checkExt(ext);
-    exts_.insert(ext);
   }
-  setPropOption_("ALLOWED_FILE_EXT", exts_);
-}
-
-vector<string> PropertyFileExt::getOpts_(void) const {
-  vector<string> options{"ALLOWED_FILE_EXT"};
-  return options;
+  setPropOption_(Option::ALLOWED_VALUES, exts);
 }
 
 void PropertyFileExt::extSupported(const string& ext) const {
   checkExt(ext);
-  auto exts_ = getPropOption("ALLOWED_FILE_EXT");
-  for (auto ext_ : exts_) {
+  auto exts_ = getPropOption<std::set<std::string>>(Option::ALLOWED_VALUES);
+  for (const std::string & ext_ : exts_) {
     if (ext_[0] == '*') {
       return;
     } else if (ext_.compare(ext) == 0) {
@@ -65,19 +50,19 @@ void PropertyFileExt::checkExt(const string& ext) const {
   return;
 }
 
-void PropertyFileExt::setPropOption(std::string option,
+void PropertyFileExt::setPropOption(Option option,
                                     std::set<std::string> vars) {
   PropertyObject::setPropOption(option, vars);
 }
 
-void PropertyFileExt::setPropOption(std::string option, std::string var) {
+void PropertyFileExt::setPropOption(Option option, std::string var) {
   set<string> vars;
   vars.insert(var);
   PropertyObject::setPropOption(option, vars);
 }
 
-bool PropertyFileExt::propValid(const string& fileNamePath) {
-  string fileName = lastStringInPath(fileNamePath);
+bool PropertyFileExt::propValid(const any & fileNamePath) {
+  string fileName = lastStringInPath(any_cast<std::string>(fileNamePath));
   string ext = grabStrAfterLastOccuranceInclusive(fileName, ".");
   extSupported(ext);
   return true;

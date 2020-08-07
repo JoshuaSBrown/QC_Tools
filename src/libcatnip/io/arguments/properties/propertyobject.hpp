@@ -15,11 +15,30 @@
 namespace catnip {
 
 enum class PropertyType {
-  UNKNOWN
+  UNKNOWN,
+  NUMERIC,
+  FILE_EXISTS,
+  FILE_EXT,
+  SISTER_FILE,
+  STRING,
+  STRING_CHOICE,
+  SWITCH
 };
 
 enum class Option {
-  NO_OPTIONS
+  NO_OPTIONS,
+  MIN,
+  MAX,
+  MIN_LENGTH,
+  MAX_LENGTH,
+  MUST_EXIST,
+  DOES_EXIST,
+  ALLOWED_VALUES,
+  ENFORCED,
+  FILE_NAME,
+  FILE_PATH,
+  FILE_PATH_NAME,
+  VALUE
 };
 
 class PropertyObject {
@@ -32,29 +51,27 @@ class PropertyObject {
     return options_.count(option);
   }
 
-  void setPropOption_(const Option &option, const std::any &val) {
+  virtual void setPropOption_(const Option &option, const std::any &val) {
       options_[option] = val;
   }
 
-  virtual PropertyType getPropertyType_(void) const noexcept 
-  { return PropertyType::UNKNOWN; }
-
-  virtual std::vector<Option> getOpts_(void) const noexcept {
-    std::vector<Option> options{Option::NO_OPTIONS};
-    return options;
-  }
-
  public:
-  virtual ~PropertyObject(void) {
-  }
+  virtual ~PropertyObject(void) { }
 
   virtual bool propValid(const std::any &value) = 0;
 
-  PropertyType getPropertyType(void) const noexcept { return getPropertyType_(); }
+  virtual PropertyType getPropertyType(void) const noexcept = 0;
 
-  std::vector<Option> getPropertyOptions(void) const noexcept { return getOpts_(); }
+  std::vector<Option> getPropertyOptions(void) const {
+    std::vector<Option> options;
+    for ( std::pair<Option,std::any> option : options_){
+      options.push_back(option.first); 
+    }
+    return options;
+  } 
 
   // Setup the valid options associated with the parameter
+  // WARNING setting a property value will overwrite existing values
   void setPropOption(Option option, const std::any & val) {
     if (!propOptionValid_(option)) {
       throw std::invalid_argument("Property option is unrecognized.");

@@ -174,10 +174,16 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   flag19.push_back(desc);
 
   vector<string> flag20;
-  flag19.push_back("--input_files");
-  flag19.push_back("-in");
-  desc = "Provide all input files and allow catnip to figure the rest out.";
-  flag19.push_back(desc);
+  flag20.push_back("--log");
+  flag20.push_back("-l");
+  desc = "Provide all .log files and allow catnip to figure the rest out.";
+  flag20.push_back(desc);
+
+  vector<string> flag21;
+  flag21.push_back("--pun");
+  flag21.push_back("-p");
+  desc = "Provide all .pun/.7/.orb files and allow catnip to figure the rest out.";
+  flag21.push_back(desc);
 
   set<vector<string>> flags;
   flags.insert(flag1);
@@ -198,22 +204,30 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   flags.insert(flag18);
   flags.insert(flag19);
   flags.insert(flag20);
+  flags.insert(flag21);
 
   unique_ptr<ArgumentParser> ArgPars(new ArgumentParser(flags));
 
   // Setup rules for handling flags
-  set<string> exts_all{".orb", ".7", ".pun", ".log"};
+  set<string> exts{".orb", ".7", ".pun"};
+  string ext_log = ".log";
+
   {
-    ArgPars->setFlagArgOpt("--input_files", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
-                           "ALLOWED_FILE_EXT", exts_all);
-    ArgPars->setFlagArgOpt("--input_files", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
-                           "ALLOWED_SISTER_FILE_EXT", exts_all);
-    ArgPars->setFlagArgOpt("--input_files", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
+    ArgPars->setFlagArgOpt("--log", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
+                           "ALLOWED_FILE_EXT", ext_log);
+    ArgPars->setFlagArgOpt("--log", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
+                           "ALLOWED_SISTER_FILE_EXT", exts);
+    ArgPars->setFlagArgOpt("--log", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
+                           "FILE_MUST_EXIST", 0);
+
+    ArgPars->setFlagArgOpt("--pun", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
+                           "ALLOWED_FILE_EXT", exts);
+    ArgPars->setFlagArgOpt("--pun", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
+                           "ALLOWED_SISTER_FILE_EXT", ext_log);
+    ArgPars->setFlagArgOpt("--pun", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
                            "FILE_MUST_EXIST", 0);
   }
 
-  set<string> exts{".orb", ".7", ".pun"};
-  string ext_log = ".log";
   // Setting up rules guiding pun files
   {
     ArgPars->setFlagArgOpt("--pun_P", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
@@ -386,7 +400,7 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse) {
     string fileName;
     auto exists = ArgParse->getFlagArgOptValue(flag, argu, prop, opt);
     if (exists.compare("1") == 0) {
-      flag_arg[flag] = ArgParse->getStr(flag);
+      flag_arg[flag] = ArgParse->getStrs(flag).at(0);
     }
     prop = "PROPERTY_SISTER_FILE";
     opt = "SISTER_FILE_EXISTS";
@@ -405,72 +419,103 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse) {
   }
 
   unique_ptr<Parameters> Par(new Parameters);
-  // Read file related flags
-  if (flag_arg.count("--pun_P") != 0) {
-    Par->setPunP(flag_arg["--pun_P"]);
-  } else if (flag_sister_arg.count("--pun_P") != 0) {
-    Par->setPunP(flag_sister_arg["--pun_P"]);
-  } else {
-    throw runtime_error("Unable to find file for flag --pun_P");
-  }
-  if (flag_arg.count("--pun_1") != 0) {
-    Par->setPun1(flag_arg["--pun_1"]);
-  } else if (flag_sister_arg.count("--pun_1") != 0) {
-    Par->setPun1(flag_sister_arg["--pun_1"]);
-  } else {
-    throw runtime_error("Unable to find file for flag --pun_1");
-  }
-  if (flag_arg.count("--pun_2") != 0) {
-    Par->setPun2(flag_arg["--pun_2"]);
-  } else if (flag_sister_arg.count("--pun_2") != 0) {
-    Par->setPun2(flag_sister_arg["--pun_2"]);
-  } else {
-    throw runtime_error("Unable to find file for flag --pun_2");
-  }
-  if (flag_arg.count("--log_P") != 0) {
-    Par->setLogP(flag_arg["--log_P"]);
-  } else if (flag_sister_arg.count("--log_P") != 0) {
-    Par->setLogP(flag_sister_arg["--log_P"]);
-  } else {
-    throw runtime_error("Unable to find file for flag --log_P");
-  }
-  if (flag_arg.count("--log_1") != 0) {
-    Par->setLog1(flag_arg["--log_1"]);
-  } else if (flag_sister_arg.count("--log_1") != 0) {
-    Par->setLog1(flag_sister_arg["--log_1"]);
-  } else {
-    throw runtime_error("Unable to find file for flag --log_1");
-  }
-  if (flag_arg.count("--log_2") != 0) {
-    Par->setLog2(flag_arg["--log_2"]);
-  } else if (flag_sister_arg.count("--log_2") != 0) {
-    Par->setLog2(flag_sister_arg["--log_2"]);
-  } else {
-    throw runtime_error("Unable to find file for flag --log_2");
+
+  bool generic_file_pun_input = true;
+  bool generic_file_log_input = true;
+  // Run file related checks
+  if ( flag_arg.count("--pun_P") || 
+      flag_arg.count("--pun_1") ||
+      flag_arg.count("--pun_2") ) {
+    generic_file_pun_input = false;
+    if ( flag_arg.count("--pun")) {
+      throw runtime_error("Cannot specify (--pun_P, --pun_1, --pun_2) options "
+          "as well as --pun. These options are mutually exclusive");
+    }
   }
 
+  if ( flag_arg.count("--log_P") || 
+      flag_arg.count("--log_1") ||
+      flag_arg.count("--log_2") ) {
+    generic_file_log_input = false;
+    if ( flag_arg.count("--log")) {
+      throw runtime_error("Cannot specify (--log_P, --log_1, --log_2) options "
+          "as well as --log. These options are mutually exclusive");
+    }
+  }
+
+  // Read file related flags
+  if ( generic_file_pun_input == false ){
+    if (flag_arg.count("--pun_P") != 0) {
+      Par->setPunP(flag_arg["--pun_P"]);
+    } else if (flag_sister_arg.count("--pun_P") != 0) {
+      Par->setPunP(flag_sister_arg["--pun_P"]);
+    } else {
+      throw runtime_error("Unable to find file for flag --pun_P");
+    }
+    if (flag_arg.count("--pun_1") != 0) {
+      Par->setPun1(flag_arg["--pun_1"]);
+    } else if (flag_sister_arg.count("--pun_1") != 0) {
+      Par->setPun1(flag_sister_arg["--pun_1"]);
+    } else {
+      throw runtime_error("Unable to find file for flag --pun_1");
+    }
+    if (flag_arg.count("--pun_2") != 0) {
+      Par->setPun2(flag_arg["--pun_2"]);
+    } else if (flag_sister_arg.count("--pun_2") != 0) {
+      Par->setPun2(flag_sister_arg["--pun_2"]);
+    } else {
+      throw runtime_error("Unable to find file for flag --pun_2");
+    }
+  } else {
+
+  }
+  if( generic_file_log_input == false ){
+    if (flag_arg.count("--log_P") != 0) {
+      Par->setLogP(flag_arg["--log_P"]);
+    } else if (flag_sister_arg.count("--log_P") != 0) {
+      Par->setLogP(flag_sister_arg["--log_P"]);
+    } else {
+      throw runtime_error("Unable to find file for flag --log_P");
+    }
+    if (flag_arg.count("--log_1") != 0) {
+      Par->setLog1(flag_arg["--log_1"]);
+    } else if (flag_sister_arg.count("--log_1") != 0) {
+      Par->setLog1(flag_sister_arg["--log_1"]);
+    } else {
+      throw runtime_error("Unable to find file for flag --log_1");
+    }
+    if (flag_arg.count("--log_2") != 0) {
+      Par->setLog2(flag_arg["--log_2"]);
+    } else if (flag_sister_arg.count("--log_2") != 0) {
+      Par->setLog2(flag_sister_arg["--log_2"]);
+    } else {
+      throw runtime_error("Unable to find file for flag --log_2");
+    }
+  } else {
+
+  }
   // Read spin related flags, do not need if statement because default values
   // are defined
-  Par->setSpinP(ArgParse->getStr("--spin_P"));
-  Par->setSpin1(ArgParse->getStr("--spin_1"));
-  Par->setSpin2(ArgParse->getStr("--spin_2"));
+  Par->setSpinP(ArgParse->getStrs("--spin_P").at(0));
+  Par->setSpin1(ArgParse->getStrs("--spin_1").at(0));
+  Par->setSpin2(ArgParse->getStrs("--spin_2").at(0));
 
   // Determine if we are doing a counterpoise calculation
-  Par->setCounterPoise(ArgParse->getInt("--counter_poise"));
-  Par->setPrintSwitch(ArgParse->getInt("--all"));
-  Par->setCitation(ArgParse->getInt("--citation"));
+  Par->setCounterPoise((ArgParse->getInts("--counter_poise")).at(0));
+  Par->setPrintSwitch(ArgParse->getInts("--all").at(0));
+  Par->setCitation(ArgParse->getInts("--citation").at(0));
   // Read Orbital related flags
   {
-    string orb_typ_1 = ArgParse->getStr("--orbital_type_1");
+    string orb_typ_1 = ArgParse->getStrs("--orbital_type_1").at(0);
     Par->setOrbType1(orb_typ_1);
     if (orb_typ_1.compare("HOMO") == 0) {
-      int MO = ArgParse->getInt("--orbital_num_1");
+      int MO = ArgParse->getInts("--orbital_num_1").at(0);
       if (MO > 0) {
         throw invalid_argument("HOMO orbital must be 0 or a negative number");
       }
       Par->setOrbNum1(MO);
     } else if (orb_typ_1.compare("LUMO") == 0) {
-      int MO = ArgParse->getInt("--orbital_num_1");
+      int MO = ArgParse->getInts("--orbital_num_1").at(0);
       if (MO < 0) {
         throw invalid_argument("LUMO orbital must be 0 or a positive number");
       }
@@ -479,16 +524,16 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse) {
   }
 
   {
-    string orb_typ_2 = ArgParse->getStr("--orbital_type_2");
+    string orb_typ_2 = ArgParse->getStrs("--orbital_type_2").at(0);
     Par->setOrbType2(orb_typ_2);
     if (orb_typ_2.compare("HOMO") == 0) {
-      int MO = ArgParse->getInt("--orbital_num_2");
+      int MO = ArgParse->getInts("--orbital_num_2").at(0);
       if (MO > 0) {
         throw invalid_argument("HOMO orbital must be 0 or a negative number");
       }
       Par->setOrbNum2(MO);
     } else if (orb_typ_2.compare("LUMO") == 0) {
-      int MO = ArgParse->getInt("--orbital_num_2");
+      int MO = ArgParse->getInts("--orbital_num_2").at(0);
       if (MO < 0) {
         throw invalid_argument("LUMO orbital must be 0 or a positive number");
       }

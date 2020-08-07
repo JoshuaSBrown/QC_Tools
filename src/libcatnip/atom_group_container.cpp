@@ -31,13 +31,13 @@ namespace catnip {
    * Local private functions
    ****************************************************************************/
   static std::unordered_map<Atom,std::vector<GroupAtomIndex>> mapAtomsToGroups_(
-      const std::vector<AtomGroup> & atom_groups_ ){
+      const std::vector<std::unique_ptr<AtomGroup>> & atom_groups_ ){
 
     std::unordered_map<Atom,std::vector<GroupAtomIndex>> atm_map;
     int grp_index = 0;
-    for ( const AtomGroup & grp : atom_groups_ ){
+    for ( const std::unique_ptr<AtomGroup> & grp : atom_groups_ ){
       int atom_index = 0;
-      for ( auto & atom_ptr : grp ){
+      for ( auto & atom_ptr : *grp ){
         atm_map[*atom_ptr].push_back(GroupAtomIndex{atom_index,grp_index});
         ++atom_index;
       }
@@ -48,15 +48,15 @@ namespace catnip {
 
   static const std::map<int,std::vector<int>> calculateConnectedGroups_(
       std::unordered_map<Atom,std::vector<GroupAtomIndex>> atm_map,
-      const std::vector<AtomGroup> & atom_groups_ 
+      const std::vector<std::unique_ptr<AtomGroup>> & atom_groups_ 
       ){
 
     std::map<int,std::vector<int>> grp_indices;
     int grp_index = 0;
-    for ( const AtomGroup & grp : atom_groups_ ){
+    for ( const std::unique_ptr<AtomGroup> & grp : atom_groups_ ){
       // Initialize
       grp_indices[grp_index];
-      for ( const auto & atom_ptr : grp ){
+      for ( const auto & atom_ptr : *grp ){
         for ( const GroupAtomIndex & grp_atm_ind : atm_map[*atom_ptr] ){
           if (grp_atm_ind.grp_ind != grp_index ){
             // Check that group has not already been added
@@ -78,19 +78,19 @@ namespace catnip {
 
   static void identifyAtomGroupsOfIslandType_(
       const std::map<int,std::vector<int>> & grp_indices,
-      std::vector<AtomGroup> & atom_groups_ 
+      std::vector<std::unique_ptr<AtomGroup>> & atom_groups_ 
       ) {
     for ( std::pair<int,std::vector<int>> grp_groups : grp_indices){
       if(grp_groups.second.size() == 0) {
         std::cout << "Empty makeing unit, does not share atoms" << std::endl;
-        atom_groups_.at(grp_groups.first).setType(GroupType::Island);
+        atom_groups_.at(grp_groups.first)->setType(GroupType::Island);
       }
     }
   }
 
   static void identifyAtomGroupsOfComponentComplexAndUnknownTypes_(
       const std::map<int,std::vector<int>> & grp_indices,
-      std::vector<AtomGroup> & atom_groups_ 
+      std::vector<std::unique_ptr<AtomGroup>> & atom_groups_ 
       ){
     std::vector<int> potential_complexes;
     for ( std::pair<int,std::vector<int>> grp_groups : grp_indices){
@@ -111,14 +111,14 @@ namespace catnip {
         } 
       }
       if ( candidate_components_valid){
-        atom_groups_.at(potential_complex).setType(GroupType::Complex);
+        atom_groups_.at(potential_complex)->setType(GroupType::Complex);
         for ( const int & candidate_component : candidate_components){
-          atom_groups_.at(candidate_component).setType(GroupType::Component);
+          atom_groups_.at(candidate_component)->setType(GroupType::Component);
         }
       }else{
-        atom_groups_.at(potential_complex).setType(GroupType::Unknown);
+        atom_groups_.at(potential_complex)->setType(GroupType::Unknown);
         for ( const int & candidate_component : candidate_components){
-          atom_groups_.at(candidate_component).setType(GroupType::Unknown);
+          atom_groups_.at(candidate_component)->setType(GroupType::Unknown);
         }
       }
     }
@@ -127,20 +127,20 @@ namespace catnip {
   /****************************************************************************
    * Private Methods
    ****************************************************************************/
-  bool AtomGroupContainer::isUniqueGroup_( const AtomGroup & atom_group ) const {
+  bool AtomGroupContainer::isUniqueGroup_( const std::unique_ptr<AtomGroup> & atom_group ) const {
     // Step 1 check the size of the atom group 
     if(atom_groups_.size() == 0) return true;
 
-    for ( const AtomGroup & grp : atom_groups_ ){
-      if ( grp.size() == atom_group.size() ){
-        std::vector<bool> matchs(grp.size(),false);
+    for ( const std::unique_ptr<AtomGroup> & grp : atom_groups_ ){
+      if ( grp->size() == atom_group->size() ){
+        std::vector<bool> matchs(grp->size(),false);
         // Determine if a match is found
-        for ( const auto & atm : atom_group ) {
+        for ( const auto & atm : *atom_group ) {
           size_t index = 0;
           for ( bool matched : matchs ){
             if ( not matched ){
               // Compare atoms 
-              if ( *atm == *(grp.at(index)) ){
+              if ( *atm == *(grp->at(index)) ){
                 matchs.at(index) = true;
                 break;
               }
@@ -150,7 +150,7 @@ namespace catnip {
           // If an atom was not matched it means that there is at least one 
           // difference, and so we do not need to cycle through the other
           // atoms in this particular group 
-          if(index == grp.size()) break;
+          if(index == grp->size()) break;
         } 
         // Count the number of matches in the vector if all of the elements match
         // then the atom group is not unique
@@ -170,8 +170,8 @@ namespace catnip {
   std::vector<int> AtomGroupContainer::getGroups(const GroupType & type) const noexcept{
     std::vector<int> groups;
     int ind1 = 0;
-    for( const AtomGroup & group : atom_groups_ ){
-      if( group.getType() == type){
+    for( const std::unique_ptr<AtomGroup> & group : atom_groups_ ){
+      if( group->getType() == type){
         groups.push_back(ind1);
       }
       ++ind1;
@@ -181,8 +181,8 @@ namespace catnip {
 
   // As soon as we add a new atom group it should invalidate the labels on 
   // all the other groups
-  void AtomGroupContainer::add( AtomGroup atom_group ) {
-    std::cout << "Adding group " << atom_group.getName() << std::endl; 
+  void AtomGroupContainer::add( std::unique_ptr<AtomGroup> & atom_group ) {
+    std::cout << "Adding group " << atom_group->getName() << std::endl; 
     if( isUniqueGroup_(atom_group) ){
       std::cout << "Is unique" << std::endl;
       atom_groups_.push_back(std::move(atom_group));
@@ -216,8 +216,8 @@ namespace catnip {
 
   bool AtomGroupContainer::exists(GroupType type) const {
     // First check that all the group types have been assigned
-    for ( const AtomGroup & grp : atom_groups_ ){
-      if( grp.getType() == type ) return true;
+    for ( const std::unique_ptr<AtomGroup> & grp : atom_groups_ ){
+      if( grp->getType() == type ) return true;
     }
     return false; 
   }

@@ -21,10 +21,6 @@ class PropertyFileExist : public PropertyObject {
     return PropertyType::FILE_EXISTS;
   }
 
-  virtual std::vector<Option> getPropertyOptions(void) const noexcept final {
-    return std::vector<Option> {Option::MUST_EXIST,Option::DOES_EXIST};
-  }
-
   void postCheck(void) const;
 };
 

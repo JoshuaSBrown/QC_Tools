@@ -9,41 +9,13 @@ using namespace std;
 
 PropertyStringChoice::PropertyStringChoice(void) {
   set<string> set_var1{"false"};
-  setPropOption_("STRING_CHOICE_ENFORCED", set_var1);
+  setPropOption_(Option::ENFORCED, set_var1);
   string str = "NOT_DEFINED";
   set<string> set_var2{str};
-  setPropOption_("STRING_CHOICES", set_var2);
+  setPropOption_(Option::ALLOWED_VALUES, set_var2);
 }
 
-vector<string> PropertyStringChoice::getOpts_(void) const {
-  vector<string> options;
-  options.push_back("STRING_CHOICE_ENFORCED");
-  options.push_back("STRING_CHOICES");
-  return options;
-}
-
-void PropertyStringChoice::setPropOption(std::string option, std::string var) {
-
-  if (option.compare("STRING_CHOICE_ENFORCED") == 0) {
-    if (var.compare("false") == 0 || var.compare("true") == 0) {
-      set<string> set_var{var};
-      setPropOption_(option, set_var);
-      return;
-    } else {
-      throw invalid_argument("The option " + option +
-                             " can only be set to values"
-                             " of true or false you have set it to " +
-                             var);
-    }
-  } else if (option.compare("STRING_CHOICES") == 0) {
-    set<string> set_var{var};
-    setPropOption_(option, set_var);
-  }
-  throw invalid_argument("Unrecognized option value combo " + option + " " +
-                         var);
-}
-
-void PropertyStringChoice::setPropOption(std::string option,
+/*void PropertyStringChoice::setPropOption( option,
                                          set<string> set_vars) {
 
   if (option.compare("STRING_CHOICES") == 0) {
@@ -82,14 +54,15 @@ void PropertyStringChoice::setPropOption(std::string option,
   trim(vars);
   throw invalid_argument("Unrecognized option value combo " + option + " " +
                          vars);
-}
+}*/
 
-bool PropertyStringChoice::propValid(const string& string_choice) {
+bool PropertyStringChoice::propValid(const any& choice) {
 
-  set<string> opt_val = getPropOption("STRING_CHOICE_ENFORCED");
+  std::string string_choice = any_cast<std::string>(choice);
+  set<string> opt_val = getPropOption<set<string>>(Option::ENFORCED);
   string val = *(opt_val.begin());
   if (val.compare("true") == 0) {
-    set<string> str_choices = getPropOption("STRING_CHOICES");
+    set<string> str_choices = getPropOption<set<string>>(Option::ALLOWED_VALUES);
     if (str_choices.count(string_choice) > 0) return true;
     throw invalid_argument("The value " + string_choice +
                            " is not a valid option");

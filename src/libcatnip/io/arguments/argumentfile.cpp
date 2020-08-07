@@ -8,14 +8,12 @@
 using namespace catnip;
 using namespace std;
 
-ArgumentFile::ArgumentFile(void) { registerProperties_(); }
+ArgumentFile::ArgumentFile(void) { 
+  auto prop_file_exist = std::unique_ptr<PropertyObject>(new PropertyFileExist());
+  propobjs_.push_back(prop_file_exist);
+  auto prop_file_ext = std::unique_ptr<PropertyObject>(new PropertyFileExt());
+  propobjs_.push_back(prop_file_ext);
+  auto prop_sis_file = std::unique_ptr<PropertyObject>(new PropertySisterFile());
+  propobjs_.push_back(prop_sis_file);
 
-void ArgumentFile::registerProperties_(void) {
-
-  PropertyFileExist* prop_file_exist = new PropertyFileExist();
-  int_propobjs_.push_back(prop_file_exist);
-  PropertyFileExt* prop_file_ext = new PropertyFileExt();
-  string_set_propobjs_.push_back(prop_file_ext);
-  PropertySisterFile* prop_sis_file = new PropertySisterFile();
-  string_vec_propobjs_.push_back(prop_sis_file);
 }

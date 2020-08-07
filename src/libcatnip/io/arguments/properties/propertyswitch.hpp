@@ -6,7 +6,7 @@
 
 namespace catnip {
 
-class PropertySwitch : public PropertyObject<std::string, std::string> {
+class PropertySwitch : public PropertyObject {
  private:
   std::string getName_(void) const { return "PROPERTY_SWITCH"; }
   std::vector<std::string> getOpts_(void) const;
@@ -16,15 +16,13 @@ class PropertySwitch : public PropertyObject<std::string, std::string> {
 
  public:
   PropertySwitch(void);
-  bool propValid(int value) {
-    switchValid(value);
-    return true;
+
+  virtual PropertyType getPropertyType(void) const noexcept final {
+    return PropertyType::SWITCH; 
   }
-  bool propValid(const std::string& value) {
-    switchValid(value);
-    return true;
-  }
-  bool propValid() { return true; }
+
+  virtual bool propValid(const std::any & value) final;
+  bool propValid() const {return true;}
 };
 
 }  // namespace catnip

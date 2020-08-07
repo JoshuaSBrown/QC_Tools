@@ -6,11 +6,9 @@
 using namespace catnip;
 using namespace std;
 
-ArgumentSwitch::ArgumentSwitch(void) { registerProperties_(); }
-
-void ArgumentSwitch::registerProperties_(void) {
-  PropertySwitch* prop_switch = new PropertySwitch;
-  string_propobjs_.push_back(prop_switch);
+ArgumentSwitch::ArgumentSwitch(void) { 
+  auto prop_switch = std::unique_ptr<PropertyObject>(new PropertySwitch);
+  propobjs_.push_back(prop_switch);
 }
 
 bool ArgumentSwitch::positive(string val) const {

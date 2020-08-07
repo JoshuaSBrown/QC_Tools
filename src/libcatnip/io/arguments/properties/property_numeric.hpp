@@ -20,10 +20,6 @@ class PropertyNumeric : public PropertyObject {
     options_[Option::MAX] = std::numeric_limits<double>::max; 
   };
 
-  virtual std::vector<Option> getPropertyOptions(void) const noexcept final {
-    return std::vector<Option> {Option::MIN, Option::MAX};
-  }
-
   virtual PropertyType getPropertyType(void) const noexcept final {
     return PropertyType::NUMERIC;
   }

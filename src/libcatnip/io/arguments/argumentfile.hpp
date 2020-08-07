@@ -7,12 +7,14 @@
 
 namespace catnip {
 
-class ArgumentFile : public ArgumentObject<std::string> {
- private:
-  std::string getName_(void) const { return "ARGUMENT_FILE"; }
-  void registerProperties_(void);
+class ArgumentFile : public ArgumentObject {
 
  public:
+
+  virtual ArgumentType getArgumentType(void) const noexcept final {
+    return ArgumentType::FILES;
+  }
+
   ArgumentFile(void);
 };
 

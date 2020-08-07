@@ -7,11 +7,9 @@
 using namespace catnip;
 using namespace std;
 
-ArgumentString::ArgumentString(void) { registerProperties_(); }
-
-void ArgumentString::registerProperties_(void) {
-  PropertyString* prop_string = new PropertyString;
-  size_t_propobjs_.push_back(prop_string);
-  PropertyStringChoice* prop_string_choice = new PropertyStringChoice;
-  string_set_propobjs_.push_back(prop_string_choice);
+ArgumentString::ArgumentString(void) { 
+  auto prop_string = std::unique_ptr<PropertyObject>(new PropertyString);
+  propobjs_.push_back(prop_string);
+  auto prop_string_choice = std::unique_ptr<PropertyObject>(new PropertyStringChoice);
+  propobjs_.push_back(prop_string_choice);
 }

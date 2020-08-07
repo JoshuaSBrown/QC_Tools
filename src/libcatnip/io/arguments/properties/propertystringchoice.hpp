@@ -8,16 +8,17 @@
 namespace catnip {
 
 class PropertyStringChoice
-    : public PropertyObject<std::string, std::set<std::string>> {
+    : public PropertyObject {
  private:
-  std::string getName_(void) const { return "PROPERTY_STRING_CHOICE"; }
-  std::vector<std::string> getOpts_(void) const;
 
  public:
   PropertyStringChoice(void);
-  void setPropOption(std::string option, std::string var);
-  void setPropOption(std::string option, std::set<std::string> var);
-  bool propValid(const std::string& string_choice);
+
+  virtual PropertyType getPropertyType(void) const noexcept final {
+    return PropertyType::STRING_CHOICE;
+  }
+
+  virtual bool propValid(const std::any& string_choice) final;
 };
 
 }  // namespace catnip

@@ -12,413 +12,123 @@
 #include <string>
 
 namespace catnip {
+
+  enum class ArgumentType {
+    NUMERICAL,
+    FILES,
+    STRING,
+    SWITCH
+  };
 // The template is simply for specifying the type of the argument coming
 // from the command line
-template <typename S>
 class ArgumentObject {
  protected:
-  std::vector<PropertyObject<S, int>*> int_propobjs_;
-  std::vector<PropertyObject<S, double>*> double_propobjs_;
-  std::vector<PropertyObject<S, size_t>*> size_t_propobjs_;
-  std::vector<PropertyObject<S, std::string>*> string_propobjs_;
-  std::vector<PropertyObject<S, std::set<std::string>>*> string_set_propobjs_;
-  std::vector<PropertyObject<S, std::vector<std::string>>*>
-      string_vec_propobjs_;
-
-  virtual std::string getName_(void) const { return "UNKNOWN"; }
-
-  void checkValid_(const S& val) const {
-    for (auto prop : int_propobjs_) {
-      prop->propValid(val);
-    }
-    for (auto prop : double_propobjs_) {
-      prop->propValid(val);
-    }
-    for (auto prop : size_t_propobjs_) {
-      prop->propValid(val);
-    }
-    for (auto prop : string_propobjs_) {
-      prop->propValid(val);
-    }
-    for (auto prop : string_set_propobjs_) {
-      prop->propValid(val);
-    }
-    for (auto prop : string_vec_propobjs_) {
-      prop->propValid(val);
-    }
-  }
-
-  // Register the relevant properties
-  virtual void registerProperties_(void){};
+  std::vector<std::unique_ptr<PropertyObject>> propobjs_;
 
  public:
-  virtual ~ArgumentObject(void) {
-
-    for (auto int_ptr : int_propobjs_) {
-      delete int_ptr;
-    }
-    int_propobjs_.clear();
-    for (auto double_ptr : double_propobjs_) {
-      delete double_ptr;
-    }
-    double_propobjs_.clear();
-    for (auto size_t_ptr : size_t_propobjs_) {
-      delete size_t_ptr;
-    }
-    size_t_propobjs_.clear();
-    for (auto str_ptr : string_propobjs_) {
-      delete str_ptr;
-    }
-    string_propobjs_.clear();
-    for (auto set_ptr : string_set_propobjs_) {
-      delete set_ptr;
-    }
-    string_set_propobjs_.clear();
-    for (auto vec_ptr : string_vec_propobjs_) {
-      delete vec_ptr;
-    }
-    string_vec_propobjs_.clear();
-  }
+  virtual ~ArgumentObject(void) {};
 
   // The argument object by default requires a parameter
   virtual bool requiresParameter(void) { return true; }
 
-  std::string getArgumentName(void) { return getName_(); }
+  virtual ArgumentType getArgumentType(void) const noexcept = 0; 
 
-  std::vector<std::string> getProperties(void) {
-    std::vector<std::string> props;
-    for (auto prop : int_propobjs_) {
-      props.push_back(prop->getPropertyName());
+  std::vector<PropertyType> getProperties(void) {
+    std::vector<PropertyType> props;
+    for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
+      props.push_back(prop->getPropertyType());
     }
-    for (auto prop : double_propobjs_) {
-      props.push_back(prop->getPropertyName());
-    }
-    for (auto prop : size_t_propobjs_) {
-      props.push_back(prop->getPropertyName());
-    }
-    for (auto prop : string_propobjs_) {
-      props.push_back(prop->getPropertyName());
-    }
-    for (auto prop : string_set_propobjs_) {
-      props.push_back(prop->getPropertyName());
-    }
-    for (auto prop : string_vec_propobjs_) {
-      props.push_back(prop->getPropertyName());
-    }
-
-    if (props.size() == 0) props.push_back("NO_PROPERTIES");
     return props;
   }
 
-  std::vector<std::string> getPropertyOptions(void) {
-    std::vector<std::string> ops;
-    for (auto prop : int_propobjs_) {
+  std::vector<Option> getPropertyOptions(PropertyType property) {
+      for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
+        if ( prop->getPropertyType() == property ) {
+          return prop->getPropertyOptions();
+        }
+      }
+      return std::vector<Option>();
+  }
+
+  /**
+   * @brief Gets the options of all properties
+   *
+   * @return 
+   */
+  std::vector<Option> getPropertyOptions(void) const {
+    std::vector<Option> ops;
+    for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
       auto vec_opt = prop->getPropertyOptions();
       ops.insert(ops.end(), vec_opt.begin(), vec_opt.end());
     }
-    for (auto prop : double_propobjs_) {
-      auto vec_opt = prop->getPropertyOptions();
-      ops.insert(ops.end(), vec_opt.begin(), vec_opt.end());
-    }
-    for (auto prop : size_t_propobjs_) {
-      auto vec_opt = prop->getPropertyOptions();
-      ops.insert(ops.end(), vec_opt.begin(), vec_opt.end());
-    }
-    for (auto prop : string_propobjs_) {
-      auto vec_opt = prop->getPropertyOptions();
-      ops.insert(ops.end(), vec_opt.begin(), vec_opt.end());
-    }
-    for (auto prop : string_set_propobjs_) {
-      auto vec_opt = prop->getPropertyOptions();
-      ops.insert(ops.end(), vec_opt.begin(), vec_opt.end());
-    }
-    for (auto prop : string_vec_propobjs_) {
-      auto vec_opt = prop->getPropertyOptions();
-      ops.insert(ops.end(), vec_opt.begin(), vec_opt.end());
-    }
-    if (ops.size() == 0) ops.push_back("NO_OPTIONS");
     return ops;
   }
 
-  std::map<std::string, std::string> getPropertyValues(void) {
-    std::map<std::string, std::string> opts_values;
-    for (auto prop : int_propobjs_) {
+ 
+  /**
+   * @brief Returns the options with value associated with it
+   *
+   * @return 
+   */
+  std::map<PropertyType, std::map<Option, std::any>> getPropertyValues(void) {
+    std::map<PropertyType, std::map<Option, std::any>> opts_values;
+    for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
+      PropertyType type = prop->getPropertyType();
       auto vec_opt = prop->getPropertyOptions();
-      for (auto opt : vec_opt) {
-        auto value = std::to_string(prop->getPropOption(opt));
-        opts_values[opt] = value;
-      }
-    }
-    for (auto prop : double_propobjs_) {
-      auto vec_opt = prop->getPropertyOptions();
-      for (auto opt : vec_opt) {
-        auto value = std::to_string(prop->getPropOption(opt));
-        opts_values[opt] = value;
-      }
-    }
-    for (auto prop : size_t_propobjs_) {
-      auto vec_opt = prop->getPropertyOptions();
-      for (auto opt : vec_opt) {
-        auto value = std::to_string(prop->getPropOption(opt));
-        opts_values[opt] = value;
-      }
-    }
-    for (auto prop : string_propobjs_) {
-      auto vec_opt = prop->getPropertyOptions();
-      for (auto opt : vec_opt) {
-        auto value = prop->getPropOption(opt);
-        opts_values[opt] = value;
-      }
-    }
-    for (auto prop : string_set_propobjs_) {
-      auto vec_opt = prop->getPropertyOptions();
-      for (auto opt : vec_opt) {
-        std::set<std::string> value_set = prop->getPropOption(opt);
-        std::string values = "";
-        for (auto val : value_set) {
-          values.append(val);
-          values.append(" ");
-        }
-        trim(values);
-        opts_values[opt] = values;
-      }
-    }
-    for (auto prop : string_vec_propobjs_) {
-      auto vec_opt = prop->getPropertyOptions();
-      for (auto opt : vec_opt) {
-        std::vector<std::string> value_vec = prop->getPropOption(opt);
-        std::string values = "";
-        for (auto val : value_vec) {
-          values.append(val);
-          values.append(" ");
-        }
-        trim(values);
-        opts_values[opt] = values;
+      for (Option opt : vec_opt) {
+        auto value = prop->getPropOption<std::any>(opt);
+        opts_values[type][opt] = value;
       }
     }
     return opts_values;
   }
 
-  std::string getPropertyValues(std::string property,const std::string & option) {
-    for (auto prop : int_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
-        auto vec_opt = prop->getPropertyOptions();
-        for (auto opt : vec_opt) {
-          if (option.compare(opt) == 0) {
-            return std::to_string(prop->getPropOption(opt));
-          }
-        }
-      }
-    }
-    for (auto prop : double_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
-        auto vec_opt = prop->getPropertyOptions();
-        for (auto opt : vec_opt) {
-          if (option.compare(opt) == 0) {
-            return std::to_string(prop->getPropOption(opt));
-          }
-        }
-      }
-    }
-    for (auto prop : size_t_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
-        auto vec_opt = prop->getPropertyOptions();
-        for (auto opt : vec_opt) {
-          if (option.compare(opt) == 0) {
-            return std::to_string(prop->getPropOption(opt));
-          }
-        }
-      }
-    }
-    for (auto prop : string_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
-        auto vec_opt = prop->getPropertyOptions();
-        for (auto opt : vec_opt) {
-          if (option.compare(opt) == 0) {
-            return prop->getPropOption(opt);
-          }
-        }
-      }
-    }
-    for (auto prop : string_set_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
-        auto vec_opt = prop->getPropertyOptions();
-        for (auto opt : vec_opt) {
-          if (option.compare(opt) == 0) {
-            std::set<std::string> value_set = prop->getPropOption(opt);
-            std::string values = "";
-            for (auto val : value_set) {
-              values.append(val);
-              values.append(" ");
-            }
-            trim(values);
-            return values;
-          }
-        }
-      }
-    }
-    for (auto prop : string_vec_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
-        auto vec_opt = prop->getPropertyOptions();
-        for (auto opt : vec_opt) {
-          if (option.compare(opt) == 0) {
-            std::vector<std::string> value_vec = prop->getPropOption(opt);
-            std::string values = "";
-            for (auto val : value_vec) {
-              values.append(val);
-              values.append(" ");
-            }
-            trim(values);
-            return values;
+  template<class T>
+  T getPropertyValues(PropertyType property,const Option & option) {
+    for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
+      if (property == prop->getPropertyType()) {
+        std::vector<Option> vec_opt = prop->getPropertyOptions();
+        for (const Option & opt : vec_opt) {
+          if (option == opt) {
+            return prop->getPropOption<T>(opt);
           }
         }
       }
     }
 
     std::string err =
-        "Unable to recognize property or option " + property + " " + option;
+        "Unable to recognize property or option ";
     throw std::invalid_argument(err);
   }
 
   // Setup the valid options associated with the parameter
-  void setArgPropertyOpt(std::string property, std::string option,
-                         const double& val) {
+  template<class T>
+  void setArgPropertyOpt(PropertyType property, Option option,
+                         const T& val) {
     bool setval = false;
-    for (auto prop : double_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
+    for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
+      if (property == prop->getPropertyType()) {
         prop->setPropOption(option, val);
         setval = true;
       }
     }
     if (!setval) {
       std::string err =
-          "Argument property: " + property + " with option: " +
-          ""
-          "" +
-          option + " of type double is unrecognized for argument " + getName_();
+          "Argument property: is unrecognized for argument ";
       throw std::invalid_argument(err);
     }
   }
 
-  void setArgPropertyOpt(std::string property, std::string option,
-                         const std::set<std::string> & val) {
-    bool setval = false;
-    for (auto prop = string_set_propobjs_.begin();
-         prop != string_set_propobjs_.end(); ++prop) {
-      if (property.compare((*prop)->getPropertyName()) == 0) {
-        (*prop)->setPropOption(option, val);
-        setval = true;
-      }
+  template< class T>
+  bool argValid(const T& value) const {
+    for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
+      prop->propValid(value);
     }
-    if (!setval) {
-      std::string err = "Argument property: " + property + " with option: " +
-                        ""
-                        "" +
-                        option +
-                        " of type set<string> is unrecognized for argument " +
-                        ""
-                        "" +
-                        getName_();
-      throw std::invalid_argument(err);
-    }
-  }
-
-  void setArgPropertyOpt(std::string property, std::string option,
-                         const std::vector<std::string> & val) {
-    bool setval = false;
-    for (auto prop : string_vec_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
-        prop->setPropOption(option, val);
-        setval = true;
-      }
-    }
-    if (!setval) {
-      std::string err =
-          "Argument property: " + property + " with option: " +
-          ""
-          "" +
-          option + " of type vector<string> is unrecognized for argument " +
-          ""
-          "" +
-          getName_();
-      throw std::invalid_argument(err);
-    }
-  }
-
-  void setArgPropertyOpt(std::string property,const std::string & option,
-                         const std::string & val) {
-    bool setval = false;
-    for (auto prop : string_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
-        prop->setPropOption(option, val);
-        setval = true;
-      }
-    }
-    for (auto prop : string_vec_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
-        std::vector<std::string> vec_str{val};
-        prop->setPropOption(option, vec_str);
-        setval = true;
-      }
-    }
-    for (auto prop : string_set_propobjs_) {
-      if (property.compare(prop->getPropertyName()) == 0) {
-        std::set<std::string> set_str{val};
-        prop->setPropOption(option, set_str);
-        setval = true;
-      }
-    }
-    if (!setval) {
-      std::string err =
-          "Argument property: " + property + " with option: " +
-          ""
-          "" +
-          option + " of type string is unrecognized for argument " + getName_();
-      throw std::invalid_argument(err);
-    }
-  }
-
-  void setArgPropertyOpt(std::string property, const std::string & option, int val) {
-    bool setval = false;
-    for (auto prop : int_propobjs_) {
-
-      if (property.compare(prop->getPropertyName()) == 0) {
-        prop->setPropOption(option, val);
-        setval = true;
-      }
-    }
-    if (!setval) {
-      std::string err = "Argument property: " + property + " with option: " +
-                        ""
-                        "" +
-                        option + " of type int is unrecognized for argument " +
-                        getName_();
-      throw std::invalid_argument(err);
-    }
-  }
-
-  bool argValid(const S& value) const {
-    checkValid_(value);
     return true;
   }
 
   void postArgCheck(void) {
-    for (auto prop : int_propobjs_) {
-      prop->postCheck();
-    }
-    for (auto prop : double_propobjs_) {
-      prop->postCheck();
-    }
-    for (auto prop : size_t_propobjs_) {
-      prop->postCheck();
-    }
-    for (auto prop : string_propobjs_) {
-      prop->postCheck();
-    }
-    for (auto prop : string_set_propobjs_) {
-      prop->postCheck();
-    }
-    for (auto prop : string_vec_propobjs_) {
+    for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
       prop->postCheck();
     }
   }

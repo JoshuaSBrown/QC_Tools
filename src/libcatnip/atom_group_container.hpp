@@ -40,7 +40,7 @@ namespace catnip {
        *
        * @return 
        */
-      bool isUniqueGroup_( const AtomGroup & atom_group ) const;
+      bool isUniqueGroup_( const std::unique_ptr<AtomGroup> & atom_group ) const;
 
 
     public: 
@@ -61,7 +61,7 @@ namespace catnip {
       std::vector<std::unique_ptr<AtomGroup>>::const_iterator 
         end() const { return atom_groups_.end(); }
 
-      void add( AtomGroup atom_group );
+      void add( std::unique_ptr<AtomGroup> & atom_group );
 
       size_t size() const noexcept { return  atom_groups_.size(); }
 
@@ -79,7 +79,7 @@ namespace catnip {
        */
       bool exists(GroupType type) const;
 
-      const GroupType & getType(int index) const { return atom_groups_.at(index).getType(); }
+      const GroupType & getType(int index) const { return atom_groups_.at(index)->getType(); }
 
       /**
        * @brief Get the indices of all the groups of the specified group type

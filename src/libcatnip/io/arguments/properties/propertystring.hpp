@@ -6,15 +6,20 @@
 
 namespace catnip {
 
-class PropertyString : public PropertyObject<std::string, size_t> {
+class PropertyString : public PropertyObject {
  private:
   void stringValid(const std::string& val) const;
-  std::string getName_(void) const { return "PROPERTY_STRING"; }
-  std::vector<std::string> getOpts_(void) const;
 
  public:
   PropertyString(void);
-  bool propValid(const std::string& value) {
+
+  virtual PropertyType getPropertyType(void) const noexcept final {
+    return PropertyType::STRING;
+  }
+
+  bool propValid(const std::any& val) {
+
+    std::string value = std::any_cast<std::string>(val);
     stringValid(value);
     return true;
   }

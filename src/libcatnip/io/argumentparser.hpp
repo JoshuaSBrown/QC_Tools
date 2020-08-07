@@ -3,6 +3,7 @@
 #include "../matrix.hpp"
 #include "../parameters.hpp"
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
@@ -19,11 +20,11 @@ class ArgumentParser {
  private:
   // 1 - flag name
   // 2 - type
-  std::map<std::string, ArgumentString*> str_arg_;
-  std::map<std::string, ArgumentSwitch*> switch_arg_;
-  std::map<std::string, ArgumentInt*> int_arg_;
-  std::map<std::string, ArgumentDouble*> double_arg_;
-  std::map<std::string, ArgumentFile*> file_arg_;
+  std::map<std::string, std::vector<std::unique_ptr<ArgumentString>>> str_arg_;
+  std::map<std::string, std::vector<std::unique_ptr<ArgumentSwitch>>> switch_arg_;
+  std::map<std::string, std::vector<std::unique_ptr<ArgumentInt>>> int_arg_;
+  std::map<std::string, std::vector<std::unique_ptr<ArgumentDouble>>> double_arg_;
+  std::map<std::string, std::vector<std::unique_ptr<ArgumentFile>>> file_arg_;
 
   // Known rules
   std::set<std::string> argument_types_;
@@ -33,10 +34,10 @@ class ArgumentParser {
 
   std::map<std::string, bool> defaults_set_;
   // Arguments that are stored when argc and argv are parsed
-  std::map<std::string, int> int_values_;
-  std::map<std::string, double> double_values_;
-  std::map<std::string, std::string> string_values_;
-  std::map<std::string, size_t> size_t_values_;
+  std::map<std::string, std::vector<int>> int_values_;
+  std::map<std::string, std::vector<double>> double_values_;
+  std::map<std::string, std::vector<std::string>> string_values_;
+  std::map<std::string, std::vector<size_t>> size_t_values_;
 
   void parseArg_(size_t& index, std::vector<std::string> arguments);
 
@@ -90,10 +91,10 @@ class ArgumentParser {
   std::string getFlagArgOptValue(std::string flag, std::string argname,
                                  std::string property, std::string option);
 
-  double getDouble(std::string flag);
-  int getInt(std::string flag);
-  std::string getStr(std::string flag);
-  size_t getSize_t(std::string flag);
+  std::vector<double> getDoubles(std::string flag);
+  std::vector<int> getInts(std::string flag);
+  std::vector<std::string> getStrs(std::string flag);
+  std::vector<size_t> getSize_ts(std::string flag);
 
   void postParseCheck(void);
 
