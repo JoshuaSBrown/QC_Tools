@@ -1,10 +1,10 @@
 
 file(GLOB CATNIP_SOURCE_FILES 
-  *.cpp 
-  io/*.cpp
   io/arguments/*.cpp 
-  io/arguments/properties/*.cpp 
-  io/file_readers/*.cpp)
+  io/arguments/properties/*.cpp )
+#  *.cpp 
+#  io/*.cpp
+#  io/file_readers/*.cpp)
 
 add_library(libcatnip ${CATNIP_SOURCE_FILES})
 set_property(TARGET libcatnip PROPERTY CXX_STANDARD 17)

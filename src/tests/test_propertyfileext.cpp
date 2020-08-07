@@ -2,9 +2,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
-#include "../libcatnip/io/arguments/properties/propertyfileext.hpp"
-#include <cassert>
-#include <exception>
+#include "io/arguments/properties/propertyfileext.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -20,14 +18,7 @@ TEST_CASE("Property File Extension","[unit]") {
     PropertyFileExt propFileExt1("*");
     PropertyFileExt propFileExt2("");
     PropertyFileExt propFileExt3(".jpg");
-    bool excep = false;
-    try {
-      PropertyFileExt propFileExt4("ffda.fd");
-    } catch (...) {
-      excep = true;
-    }
-    assert(excep);
-
+    CHECK_THROWS(PropertyFileExt propFileExt4("ffda.fd"));
     set<string> exts = {".png", ".gjf"};
     PropertyFileExt propFileExt5(exts);
   }
@@ -35,8 +26,8 @@ TEST_CASE("Property File Extension","[unit]") {
   cerr << "Testing: getPropertyName" << endl;
   {
     PropertyFileExt propFileExt;
-    string name = propFileExt.getPropertyName();
-    assert(name.compare("PROPERTY_FILE_EXT") == 0);
+    PropertyType type = propFileExt.getPropertyType();
+    REQUIRE(type == PropertyType::FILE_EXT);
   }
 
   cerr << "Testing: getPropertyOptions" << endl;
@@ -44,41 +35,29 @@ TEST_CASE("Property File Extension","[unit]") {
 
     PropertyFileExt propFileExt;
     auto options = propFileExt.getPropertyOptions();
-    string opt = options.at(0);
-    assert(opt.compare("ALLOWED_FILE_EXT") == 0);
+    Option opt = options.at(0);
+    REQUIRE(opt == Option::ALLOWED_VALUES);
   }
 
   cerr << "Testing: propValid" << endl;
   {
     PropertyFileExt propFileExt(".jpg");
     bool valid = propFileExt.propValid("dir/file.jpg");
-    assert(valid);
-    bool excep = false;
-    try {
-      propFileExt.propValid("dir/file.jp");
-    } catch (...) {
-      excep = true;
-    }
-    assert(excep);
+    CHECK(valid);
+    CHECK_THROWS(propFileExt.propValid("dir/file.jp"));
 
     PropertyFileExt propFileExt2("*");
     valid = propFileExt2.propValid("dir/file.jpg");
-    assert(valid);
+    CHECK(valid);
     valid = propFileExt2.propValid("dir/file.jp");
-    assert(valid);
+    CHECK(valid);
 
     set<string> exts = {".png", ".gjf"};
     PropertyFileExt propFileExt3(exts);
     valid = propFileExt3.propValid("Dir2/Path/File.png");
-    assert(valid);
+    CHECK(valid);
     valid = propFileExt3.propValid("Dir2/Path/File.gjf");
-    assert(valid);
-    excep = false;
-    try {
-      propFileExt3.propValid("dir/file.com");
-    } catch (...) {
-      excep = true;
-    }
-    assert(excep);
+    CHECK(valid);
+    CHECK_THROWS(propFileExt3.propValid("dir/file.com"));
   }
 }

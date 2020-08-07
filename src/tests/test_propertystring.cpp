@@ -21,8 +21,8 @@ TEST_CASE("Property String","[unit]") {
   cerr << "Testing: getPropertyName" << endl;
   {
     PropertyString propString;
-    string name = propString.getPropertyName();
-    assert(name.compare("PROPERTY_STRING") == 0);
+    PropertyType type = propString.getPropertyType();
+    REQUIRE(type == PropertyType::STRING);
   }
 
   cerr << "Testing: getPropertyOptions" << endl;
@@ -30,40 +30,28 @@ TEST_CASE("Property String","[unit]") {
 
     PropertyString propString;
     auto options = propString.getPropertyOptions();
-    string opt = options.at(0);
-    assert(opt.compare("MIN_LENGTH") == 0);
+    Option opt = options.at(0);
+    REQUIRE(opt == Option::MIN_LENGTH);
     opt = options.at(1);
-    assert(opt.compare("MAX_LENGTH") == 0);
+    REQUIRE(opt == Option::MAX_LENGTH);
   }
 
   cerr << "Testing: propValid" << endl;
   {
     PropertyString propString;
     bool valid = propString.propValid("Hello");
-    assert(valid);
+    REQUIRE(valid);
   }
 
   cerr << "Testing: setPropOption" << endl;
   {
     PropertyString propString;
     size_t val = 3;
-    propString.setPropOption("MAX_LENGTH", val);
+    propString.setPropOption(Option::MAX_LENGTH, val);
     propString.propValid("");
-    bool excep = false;
-    try {
-      propString.propValid("Hello");
-    } catch (...) {
-      excep = true;
-    }
-    assert(excep);
-
-    excep = false;
-    try {
-      val = 4;
-      propString.setPropOption("MAXimum", val);
-    } catch (...) {
-      excep = true;
-    }
-    assert(excep);
+    CHECK_THROWS(propString.propValid("Hello"));
+    
+    val = 4;
+    CHECK_THROWS(propString.setPropOption(Option::MAX, val));
   }
 }

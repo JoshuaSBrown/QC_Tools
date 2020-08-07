@@ -83,6 +83,22 @@ class ArgumentObject {
     return opts_values;
   }
 
+  std::map<Option, std::any> getPropertyValues(
+      PropertyType property) {
+
+    std::map<Option, std::any> opts_values;
+    for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
+      if (property == prop->getPropertyType()) {
+        std::vector<Option> vec_opt = prop->getPropertyOptions();
+        for (const Option & opt : vec_opt) {
+          auto value = prop->getPropOption<std::any>(opt);
+          opts_values[opt] = value;
+        }
+      }
+    }
+    return opts_values;
+  }
+
   template<class T>
   T getPropertyValues(PropertyType property,const Option & option) {
     for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
@@ -116,6 +132,19 @@ class ArgumentObject {
       std::string err =
           "Argument property: is unrecognized for argument ";
       throw std::invalid_argument(err);
+    }
+  }
+
+   void setPropertyValues(
+      PropertyType property, std::map<Option, std::any> opts) {
+
+    for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
+      if (property == prop->getPropertyType()) {
+        for ( std::pair<Option,std::any> opt_val : opts ){
+          prop->setPropOption(opt_val.first, opt_val.second);
+        }
+        return; 
+      }
     }
   }
 

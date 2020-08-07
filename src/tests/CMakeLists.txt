@@ -1,29 +1,32 @@
 list( APPEND UNIT_TEST_SOURCE_FILES
-  test_argumentdouble
-  test_argumentfile
-  test_argumentint
-  test_argumentparser
-  test_argumentstring
-  test_argumentswitch
-  test_atom
-  test_atom_group
-  test_atom_group_container
-  test_atom_system
-  test_basis_map
-  test_elements
-  test_log
-  test_parameters
-  test_propertydouble
+  test_propertynumerical
   test_propertyfileexist
   test_propertyfileext
-  test_propertyint
   test_propertysisterfile
   test_propertystringchoice
   test_propertystring
   test_propertyswitch
-  test_qc_functions
-  test_string_support
-  test_swap_engine)
+)
+
+#
+#  test_argumentnumerical
+#  test_argumentfile
+#  test_argumentparser
+#  test_argumentstring
+#  test_argumentswitch
+#
+#  test_atom
+#  test_atom_group
+#  test_atom_group_container
+#  test_atom_system
+#  test_basis_map
+#  test_elements
+#  test_log
+#  test_parameters
+#
+#  test_qc_functions
+#  test_string_support
+#  test_swap_engine
 
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
   find_library (GCOV gcov)

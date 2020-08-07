@@ -1,7 +1,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include "../libcatnip/io/arguments/properties/propertystringchoice.hpp"
+#include "io/arguments/properties/propertystringchoice.hpp"
 #include <cassert>
 #include <exception>
 #include <fstream>

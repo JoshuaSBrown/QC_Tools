@@ -2,7 +2,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
-#include "../libcatnip/io/arguments/properties/propertyfileexist.hpp"
+#include "io/arguments/properties/propertyfileexist.hpp"
 #include <cassert>
 #include <exception>
 #include <iostream>
@@ -24,8 +24,8 @@ TEST_CASE("Property File Exists","[unit]") {
   cerr << "Testing: getPropertyName" << endl;
   {
     PropertyFileExist propFileExist;
-    string name = propFileExist.getPropertyName();
-    assert(name.compare("PROPERTY_FILE_EXIST") == 0);
+    PropertyType type = propFileExist.getPropertyType();
+    CHECK(type == PropertyTYpe::FILE_EXIST);
   }
 
   cerr << "Testing: getPropertyOptions" << endl;
@@ -33,8 +33,8 @@ TEST_CASE("Property File Exists","[unit]") {
 
     PropertyFileExist propFileExist;
     auto options = propFileExist.getPropertyOptions();
-    string opt = options.at(0);
-    assert(opt.compare("FILE_MUST_EXIST") == 0);
+    Option opt = options.at(0);
+    CHECK(opt == Option::MUST_EXIST);
   }
 
   cerr << "Testing: propValid" << endl;
@@ -44,18 +44,12 @@ TEST_CASE("Property File Exists","[unit]") {
     PropertyFileExist propFileExist3(true);
 
     bool valid = propFileExist1.propValid("test_propertyfileexist.cpp");
-    assert(valid);
+    CHECK(valid);
 
-    bool excep = false;
-    try {
-      valid = propFileExist2.propValid("fake");
-    } catch (...) {
-      excep = true;
-    }
-    assert(excep);
+    CHECK_THROWS(propFileExist2.propValid("fake"));
 
     valid = propFileExist3.propValid("testfile.pun");
-    assert(valid);
+    CHECK(valid);
   }
 
   cerr << "Testing: getPropOption" << endl;
@@ -63,11 +57,11 @@ TEST_CASE("Property File Exists","[unit]") {
     PropertyFileExist propFileExist1(true);
     PropertyFileExist propFileExist2(false);
 
-    bool fileExist = propFileExist1.getPropOption("FILE_MUST_EXIST");
-    assert(fileExist);
+    bool fileExist = propFileExist1.getPropOption(Option::MUST_EXIST);
+    CHECK(fileExist);
 
-    fileExist = propFileExist2.getPropOption("FILE_MUST_EXIST");
-    assert(fileExist == false);
+    fileExist = propFileExist2.getPropOption(Option::MUST_EXIST);
+    CHECK(fileExist == false);
   }
 
 }
