@@ -20,12 +20,13 @@ Message to users: Version 2.0 is in the works, will provide additional functiona
  * [Downloading](https://github.com/JoshuaSBrown/QC_Tools/wiki/1.-Downloading)
  * [Compiling](https://github.com/JoshuaSBrown/QC_Tools/wiki/2.-Compiling)
  * [Gaussian Files](https://github.com/JoshuaSBrown/QC_Tools/wiki/3.-Gaussian-Files)
- * [Tutorial 1](https://github.com/JoshuaSBrown/QC_Tools/wiki/4.-Tutorial-1)
- * [Tutorial 2](https://github.com/JoshuaSBrown/QC_Tools/wiki/5.-Tutorial-2)
- * [Tutorial 3](https://github.com/JoshuaSBrown/QC_Tools/wiki/6.-Tutorial-3)
- * [Common Problems](https://github.com/JoshuaSBrown/QC_Tools/wiki/7.-Common-Problems)
- * [Other Resources](https://github.com/JoshuaSBrown/QC_Tools/wiki/8.-Other-Resources)
- * [Versions](https://github.com/JoshuaSBrown/QC_Tools/wiki/9.-Versions)
+ * [Tutorial 1](https://github.com/JoshuaSBrown/QC_Tools/wiki/4.a-Tutorial-1)
+ * [Tutorial 2](https://github.com/JoshuaSBrown/QC_Tools/wiki/4.b-Tutorial-2)
+ * [Tutorial 3](https://github.com/JoshuaSBrown/QC_Tools/wiki/4.c-Tutorial-3)
+ * [Common Problems](https://github.com/JoshuaSBrown/QC_Tools/wiki/5.-Common-Problems)
+ * [Other Resources](https://github.com/JoshuaSBrown/QC_Tools/wiki/6.-Other-Resources)
+ * [Versions](https://github.com/JoshuaSBrown/QC_Tools/wiki/7.-Versions)
+ * [Papers Using CATNIP](https://github.com/JoshuaSBrown/QC_Tools/wiki/8.-Papers-using-CATNIP)
 
 ## Objective
 
