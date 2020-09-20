@@ -15,6 +15,10 @@ class ArgumentFile : public ArgumentObject {
     return ArgumentType::FILES;
   }
 
+  virtual std::type_index getValueType(void) const noexcept final { 
+    return typeid(std::string);
+  }
+
   ArgumentFile(void);
 };
 

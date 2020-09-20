@@ -1,6 +1,5 @@
 #ifndef _CATNIP_ARGUMENTPARSER_HPP
 #define _CATNIP_ARGUMENTPARSER_HPP
-#include "matrix.hpp"
 #include "parameters.hpp"
 #include <any>
 #include <map>
@@ -44,6 +43,10 @@ class ArgumentParser {
   size_t maxDescriptionSize;
   size_t maxLineLength = 80;
 
+  // Will convert the command line argument to the appropriate type before
+  // placing in std::any and adding to the values container
+  void addValue_(std::string flag, std::string value);
+
  public:
   // 1 - short flag
   // 2 - long flag
@@ -67,8 +70,8 @@ class ArgumentParser {
   // "SWITCH"
   // The rules are dependent on the type
   template<class T>
-    void ArgumentParser::setFlagArgOpt(
-        string flag, 
+    void setFlagArgOpt(
+        std::string flag, 
         ArgumentType argname,
         PropertyType property,
         Option option,
@@ -77,8 +80,8 @@ class ArgumentParser {
       
       if (arg_.count(flag) == 0) {
         auto arg = createArgument(argname);
-        ArInt->setArgPropertyOpt(property, option, val);
-        arg_[flag].push_back(std::move(ArInt));
+        arg->setArgPropertyOpt(property, option, val);
+        arg_[flag].push_back(std::move(arg));
       } else {
         for ( std::unique_ptr<ArgumentObject> & ptr : arg_[flag]){
           ptr->setArgPropertyOpt(property, option, val);
@@ -164,13 +167,24 @@ class ArgumentParser {
   template<class T>
   std::vector<T> get(std::string flag) {
     std::vector<T> values;
-    if ( values[flag].count(type_index(T)) ){
-      for ( std::any & val : values[flag][std::type_index(T)] ){
+    if ( values_[flag].count(typeid(T)) ){
+      for ( std::any & val : values_[flag][typeid(T)] ){
         values.push_back(std::any_cast<T>(val));
       }
     }
     return values;
   }
+//
+//  template<class T>
+//  std::vector<T> get(std::string flag, ArgumentType arg_type, PropertyType prop_type, Option opt) {
+//    std::vector<T> values;
+//    if ( values_[flag].count(typeid(T)) ){
+//      for ( std::any & val : values_[flag][typeid(T)] ){
+//        values.push_back(std::any_cast<T>(val));
+//      }
+//    }
+//    return values;
+//  }
 /*  std::vector<double> getDoubles(std::string flag);
   std::vector<int> getInts(std::string flag);
   std::vector<std::string> getStrs(std::string flag);

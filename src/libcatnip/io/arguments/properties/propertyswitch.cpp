@@ -6,7 +6,7 @@
 using namespace catnip;
 using namespace std;
 
-PropertySwitch::PropertySwitch() { setPropOption_(Option::VALUE, bool(false)); }
+PropertySwitch::PropertySwitch() { setPropOption_(Option::DEFAULT, bool(false)); }
 
 void PropertySwitch::switchValid(int val) const {
   if (val < 0 || val > 1) {
@@ -45,4 +45,5 @@ bool PropertySwitch::propValid(const std::any & value) {
     throw invalid_argument("Unrecognized type passed to switch, only recognizes"
         " int, string and bool types");
   }
+  return true;
 }

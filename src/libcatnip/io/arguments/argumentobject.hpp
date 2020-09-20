@@ -2,7 +2,7 @@
 #ifndef _CATNIP_ARGUMENTOBJECT_HPP
 #define _CATNIP_ARGUMENTOBJECT_HPP
 
-#include "../../string_support.hpp"
+#include "string_support.hpp"
 #include "properties/propertyobject.hpp"
 #include <exception>
 #include <iostream>
@@ -19,6 +19,7 @@ namespace catnip {
     STRING,
     SWITCH
   };
+
 // The template is simply for specifying the type of the argument coming
 // from the command line
 class ArgumentObject {
@@ -32,6 +33,9 @@ class ArgumentObject {
   virtual bool requiresParameter(void) { return true; }
 
   virtual ArgumentType getArgumentType(void) const noexcept = 0; 
+
+  // This is the type the value will be converted to after being read in
+  virtual std::type_index getValueType(void) const noexcept = 0;
 
   std::vector<PropertyType> getProperties(void) {
     std::vector<PropertyType> props;
@@ -132,6 +136,17 @@ class ArgumentObject {
       std::string err =
           "Argument property: is unrecognized for argument ";
       throw std::invalid_argument(err);
+    }
+  }
+
+  void setValues(std::map<PropertyType, std::map<Option, std::any>> values) {
+    for (const std::unique_ptr<PropertyObject> & prop : propobjs_) {
+      const PropertyType & type = prop->getPropertyType();
+      if(values.count(type)){
+        for ( std::pair<Option,std::any> opt_val : values[type] ){
+          prop->setPropOption(opt_val.first, opt_val.second);
+        }
+      }
     }
   }
 

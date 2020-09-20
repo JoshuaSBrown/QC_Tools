@@ -21,13 +21,15 @@ int main(int argc, const char* argv[]) {
 
   for (auto flag : flags) {
     cout << endl;
-    string argu = "ARGUMENT_FILE";
-    string prop = "PROPERTY_FILE_EXT";
-    string opt = "ALLOWED_FILE_EXT";
-    auto val = ArgParse->getFlagArgOptValue(flag, argu, prop, opt);
-    cout << flag << " " << argu << " " << prop << " " << opt << " " << val
-         << endl;
-
+    ArgumentType argu = ArgumentType::FILES;
+    PropertyType prop = PropertyType::FILE_EXT;
+    Option opt = Option::ALLOWED_VALUES;
+    auto values = ArgParse->get<string>(flag, argu, prop, opt);
+    for ( std::string & val : values ){
+      cout << val << " ";
+    }
+    cout << endl;
+/*
     prop = "PROPERTY_SISTER_FILE";
     opt = "ALLOWED_SISTER_FILE_EXT";
     auto val1 = ArgParse->getFlagArgOptValue(flag, argu, prop, opt);
@@ -59,7 +61,7 @@ int main(int argc, const char* argv[]) {
     opt = "FILE_DOES_EXIST";
     auto val7 = ArgParse->getFlagArgOptValue(flag, argu, prop, opt);
     cout << flag << " " << argu << " " << prop << " " << opt << " " << val7
-         << endl;
+         << endl;*/
   }
 
   auto Par = prepareParameters(ArgParse);

@@ -8,15 +8,13 @@ namespace catnip {
 
 class PropertySwitch : public PropertyObject {
  private:
-  std::string getName_(void) const { return "PROPERTY_SWITCH"; }
-  std::vector<std::string> getOpts_(void) const;
   void propOptionValueSettingValid_();
   void switchValid(int val) const;
   void switchValid(std::string val) const;
 
  public:
   PropertySwitch(void);
-
+  
   virtual PropertyType getPropertyType(void) const noexcept final {
     return PropertyType::SWITCH; 
   }

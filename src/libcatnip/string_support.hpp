@@ -29,6 +29,9 @@ std::string firstN(std::string input, int n);
 
 std::string cut_beg(std::string input, int n);
 
+// Converts a string to an upper case version
+std::string to_upper(std::string input);
+
 // trim from both ends (in place)
 void trim(std::string &s);
 

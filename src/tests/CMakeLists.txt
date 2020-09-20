@@ -59,20 +59,20 @@ if(ENABLE_INTEGRATION_TESTING)
 
   endforeach(PROG)
 
-  add_executable(test_io test_io.cpp)
-  if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
-    set_source_files_properties( test_io.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS})
-  endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
-  target_link_libraries(test_io libcatnip)
-  add_test(regression_test_io test_io -p_P "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30/30_pair.pun" -p_1 "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30/ref.pun" -p_2 "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30/30_2.pun")
-
-  add_custom_command(TARGET test_io
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:test_io> ${CMAKE_CURRENT_SOURCE_DIR})
-
-  find_program (BASH_PROGRAM bash)
+#  add_executable(test_io test_io.cpp)
+#  if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
+#    set_source_files_properties( test_io.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS})
+#  endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")    
+#  target_link_libraries(test_io libcatnip)
+#  add_test(regression_test_io test_io -p_P "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30/30_pair.pun" -p_1 "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30/ref.pun" -p_2 "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30/30_2.pun")
+#
+#  add_custom_command(TARGET test_io
+#    POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:test_io> ${CMAKE_CURRENT_SOURCE_DIR})
+#
+#  find_program (BASH_PROGRAM bash)
   if(BASH_PROGRAM)
-    add_test(regression_test_io_script ${BASH_PROGRAM} ${PROJECT_SOURCE_DIR}/src/tests/test_script_io.sh ${CMAKE_CURRENT_SOURCE_DIR})
+    #    add_test(regression_test_io_script ${BASH_PROGRAM} ${PROJECT_SOURCE_DIR}/src/tests/test_script_io.sh ${CMAKE_CURRENT_SOURCE_DIR})
 
     add_test(integration_test_calc_J_script ${BASH_PROGRAM} ${PROJECT_SOURCE_DIR}/src/tests/test_script_calc_J.sh ${CMAKE_SOURCE_DIR})
 

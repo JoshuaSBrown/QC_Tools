@@ -213,43 +213,43 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   string ext_log = ".log";
 
   {
-    ArgPars->setFlagArgOpt("--log", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
-                           "ALLOWED_FILE_EXT", ext_log);
-    ArgPars->setFlagArgOpt("--log", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
-                           "ALLOWED_SISTER_FILE_EXT", exts);
-    ArgPars->setFlagArgOpt("--log", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
-                           "FILE_MUST_EXIST", 0);
+    ArgPars->setFlagArgOpt("--log", ArgumentType::FILES, PropertyType::FILE_EXT,
+                           Option::ALLOWED_VALUES, ext_log);
+    ArgPars->setFlagArgOpt("--log", ArgumentType::FILES, PropertyType::SISTER_FILE,
+                           Option::ALLOWED_VALUES, exts);
+    ArgPars->setFlagArgOpt("--log", ArgumentType::FILES, PropertyType::FILE_EXISTS,
+                           Option::MUST_EXIST, 0);
 
-    ArgPars->setFlagArgOpt("--pun", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
-                           "ALLOWED_FILE_EXT", exts);
-    ArgPars->setFlagArgOpt("--pun", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
-                           "ALLOWED_SISTER_FILE_EXT", ext_log);
-    ArgPars->setFlagArgOpt("--pun", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
-                           "FILE_MUST_EXIST", 0);
+    ArgPars->setFlagArgOpt("--pun", ArgumentType::FILES, PropertyType::FILE_EXT,
+                           Option::ALLOWED_VALUES, exts);
+    ArgPars->setFlagArgOpt("--pun", ArgumentType::FILES, PropertyType::SISTER_FILE,
+                           Option::ALLOWED_VALUES, ext_log);
+    ArgPars->setFlagArgOpt("--pun", ArgumentType::FILES, PropertyType::FILE_EXISTS,
+                           Option::MUST_EXIST, 0);
   }
 
   // Setting up rules guiding pun files
   {
-    ArgPars->setFlagArgOpt("--pun_P", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
-                           "ALLOWED_FILE_EXT", exts);
-    ArgPars->setFlagArgOpt("--pun_P", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
-                           "ALLOWED_SISTER_FILE_EXT", ext_log);
-    ArgPars->setFlagArgOpt("--pun_P", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
-                           "FILE_MUST_EXIST", 0);
+    ArgPars->setFlagArgOpt("--pun_P", ArgumentType::FILES, PropertyType::FILE_EXT,
+                           Option::ALLOWED_VALUES, exts);
+    ArgPars->setFlagArgOpt("--pun_P", ArgumentType::FILES, PropertyType::SISTER_FILE,
+                           Option::ALLOWED_VALUES, ext_log);
+    ArgPars->setFlagArgOpt("--pun_P", ArgumentType::FILES, PropertyType::FILE_EXISTS,
+                           Option::MUST_EXIST, 0);
 
-    ArgPars->setFlagArgOpt("--pun_1", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
-                           "ALLOWED_FILE_EXT", exts);
-    ArgPars->setFlagArgOpt("--pun_1", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
-                           "ALLOWED_SISTER_FILE_EXT", ext_log);
-    ArgPars->setFlagArgOpt("--pun_1", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
-                           "FILE_MUST_EXIST", 0);
+    ArgPars->setFlagArgOpt("--pun_1", ArgumentType::FILES, PropertyType::FILE_EXT,
+                           Option::ALLOWED_VALUES, exts);
+    ArgPars->setFlagArgOpt("--pun_1", ArgumentType::FILES, PropertyType::SISTER_FILE,
+                           Option::ALLOWED_VALUES, ext_log);
+    ArgPars->setFlagArgOpt("--pun_1", ArgumentType::FILES, PropertyType::FILE_EXISTS,
+                           Option::MUST_EXIST, 0);
 
-    ArgPars->setFlagArgOpt("--pun_2", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
-                           "ALLOWED_FILE_EXT", exts);
-    ArgPars->setFlagArgOpt("--pun_2", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
-                           "ALLOWED_SISTER_FILE_EXT", ext_log);
-    ArgPars->setFlagArgOpt("--pun_2", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
-                           "FILE_MUST_EXIST", 0);
+    ArgPars->setFlagArgOpt("--pun_2", ArgumentType::FILES, PropertyType::FILE_EXISTS,
+                           Option::ALLOWED_VALUES, exts);
+    ArgPars->setFlagArgOpt("--pun_2", ArgumentType::FILES, PropertyType::SISTER_FILE,
+                           Option::ALLOWED_VALUES, ext_log);
+    ArgPars->setFlagArgOpt("--pun_2", ArgumentType::FILES, PropertyType::FILE_EXISTS,
+                           Option::MUST_EXIST, 0);
 
   }
 
@@ -259,51 +259,51 @@ unique_ptr<ArgumentParser> prepareParser(void) {
 
   // Setting rules guiding log files
   {
-    ArgPars->setFlagArgOpt("--log_P", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
-                           "ALLOWED_FILE_EXT", exts_log);
-    ArgPars->setFlagArgOpt("--log_P", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
-                           "ALLOWED_SISTER_FILE_EXT", exts_other);
-    ArgPars->setFlagArgOpt("--log_P", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
-                           "FILE_MUST_EXIST", 0);
+    ArgPars->setFlagArgOpt("--log_P", ArgumentType::FILES, PropertyType::FILE_EXT,
+                           Option::ALLOWED_VALUES, exts_log);
+    ArgPars->setFlagArgOpt("--log_P", ArgumentType::FILES, PropertyType::SISTER_FILE,
+                           Option::ALLOWED_VALUES, exts_other);
+    ArgPars->setFlagArgOpt("--log_P", ArgumentType::FILES, PropertyType::FILE_EXISTS,
+                           Option::MUST_EXIST, 0);
 
-    ArgPars->setFlagArgOpt("--log_1", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
-                           "ALLOWED_FILE_EXT", exts_log);
-    ArgPars->setFlagArgOpt("--log_1", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
-                           "ALLOWED_SISTER_FILE_EXT", exts_other);
-    ArgPars->setFlagArgOpt("--log_1", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
-                           "FILE_MUST_EXIST", 0);
+    ArgPars->setFlagArgOpt("--log_1", ArgumentType::FILES, PropertyType::FILE_EXT,
+                           Option::ALLOWED_VALUES, exts_log);
+    ArgPars->setFlagArgOpt("--log_1", ArgumentType::FILES, PropertyType::SISTER_FILE,
+                           Option::ALLOWED_VALUES, exts_other);
+    ArgPars->setFlagArgOpt("--log_1", ArgumentType::FILES, PropertyType::FILE_EXISTS,
+                           Option::MUST_EXIST, 0);
 
-    ArgPars->setFlagArgOpt("--log_2", "ARGUMENT_FILE", "PROPERTY_FILE_EXT",
-                           "ALLOWED_FILE_EXT", exts_log);
-    ArgPars->setFlagArgOpt("--log_2", "ARGUMENT_FILE", "PROPERTY_SISTER_FILE",
-                           "ALLOWED_SISTER_FILE_EXT", exts_other);
-    ArgPars->setFlagArgOpt("--log_2", "ARGUMENT_FILE", "PROPERTY_FILE_EXIST",
-                           "FILE_MUST_EXIST", 0);
+    ArgPars->setFlagArgOpt("--log_2", ArgumentType::FILES, PropertyType::FILE_EXT,
+                           Option::ALLOWED_VALUES, exts_log);
+    ArgPars->setFlagArgOpt("--log_2", ArgumentType::FILES, PropertyType::SISTER_FILE,
+                           Option::ALLOWED_VALUES, exts_other);
+    ArgPars->setFlagArgOpt("--log_2", ArgumentType::FILES, PropertyType::FILE_EXISTS,
+                           Option::MUST_EXIST, 0);
   }
 
   set<string> spin_opts{"Alpha", "Beta"};
 
   // Setting rules guiding spin
   {
-    ArgPars->setFlagArgOpt("--spin_P", "ARGUMENT_STRING",
-                           "PROPERTY_STRING_CHOICE", "STRING_CHOICE_ENFORCED",
+    ArgPars->setFlagArgOpt("--spin_P", ArgumentType::STRING,
+                           PropertyType::STRING_CHOICE, Option::ENFORCED,
                            "true");
-    ArgPars->setFlagArgOpt("--spin_P", "ARGUMENT_STRING",
-                           "PROPERTY_STRING_CHOICE", "STRING_CHOICES",
+    ArgPars->setFlagArgOpt("--spin_P", ArgumentType::STRING,
+                           PropertyType::STRING_CHOICE, Option::ALLOWED_VALUES,
                            spin_opts);
 
-    ArgPars->setFlagArgOpt("--spin_1", "ARGUMENT_STRING",
-                           "PROPERTY_STRING_CHOICE", "STRING_CHOICE_ENFORCED",
+    ArgPars->setFlagArgOpt("--spin_1", ArgumentType::STRING,
+                           PropertyType::STRING_CHOICE, Option::ENFORCED,
                            "true");
-    ArgPars->setFlagArgOpt("--spin_1", "ARGUMENT_STRING",
-                           "PROPERTY_STRING_CHOICE", "STRING_CHOICES",
+    ArgPars->setFlagArgOpt("--spin_1", ArgumentType::STRING,
+                           PropertyType::STRING_CHOICE, Option::ALLOWED_VALUES,
                            spin_opts);
 
-    ArgPars->setFlagArgOpt("--spin_2", "ARGUMENT_STRING",
-                           "PROPERTY_STRING_CHOICE", "STRING_CHOICE_ENFORCED",
+    ArgPars->setFlagArgOpt("--spin_2", ArgumentType::STRING,
+                           PropertyType::STRING_CHOICE, Option::ENFORCED,
                            "true");
-    ArgPars->setFlagArgOpt("--spin_2", "ARGUMENT_STRING",
-                           "PROPERTY_STRING_CHOICE", "STRING_CHOICES",
+    ArgPars->setFlagArgOpt("--spin_2", ArgumentType::STRING,
+                           PropertyType::STRING_CHOICE, Option::ALLOWED_VALUES,
                            spin_opts);
 
     ArgPars->setFlagDefaultValue("--spin_P", "Alpha");
@@ -314,18 +314,18 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   // Setting rules guidling orbital type
   set<string> orb_opts{"HOMO", "LUMO"};
   {
-    ArgPars->setFlagArgOpt("--orbital_type_1", "ARGUMENT_STRING",
-                           "PROPERTY_STRING_CHOICE", "STRING_CHOICE_ENFORCED",
+    ArgPars->setFlagArgOpt("--orbital_type_1", ArgumentType::STRING,
+                           PropertyType::STRING_CHOICE, Option::ENFORCED,
                            "true");
-    ArgPars->setFlagArgOpt("--orbital_type_1", "ARGUMENT_STRING",
-                           "PROPERTY_STRING_CHOICE", "STRING_CHOICES",
+    ArgPars->setFlagArgOpt("--orbital_type_1", ArgumentType::STRING,
+                           PropertyType::STRING_CHOICE, Option::ALLOWED_VALUES,
                            orb_opts);
 
-    ArgPars->setFlagArgOpt("--orbital_type_2", "ARGUMENT_STRING",
-                           "PROPERTY_STRING_CHOICE", "STRING_CHOICE_ENFORCED",
+    ArgPars->setFlagArgOpt("--orbital_type_2", ArgumentType::STRING,
+                           PropertyType::STRING_CHOICE, Option::ENFORCED,
                            "true");
-    ArgPars->setFlagArgOpt("--orbital_type_2", "ARGUMENT_STRING",
-                           "PROPERTY_STRING_CHOICE", "STRING_CHOICES",
+    ArgPars->setFlagArgOpt("--orbital_type_2", ArgumentType::STRING,
+                           PropertyType::STRING_CHOICE, Option::ALLOWED_VALUES,
                            orb_opts);
 
     ArgPars->setFlagDefaultValue("--orbital_type_1", "HOMO");
@@ -334,8 +334,8 @@ unique_ptr<ArgumentParser> prepareParser(void) {
 
   // Set argument allowed values for counterpoise
   {
-    ArgPars->setFlagArgOpt("--counter_poise", "ARGUMENT_SWITCH",
-                           "PROPERTY_SWITCH", "DEFAULT", "OFF");
+    ArgPars->setFlagArgOpt("--counter_poise", ArgumentType::SWITCH,
+                           PropertyType::SWITCH, Option::VALUE, "OFF");
 
     // By default the flag counter poise is turned off
     ArgPars->setFlagDefaultValue("--counter_poise", "OFF");
@@ -343,24 +343,24 @@ unique_ptr<ArgumentParser> prepareParser(void) {
 
   // Set argument for allowing printing of all transfer integrals
   {
-    ArgPars->setFlagArgOpt("--all", "ARGUMENT_SWITCH",
-        "PROPERTY_SWITCH", "DEFAULT", "OFF");
+    ArgPars->setFlagArgOpt("--all", ArgumentType::SWITCH,
+        PropertyType::SWITCH, Option::VALUE, "OFF");
 
     // By default the flag counter poise is turned off
     ArgPars->setFlagDefaultValue("--all", "OFF");
   }
 
   {
-    ArgPars->setFlagArgOpt("--citation", "ARGUMENT_SWITCH", "PROPERTY_SWITCH",
-                           "DEFAULT", "OFF");
+    ArgPars->setFlagArgOpt("--citation", ArgumentType::SWITCH, PropertyType::SWITCH,
+                           Option::VALUE, "OFF");
 
     // By default the flag citation is turned off
     ArgPars->setFlagDefaultValue("--citation", "OFF");
   }
 
   {
-    ArgPars->setFlagArgOpt("--version", "ARGUMENT_SWITCH", "PROPERTY_SWITCH",
-                           "DEFAULT", "OFF");
+    ArgPars->setFlagArgOpt("--version", ArgumentType::SWITCH, PropertyType::SWITCH,
+                           Option::VALUE, "OFF");
 
     // By default the flag citation is turned off
     ArgPars->setFlagDefaultValue("--version", "OFF");
@@ -369,8 +369,8 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   // Set rules guiding orbital numbers
   // Use default settings for min and max numbers
   {
-    ArgPars->addFlagArg("--orbital_num_1", "ARGUMENT_INT");
-    ArgPars->addFlagArg("--orbital_num_2", "ARGUMENT_INT");
+    ArgPars->addFlagArg("--orbital_num_1", ArgumentType::NUMERICAL);
+    ArgPars->addFlagArg("--orbital_num_2", ArgumentType::NUMERICAL);
 
     int orb_num = 0;
     ArgPars->setFlagDefaultValue("--orbital_num_1", orb_num);
@@ -393,20 +393,20 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse) {
   for (size_t i = 0; i < flags.size(); ++i) {
     auto flag = flags.at(i);
     auto flag_sister = flags_sister.at(i);
-    string argu = "ARGUMENT_FILE";
-    string prop = "PROPERTY_FILE_EXIST";
-    string opt = "FILE_DOES_EXIST";
+    ArgumentType argu = ArgumentType::FILES;
+    PropertyType prop = PropertyType::FILE_EXISTS;
+    Option opt = Option::DOES_EXIST;
 
     string fileName;
-    auto exists = ArgParse->getFlagArgOptValue(flag, argu, prop, opt);
-    if (exists.compare("1") == 0) {
+    std::vector<bool> exists = ArgParse->get<bool>(flag, argu, prop, opt);
+    if ( exists ) {
       flag_arg[flag] = ArgParse->getStrs(flag).at(0);
     }
-    prop = "PROPERTY_SISTER_FILE";
-    opt = "SISTER_FILE_EXISTS";
-    auto line = ArgParse->getFlagArgOptValue(flag, argu, prop, opt);
-    opt = "SISTER_FILE_PATH_NAME";
-    auto line2 = ArgParse->getFlagArgOptValue(flag, argu, prop, opt);
+    prop = PropertyType::SISTER_FILE;
+    opt = Option::VALUE;
+    std::string line = ArgParse->get<std::string>(flag, argu, prop, opt);
+    opt = Option::FILE_PATH_NAME;
+    std::string line2 = ArgParse->get<std::string>(flag, argu, prop, opt);
     auto sisters_exist = splitSt(line);
     vector<string> sister_file_paths = splitSt(line2);
     int countFiles = 0;

@@ -4,7 +4,7 @@ project (catnip)
 ##############################################################################
 # Defining options 
 ##############################################################################
-option(ENABLE_TESTS "Enable testing" Off)
+option(ENABLE_TESTS "Enable testing" OFF)
 option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" ${ENABLE_TESTS})
 option(ENABLE_INTEGRATION_TESTING "Enable integration tests" ${ENABLE_TESTS})
 option(ENABLE_UNIT_TESTING "Enable tests" ${ENABLE_TESTS})
@@ -21,6 +21,9 @@ set(catnip_AUTHOR_SURNAME "\"Brown\"" )
 set(catnip_AUTHOR_INITIALS "\"J. S.\"" )
 set(catnip_TITLE "\"CATNIP\"")
 set(catnip_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 set(COMMON_LIBRARIES stdc++ m)

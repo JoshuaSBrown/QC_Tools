@@ -7,8 +7,7 @@ using namespace catnip;
 using namespace std;
 
 ArgumentSwitch::ArgumentSwitch(void) { 
-  auto prop_switch = std::unique_ptr<PropertyObject>(new PropertySwitch);
-  propobjs_.push_back(prop_switch);
+  propobjs_.emplace_back(new PropertySwitch);
 }
 
 bool ArgumentSwitch::positive(string val) const {

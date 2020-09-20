@@ -20,8 +20,8 @@ TEST_CASE("Property Switch","[unit]") {
   cerr << "Testing: getPropertyName" << endl;
   {
     PropertySwitch propSwitch;
-    string name = propSwitch.getPropertyName();
-    assert(name.compare("PROPERTY_SWITCH") == 0);
+    PropertyType type = propSwitch.getPropertyType();
+    REQUIRE(type == PropertyType::SWITCH);
   }
 
   cerr << "Testing: getPropertyOptions" << endl;
@@ -29,8 +29,8 @@ TEST_CASE("Property Switch","[unit]") {
 
     PropertySwitch propSwitch;
     auto options = propSwitch.getPropertyOptions();
-    string opt = options.at(0);
-    assert(opt.compare("DEFAULT") == 0);
+    Option opt = options.at(0);
+    REQUIRE(opt == Option::DEFAULT);
   }
 
   cerr << "Testing: propValid" << endl;
@@ -75,8 +75,8 @@ TEST_CASE("Property Switch","[unit]") {
   cerr << "Testing: setPropOption" << endl;
   {
     PropertySwitch propSwitch;
-    propSwitch.setPropOption("DEFAULT", "ON");
-    propSwitch.setPropOption("DEFAULT", "OFF");
+    propSwitch.setPropOption(Option::DEFAULT, "ON");
+    propSwitch.setPropOption(Option::DEFAULT, "OFF");
     //    propSwitch.propValid(0);
     //    bool excep = false;
     //    try {
