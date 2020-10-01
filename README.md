@@ -14,7 +14,7 @@
 
 Message to users:
 
-1. The wiki has been ported to github pages, I have left the documentation in the wiki but it will become deprecated in the future
+1. The wiki has been ported to github pages, I have left the documentation in the wiki but it will become deprecated in the future.
 2. Version 2.0 is in the works, will provide additional functionality.
 
 ## Documentation
