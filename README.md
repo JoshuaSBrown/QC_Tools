@@ -19,7 +19,17 @@ Message to users:
 
 ## Documentation
 
-[CATNIP Home](https://joshuasbrown.github.io/docs/CATNIP/catnip_home.html)
+* [CATNIP Home](https://joshuasbrown.github.io/docs/CATNIP/catnip_home.html)
+* [Downloading & Building](https://joshuasbrown.github.io/docs/CATNIP/catnip_downloads.html)
+* [Theory](https://joshuasbrown.github.io/docs/CATNIP/catnip_theory.html)
+* [Gaussian Files](https://joshuasbrown.github.io/docs/CATNIP/catnip_gaussian_files.html)
+* [Tutorial 1](https://joshuasbrown.github.io/docs/CATNIP/catnip_tutorial1.html)
+* [Tutorial 2](https://joshuasbrown.github.io/docs/CATNIP/catnip_tutorial2.html)
+* [Tutorial 3](https://joshuasbrown.github.io/docs/CATNIP/catnip_tutorial3.html)
+* [Common Problems](https://joshuasbrown.github.io/docs/CATNIP/catnip_common_problems.html)
+* [Versions](https://joshuasbrown.github.io/docs/CATNIP/catnip_versions.html)
+* [Resources](https://joshuasbrown.github.io/docs/CATNIP/catnip_resources.html)
+* [Papers](https://joshuasbrown.github.io/docs/CATNIP/catnip_papers.html)
 
 ## Old Documentation
 
