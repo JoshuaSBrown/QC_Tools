@@ -9,6 +9,7 @@
 [![Github All Releases](https://img.shields.io/github/downloads/JoshuaSBrown/QC_Tools/total.svg)]()
 [![Build Status](https://travis-ci.org/JoshuaSBrown/QC_Tools.svg?branch=master)](https://travis-ci.org/JoshuaSBrown/QC_Tools)
 [![codecov](https://codecov.io/gh/JoshuaSBrown/QC_Tools/branch/master/graph/badge.svg)](https://codecov.io/gh/JoshuaSBrown/QC_Tools)
+[![deepcode](https://www.deepcode.ai/api/gh/badge?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwbGF0Zm9ybTEiOiJnaCIsIm93bmVyMSI6Ikpvc2h1YVNCcm93biIsInJlcG8xIjoiUUNfVG9vbHMiLCJpbmNsdWRlTGludCI6ZmFsc2UsImF1dGhvcklkIjoxNjMwMSwiaWF0IjoxNjA0MDY3MTAyfQ.wrs9hiswcpMuEVl0OoenBBpTFCQd6dV-5h0NR_jKmzA)](https://www.deepcode.ai/app/gh/JoshuaSBrown/QC_Tools/_/dashboard?utm_content=gh%2FJoshuaSBrown%2FQC_Tools)
 
 # Updates
 
