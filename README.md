@@ -32,20 +32,6 @@ Message to users:
 * [Resources](https://joshuasbrown.github.io/docs/CATNIP/catnip_resources.html)
 * [Papers](https://joshuasbrown.github.io/docs/CATNIP/catnip_papers.html)
 
-## Old Documentation
-
- * [Home](https://github.com/JoshuaSBrown/QC_Tools/wiki)
- * [Downloading](https://github.com/JoshuaSBrown/QC_Tools/wiki/1.-Downloading)
- * [Compiling](https://github.com/JoshuaSBrown/QC_Tools/wiki/2.-Compiling)
- * [Gaussian Files](https://github.com/JoshuaSBrown/QC_Tools/wiki/3.-Gaussian-Files)
- * [Tutorial 1](https://github.com/JoshuaSBrown/QC_Tools/wiki/4.a-Tutorial-1)
- * [Tutorial 2](https://github.com/JoshuaSBrown/QC_Tools/wiki/4.b-Tutorial-2)
- * [Tutorial 3](https://github.com/JoshuaSBrown/QC_Tools/wiki/4.c-Tutorial-3)
- * [Common Problems](https://github.com/JoshuaSBrown/QC_Tools/wiki/5.-Common-Problems)
- * [Other Resources](https://github.com/JoshuaSBrown/QC_Tools/wiki/6.-Other-Resources)
- * [Versions](https://github.com/JoshuaSBrown/QC_Tools/wiki/7.-Versions)
- * [Papers Using CATNIP](https://github.com/JoshuaSBrown/QC_Tools/wiki/8.-Papers-using-CATNIP)
-
 ## Objective
 
 CATNIP is meant to make difficult calculations accessible to the masses. The focus is to accelerate science and industry by:
