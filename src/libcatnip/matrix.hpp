@@ -23,7 +23,10 @@ class Matrix {
   Matrix(const int r, const int c);
   Matrix(const int r, const int c, const int s);
 
+  Matrix(const Matrix & mat);
+
   Matrix &operator=(const Matrix &m);
+  Matrix &operator=(Matrix &m);
   // manipulators
   void set_rows(int r);
   void set_cols(int c);
