@@ -1,8 +1,9 @@
 
 
-#include "../libcatnip/io/argumentparser.hpp"
-#include "../libcatnip/io/io.hpp"
-#include "../libcatnip/matrix.hpp"
+#include <mamap/argumentparser.hpp>
+#include "io/io.hpp"
+#include "parameters.hpp"
+#include "matrix.hpp"
 #include <cassert>
 #include <iostream>
 #include <string>
@@ -13,21 +14,23 @@ using namespace std;
 
 int main(int argc, const char* argv[]) {
 
-  auto ArgParse = prepareParser();
+  auto arg_parser = prepareParser();
 
-  ArgParse->parse(argv, argc);
-  vector<string> flags{"--pun_P", "--pun_1", "--pun_2",
-                       "--log_P", "--log_1", "--log_2"};
+  arg_parser->parse(argv, argc);
+  
+  auto parameters = prepareParameters(std::move(arg_parser))
 
+/*
   for (auto flag : flags) {
     cout << endl;
-    string argu = "ARGUMENT_FILE";
-    string prop = "PROPERTY_FILE_EXT";
-    string opt = "ALLOWED_FILE_EXT";
-    auto val = ArgParse->getFlagArgOptValue(flag, argu, prop, opt);
-    cout << flag << " " << argu << " " << prop << " " << opt << " " << val
-         << endl;
-
+    ArgumentType argu = ArgumentType::FILES;
+    PropertyType prop = PropertyType::FILE_EXT;
+    Option opt = Option::ALLOWED_VALUES;
+    auto values = ArgParse->get<string>(flag, argu, prop, opt);
+    for ( std::string & val : values ){
+      cout << val << " ";
+    }
+    cout << endl;
     prop = "PROPERTY_SISTER_FILE";
     opt = "ALLOWED_SISTER_FILE_EXT";
     auto val1 = ArgParse->getFlagArgOptValue(flag, argu, prop, opt);
@@ -59,7 +62,7 @@ int main(int argc, const char* argv[]) {
     opt = "FILE_DOES_EXIST";
     auto val7 = ArgParse->getFlagArgOptValue(flag, argu, prop, opt);
     cout << flag << " " << argu << " " << prop << " " << opt << " " << val7
-         << endl;
+         << endl;*/
   }
 
   auto Par = prepareParameters(ArgParse);

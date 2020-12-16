@@ -1,0 +1,18 @@
+// Configured options and settings for catnip
+
+#ifndef CATNIP_CONFIG_HPP
+#define CATNIP_CONFIG_HPP
+
+#include <string>
+
+namespace catnip {
+  const int catnip_VERSION_MAJOR = @catnip_VERSION_MAJOR@;
+  const int catnip_VERSION_MINOR = @catnip_VERSION_MINOR@;
+  const int catnip_YEAR_PUBLISHED = @catnip_YEAR_PUBLISHED@;
+  const std::string catnip_AUTHOR_SURNAME = @catnip_AUTHOR_SURNAME@;
+  const std::string catnip_AUTHOR_INITIALS = @catnip_AUTHOR_INITIALS@;
+  const std::string catnip_TITLE = @catnip_TITLE@;
+  const std::string catnip_URL = @catnip_URL@;
+}  // namespace catnip
+
+#endif  // CATNIP_CONFIG_HPP

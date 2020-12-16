@@ -1,20 +1,22 @@
 #ifndef _CATNIP_IO_HPP
 #define _CATNIP_IO_HPP
-#include "../matrix.hpp"
 #include "../parameters.hpp"
-#include "argumentparser.hpp"
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
 #include <utility>
 
+namespace mamap {
+  class ArgumentParser;
+}
+
 namespace catnip {
 
-std::unique_ptr<ArgumentParser> prepareParser(void);
+std::unique_ptr<mamap::ArgumentParser> prepareParser(void);
 
 std::unique_ptr<Parameters> prepareParameters(
-    std::unique_ptr<ArgumentParser>& ArgParse);
+    std::unique_ptr<mamap::ArgumentParser>& ArgParse);
 
 }  // namespace catnip
 

@@ -25,6 +25,18 @@ void Parameters::setLogP(const string& logP) {
     throw invalid_argument("log file has wrong extension");
   logP_ = logP;
 }
+
+void Parameters::setLogs(std::vector<std::string> logs) {
+  logs_.clear();
+  logs_.reserve(logs.size());
+  for( const std::string & log : logs ) {
+    string ext = lastN(log, 4);
+    if (ext.compare(".log"))
+      throw invalid_argument("log file has wrong extension");
+    logs_.push_back(log);
+  }
+}
+
 void Parameters::setPun1(const string& pun1) {
   string ext = lastN(pun1, 4);
   if (ext.compare(".pun"))
@@ -43,3 +55,17 @@ void Parameters::setPunP(const string& punP) {
     throw invalid_argument("pun file has wrong extension");
   punP_ = punP;
 }
+
+void Parameters::setPuns(std::vector<std::string> puns) {
+  puns_.clear();
+  puns_.reserve(puns.size());
+  for( const std::string & pun : puns ) {
+    string ext = lastN(pun, 4);
+    if (ext.compare(".pun"))
+      throw invalid_argument("pun file has wrong extension");
+    puns_.push_back(pun);
+  }
+}
+
+
+

@@ -91,6 +91,12 @@ string firstN(string input, int n) { return input.substr(0, n); }
 
 string cut_beg(string input, int n) { return input.substr(n, input.size()); }
 
+// Converts to uppercase
+std::string to_upper(std::string input) {
+  std::for_each(input.begin(),input.end(), ::toupper);
+  return input;
+}
+
 // trim from both ends (in place)
 void trim(string &s) {
   ltrim_(s);

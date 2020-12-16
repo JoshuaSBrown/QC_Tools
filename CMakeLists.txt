@@ -1,120 +1,132 @@
-cmake_minimum_required (VERSION 2.8)
-project (calc_J)
+cmake_minimum_required (VERSION 3.14)
+project (catnip VERSION 2.0.0)
 
 ##############################################################################
 # Defining options 
 ##############################################################################
-option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" OFF)
-option(ENABLE_INTEGRATION_TESTS "Enable integration tests" OFF)
-option(ENABLE_TESTS "Enable tests" OFF)
+option(ENABLE_TESTS "Enable testing" OFF)
+option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" ${ENABLE_TESTS})
+option(ENABLE_INTEGRATION_TESTING "Enable integration tests" ${ENABLE_TESTS})
+option(ENABLE_UNIT_TESTING "Enable unit tests" ${ENABLE_TESTS})
+option(ENABLE_PROFILING "Enable profiling" OFF)
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
+
+##############################################################################
+# Override default options 
+##############################################################################
+set(DOWNLOAD_TUTORIAL_FILES ${ENABLE_TESTS} CACHE STRING "Download tutorial files" FORCE)
+set(ENABLE_INTEGRATION_TESTING ${ENABLE_TESTS} CACHE STRING "Enable integration tests" FORCE)
+set(ENABLE_UNIT_TESTING ${ENABLE_TESTS} CACHE STRING "Enable unit tests" FORCE)
 
 ##############################################################################
 # Defining settings 
 ##############################################################################
-set(calcJ_VERSION_MAJOR 1 )
-set(calcJ_VERSION_MINOR 9 )
-set(calcJ_YEAR_PUBLISHED 2018 )
-set(calcJ_AUTHOR_SURNAME "\"Brown\"" )
-set(calcJ_AUTHOR_INITIALS "\"J. S.\"" )
-set(calcJ_TITLE "\"CATNIP\"")
-set(calcJ_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
+set(catnip_YEAR_PUBLISHED 2018 )
+set(catnip_AUTHOR_SURNAME "\"Brown\"" )
+set(catnip_AUTHOR_INITIALS "\"J. S.\"" )
+set(catnip_TITLE "\"CATNIP\"")
+set(catnip_URL "\"https://github.com/JoshuaSBrown/QC_Tools\"" )
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(COVERAGE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 set(COMMON_LIBRARIES stdc++ m)
-set(LOG_LEVEL 0 CACHE INT "Choose the log level" )
+set(LOG_LEVEL 0 CACHE STRING "Choose the log level" )
 # Prevents multiple file extensions from being appended one after the other
 # important for using gcov .o.gcno or .cpp.gcno now will be .gcno
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic -Werror")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -Werror")
+
+##############################################################################
+# Check for Dependencies 
+##############################################################################
+
+find_package(mamap REQUIRED)
+if( NOT ${mamap_FOUND} )
+  include(${catnip_SOURCE_DIR}/cmake/InstallMAMAP.cmake)
+else()
+  message(STATUS "found system installed mamap will not download")
+endif()
 
 ##############################################################################
 # Configuring header file with cmake variables 
 ##############################################################################
 # Configure header file to pass some of the CMake settings to the source code
 configure_file(
-  "${PROJECT_SOURCE_DIR}/src/libcatnip/calcJconfig.hpp.in"
-  "${PROJECT_SOURCE_DIR}/src/libcatnip/calcJconfig.hpp"
+  "${catnip_SOURCE_DIR}/src/libcatnip/catnip_config.hpp.in"
+  "${catnip_SOURCE_DIR}/src/libcatnip/catnip_config.hpp"
   )
 
 ##############################################################################
 # Finding dependencies 
 ##############################################################################
 # Find bash it is important for testing using scripts
-find_program (BASH_PROGRAM bash)
 find_library (GCOV gcov)
+#find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+#if (TARGET Eigen3::Eigen)
+#  message("-- Eigen found")
+#endif(TARGET Eigen3::Eigen)
 add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
 
 ##############################################################################
+# Setting up profiling 
+##############################################################################
+if(${ENABLE_PROFILING})
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
+endif()
+##############################################################################
 # Setting up testing 
 ##############################################################################
-if(ENABLE_INTEGRATION_TESTS)
-  if(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
-    message("GAUSSIANFILES found will not download")
+message("ENable tests ${ENABLE_TESTS} and integration ${ENABLE_INTEGRATION_TESTING}")
+if(${ENABLE_INTEGRATION_TESTING})
+  if(EXISTS "${catnip_SOURCE_DIR}/GAUSSIANFILES")
+    message(STATUS "GAUSSIANFILES found will not download")
     set(DOWNLOAD_TUTORIAL_FILES OFF)
-  else(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
-    message("GAUSSIANFILES not found will download")
-    set(DOWNLOAD_TUTORIAL_FILES ON)
-  endif(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
+  else(EXISTS "${catnip_SOURCE_DIR}/GAUSSIANFILES")
+    message(STATUS "GAUSSIANFILES not found will attempt to download")
+    include(${catnip_SOURCE_DIR}/cmake/InstallGdown.cmake)
+  endif(EXISTS "${catnip_SOURCE_DIR}/GAUSSIANFILES")
 endif()
 
-if(DOWNLOAD_TUTORIAL_FILES)
-  message("Downloading gaussian tutorial files")
-  execute_process(COMMAND ${PROJECT_SOURCE_DIR}/scripts/test_suite_install.bash "${PROJECT_SOURCE_DIR}" )
-endif()
-
-if(ENABLE_TESTS OR ENABLE_INTEGRATION_TESTS)
+if(${ENABLE_UNIT_TESTING} OR ${ENABLE_INTEGRATION_TESTING})
+  find_package(Catch2 2.11.1)
+  if( NOT ${Catch2_FOUND} )
+    include(${catnip_SOURCE_DIR}/cmake/InstallCatch2.cmake)
+  else()
+    message(STATUS "found system installed Catch2 will not download")
+  endif()
   enable_testing()
-  add_subdirectory("${PROJECT_SOURCE_DIR}/src/tests")
+  include(Catch)
+  include(ParseAndAddCatchTests)
+
+  if (${ENABLE_INTEGRATION_TESTING})
+    file( COPY "${catnip_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
+      DESTINATION "${catnip_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+    file( COPY "${catnip_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" 
+      DESTINATION "${catnip_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+
+    file( COPY "${catnip_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" 
+      DESTINATION "${catnip_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+    file( COPY "${catnip_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" 
+      DESTINATION "${catnip_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+    file( COPY "${catnip_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" 
+      DESTINATION "${catnip_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+  endif()
+
+  if (${ENABLE_UNIT_TESTING})
+    file( COPY "${catnip_SOURCE_DIR}/src/tests/testfile.pun" 
+      DESTINATION "${catnip_BINARY_DIR}/src/tests")
+    file( COPY "${catnip_SOURCE_DIR}/src/tests/testfile.log" 
+      DESTINATION "${catnip_BINARY_DIR}/src/tests")
+  endif()
+
 endif()
-
-if (ENABLE_INTEGRATION_TESTS)
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
-
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-  file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-endif()
-
-if (ENABLE_TESTS)
-  file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.pun" 
-    DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
-  file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.log" 
-    DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
-endif()
-
 ##############################################################################
 # Compiling build tree/paths 
 ##############################################################################
-# Add the binary tree to the search path for include files
-# so that we will find calcJconfig.hpp
-include_directories("${PROJECT_BINARY_DIR}/src")
-include_directories("${PROJECT_SOURCE_DIR}/src/libcatnip")
-include_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments/properties")
-include_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments")
-include_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/file_readers")
-include_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io")
+add_subdirectory("${catnip_SOURCE_DIR}/src")
 
-link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments/properties")
-link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/arguments")
-link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io/file_readers")
-link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip/io")
-link_directories("${PROJECT_SOURCE_DIR}/src/libcatnip")
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/src/libcatnip")
-
-##############################################################################
-# Creating calc_J and setting up code coverage if on  
-##############################################################################
-add_executable(calc_J src/tools/main.cpp)
-if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  target_link_libraries(calc_J gcov)
-  set_source_files_properties( src/tools/main.cpp PROPERTIES COMPILE_FLAGS ${COVERAGE_FLAGS})
-endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-target_link_libraries(calc_J libcatnip ${COMMON_LIBRARIES})
-install( TARGETS calc_J DESTINATION bin)
