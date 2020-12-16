@@ -34,79 +34,79 @@ TEST_CASE("Atom System","[unit]") {
 
   SECTION("Building component without atom 5") {
     // Extra atoms are allowed in the complex but not in the componets
-    AtomGroup component1("CH2");
-    component1.add(atom1_ptr);
-    component1.add(atom2_ptr);
-    component1.add(atom3_ptr);
+    auto component1 = std::make_unique<AtomGroup>("CH2");
+    component1->add(atom1_ptr);
+    component1->add(atom2_ptr);
+    component1->add(atom3_ptr);
 
-    AtomGroup component2("O2");
-    component2.add(atom4_ptr);  
+    auto component2 = std::make_unique<AtomGroup>("O2");
+    component2->add(atom4_ptr);  
 
-    AtomGroup complex1("O2CH2");
-    complex1.add(atom1_ptr);
-    complex1.add(atom2_ptr);
-    complex1.add(atom3_ptr);
-    complex1.add(atom4_ptr);
-    complex1.add(atom5_ptr);
+    auto complex1 = std::make_unique<AtomGroup>("O2CH2");
+    complex1->add(atom1_ptr);
+    complex1->add(atom2_ptr);
+    complex1->add(atom3_ptr);
+    complex1->add(atom4_ptr);
+    complex1->add(atom5_ptr);
 
-    AtomGroupContainer atom_grp_cont;
-    atom_grp_cont.add(component1);
-    atom_grp_cont.add(component2);
-    atom_grp_cont.add(complex1);
+    auto atom_grp_cont = std::unique_ptr<AtomGroupContainer>(new AtomGroupContainer);
+    atom_grp_cont->add(std::move(component1));
+    atom_grp_cont->add(std::move(component2));
+    atom_grp_cont->add(std::move(complex1));
 
-    REQUIRE_NOTHROW(AtomSystem(atom_grp_cont) );
+    REQUIRE_NOTHROW(AtomSystem(std::move(atom_grp_cont)) );
   }
 
   SECTION("Building complex without atom 5") {
     // Extra atoms are allowed in the complex but not in the componets
-    AtomGroup component1("CH2");
-    component1.add(atom1_ptr);
-    component1.add(atom2_ptr);
-    component1.add(atom3_ptr);
+    auto component1 = std::make_unique<AtomGroup>("CH2");
+    component1->add(atom1_ptr);
+    component1->add(atom2_ptr);
+    component1->add(atom3_ptr);
 
-    AtomGroup component2("O2");
-    component2.add(atom4_ptr);  
-    component2.add(atom5_ptr);  
+    auto component2 = std::make_unique<AtomGroup>("O2");
+    component2->add(atom4_ptr);  
+    component2->add(atom5_ptr);  
 
-    AtomGroup complex1("O2CH2");
-    complex1.add(atom1_ptr);
-    complex1.add(atom2_ptr);
-    complex1.add(atom3_ptr);
-    complex1.add(atom4_ptr);
+    auto complex1 = std::make_unique<AtomGroup>("O2CH2");
+    complex1->add(atom1_ptr);
+    complex1->add(atom2_ptr);
+    complex1->add(atom3_ptr);
+    complex1->add(atom4_ptr);
 
-    AtomGroupContainer atom_grp_cont;
-    atom_grp_cont.add(component1);
-    atom_grp_cont.add(component2);
-    atom_grp_cont.add(complex1);
+    auto atom_grp_cont = std::unique_ptr<AtomGroupContainer>(new AtomGroupContainer);
+    atom_grp_cont->add(std::move(component1));
+    atom_grp_cont->add(std::move(component2));
+    atom_grp_cont->add(std::move(complex1));
 
-    REQUIRE_THROWS(AtomSystem(atom_grp_cont) );
+    REQUIRE_THROWS(AtomSystem(std::move(atom_grp_cont)) );
   }
 
   SECTION("Building with atom 5") {
-    AtomGroup component1("CH2");
-    component1.add(atom1_ptr); // H
-    component1.add(atom2_ptr); // H 
-    component1.add(atom3_ptr); // C
+    auto component1 = std::make_unique<AtomGroup>("CH2");
+    component1->add(atom1_ptr);
+    component1->add(atom2_ptr);
+    component1->add(atom3_ptr);
 
-    AtomGroup component2("O2");
-    component2.add(atom4_ptr); // O
-    component2.add(atom5_ptr); // O 
+    auto component2 = std::make_unique<AtomGroup>("O2");
+    component2->add(atom4_ptr);  
+    component2->add(atom5_ptr);  
 
-    AtomGroup complex1("O2CH2");
-    complex1.add(atom1_ptr); // H
-    complex1.add(atom2_ptr); // H
-    complex1.add(atom3_ptr); // C
-    complex1.add(atom4_ptr); // O
-    complex1.add(atom5_ptr); // O
+    auto complex1 = std::make_unique<AtomGroup>("O2CH2");
+    complex1->add(atom1_ptr);
+    complex1->add(atom2_ptr);
+    complex1->add(atom3_ptr);
+    complex1->add(atom4_ptr);
+    complex1->add(atom5_ptr); // O
 
-    AtomGroupContainer atom_grp_cont;
-    atom_grp_cont.add(component1);
-    atom_grp_cont.add(component2);
-    atom_grp_cont.add(complex1);
+    auto atom_grp_cont = std::unique_ptr<AtomGroupContainer>(new AtomGroupContainer);
+    atom_grp_cont->add(std::move(component1));
+    atom_grp_cont->add(std::move(component2));
+    atom_grp_cont->add(std::move(complex1));
 
-    AtomSystem atm_sys(atom_grp_cont);
-    REQUIRE(atm_sys.getComplex().getType() == GroupType::Complex );
-    REQUIRE(atm_sys.getComplex().getName() == "O2CH2" );
+    AtomSystem atm_sys(std::move(atom_grp_cont));
+    REQUIRE(atm_sys.getComplex()->getType() == GroupType::Complex );
+    REQUIRE(atm_sys.getComplex()->getName() == "O2CH2" );
 
     std::vector<int> component_indices = atm_sys.getComponentIndices();
     REQUIRE(component_indices.size() == 2);
@@ -135,48 +135,48 @@ TEST_CASE("Atom System","[unit]") {
     std::vector<int> basis_complex{ 1, 1, 4, 5, 5}; 
     REQUIRE_NOTHROW( atm_sys.assignBasisFunctions( 2, basis_complex ));
 
-    REQUIRE( atm_sys.at(0).size() == 3);
-    REQUIRE( atm_sys.at(0).at(0)->getBasisFuncCount() == 1); // H 
-    REQUIRE( atm_sys.at(0).at(1)->getBasisFuncCount() == 1); // H
-    REQUIRE( atm_sys.at(0).at(2)->getBasisFuncCount() == 4); // C
+    REQUIRE( atm_sys.at(0)->size() == 3);
+    REQUIRE( atm_sys.at(0)->at(0)->getBasisFuncCount() == 1); // H 
+    REQUIRE( atm_sys.at(0)->at(1)->getBasisFuncCount() == 1); // H
+    REQUIRE( atm_sys.at(0)->at(2)->getBasisFuncCount() == 4); // C
     
-    REQUIRE( atm_sys.at(1).size() == 2);
-    REQUIRE( atm_sys.at(1).at(0)->getBasisFuncCount() == 5); // O
-    REQUIRE( atm_sys.at(1).at(1)->getBasisFuncCount() == 5); // O
+    REQUIRE( atm_sys.at(1)->size() == 2);
+    REQUIRE( atm_sys.at(1)->at(0)->getBasisFuncCount() == 5); // O
+    REQUIRE( atm_sys.at(1)->at(1)->getBasisFuncCount() == 5); // O
 
-    REQUIRE( atm_sys.at(2).size() == 5);
-    REQUIRE( atm_sys.at(2).at(0)->getBasisFuncCount() == 1); // H 
-    REQUIRE( atm_sys.at(2).at(1)->getBasisFuncCount() == 1); // H
-    REQUIRE( atm_sys.at(2).at(2)->getBasisFuncCount() == 4); // C
-    REQUIRE( atm_sys.at(2).at(3)->getBasisFuncCount() == 5); // O
-    REQUIRE( atm_sys.at(2).at(4)->getBasisFuncCount() == 5); // O
+    REQUIRE( atm_sys.at(2)->size() == 5);
+    REQUIRE( atm_sys.at(2)->at(0)->getBasisFuncCount() == 1); // H 
+    REQUIRE( atm_sys.at(2)->at(1)->getBasisFuncCount() == 1); // H
+    REQUIRE( atm_sys.at(2)->at(2)->getBasisFuncCount() == 4); // C
+    REQUIRE( atm_sys.at(2)->at(3)->getBasisFuncCount() == 5); // O
+    REQUIRE( atm_sys.at(2)->at(4)->getBasisFuncCount() == 5); // O
   }
 
   SECTION("Building complex with atom 6") {
-    AtomGroup component1("CH2");
-    component1.add(atom1_ptr);
-    component1.add(atom2_ptr);
-    component1.add(atom3_ptr);
+    auto component1 = std::make_unique<AtomGroup>("CH2");
+    component1->add(atom1_ptr);
+    component1->add(atom2_ptr);
+    component1->add(atom3_ptr);
 
-    AtomGroup component2("O2");
-    component2.add(atom4_ptr);  
-    component2.add(atom5_ptr);  
+    auto component2 = std::make_unique<AtomGroup>("O2");
+    component2->add(atom4_ptr);  
+    component2->add(atom5_ptr);  
 
-    AtomGroup complex1("OC2H2");
-    complex1.add(atom1_ptr);
-    complex1.add(atom2_ptr);
-    complex1.add(atom3_ptr);
-    complex1.add(atom4_ptr);
-    complex1.add(atom6_ptr); // Carbon instead of Oxygen
+    auto complex1 = std::make_unique<AtomGroup>("OC2H2");
+    complex1->add(atom1_ptr);
+    complex1->add(atom2_ptr);
+    complex1->add(atom3_ptr);
+    complex1->add(atom4_ptr);
+    complex1->add(atom6_ptr);// Carbon instead of Oxygen
 
-    AtomGroupContainer atom_grp_cont;
-    atom_grp_cont.add(component1);
-    atom_grp_cont.add(component2);
-    atom_grp_cont.add(complex1);
+    auto atom_grp_cont = std::unique_ptr<AtomGroupContainer>(new AtomGroupContainer);
+    atom_grp_cont->add(std::move(component1));
+    atom_grp_cont->add(std::move(component2));
+    atom_grp_cont->add(std::move(complex1));
 
-    AtomSystem atm_sys(atom_grp_cont);
-    REQUIRE(atm_sys.getComplex().getType() == GroupType::Complex );
-    REQUIRE(atm_sys.getComplex().getName() == "OC2H2" );
+    AtomSystem atm_sys(std::move(atom_grp_cont));
+    REQUIRE(atm_sys.getComplex()->getType() == GroupType::Complex );
+    REQUIRE(atm_sys.getComplex()->getName() == "OC2H2" );
 
     std::vector<int> component_indices = atm_sys.getComponentIndices();
     REQUIRE(component_indices.size() == 2);
@@ -215,20 +215,20 @@ TEST_CASE("Atom System","[unit]") {
     REQUIRE_NOTHROW( atm_sys.assignBasisFunctions( 2, basis_complex ));
     REQUIRE( atm_sys.systemComplete() );
 
-    REQUIRE( atm_sys.at(0).size() == 3);
-    REQUIRE( atm_sys.at(0).at(0)->getBasisFuncCount() == 1); // H 
-    REQUIRE( atm_sys.at(0).at(1)->getBasisFuncCount() == 1); // H
-    REQUIRE( atm_sys.at(0).at(2)->getBasisFuncCount() == 4); // C
+    REQUIRE( atm_sys.at(0)->size() == 3);
+    REQUIRE( atm_sys.at(0)->at(0)->getBasisFuncCount() == 1); // H 
+    REQUIRE( atm_sys.at(0)->at(1)->getBasisFuncCount() == 1); // H
+    REQUIRE( atm_sys.at(0)->at(2)->getBasisFuncCount() == 4); // C
 
-    REQUIRE( atm_sys.at(1).size() == 2);
-    REQUIRE( atm_sys.at(1).at(0)->getBasisFuncCount() == 5); // O
-    REQUIRE( atm_sys.at(1).at(1)->getBasisFuncCount() == 5); // O
+    REQUIRE( atm_sys.at(1)->size() == 2);
+    REQUIRE( atm_sys.at(1)->at(0)->getBasisFuncCount() == 5); // O
+    REQUIRE( atm_sys.at(1)->at(1)->getBasisFuncCount() == 5); // O
 
-    REQUIRE( atm_sys.at(2).size() == 5);
-    REQUIRE( atm_sys.at(2).at(0)->getBasisFuncCount() == 1); // H 
-    REQUIRE( atm_sys.at(2).at(1)->getBasisFuncCount() == 1); // H
-    REQUIRE( atm_sys.at(2).at(2)->getBasisFuncCount() == 4); // C
-    REQUIRE( atm_sys.at(2).at(3)->getBasisFuncCount() == 5); // O
-    REQUIRE( atm_sys.at(2).at(4)->getBasisFuncCount() == 5); // O
+    REQUIRE( atm_sys.at(2)->size() == 5);
+    REQUIRE( atm_sys.at(2)->at(0)->getBasisFuncCount() == 1); // H 
+    REQUIRE( atm_sys.at(2)->at(1)->getBasisFuncCount() == 1); // H
+    REQUIRE( atm_sys.at(2)->at(2)->getBasisFuncCount() == 4); // C
+    REQUIRE( atm_sys.at(2)->at(3)->getBasisFuncCount() == 5); // O
+    REQUIRE( atm_sys.at(2)->at(4)->getBasisFuncCount() == 5); // O
   }
 }

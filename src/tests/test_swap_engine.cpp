@@ -19,53 +19,6 @@
 #include <vector>
 
 using namespace catnip;
-/*
-TEST_CASE("Basis Map Unscrambled","[integration]") {
-
-  Atom atom1(Element::H, 0.0, 0.0, 0.0);
-  Atom atom2(Element::H, 2.0, 0.0, 0.0);
-  Atom atom3(Element::C, 1.0, 1.0, 0.0);
-  Atom atom4(Element::O, 3.3, 4.3, 0.0);
-  Atom atom5(Element::O, 3.0, 3.9, 0.0);
-
-  auto atom1_ptr = std::make_shared<Atom>(atom1);
-  auto atom2_ptr = std::make_shared<Atom>(atom2);
-  auto atom3_ptr = std::make_shared<Atom>(atom3);
-  auto atom4_ptr = std::make_shared<Atom>(atom4);
-  auto atom5_ptr = std::make_shared<Atom>(atom5);
-
-  // Extra atoms are allowed in the complex but not in the componets
-  AtomGroup component1("CH2");
-  component1.add(atom1_ptr);
-  component1.add(atom2_ptr);
-  component1.add(atom3_ptr);
-
-  AtomGroup component2("O2");
-  component2.add(atom4_ptr);  
-  component2.add(atom5_ptr);  
-
-  AtomGroup complex1("O2CH2");
-  complex1.add(atom1_ptr);
-  complex1.add(atom2_ptr);
-  complex1.add(atom3_ptr);
-  complex1.add(atom4_ptr);
-  complex1.add(atom5_ptr);
-
-  AtomGroupContainer atom_grp_cont;
-  atom_grp_cont.add(component1);
-  atom_grp_cont.add(component2);
-  atom_grp_cont.add(complex1);
-
-  AtomSystem atm_sys(atom_grp_cont);
-
-  std::vector<int> basis_complex{ 1, 1, 4, 5, 5}; 
-
-  int index_complex = 2;
-  atm_sys.assignBasisFunctions( index_complex, basis_complex);
-  BasisMap basis_map(atm_sys);
-
-}
-*/
 
 /**
  * @brief In this test some of the atoms added to the complex will be added
@@ -92,30 +45,29 @@ TEST_CASE("Basis Map Scrambled","[integration]") {
   auto atom5_ptr = std::make_shared<Atom>(atom5);
 
   // Extra atoms are allowed in the complex but not in the componets
-  AtomGroup component1("CH2");
-  component1.add(atom1_ptr);
-  component1.add(atom2_ptr);
-  component1.add(atom3_ptr);
+  auto component1 = std::make_unique<AtomGroup>("CH2");
+  component1->add(atom1_ptr);
+  component1->add(atom2_ptr);
+  component1->add(atom3_ptr);
 
-  AtomGroup component2("O2");
-  component2.add(atom4_ptr);  
-  component2.add(atom5_ptr);  
+  auto component2 = std::make_unique<AtomGroup>("O2");
+  component2->add(atom4_ptr);  
+  component2->add(atom5_ptr);  
 
   // HERE: the order has been changed
-  AtomGroup complex1("O2CH2");
-  complex1.add(atom4_ptr); // The basis functions of atom 4 : 0 - 4
-  complex1.add(atom1_ptr); // The basis functiosn of atom 1 : 5 - 5 
-  complex1.add(atom3_ptr); // The basis functiosn of atom 3 : 6 - 9
-  complex1.add(atom5_ptr); // The basis functiosn of atom 5 : 10 - 14
-  complex1.add(atom2_ptr); // The basis functions of atom 2 : 15 - 15
+  auto complex1 = std::make_unique<AtomGroup>("O2CH2");
+  complex1->add(atom4_ptr); // The basis functions of atom 4 : 0 - 4
+  complex1->add(atom1_ptr); // The basis functions of atom 1 : 5 - 5 
+  complex1->add(atom3_ptr); // The basis functions of atom 3 : 6 - 9
+  complex1->add(atom5_ptr); // The basis functions of atom 5 : 10 - 14
+  complex1->add(atom2_ptr); // The basis functions of atom 2 : 15 - 15
 
-  AtomGroupContainer atom_grp_cont;
-  atom_grp_cont.add(component1);
-  atom_grp_cont.add(component2);
-  atom_grp_cont.add(complex1);
+  auto atom_grp_cont = std::unique_ptr<AtomGroupContainer>(new AtomGroupContainer);
+  atom_grp_cont->add(std::move(component1));
+  atom_grp_cont->add(std::move(component2));
+  atom_grp_cont->add(std::move(complex1));
 
-  AtomSystem atm_sys(atom_grp_cont);
-
+  AtomSystem atm_sys(std::move(atom_grp_cont));
 
   int index_component1 = 0;
   int index_component2 = 1;
@@ -160,9 +112,9 @@ TEST_CASE("QC Functions","[integration]") {
     auto atom1_ptr = std::make_shared<Atom>(atom1);
     auto atom2_ptr = std::make_shared<Atom>(atom2);
 
-    AtomGroup componentA("A");
-    componentA.add(atom1_ptr);
-    componentA.add(atom2_ptr);
+    auto componentA = std::make_unique<AtomGroup>("A");
+    componentA->add(atom1_ptr);
+    componentA->add(atom2_ptr);
 
     Atom atom3(Element::C, 1.0, 0.0, 0.0);
     Atom atom4(Element::O, 2.0, 0.0, 0.0);
@@ -172,32 +124,32 @@ TEST_CASE("QC Functions","[integration]") {
     auto atom4_ptr = std::make_shared<Atom>(atom4);
     auto atom5_ptr = std::make_shared<Atom>(atom5);
 
-    AtomGroup componentB("B");
-    componentB.add(atom3_ptr);
-    componentB.add(atom4_ptr);
-    componentB.add(atom5_ptr);
+    auto componentB = std::make_unique<AtomGroup>("B");
+    componentB->add(atom3_ptr);
+    componentB->add(atom4_ptr);
+    componentB->add(atom5_ptr);
 
     // Arrange atoms in the dimer so they do not appear in the
     // same order as the monomers
 
-    // Atom 3   1.0, 0.0, 0.0
-    // Atom 1   1.0, 1.0, 1.0
-    // Atom 5   3.0, 0.0, 0.0
-    // Atom 4   2.0, 0.0, 0.0
-    // Atom 2   0.0, 0.0, 0.0
+    // Atom 3   1->0, 0->0, 0->0
+    // Atom 1   1->0, 1->0, 1->0
+    // Atom 5   3->0, 0->0, 0->0
+    // Atom 4   2->0, 0->0, 0->0
+    // Atom 2   0->0, 0->0, 0->0
 
-    AtomGroup complexAB("AB");
-    complexAB.add(atom3_ptr);
-    complexAB.add(atom1_ptr);
-    complexAB.add(atom5_ptr);
-    complexAB.add(atom4_ptr);
-    complexAB.add(atom2_ptr);
+    auto complexAB = std::make_unique<AtomGroup>("AB");
+    complexAB->add(atom3_ptr);
+    complexAB->add(atom1_ptr);
+    complexAB->add(atom5_ptr);
+    complexAB->add(atom4_ptr);
+    complexAB->add(atom2_ptr);
 
     // Combine atom groups
-    AtomGroupContainer atom_grp_cont;
-    atom_grp_cont.add(componentA);
-    atom_grp_cont.add(componentB);
-    atom_grp_cont.add(complexAB);
+    auto atom_grp_cont = std::unique_ptr<AtomGroupContainer>(new AtomGroupContainer);
+    atom_grp_cont->add(std::move(componentA));
+    atom_grp_cont->add(std::move(componentB));
+    atom_grp_cont->add(std::move(complexAB));
 
     // Basis functions per atom
     //
@@ -222,7 +174,7 @@ TEST_CASE("QC Functions","[integration]") {
     basisFuncDimer.push_back(2);
     basisFuncDimer.push_back(2);
 
-    AtomSystem atm_sys(atom_grp_cont);
+    AtomSystem atm_sys(std::move(atom_grp_cont));
 
     // Assign the basis functions to the atoms that are in the complex
     int index_complex = 2;
@@ -317,9 +269,9 @@ TEST_CASE("QC Functions","[integration]") {
     auto atom1_ptr = std::make_shared<Atom>(atom1);
     auto atom2_ptr = std::make_shared<Atom>(atom2);
 
-    AtomGroup componentB("B");
-    componentB.add(atom1_ptr);
-    componentB.add(atom2_ptr);
+    auto componentB = std::make_unique<AtomGroup>("B");
+    componentB->add(atom1_ptr);
+    componentB->add(atom2_ptr);
 
     // Contains the x y and z position of atoms in monomer B
     Atom atom3(Element::C, 1.0, 0.0, 0.0);
@@ -330,26 +282,26 @@ TEST_CASE("QC Functions","[integration]") {
     auto atom4_ptr = std::make_shared<Atom>(atom4);
     auto atom5_ptr = std::make_shared<Atom>(atom5);
 
-    AtomGroup componentA("A");
-    componentA.add(atom3_ptr);
-    componentA.add(atom4_ptr);
-    componentA.add(atom5_ptr);
+    auto componentA = std::make_unique<AtomGroup>("A");
+    componentA->add(atom3_ptr);
+    componentA->add(atom4_ptr);
+    componentA->add(atom5_ptr);
 
     // Positions of atoms in the complex
-    AtomGroup complexAB("AB");
-    complexAB.add(atom3_ptr);
-    complexAB.add(atom1_ptr);
-    complexAB.add(atom5_ptr);
-    complexAB.add(atom4_ptr);
-    complexAB.add(atom2_ptr);
+    auto complexAB = std::make_unique<AtomGroup>("AB");
+    complexAB->add(atom3_ptr);
+    complexAB->add(atom1_ptr);
+    complexAB->add(atom5_ptr);
+    complexAB->add(atom4_ptr);
+    complexAB->add(atom2_ptr);
 
     // Combine atom groups
-    AtomGroupContainer atom_grp_cont;
-    atom_grp_cont.add(componentA);
-    atom_grp_cont.add(componentB);
-    atom_grp_cont.add(complexAB);
+    auto atom_grp_cont = std::unique_ptr<AtomGroupContainer>(new AtomGroupContainer);
+    atom_grp_cont->add(std::move(componentA));
+    atom_grp_cont->add(std::move(componentB));
+    atom_grp_cont->add(std::move(complexAB));
 
-    AtomSystem atm_sys(atom_grp_cont);
+    AtomSystem atm_sys(std::move(atom_grp_cont));
     
     // Basis functions per atom
     //

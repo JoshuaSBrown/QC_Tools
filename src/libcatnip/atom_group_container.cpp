@@ -181,7 +181,7 @@ namespace catnip {
 
   // As soon as we add a new atom group it should invalidate the labels on 
   // all the other groups
-  void AtomGroupContainer::add( std::unique_ptr<AtomGroup> & atom_group ) {
+  void AtomGroupContainer::add( std::unique_ptr<AtomGroup> atom_group ) {
     std::cout << "Adding group " << atom_group->getName() << std::endl; 
     if( isUniqueGroup_(atom_group) ){
       std::cout << "Is unique" << std::endl;
@@ -220,6 +220,16 @@ namespace catnip {
       if( grp->getType() == type ) return true;
     }
     return false; 
+  }
+
+  std::vector<GroupType> AtomGroupContainer::getType(const std::string & group_name) const { 
+    std::vector<GroupType> group_types;
+    for ( const std::unique_ptr<AtomGroup> & grp : atom_groups_ ){
+      if ( group_name == grp->getName() ) {
+        group_types.push_back(grp->getType());
+      }
+    } 
+    return group_types;
   }
 
 }  // namespace catnip

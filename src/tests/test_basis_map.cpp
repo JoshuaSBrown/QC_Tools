@@ -27,34 +27,34 @@ TEST_CASE("Basis Map Unscrambled","[integration]") {
   auto atom5_ptr = std::make_shared<Atom>(atom5);
 
   // Extra atoms are allowed in the complex but not in the componets
-  AtomGroup component1("CH2");
-  component1.add(atom1_ptr);
-  component1.add(atom2_ptr);
-  component1.add(atom3_ptr);
+  auto component1 = std::make_unique<AtomGroup>("CH2");
+  component1->add(atom1_ptr);
+  component1->add(atom2_ptr);
+  component1->add(atom3_ptr);
 
-  AtomGroup component2("O2");
-  component2.add(atom4_ptr);  
-  component2.add(atom5_ptr);  
+  auto component2 = std::make_unique<AtomGroup>("O2");
+  component2->add(atom4_ptr);  
+  component2->add(atom5_ptr);  
 
-  AtomGroup complex1("O2CH2");
-  complex1.add(atom1_ptr);
-  complex1.add(atom2_ptr);
-  complex1.add(atom3_ptr);
-  complex1.add(atom4_ptr);
-  complex1.add(atom5_ptr);
+  auto complex1 = std::make_unique<AtomGroup>("O2CH2");
+  complex1->add(atom1_ptr);
+  complex1->add(atom2_ptr);
+  complex1->add(atom3_ptr);
+  complex1->add(atom4_ptr);
+  complex1->add(atom5_ptr);
 
-  AtomGroupContainer atom_grp_cont;
-  atom_grp_cont.add(component1);
-  atom_grp_cont.add(component2);
-  atom_grp_cont.add(complex1);
+  auto atom_grp_cont = std::unique_ptr<AtomGroupContainer>(new AtomGroupContainer);
+  atom_grp_cont->add(std::move(component1));
+  atom_grp_cont->add(std::move(component2));
+  atom_grp_cont->add(std::move(complex1));
 
-  AtomSystem atm_sys(atom_grp_cont);
+  auto atm_sys = AtomSystem(std::move(atom_grp_cont));
 
   std::vector<int> basis_complex{ 1, 1, 4, 5, 5}; 
 
   int index_complex = 2;
   atm_sys.assignBasisFunctions( index_complex, basis_complex);
-  BasisMap basis_map(atm_sys);
+  BasisMap basis_map(std::move(atm_sys));
 
   // Equal to the total number of basis in the group
   REQUIRE( basis_map.row_col_current[0].size() == 6);
@@ -156,30 +156,29 @@ TEST_CASE("Basis Map Scrambled","[integration]") {
   auto atom5_ptr = std::make_shared<Atom>(atom5);
 
   // Extra atoms are allowed in the complex but not in the componets
-  AtomGroup component1("CH2");
-  component1.add(atom1_ptr);
-  component1.add(atom2_ptr);
-  component1.add(atom3_ptr);
+  auto component1 = std::make_unique<AtomGroup>("CH2");
+  component1->add(atom1_ptr);
+  component1->add(atom2_ptr);
+  component1->add(atom3_ptr);
 
-  AtomGroup component2("O2");
-  component2.add(atom4_ptr);  
-  component2.add(atom5_ptr);  
+  auto component2 = std::make_unique<AtomGroup>("O2");
+  component2->add(atom4_ptr);  
+  component2->add(atom5_ptr);  
 
   // HERE: the order has been changed
-  AtomGroup complex1("O2CH2");
-  complex1.add(atom4_ptr); // The basis functions of atom 4 : 0 - 4
-  complex1.add(atom1_ptr); // The basis functiosn of atom 1 : 5 - 5 
-  complex1.add(atom3_ptr); // The basis functiosn of atom 3 : 6 - 9
-  complex1.add(atom5_ptr); // The basis functiosn of atom 5 : 10 - 14
-  complex1.add(atom2_ptr); // The basis functions of atom 2 : 15 - 15
+  auto complex1 = std::make_unique<AtomGroup>("O2CH2");
+  complex1->add(atom4_ptr); // The basis functions of atom 4 : 0 - 4
+  complex1->add(atom1_ptr); // The basis functiosn of atom 1 : 5 - 5 
+  complex1->add(atom3_ptr); // The basis functiosn of atom 3 : 6 - 9
+  complex1->add(atom5_ptr); // The basis functiosn of atom 5 : 10 - 14
+  complex1->add(atom2_ptr); // The basis functions of atom 2 : 15 - 15
 
-  AtomGroupContainer atom_grp_cont;
-  atom_grp_cont.add(component1);
-  atom_grp_cont.add(component2);
-  atom_grp_cont.add(complex1);
+  auto atom_grp_cont = std::unique_ptr<AtomGroupContainer>(new AtomGroupContainer);
+  atom_grp_cont->add(std::move(component1));
+  atom_grp_cont->add(std::move(component2));
+  atom_grp_cont->add(std::move(complex1));
 
-  AtomSystem atm_sys(atom_grp_cont);
-
+  AtomSystem atm_sys(std::move(atom_grp_cont));
 
   int index_component1 = 0;
   int index_component2 = 1;

@@ -3,6 +3,7 @@
 #define _CATNIP_PARAMETERS_HPP_
 
 #include <string>
+#include <vector>
 
 namespace catnip {
 
@@ -11,9 +12,13 @@ class Parameters {
   std::string log1_;
   std::string log2_;
   std::string logP_;
+
   std::string pun1_;
   std::string pun2_;
   std::string punP_;
+
+  std::vector<std::string> puns_;
+  std::vector<std::string> logs_;
 
   std::string spinP;
   std::string spin1;
@@ -53,9 +58,12 @@ class Parameters {
   std::string getLog1() const { return log1_; }
   std::string getLog2() const { return log2_; }
   std::string getLogP() const { return logP_; }
+  std::vector<std::string> getLogs() const { return logs_; }
+
   std::string getPun1() const { return pun1_; }
   std::string getPun2() const { return pun2_; }
   std::string getPunP() const { return punP_; }
+  std::vector<std::string> getPuns() const { return puns_; }
 
   std::string getSpinP() const { return spinP; }
   std::string getSpin1() const { return spin1; }
@@ -75,9 +83,12 @@ class Parameters {
   void setLog1(const std::string& log1);
   void setLog2(const std::string& log2);
   void setLogP(const std::string& logP);
+  void setLogs(std::vector<std::string> logs);
+
   void setPun1(const std::string& pun1);
   void setPun2(const std::string& pun2);
   void setPunP(const std::string& punP);
+  void setPuns(std::vector<std::string> puns);
 
   void setSpinP(const std::string& spin) { spinP = spin; }
   void setSpin1(const std::string& spin) { spin1 = spin; }

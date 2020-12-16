@@ -52,8 +52,15 @@ namespace catnip {
   };
 
   /**
-   * @brief Stores the name of the atom group, the group type and the atoms in
-   * the group
+   * @brief Atom group essentially packages anything associated with a file 
+   *
+   * Atom group is responsible for packaging the atoms associated with a 
+   * group of atoms in one place. The group type can be assigned to the atom
+   * group once it is known. Once the group type is known a bunch of other 
+   * operations open up..
+   *
+   * Probably the core use of this class is to be able to compare atoms in the
+   * group and ensure that they are equivalent. 
    *
    */
   class AtomGroup {
@@ -77,6 +84,7 @@ namespace catnip {
       // Attempt to load overlap matrix hopefully a log file exists which can do
       // this
       void loadOverlapMatrix() {};
+      void loadMOCoefMatrix() {};
 
       std::string getName() const noexcept { return name_; }
 

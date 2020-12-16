@@ -18,11 +18,16 @@ namespace catnip {
    * change group types
    *
    * It can only be created if there are known group types and there is only
-   * a single complex, and it's components, 
+   * a single complex, and it's components. The presence of these group types
+   * is what makes it possible to run the charge transfer integral calculations.
    *
    * Each atom in a component must only be shared with the complex, the atom of
    * a component is allowed to be of a different element then what is in the 
-   * complex, but must have the same position
+   * complex, but must have the same position.
+   *
+   * Basis functions can be assigned using the atom system, atoms shared between
+   * a component and the complex will be made consistent in terms of the
+   * number of basis functions that are associated with them. 
    */
   class AtomSystem {
       // Atoms in each component that share the same location with atoms in

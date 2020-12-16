@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.14)
-project (catnip)
+project (catnip VERSION 2.0.0)
 
 ##############################################################################
 # Defining options 
@@ -7,15 +7,20 @@ project (catnip)
 option(ENABLE_TESTS "Enable testing" OFF)
 option(DOWNLOAD_TUTORIAL_FILES "Download tutorial files" ${ENABLE_TESTS})
 option(ENABLE_INTEGRATION_TESTING "Enable integration tests" ${ENABLE_TESTS})
-option(ENABLE_UNIT_TESTING "Enable tests" ${ENABLE_TESTS})
+option(ENABLE_UNIT_TESTING "Enable unit tests" ${ENABLE_TESTS})
 option(ENABLE_PROFILING "Enable profiling" OFF)
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
 ##############################################################################
+# Override default options 
+##############################################################################
+set(DOWNLOAD_TUTORIAL_FILES ${ENABLE_TESTS} CACHE STRING "Download tutorial files" FORCE)
+set(ENABLE_INTEGRATION_TESTING ${ENABLE_TESTS} CACHE STRING "Enable integration tests" FORCE)
+set(ENABLE_UNIT_TESTING ${ENABLE_TESTS} CACHE STRING "Enable unit tests" FORCE)
+
+##############################################################################
 # Defining settings 
 ##############################################################################
-set(catnip_VERSION_MAJOR 2 )
-set(catnip_VERSION_MINOR 0 )
 set(catnip_YEAR_PUBLISHED 2018 )
 set(catnip_AUTHOR_SURNAME "\"Brown\"" )
 set(catnip_AUTHOR_INITIALS "\"J. S.\"" )
@@ -32,13 +37,25 @@ set(LOG_LEVEL 0 CACHE STRING "Choose the log level" )
 # important for using gcov .o.gcno or .cpp.gcno now will be .gcno
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -Werror")
+
+##############################################################################
+# Check for Dependencies 
+##############################################################################
+
+find_package(mamap REQUIRED)
+if( NOT ${mamap_FOUND} )
+  include(${catnip_SOURCE_DIR}/cmake/InstallMAMAP.cmake)
+else()
+  message(STATUS "found system installed mamap will not download")
+endif()
+
 ##############################################################################
 # Configuring header file with cmake variables 
 ##############################################################################
 # Configure header file to pass some of the CMake settings to the source code
 configure_file(
-  "${PROJECT_SOURCE_DIR}/src/libcatnip/catnip_config.hpp.in"
-  "${PROJECT_SOURCE_DIR}/src/libcatnip/catnip_config.hpp"
+  "${catnip_SOURCE_DIR}/src/libcatnip/catnip_config.hpp.in"
+  "${catnip_SOURCE_DIR}/src/libcatnip/catnip_config.hpp"
   )
 
 ##############################################################################
@@ -55,7 +72,7 @@ add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
 ##############################################################################
 # Setting up profiling 
 ##############################################################################
-if(ENABLE_PROFILING)
+if(${ENABLE_PROFILING})
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
@@ -63,51 +80,53 @@ endif()
 ##############################################################################
 # Setting up testing 
 ##############################################################################
-if(ENABLE_INTEGRATION_TESTING)
-  if(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
+message("ENable tests ${ENABLE_TESTS} and integration ${ENABLE_INTEGRATION_TESTING}")
+if(${ENABLE_INTEGRATION_TESTING})
+  if(EXISTS "${catnip_SOURCE_DIR}/GAUSSIANFILES")
     message(STATUS "GAUSSIANFILES found will not download")
     set(DOWNLOAD_TUTORIAL_FILES OFF)
-  else(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
+  else(EXISTS "${catnip_SOURCE_DIR}/GAUSSIANFILES")
     message(STATUS "GAUSSIANFILES not found will attempt to download")
-    include(${PROJECT_SOURCE_DIR}/cmake/InstallGdown.cmake)
-  endif(EXISTS "${PROJECT_SOURCE_DIR}/GAUSSIANFILES")
+    include(${catnip_SOURCE_DIR}/cmake/InstallGdown.cmake)
+  endif(EXISTS "${catnip_SOURCE_DIR}/GAUSSIANFILES")
 endif()
 
-if(ENABLE_UNIT_TESTING OR ENABLE_INTEGRATION_TESTING)
+if(${ENABLE_UNIT_TESTING} OR ${ENABLE_INTEGRATION_TESTING})
   find_package(Catch2 2.11.1)
-  if( NOT Catch2 )
-    include(${PROJECT_SOURCE_DIR}/cmake/InstallCatch2.cmake)
+  if( NOT ${Catch2_FOUND} )
+    include(${catnip_SOURCE_DIR}/cmake/InstallCatch2.cmake)
   else()
     message(STATUS "found system installed Catch2 will not download")
   endif()
   enable_testing()
+  include(Catch)
   include(ParseAndAddCatchTests)
 
-  if (ENABLE_INTEGRATION_TESTING)
-    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
-      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
-    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" 
-      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+  if (${ENABLE_INTEGRATION_TESTING})
+    file( COPY "${catnip_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.log" 
+      DESTINATION "${catnip_BINARY_DIR}/GAUSSIANFILES/90_unordered")
+    file( COPY "${catnip_SOURCE_DIR}/GAUSSIANFILES/90_unordered/90_pair.pun" 
+      DESTINATION "${catnip_BINARY_DIR}/GAUSSIANFILES/90_unordered")
 
-    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" 
-      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" 
-      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
-    file( COPY "${PROJECT_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" 
-      DESTINATION "${PROJECT_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+    file( COPY "${catnip_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_pair.pun" 
+      DESTINATION "${catnip_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+    file( COPY "${catnip_SOURCE_DIR}/GAUSSIANFILES/30_unordered/ref.pun" 
+      DESTINATION "${catnip_BINARY_DIR}/GAUSSIANFILES/30_unordered")
+    file( COPY "${catnip_SOURCE_DIR}/GAUSSIANFILES/30_unordered/30_2.pun" 
+      DESTINATION "${catnip_BINARY_DIR}/GAUSSIANFILES/30_unordered")
   endif()
 
-  if (ENABLE_UNIT_TESTING)
-    file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.pun" 
-      DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
-    file( COPY "${PROJECT_SOURCE_DIR}/src/tests/testfile.log" 
-      DESTINATION "${PROJECT_BINARY_DIR}/src/tests")
+  if (${ENABLE_UNIT_TESTING})
+    file( COPY "${catnip_SOURCE_DIR}/src/tests/testfile.pun" 
+      DESTINATION "${catnip_BINARY_DIR}/src/tests")
+    file( COPY "${catnip_SOURCE_DIR}/src/tests/testfile.log" 
+      DESTINATION "${catnip_BINARY_DIR}/src/tests")
   endif()
 
 endif()
 ##############################################################################
 # Compiling build tree/paths 
 ##############################################################################
-add_subdirectory("${PROJECT_SOURCE_DIR}/src")
+add_subdirectory("${catnip_SOURCE_DIR}/src")
 
 

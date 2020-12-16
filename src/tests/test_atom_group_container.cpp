@@ -19,15 +19,15 @@ TEST_CASE("Atom Group Container","[unit]") {
   Atom atom1(Element::H, 0.0, 0.0, 0.0);
   Atom atom2(Element::H, 2.0, 0.0, 0.0);
   Atom atom3(Element::C, 1.0, 1.0, 0.0);
-
+  
   auto atom1_ptr = std::make_shared<Atom>(atom1);
   auto atom2_ptr = std::make_shared<Atom>(atom2);
   auto atom3_ptr = std::make_shared<Atom>(atom3);
 
-  AtomGroup atom_grp1("CH2");
-  atom_grp1.add(atom1_ptr);
-  atom_grp1.add(atom2_ptr);
-  atom_grp1.add(atom3_ptr);
+  auto atom_grp1 = std::make_unique<AtomGroup>("CH2");
+  atom_grp1->add(atom1_ptr);
+  atom_grp1->add(atom2_ptr);
+  atom_grp1->add(atom3_ptr);
 
   Atom atom4(Element::O, 3.3, 4.3, 0.0);
   Atom atom5(Element::O, 3.0, 3.9, 0.0);
@@ -35,14 +35,14 @@ TEST_CASE("Atom Group Container","[unit]") {
   auto atom4_ptr = std::make_shared<Atom>(atom4);
   auto atom5_ptr = std::make_shared<Atom>(atom5);
 
-  AtomGroup atom_grp2("O2");
-  atom_grp2.add(atom4_ptr);  
-  atom_grp2.add(atom5_ptr);  
+  auto atom_grp2 = std::make_unique<AtomGroup>("O2");
+  atom_grp2->add(atom4_ptr);  
+  atom_grp2->add(atom5_ptr);  
 
   AtomGroupContainer atom_grp_cont;
 
-  atom_grp_cont.add(atom_grp1);
-  atom_grp_cont.add(atom_grp2);
+  atom_grp_cont.add(std::move(atom_grp1));
+  atom_grp_cont.add(std::move(atom_grp2));
 
   REQUIRE(atom_grp_cont.size() == 2);
 
@@ -52,9 +52,6 @@ TEST_CASE("Atom Group Container","[unit]") {
 
   atom_grp_cont.assignGroupTypes();
   REQUIRE(atom_grp_cont.isUpToDate() == true);
-  // Because it made a copy these should still be unassigned
-  REQUIRE(atom_grp1.getType() == GroupType::Unassigned);
-  REQUIRE(atom_grp2.getType() == GroupType::Unassigned);
 
   // These should be changed
   REQUIRE(atom_grp_cont.getType(0) == GroupType::Island);
@@ -62,14 +59,14 @@ TEST_CASE("Atom Group Container","[unit]") {
   REQUIRE(atom_grp_cont.exists(GroupType::Island));
 
   // Now we make a third group that has all the atoms of the first two groups
-  AtomGroup atom_grp3("O2CH2");
-  atom_grp3.add(atom1_ptr);
-  atom_grp3.add(atom2_ptr);
-  atom_grp3.add(atom3_ptr);
-  atom_grp3.add(atom4_ptr);
-  atom_grp3.add(atom5_ptr);
+  auto atom_grp3 = std::make_unique<AtomGroup>("O2CH2");
+  atom_grp3->add(std::move(atom1_ptr));
+  atom_grp3->add(atom2_ptr);
+  atom_grp3->add(atom3_ptr);
+  atom_grp3->add(atom4_ptr);
+  atom_grp3->add(atom5_ptr);
 
-  atom_grp_cont.add(atom_grp3);
+  atom_grp_cont.add(std::move(atom_grp3));
   REQUIRE(atom_grp_cont.isUpToDate() == false);
 
   REQUIRE(atom_grp_cont.getType(2) == GroupType::Unassigned);
@@ -83,5 +80,4 @@ TEST_CASE("Atom Group Container","[unit]") {
 
   REQUIRE(atom_grp_cont.exists(GroupType::Complex));
   REQUIRE(atom_grp_cont.exists(GroupType::Component));
-
 }

@@ -20,7 +20,7 @@ namespace catnip {
   class BasisMap {
     public:
       BasisMap() = default;
-      BasisMap(AtomSystem atm_sys);
+      BasisMap(const AtomSystem & atm_sys);
       // The component rows and colums in their current locations in  
       // in the full system matrix of the complex
       std::map<int,std::vector<int>> row_col_current;

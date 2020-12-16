@@ -25,6 +25,10 @@ namespace catnip {
    * What this means is that if you pass in atom groups and thier state is not
    * known, this class can automatically detect if they are related, if they
    * are an island a complex or a component.
+   *
+   * Accurate assignment of a group type can only be achieved after all of the 
+   * groups are added. If a new group is added after group types have been 
+   * assigned it will invalidate the previously assigned group types. 
    */
   class AtomGroupContainer {
       std::vector<std::unique_ptr<AtomGroup>> atom_groups_;
@@ -61,7 +65,7 @@ namespace catnip {
       std::vector<std::unique_ptr<AtomGroup>>::const_iterator 
         end() const { return atom_groups_.end(); }
 
-      void add( std::unique_ptr<AtomGroup> & atom_group );
+      void add( std::unique_ptr<AtomGroup> atom_group );
 
       size_t size() const noexcept { return  atom_groups_.size(); }
 
@@ -80,6 +84,8 @@ namespace catnip {
       bool exists(GroupType type) const;
 
       const GroupType & getType(int index) const { return atom_groups_.at(index)->getType(); }
+
+      std::vector<GroupType> getType(const std::string & group_name) const; 
 
       /**
        * @brief Get the indices of all the groups of the specified group type

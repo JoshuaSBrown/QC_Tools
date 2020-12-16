@@ -11,7 +11,7 @@
 
 namespace catnip {
 
-  BasisMap::BasisMap(AtomSystem atm_sys){
+  BasisMap::BasisMap(const AtomSystem & atm_sys){
     if ( not atm_sys.systemComplete() ) {
       throw std::runtime_error("Cannot build an index map from an incomplete "
           "atom system.");

@@ -4,15 +4,21 @@
 #include <string>
 #include <vector>
 
-#include "../parameters.hpp"
-#include "../string_support.hpp"
+#include <mamap/arguments/argumenttypes.hpp>
+#include <mamap/arguments/properties/propertyoptions.hpp>
+#include <mamap/argumentparser.hpp>
+#include <mamap/string_support.hpp>
+
+#include "parameters.hpp"
 #include "io.hpp"
+
+#include <mamap/argumentparser.hpp>
 
 using namespace std;
 
 namespace catnip {
 
-unique_ptr<ArgumentParser> prepareParser(void) {
+unique_ptr<mamap::ArgumentParser> prepareParser(void) {
 
   // Setup flags
   vector<string> flag1;
@@ -176,13 +182,29 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   vector<string> flag20;
   flag20.push_back("--log");
   flag20.push_back("-l");
-  desc = "Provide all .log files and allow catnip to figure the rest out.";
+  desc = "Provide all .log files and allow catnip to figure the rest out. ";
+  desc += "\nCaveats\n";
+  desc += "1. if the --pun file flag is not used the pun/orb/.7 files must ";
+  desc += "appear in the same folder as the log files and have the same core ";
+  desc += "file name as the log file.";
+  desc += "2. if the --pun file flag is also provided the same number of files ";
+  desc += "must be provided as is provided with the --log flag, and they must ";
+  desc += "either be entered in the same order or they must have the same core";
+  desc += " file name.";
   flag20.push_back(desc);
 
   vector<string> flag21;
   flag21.push_back("--pun");
   flag21.push_back("-p");
-  desc = "Provide all .pun/.7/.orb files and allow catnip to figure the rest out.";
+  desc = "Provide all .punt/.7/.orb files and allow catnip to figure the rest out. ";
+  desc += "\nCaveats\n";
+  desc += "1. if the --log file flag is not used the .log files must ";
+  desc += "appear in the same folder as the .pun/.7/.orb files and have the same core ";
+  desc += "file name as the .pun/.7/.orb file.";
+  desc += "2. if the --log file flag is also provided the same number of files ";
+  desc += "must be provided as is provided with the --pun flag, and they must ";
+  desc += "either be entered in the same order or they must have the same core";
+  desc += " file name.";
   flag21.push_back(desc);
 
   set<vector<string>> flags;
@@ -206,50 +228,50 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   flags.insert(flag20);
   flags.insert(flag21);
 
-  unique_ptr<ArgumentParser> ArgPars(new ArgumentParser(flags));
+  unique_ptr<mamap::ArgumentParser> ArgPars(new mamap::ArgumentParser(flags));
 
   // Setup rules for handling flags
   set<string> exts{".orb", ".7", ".pun"};
   string ext_log = ".log";
 
   {
-    ArgPars->setFlagArgOpt("--log", ArgumentType::FILES, PropertyType::FILE_EXT,
-                           Option::ALLOWED_VALUES, ext_log);
-    ArgPars->setFlagArgOpt("--log", ArgumentType::FILES, PropertyType::SISTER_FILE,
-                           Option::ALLOWED_VALUES, exts);
-    ArgPars->setFlagArgOpt("--log", ArgumentType::FILES, PropertyType::FILE_EXISTS,
-                           Option::MUST_EXIST, 0);
+    ArgPars->setFlagArgOpt("--log", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXT,
+                           mamap::Option::ALLOWED_VALUES, ext_log);
+    ArgPars->setFlagArgOpt("--log", mamap::ArgumentType::FILES, mamap::PropertyType::SISTER_FILE,
+                           mamap::Option::ALLOWED_VALUES, exts);
+    ArgPars->setFlagArgOpt("--log", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXISTS,
+                           mamap::Option::MUST_EXIST, true);
 
-    ArgPars->setFlagArgOpt("--pun", ArgumentType::FILES, PropertyType::FILE_EXT,
-                           Option::ALLOWED_VALUES, exts);
-    ArgPars->setFlagArgOpt("--pun", ArgumentType::FILES, PropertyType::SISTER_FILE,
-                           Option::ALLOWED_VALUES, ext_log);
-    ArgPars->setFlagArgOpt("--pun", ArgumentType::FILES, PropertyType::FILE_EXISTS,
-                           Option::MUST_EXIST, 0);
+    ArgPars->setFlagArgOpt("--pun", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXT,
+                           mamap::Option::ALLOWED_VALUES, exts);
+    ArgPars->setFlagArgOpt("--pun", mamap::ArgumentType::FILES, mamap::PropertyType::SISTER_FILE,
+                           mamap::Option::ALLOWED_VALUES, ext_log);
+    ArgPars->setFlagArgOpt("--pun", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXISTS,
+                           mamap::Option::MUST_EXIST, true);
   }
 
   // Setting up rules guiding pun files
   {
-    ArgPars->setFlagArgOpt("--pun_P", ArgumentType::FILES, PropertyType::FILE_EXT,
-                           Option::ALLOWED_VALUES, exts);
-    ArgPars->setFlagArgOpt("--pun_P", ArgumentType::FILES, PropertyType::SISTER_FILE,
-                           Option::ALLOWED_VALUES, ext_log);
-    ArgPars->setFlagArgOpt("--pun_P", ArgumentType::FILES, PropertyType::FILE_EXISTS,
-                           Option::MUST_EXIST, 0);
+    ArgPars->setFlagArgOpt("--pun_P", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXT,
+                           mamap::Option::ALLOWED_VALUES, exts);
+    ArgPars->setFlagArgOpt("--pun_P", mamap::ArgumentType::FILES, mamap::PropertyType::SISTER_FILE,
+                           mamap::Option::ALLOWED_VALUES, ext_log);
+    ArgPars->setFlagArgOpt("--pun_P", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXISTS,
+                           mamap::Option::MUST_EXIST, 0);
 
-    ArgPars->setFlagArgOpt("--pun_1", ArgumentType::FILES, PropertyType::FILE_EXT,
-                           Option::ALLOWED_VALUES, exts);
-    ArgPars->setFlagArgOpt("--pun_1", ArgumentType::FILES, PropertyType::SISTER_FILE,
-                           Option::ALLOWED_VALUES, ext_log);
-    ArgPars->setFlagArgOpt("--pun_1", ArgumentType::FILES, PropertyType::FILE_EXISTS,
-                           Option::MUST_EXIST, 0);
+    ArgPars->setFlagArgOpt("--pun_1", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXT,
+                           mamap::Option::ALLOWED_VALUES, exts);
+    ArgPars->setFlagArgOpt("--pun_1", mamap::ArgumentType::FILES, mamap::PropertyType::SISTER_FILE,
+                           mamap::Option::ALLOWED_VALUES, ext_log);
+    ArgPars->setFlagArgOpt("--pun_1", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXISTS,
+                           mamap::Option::MUST_EXIST, 0);
 
-    ArgPars->setFlagArgOpt("--pun_2", ArgumentType::FILES, PropertyType::FILE_EXISTS,
-                           Option::ALLOWED_VALUES, exts);
-    ArgPars->setFlagArgOpt("--pun_2", ArgumentType::FILES, PropertyType::SISTER_FILE,
-                           Option::ALLOWED_VALUES, ext_log);
-    ArgPars->setFlagArgOpt("--pun_2", ArgumentType::FILES, PropertyType::FILE_EXISTS,
-                           Option::MUST_EXIST, 0);
+    ArgPars->setFlagArgOpt("--pun_2", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXISTS,
+                           mamap::Option::ALLOWED_VALUES, exts);
+    ArgPars->setFlagArgOpt("--pun_2", mamap::ArgumentType::FILES, mamap::PropertyType::SISTER_FILE,
+                           mamap::Option::ALLOWED_VALUES, ext_log);
+    ArgPars->setFlagArgOpt("--pun_2", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXISTS,
+                           mamap::Option::MUST_EXIST, 0);
 
   }
 
@@ -259,51 +281,51 @@ unique_ptr<ArgumentParser> prepareParser(void) {
 
   // Setting rules guiding log files
   {
-    ArgPars->setFlagArgOpt("--log_P", ArgumentType::FILES, PropertyType::FILE_EXT,
-                           Option::ALLOWED_VALUES, exts_log);
-    ArgPars->setFlagArgOpt("--log_P", ArgumentType::FILES, PropertyType::SISTER_FILE,
-                           Option::ALLOWED_VALUES, exts_other);
-    ArgPars->setFlagArgOpt("--log_P", ArgumentType::FILES, PropertyType::FILE_EXISTS,
-                           Option::MUST_EXIST, 0);
+    ArgPars->setFlagArgOpt("--log_P", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXT,
+                           mamap::Option::ALLOWED_VALUES, exts_log);
+    ArgPars->setFlagArgOpt("--log_P", mamap::ArgumentType::FILES, mamap::PropertyType::SISTER_FILE,
+                           mamap::Option::ALLOWED_VALUES, exts_other);
+    ArgPars->setFlagArgOpt("--log_P", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXISTS,
+                           mamap::Option::MUST_EXIST, 0);
 
-    ArgPars->setFlagArgOpt("--log_1", ArgumentType::FILES, PropertyType::FILE_EXT,
-                           Option::ALLOWED_VALUES, exts_log);
-    ArgPars->setFlagArgOpt("--log_1", ArgumentType::FILES, PropertyType::SISTER_FILE,
-                           Option::ALLOWED_VALUES, exts_other);
-    ArgPars->setFlagArgOpt("--log_1", ArgumentType::FILES, PropertyType::FILE_EXISTS,
-                           Option::MUST_EXIST, 0);
+    ArgPars->setFlagArgOpt("--log_1", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXT,
+                           mamap::Option::ALLOWED_VALUES, exts_log);
+    ArgPars->setFlagArgOpt("--log_1", mamap::ArgumentType::FILES, mamap::PropertyType::SISTER_FILE,
+                           mamap::Option::ALLOWED_VALUES, exts_other);
+    ArgPars->setFlagArgOpt("--log_1", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXISTS,
+                           mamap::Option::MUST_EXIST, 0);
 
-    ArgPars->setFlagArgOpt("--log_2", ArgumentType::FILES, PropertyType::FILE_EXT,
-                           Option::ALLOWED_VALUES, exts_log);
-    ArgPars->setFlagArgOpt("--log_2", ArgumentType::FILES, PropertyType::SISTER_FILE,
-                           Option::ALLOWED_VALUES, exts_other);
-    ArgPars->setFlagArgOpt("--log_2", ArgumentType::FILES, PropertyType::FILE_EXISTS,
-                           Option::MUST_EXIST, 0);
+    ArgPars->setFlagArgOpt("--log_2", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXT,
+                           mamap::Option::ALLOWED_VALUES, exts_log);
+    ArgPars->setFlagArgOpt("--log_2", mamap::ArgumentType::FILES, mamap::PropertyType::SISTER_FILE,
+                           mamap::Option::ALLOWED_VALUES, exts_other);
+    ArgPars->setFlagArgOpt("--log_2", mamap::ArgumentType::FILES, mamap::PropertyType::FILE_EXISTS,
+                           mamap::Option::MUST_EXIST, 0);
   }
 
   set<string> spin_opts{"Alpha", "Beta"};
 
   // Setting rules guiding spin
   {
-    ArgPars->setFlagArgOpt("--spin_P", ArgumentType::STRING,
-                           PropertyType::STRING_CHOICE, Option::ENFORCED,
+    ArgPars->setFlagArgOpt("--spin_P", mamap::ArgumentType::STRING,
+                           mamap::PropertyType::STRING_CHOICE, mamap::Option::ENFORCED,
                            "true");
-    ArgPars->setFlagArgOpt("--spin_P", ArgumentType::STRING,
-                           PropertyType::STRING_CHOICE, Option::ALLOWED_VALUES,
+    ArgPars->setFlagArgOpt("--spin_P", mamap::ArgumentType::STRING,
+                           mamap::PropertyType::STRING_CHOICE, mamap::Option::ALLOWED_VALUES,
                            spin_opts);
 
-    ArgPars->setFlagArgOpt("--spin_1", ArgumentType::STRING,
-                           PropertyType::STRING_CHOICE, Option::ENFORCED,
+    ArgPars->setFlagArgOpt("--spin_1", mamap::ArgumentType::STRING,
+                           mamap::PropertyType::STRING_CHOICE, mamap::Option::ENFORCED,
                            "true");
-    ArgPars->setFlagArgOpt("--spin_1", ArgumentType::STRING,
-                           PropertyType::STRING_CHOICE, Option::ALLOWED_VALUES,
+    ArgPars->setFlagArgOpt("--spin_1", mamap::ArgumentType::STRING,
+                           mamap::PropertyType::STRING_CHOICE, mamap::Option::ALLOWED_VALUES,
                            spin_opts);
 
-    ArgPars->setFlagArgOpt("--spin_2", ArgumentType::STRING,
-                           PropertyType::STRING_CHOICE, Option::ENFORCED,
+    ArgPars->setFlagArgOpt("--spin_2", mamap::ArgumentType::STRING,
+                           mamap::PropertyType::STRING_CHOICE, mamap::Option::ENFORCED,
                            "true");
-    ArgPars->setFlagArgOpt("--spin_2", ArgumentType::STRING,
-                           PropertyType::STRING_CHOICE, Option::ALLOWED_VALUES,
+    ArgPars->setFlagArgOpt("--spin_2", mamap::ArgumentType::STRING,
+                           mamap::PropertyType::STRING_CHOICE, mamap::Option::ALLOWED_VALUES,
                            spin_opts);
 
     ArgPars->setFlagDefaultValue("--spin_P", "Alpha");
@@ -314,18 +336,18 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   // Setting rules guidling orbital type
   set<string> orb_opts{"HOMO", "LUMO"};
   {
-    ArgPars->setFlagArgOpt("--orbital_type_1", ArgumentType::STRING,
-                           PropertyType::STRING_CHOICE, Option::ENFORCED,
+    ArgPars->setFlagArgOpt("--orbital_type_1", mamap::ArgumentType::STRING,
+                           mamap::PropertyType::STRING_CHOICE, mamap::Option::ENFORCED,
                            "true");
-    ArgPars->setFlagArgOpt("--orbital_type_1", ArgumentType::STRING,
-                           PropertyType::STRING_CHOICE, Option::ALLOWED_VALUES,
+    ArgPars->setFlagArgOpt("--orbital_type_1", mamap::ArgumentType::STRING,
+                           mamap::PropertyType::STRING_CHOICE, mamap::Option::ALLOWED_VALUES,
                            orb_opts);
 
-    ArgPars->setFlagArgOpt("--orbital_type_2", ArgumentType::STRING,
-                           PropertyType::STRING_CHOICE, Option::ENFORCED,
+    ArgPars->setFlagArgOpt("--orbital_type_2", mamap::ArgumentType::STRING,
+                           mamap::PropertyType::STRING_CHOICE, mamap::Option::ENFORCED,
                            "true");
-    ArgPars->setFlagArgOpt("--orbital_type_2", ArgumentType::STRING,
-                           PropertyType::STRING_CHOICE, Option::ALLOWED_VALUES,
+    ArgPars->setFlagArgOpt("--orbital_type_2", mamap::ArgumentType::STRING,
+                           mamap::PropertyType::STRING_CHOICE, mamap::Option::ALLOWED_VALUES,
                            orb_opts);
 
     ArgPars->setFlagDefaultValue("--orbital_type_1", "HOMO");
@@ -334,8 +356,8 @@ unique_ptr<ArgumentParser> prepareParser(void) {
 
   // Set argument allowed values for counterpoise
   {
-    ArgPars->setFlagArgOpt("--counter_poise", ArgumentType::SWITCH,
-                           PropertyType::SWITCH, Option::VALUE, "OFF");
+    ArgPars->setFlagArgOpt("--counter_poise", mamap::ArgumentType::SWITCH,
+                           mamap::PropertyType::SWITCH, mamap::Option::VALUE, "OFF");
 
     // By default the flag counter poise is turned off
     ArgPars->setFlagDefaultValue("--counter_poise", "OFF");
@@ -343,24 +365,24 @@ unique_ptr<ArgumentParser> prepareParser(void) {
 
   // Set argument for allowing printing of all transfer integrals
   {
-    ArgPars->setFlagArgOpt("--all", ArgumentType::SWITCH,
-        PropertyType::SWITCH, Option::VALUE, "OFF");
+    ArgPars->setFlagArgOpt("--all", mamap::ArgumentType::SWITCH,
+        mamap::PropertyType::SWITCH, mamap::Option::VALUE, "OFF");
 
     // By default the flag counter poise is turned off
     ArgPars->setFlagDefaultValue("--all", "OFF");
   }
 
   {
-    ArgPars->setFlagArgOpt("--citation", ArgumentType::SWITCH, PropertyType::SWITCH,
-                           Option::VALUE, "OFF");
+    ArgPars->setFlagArgOpt("--citation", mamap::ArgumentType::SWITCH, mamap::PropertyType::SWITCH,
+                           mamap::Option::VALUE, "OFF");
 
     // By default the flag citation is turned off
     ArgPars->setFlagDefaultValue("--citation", "OFF");
   }
 
   {
-    ArgPars->setFlagArgOpt("--version", ArgumentType::SWITCH, PropertyType::SWITCH,
-                           Option::VALUE, "OFF");
+    ArgPars->setFlagArgOpt("--version", mamap::ArgumentType::SWITCH, mamap::PropertyType::SWITCH,
+                           mamap::Option::VALUE, "OFF");
 
     // By default the flag citation is turned off
     ArgPars->setFlagDefaultValue("--version", "OFF");
@@ -369,8 +391,8 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   // Set rules guiding orbital numbers
   // Use default settings for min and max numbers
   {
-    ArgPars->addFlagArg("--orbital_num_1", ArgumentType::NUMERICAL);
-    ArgPars->addFlagArg("--orbital_num_2", ArgumentType::NUMERICAL);
+    ArgPars->addFlagArg("--orbital_num_1", mamap::ArgumentType::NUMERIC);
+    ArgPars->addFlagArg("--orbital_num_2", mamap::ArgumentType::NUMERIC);
 
     int orb_num = 0;
     ArgPars->setFlagDefaultValue("--orbital_num_1", orb_num);
@@ -379,43 +401,113 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   return ArgPars;
 }
 
-unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse) {
+unique_ptr<Parameters> prepareParameters(unique_ptr<mamap::ArgumentParser>& ArgParse) {
 
-  map<string, string> flag_arg;
-  map<string, string> flag_sister_arg;
+  map<string, std::vector<string>> flag_arg;
+  map<string, std::vector<string>> flag_sister_arg;
 
-  vector<string> flags{"--pun_P", "--pun_1", "--pun_2",
-                       "--log_P", "--log_1", "--log_2"};
+  vector<string> flags{"--pun_P", "--pun_1", "--pun_2","--pun",
+                       "--log_P", "--log_1", "--log_2","--log"};
 
-  vector<string> flags_sister{"--log_P", "--log_1", "--log_2",
-                              "--pun_P", "--pun_1", "--pun_2"};
+  vector<string> flags_sister{"--log_P", "--log_1", "--log_2","--log",
+                              "--pun_P", "--pun_1", "--pun_2","--pun"};
 
+  // Determine if each log or pun file has a sister file, and if it does store
+  // it in case that particular file it not passed in. 
   for (size_t i = 0; i < flags.size(); ++i) {
-    auto flag = flags.at(i);
-    auto flag_sister = flags_sister.at(i);
-    ArgumentType argu = ArgumentType::FILES;
-    PropertyType prop = PropertyType::FILE_EXISTS;
-    Option opt = Option::DOES_EXIST;
+    // 1. Get the possible fileNames of the sister files
+    // When a sister file is calcualted it takes the core file name and 
+    // generates the appropriate substitutes. E.g. if -logs flag is provided
+    // --logs core.log 
+    //
+    // then the sister file names will be calculated as
+    // core.pun
+    // core.7
+    // core.orb
+    //
+    // But to determine if any of these files exist we have to get the value
+    // of the DOES_EXIST option
+    const std::string & flag = flags.at(i);
+    const std::string & sister_flag = flags_sister.at(i);
 
-    string fileName;
-    std::vector<bool> exists = ArgParse->get<bool>(flag, argu, prop, opt);
-    if ( exists ) {
-      flag_arg[flag] = ArgParse->getStrs(flag).at(0);
-    }
-    prop = PropertyType::SISTER_FILE;
-    opt = Option::VALUE;
-    std::string line = ArgParse->get<std::string>(flag, argu, prop, opt);
-    opt = Option::FILE_PATH_NAME;
-    std::string line2 = ArgParse->get<std::string>(flag, argu, prop, opt);
-    auto sisters_exist = splitSt(line);
-    vector<string> sister_file_paths = splitSt(line2);
-    int countFiles = 0;
-    for (auto sister_exists : sisters_exist) {
-      if (sister_exists.compare("true") == 0) {
-        flag_sister_arg[flag_sister] = sister_file_paths.at(countFiles);
+    // Should return a vector of vector of strings
+    // The first vector is for each argument passed to the flag
+    // the second vector is the option values associated with each argument
+    // E.g. for the --pun flag
+    //
+    // --log dir1/file1.log dir2/file2.log dir3/file3.log
+    //
+    // There are 3 arguments passed to --log 
+    //
+    // Each argument will have a set of potential sister files associate with
+    // it
+    //
+    // dir1/file1.log   :   dir1/file1.log dir1/file1.7 dir1/file1.orb
+    // dir2/file2.log   :   dir2/file2.log dir2/file2.7 dir2/file2.orb
+    // dir3/file3.log   :   dir3/file3.log dir3/file3.7 dir3/file3.orb
+    auto arg_potential_sister_files = 
+      ArgParse->getFlagArgOptValues<std::vector<std::string>>(
+        flag,
+        mamap::ArgumentType::FILES,
+        mamap::PropertyType::SISTER_FILE,
+        mamap::Option::FILE_PATH_NAME);
+
+    // Does the file passed in as an argument actually exist, using the example
+    // above
+    //
+    // --log dir1/file1.log dir2/file2.log dir3/file3.log
+    //
+    // This would check that dir1/file1.log dir2/file2.log and dir3/file3.log
+    // exists. will return a vector of bools
+    auto arg_potential_files_exist = 
+      ArgParse->getFlagArgOptValues<bool>(
+          flag,
+          mamap::ArgumentType::FILES,
+          mamap::PropertyType::FILE_EXISTS,
+          mamap::Option::DOES_EXIST);
+
+    // 2. Determine which files exist and choose a suitable substitute
+    //
+    // Should return a vector of vectors of bools
+    auto arg_potential_sister_files_exist = 
+      ArgParse->getFlagArgOptValues<std::vector<bool>>(
+        flag,
+        mamap::ArgumentType::FILES,
+        mamap::PropertyType::SISTER_FILE,
+        mamap::Option::DOES_EXIST);
+
+    // 3. Get the arguments associated with a particular flag
+    // Using the example above this would be
+    // dir1/file1.log dir2/file2.log dir3/file3.log
+    std::vector<std::string> file_names = ArgParse->get<std::string>(flag);
+
+    size_t num_args = ArgParse->getNumArgs(flag);
+
+    for( size_t arg_ind = 0; arg_ind <num_args; ++arg_ind){
+      // Vector of bools, that specefies if each potential sister file 
+      // of the argument actually exists
+      std::vector<bool> sister_files_exists = 
+        arg_potential_sister_files_exist.at(arg_ind);
+      // Vector of string, that each potential sister file 
+      // of the argument 
+      std::vector<std::string> potential_sister_files = 
+        arg_potential_sister_files.at(arg_ind);
+
+      for( size_t k = 0; k<potential_sister_files.size(); ++k){
+        if( sister_files_exists.at(k) ) {
+          // Only grab the first one that exists
+          flag_sister_arg[sister_flag].push_back(potential_sister_files.at(k));
+          break;
+        }
+      
+        // 3. Get the actual argument passed in, check if the file exists
+        if( arg_potential_files_exist.at(arg_ind) ) {
+          flag_arg[flag].push_back(file_names.at(arg_ind)); 
+        } 
       }
-      ++countFiles;
-    }
+      
+    } 
+
   }
 
   unique_ptr<Parameters> Par(new Parameters);
@@ -423,6 +515,13 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse) {
   bool generic_file_pun_input = true;
   bool generic_file_log_input = true;
   // Run file related checks
+  
+  // 1. Check that:
+  // --pun_P 
+  // --pun_1
+  // --pun_2
+  //
+  // are not also submitted with --pun, which should be mutually exclusive
   if ( flag_arg.count("--pun_P") || 
       flag_arg.count("--pun_1") ||
       flag_arg.count("--pun_2") ) {
@@ -433,6 +532,12 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse) {
     }
   }
 
+  // 2. Check that:
+  // --log_P 
+  // --log_1
+  // --log_2
+  //
+  // are not also submitted with --log, which should be mutually exclusive
   if ( flag_arg.count("--log_P") || 
       flag_arg.count("--log_1") ||
       flag_arg.count("--log_2") ) {
@@ -443,103 +548,207 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse) {
     }
   }
 
-  // Read file related flags
+
+  size_t num_logs =0;
+  size_t num_puns =0;
+
+  // 3. Using the dimer flags
+  // --pun_P
+  // --pun_1
+  // --pun_2 
+  //
+  // Check that the files were found, if the pun flags were not
+  // found attempt to generate the file from a sister file.  
   if ( generic_file_pun_input == false ){
     if (flag_arg.count("--pun_P") != 0) {
-      Par->setPunP(flag_arg["--pun_P"]);
+      Par->setPunP(flag_arg.at("--pun_P").at(0));
     } else if (flag_sister_arg.count("--pun_P") != 0) {
-      Par->setPunP(flag_sister_arg["--pun_P"]);
+      Par->setPunP(flag_sister_arg.at("--pun_P").at(0));
     } else {
       throw runtime_error("Unable to find file for flag --pun_P");
     }
     if (flag_arg.count("--pun_1") != 0) {
-      Par->setPun1(flag_arg["--pun_1"]);
+      Par->setPun1(flag_arg.at("--pun_1").at(0));
     } else if (flag_sister_arg.count("--pun_1") != 0) {
-      Par->setPun1(flag_sister_arg["--pun_1"]);
+      Par->setPun1(flag_sister_arg.at("--pun_1").at(0));
     } else {
       throw runtime_error("Unable to find file for flag --pun_1");
     }
     if (flag_arg.count("--pun_2") != 0) {
-      Par->setPun2(flag_arg["--pun_2"]);
+      Par->setPun2(flag_arg.at("--pun_2").at(0));
     } else if (flag_sister_arg.count("--pun_2") != 0) {
-      Par->setPun2(flag_sister_arg["--pun_2"]);
+      Par->setPun2(flag_sister_arg.at("--pun_2").at(0));
     } else {
       throw runtime_error("Unable to find file for flag --pun_2");
     }
   } else {
+    // 4. Using the generic flag pun
+    // Check that files were passed in with the pun flag if not attempt 
+    // to use sister files that were generated by looking at the log files
+    if (flag_arg.count("--pun") != 0) {
+      Par->setPuns(flag_arg.at("--pun"));
+      num_puns = flag_arg.at("--pun").size();
+    } else if (flag_sister_arg.count("--pun") != 0) {
+      Par->setPuns(flag_sister_arg.at("--pun"));
+      num_puns = flag_sister_arg.at("--pun").size();
+    } else {
+      throw runtime_error("Unable to find file for flag --pun");
+    }
 
   }
+
   if( generic_file_log_input == false ){
     if (flag_arg.count("--log_P") != 0) {
-      Par->setLogP(flag_arg["--log_P"]);
+      Par->setLogP(flag_arg.at("--log_P").at(0));
     } else if (flag_sister_arg.count("--log_P") != 0) {
-      Par->setLogP(flag_sister_arg["--log_P"]);
+      Par->setLogP(flag_sister_arg.at("--log_P").at(0));
     } else {
       throw runtime_error("Unable to find file for flag --log_P");
     }
     if (flag_arg.count("--log_1") != 0) {
-      Par->setLog1(flag_arg["--log_1"]);
+      Par->setLog1(flag_arg.at("--log_1").at(0));
     } else if (flag_sister_arg.count("--log_1") != 0) {
-      Par->setLog1(flag_sister_arg["--log_1"]);
+      Par->setLog1(flag_sister_arg.at("--log_1").at(0));
     } else {
       throw runtime_error("Unable to find file for flag --log_1");
     }
     if (flag_arg.count("--log_2") != 0) {
-      Par->setLog2(flag_arg["--log_2"]);
+      Par->setLog2(flag_arg.at("--log_2").at(0));
     } else if (flag_sister_arg.count("--log_2") != 0) {
-      Par->setLog2(flag_sister_arg["--log_2"]);
+      Par->setLog2(flag_sister_arg.at("--log_2").at(0));
     } else {
       throw runtime_error("Unable to find file for flag --log_2");
     }
   } else {
+    // 4. Using the generic flag log
+    // Check that files were passed in with the pun flag if not attempt 
+    // to use sister files that were generated by looking at the pun files
+    if (flag_arg.count("--log") != 0) {
+      Par->setLogs(flag_arg.at("--log"));
+      num_logs = flag_arg.at("--log").size();
+    } else if (flag_sister_arg.count("--log") != 0) {
+      Par->setLogs(flag_sister_arg.at("--log"));
+      num_logs = flag_sister_arg.at("--log").size();
+    } else {
+      throw runtime_error("Unable to find file for flag --log");
+    }
 
   }
-  // Read spin related flags, do not need if statement because default values
-  // are defined
-  Par->setSpinP(ArgParse->getStrs("--spin_P").at(0));
-  Par->setSpin1(ArgParse->getStrs("--spin_1").at(0));
-  Par->setSpin2(ArgParse->getStrs("--spin_2").at(0));
 
+
+  // If we are using the generic file options --pun and --log and both flags
+  // are provided the flags must have an equal number of arguments, otherwise
+  // it becomes impossible to match the appropriate log file with the
+  // appropriate pun file
+  //
+  // E.g. I can't have 
+  //
+  // --pun File1.pun File3.pun --log File1.log File2,log File3.log
+  //
+  // Because I don't know which pun file is missing
+  //
+  // The file names passed to these flags must be in order as well
+  //
+  // --pun File1.pun File3.pun File2.pun --log File1.log File2.log File3.log
+  //
+  // Will not work because I will not be able to identify that File2 and File3
+  // are not associated with each other the input must look like this
+  //
+  // --pun file1.pun file2.pun file3.pun --log file1.log file2.log file3.log
+  //
+  // though it does not matter the order they are passed in E.g. this is ok
+  //
+  // --pun file2.pun file3.pun file1.pun --log file2.log file3.log file1.log
+  //
+  // As long as the order is consistent between --log and --pun flags
+  if ( generic_file_log_input && generic_file_pun_input) {
+
+    if(num_logs != num_puns ) {
+      std::string error_msg = "There must be an equal number of log and pun files";
+      error_msg += "\nThe following files have been detected\n\nLogs .log :";
+      for ( std::string & log_file : Par->getLogs() ) {
+        error_msg += log_file + "\n";
+      }
+      error_msg += "\n\nPuns pun/.7/.orb :";
+      for ( std::string & pun_file : Par->getPuns() ) {
+        error_msg += pun_file + "\n";
+      }
+      throw std::runtime_error(error_msg);
+    }
+  }
+
+  // If --pun or --log flags are used then non of the other flags are 
+  // appropriate
+  if( generic_file_pun_input || generic_file_log_input ) {
+    if( ArgParse->getNumArgs("--spin_P") != 0){
+      throw std::runtime_error("--spin_P command cannot be used with the --pun and --log flags");
+    }
+    if( ArgParse->getNumArgs("--spin_1") != 0){
+      throw std::runtime_error("--spin_1 command cannot be used with the --pun and --log flags");
+    }
+    if( ArgParse->getNumArgs("--spin_2") != 0){
+      throw std::runtime_error("--spin_2 command cannot be used with the --pun and --log flags");
+    }
+    if( ArgParse->getNumArgs("--orbital_type_1") != 0){
+      throw std::runtime_error("--orbital_type_1 command cannot be used with the --pun and --log flags");
+    }
+    if( ArgParse->getNumArgs("--orbital_type_2") != 0){
+      throw std::runtime_error("--orbital_type_2 command cannot be used with the --pun and --log flags");
+    }
+    if( ArgParse->getNumArgs("--orbital_num_1") != 0){
+      throw std::runtime_error("--orbital_num_1 command cannot be used with the --pun and --log flags");
+    }
+    if( ArgParse->getNumArgs("--orbital_num_2") != 0){
+      throw std::runtime_error("--orbital_num_2 command cannot be used with the --pun and --log flags");
+    }
+  } else {
+    // Read spin related flags, do not need if statement because default values
+    // are defined
+    Par->setSpinP(ArgParse->get<std::string>("--spin_P").at(0));
+    Par->setSpin1(ArgParse->get<std::string>("--spin_1").at(0));
+    Par->setSpin2(ArgParse->get<std::string>("--spin_2").at(0));
+
+    // Read Orbital related flags
+    {
+      string orb_typ_1 = ArgParse->get<std::string>("--orbital_type_1").at(0);
+      Par->setOrbType1(orb_typ_1);
+      if (orb_typ_1.compare("HOMO") == 0) {
+        int MO = ArgParse->get<int>("--orbital_num_1").at(0);
+        if (MO > 0) {
+          throw invalid_argument("HOMO orbital must be 0 or a negative number");
+        }
+        Par->setOrbNum1(MO);
+      } else if (orb_typ_1.compare("LUMO") == 0) {
+        int MO = ArgParse->get<int>("--orbital_num_1").at(0);
+        if (MO < 0) {
+          throw invalid_argument("LUMO orbital must be 0 or a positive number");
+        }
+        Par->setOrbNum1(MO);
+      }
+    }
+
+    {
+      string orb_typ_2 = ArgParse->get<std::string>("--orbital_type_2").at(0);
+      Par->setOrbType2(orb_typ_2);
+      if (orb_typ_2.compare("HOMO") == 0) {
+        int MO = ArgParse->get<int>("--orbital_num_2").at(0);
+        if (MO > 0) {
+          throw invalid_argument("HOMO orbital must be 0 or a negative number");
+        }
+        Par->setOrbNum2(MO);
+      } else if (orb_typ_2.compare("LUMO") == 0) {
+        int MO = ArgParse->get<int>("--orbital_num_2").at(0);
+        if (MO < 0) {
+          throw invalid_argument("LUMO orbital must be 0 or a positive number");
+        }
+        Par->setOrbNum2(MO);
+      }
+    }
+  }
   // Determine if we are doing a counterpoise calculation
-  Par->setCounterPoise((ArgParse->getInts("--counter_poise")).at(0));
-  Par->setPrintSwitch(ArgParse->getInts("--all").at(0));
-  Par->setCitation(ArgParse->getInts("--citation").at(0));
-  // Read Orbital related flags
-  {
-    string orb_typ_1 = ArgParse->getStrs("--orbital_type_1").at(0);
-    Par->setOrbType1(orb_typ_1);
-    if (orb_typ_1.compare("HOMO") == 0) {
-      int MO = ArgParse->getInts("--orbital_num_1").at(0);
-      if (MO > 0) {
-        throw invalid_argument("HOMO orbital must be 0 or a negative number");
-      }
-      Par->setOrbNum1(MO);
-    } else if (orb_typ_1.compare("LUMO") == 0) {
-      int MO = ArgParse->getInts("--orbital_num_1").at(0);
-      if (MO < 0) {
-        throw invalid_argument("LUMO orbital must be 0 or a positive number");
-      }
-      Par->setOrbNum1(MO);
-    }
-  }
-
-  {
-    string orb_typ_2 = ArgParse->getStrs("--orbital_type_2").at(0);
-    Par->setOrbType2(orb_typ_2);
-    if (orb_typ_2.compare("HOMO") == 0) {
-      int MO = ArgParse->getInts("--orbital_num_2").at(0);
-      if (MO > 0) {
-        throw invalid_argument("HOMO orbital must be 0 or a negative number");
-      }
-      Par->setOrbNum2(MO);
-    } else if (orb_typ_2.compare("LUMO") == 0) {
-      int MO = ArgParse->getInts("--orbital_num_2").at(0);
-      if (MO < 0) {
-        throw invalid_argument("LUMO orbital must be 0 or a positive number");
-      }
-      Par->setOrbNum2(MO);
-    }
-  }
+  Par->setCounterPoise((ArgParse->get<int>("--counter_poise")).at(0));
+  Par->setPrintSwitch(ArgParse->get<int>("--all").at(0));
+  Par->setCitation(ArgParse->get<int>("--citation").at(0));
   return Par;
 }
 

@@ -12,7 +12,7 @@ namespace catnip {
   void TransferComplex::unscramble(AtomSystem atom_sys) {
     // We should figure out how all the rows and columns should be
     // rearranged before moving any of the coefficients in the matrix    
-    BasisMap basis_map = BasisMap(atom_sys);
+    BasisMap basis_map = BasisMap(std::move(atom_sys));
   
     size_t total_basis = atom_sys.getTotalBasisFunctions(GroupType::Component); 
     size_t total_basis_comp = atom_sys.getTotalBasisFunctions(GroupType::Complex); 
@@ -25,17 +25,17 @@ namespace catnip {
 
     auto swap_eng = SwapEngine(basis_map);
 
-    swap_eng.arrange(*(params_->complex_coefs));
-    swap_eng.arrange(*(params_->S_AO));
+    //swap_eng.arrange(*(params_->complex_coefs));
+    //swap_eng.arrange(*(params_->S_AO));
 
-    auto dimension = mat_1_Coef.cols()+mat_2_Coef.cols();
-    Eigen::MatrixXd zetaA(mat_1_Coef.rows(),dimension);
-    Eigen::MatrixXd zetaB(mat_2_Coef.rows(),dimension);
-    if (params_->counter_poise) {
-
-    } else {
-
-    }
+//    auto dimension = mat_1_Coef.cols()+mat_2_Coef.cols();
+//    Eigen::MatrixXd zetaA(mat_1_Coef.rows(),dimension);
+//    Eigen::MatrixXd zetaB(mat_2_Coef.rows(),dimension);
+//    if (params_->counter_poise) {
+//
+//    } else {
+//
+//    }
   }
 
   void TransferComplex::calcJ() {};

@@ -19,8 +19,8 @@
 #include "../libcatnip/parameters.hpp"
 #include "../libcatnip/qc_functions.hpp"
 #include "../libcatnip/matrix.hpp"*/
-#include "libcatnip/catnip_config.hpp"
-#include "libcatnip/log.hpp"
+#include "catnip_config.hpp"
+#include "log.hpp"
 
 #include <eigen3/Eigen/Core>
 
@@ -29,8 +29,9 @@ using namespace std;
 
 int main(int argc, const char *argv[]) {
   cout << endl;
-  cout << "Running calc_J VERSION " << calcJ_VERSION_MAJOR << ".";
-  cout << calcJ_VERSION_MINOR << endl;
+  cout << "Running calc_J VERSION " << catnip_VERSION_MAJOR << ".";
+  cout << catnip_VERSION_MINOR << "." << endl;
+  cout << catnip_VERSION_PATCH << "." << endl;
 
   string line;
   LOG("Preparing parser", 1);

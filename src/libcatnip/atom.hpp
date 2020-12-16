@@ -14,6 +14,14 @@
 
 namespace catnip {
 
+  /**
+   * @brief Atom Class
+   *
+   * This class is responsible for packaging basic atomic information including
+   *    atomic coordinates
+   *    element
+   *    the number of basis functions
+   */
   class Atom {
     private:
       // Element should not be able to change
