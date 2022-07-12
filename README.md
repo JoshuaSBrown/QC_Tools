@@ -9,6 +9,7 @@
 [![Github All Releases](https://img.shields.io/github/downloads/JoshuaSBrown/QC_Tools/total.svg)]()
 [![Build Status](https://travis-ci.org/JoshuaSBrown/QC_Tools.svg?branch=master)](https://travis-ci.org/JoshuaSBrown/QC_Tools)
 [![codecov](https://codecov.io/gh/JoshuaSBrown/QC_Tools/branch/master/graph/badge.svg)](https://codecov.io/gh/JoshuaSBrown/QC_Tools)
+[![CodeFactor](https://www.codefactor.io/repository/github/joshuasbrown/qc_tools/badge)](https://www.codefactor.io/repository/github/joshuasbrown/qc_tools)
 
 # Updates
 
