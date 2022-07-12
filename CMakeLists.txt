@@ -25,7 +25,7 @@ set(LOG_LEVEL 0 CACHE INT "Choose the log level" )
 # Prevents multiple file extensions from being appended one after the other
 # important for using gcov .o.gcno or .cpp.gcno now will be .gcno
 set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic -Werror")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++11 -pedantic")
 
 ##############################################################################
 # Configuring header file with cmake variables 
