@@ -1,4 +1,4 @@
-FROM centos:7
+FROM centos:centos8
 
 RUN yum update -y
 RUN yum install python curl unzip zip make cmake gcc-c++ git file redhat-lsb-core -y
