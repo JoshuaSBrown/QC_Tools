@@ -1,3 +1,5 @@
+![CATNIPLOGO](docs/images/CATNIPLong.png)
+
 # QC_Tools or CATNIP - ChArge TraNsfer Integral Package
 
 ## Badges
@@ -7,19 +9,31 @@
 [![Github All Releases](https://img.shields.io/github/downloads/JoshuaSBrown/QC_Tools/total.svg)]()
 [![Build Status](https://travis-ci.org/JoshuaSBrown/QC_Tools.svg?branch=master)](https://travis-ci.org/JoshuaSBrown/QC_Tools)
 [![codecov](https://codecov.io/gh/JoshuaSBrown/QC_Tools/branch/master/graph/badge.svg)](https://codecov.io/gh/JoshuaSBrown/QC_Tools)
+[![CodeFactor](https://www.codefactor.io/repository/github/joshuasbrown/qc_tools/badge)](https://www.codefactor.io/repository/github/joshuasbrown/qc_tools)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/JoshuaSBrown/QC_Tools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/JoshuaSBrown/QC_Tools/alerts/)
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/JoshuaSBrown/QC_Tools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/JoshuaSBrown/QC_Tools/context:cpp)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JoshuaSBrown_QC_Tools&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=JoshuaSBrown_QC_Tools)
+
+# Updates
+
+Message to users:
+
+1. The wiki has been ported to github pages, I have left the documentation in the wiki but it will become deprecated in the future.
+2. Version 2.0 is in the works, will provide additional functionality.
 
 ## Documentation
 
- * [Home](https://github.com/JoshuaSBrown/QC_Tools/wiki)
- * [Downloading](https://github.com/JoshuaSBrown/QC_Tools/wiki/1.-Downloading)
- * [Compiling](https://github.com/JoshuaSBrown/QC_Tools/wiki/2.-Compiling)
- * [Gaussian Files](https://github.com/JoshuaSBrown/QC_Tools/wiki/3.-Gaussian-Files)
- * [Tutorial 1](https://github.com/JoshuaSBrown/QC_Tools/wiki/4.-Tutorial-1)
- * [Tutorial 2](https://github.com/JoshuaSBrown/QC_Tools/wiki/5.-Tutorial-2)
- * [Tutorial 3](https://github.com/JoshuaSBrown/QC_Tools/wiki/6.-Tutorial-3)
- * [Common Problems](https://github.com/JoshuaSBrown/QC_Tools/wiki/7.-Common-Problems)
- * [Other Resources](https://github.com/JoshuaSBrown/QC_Tools/wiki/8.-Other-Resources)
- * [Versions](https://github.com/JoshuaSBrown/QC_Tools/wiki/9.-Versions)
+* [CATNIP Home](https://joshuasbrown.github.io/docs/CATNIP/catnip_home.html)
+* [Downloading & Building](https://joshuasbrown.github.io/docs/CATNIP/catnip_downloads.html)
+* [Theory](https://joshuasbrown.github.io/docs/CATNIP/catnip_theory.html)
+* [Gaussian Files](https://joshuasbrown.github.io/docs/CATNIP/catnip_gaussian_files.html)
+* [Tutorial 1](https://joshuasbrown.github.io/docs/CATNIP/catnip_tutorial1.html)
+* [Tutorial 2](https://joshuasbrown.github.io/docs/CATNIP/catnip_tutorial2.html)
+* [Tutorial 3](https://joshuasbrown.github.io/docs/CATNIP/catnip_tutorial3.html)
+* [Common Problems](https://joshuasbrown.github.io/docs/CATNIP/catnip_common_problems.html)
+* [Versions](https://joshuasbrown.github.io/docs/CATNIP/catnip_versions.html)
+* [Resources](https://joshuasbrown.github.io/docs/CATNIP/catnip_resources.html)
+* [Papers](https://joshuasbrown.github.io/docs/CATNIP/catnip_papers.html)
 
 ## Objective
 
@@ -31,13 +45,15 @@ CATNIP is meant to make difficult calculations accessible to the masses. The foc
  
 I welcome feedback and contributors. If you have suggestions for integrating CATNIP with other programs please do not hesitate to create an issue or contact me on gitter. You can do this by clicking on the gitter badge.
 
-If you run into a problem feel free to create an issue on [github](https://github.com/JoshuaSBrown/QC_Tools/issues), if I do not respond promptly feel free to reach out again. Often responses get filtered to my spam folder or I simply do not see them.
+If you run into a problem feel free to create an issue on [github](https://github.com/JoshuaSBrown/QC_Tools/issues), just be sure to give me enough information to reproduce the error, otherwise I won't be able to fix it. If I do not respond promptly feel free to reach out again. Often responses get filtered to my spam folder or I simply do not see them.
 
 ## Citing
 
 If you use CATNIP to get values for a paper it would be nice if you cited it. To know how to cite it you can simply pass the folloing -cite flag to `calc_J` as:
 
 ```calc_J -cite```
+
+It would also be nice if you starred the repo... if you find it useful.
 
 ## Acknowledgements and Relevant Papers
 
@@ -52,3 +68,4 @@ The author would like to acknowledge insightful correspondence with E. F. Valeev
 * dwaipayanroni
 * rdft4e
 * ivorever
+* Caleb Wehrmann

@@ -18,9 +18,9 @@ unzip "GAUSSIANFILES.zip"
 #cleanup
 rm GAUSSIANFILES.zip
 
-if [ -d "${DOWNLOAD_TO}/GAUSSIANFILES" ]; then
-  rm -rf ${DOWNLOAD_TO}/GAUSSIANFILES
+if [ "$DOWNLOAD_TO" != "." ]; then
+  mv GAUSSIANFILES $DOWNLOAD_TO
 fi
-mv GAUSSIANFILES $DOWNLOAD_TO
+
 
 
