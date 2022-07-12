@@ -10,6 +10,8 @@
 [![Build Status](https://travis-ci.org/JoshuaSBrown/QC_Tools.svg?branch=master)](https://travis-ci.org/JoshuaSBrown/QC_Tools)
 [![codecov](https://codecov.io/gh/JoshuaSBrown/QC_Tools/branch/master/graph/badge.svg)](https://codecov.io/gh/JoshuaSBrown/QC_Tools)
 [![CodeFactor](https://www.codefactor.io/repository/github/joshuasbrown/qc_tools/badge)](https://www.codefactor.io/repository/github/joshuasbrown/qc_tools)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/JoshuaSBrown/QC_Tools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/JoshuaSBrown/QC_Tools/alerts/)
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/JoshuaSBrown/QC_Tools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/JoshuaSBrown/QC_Tools/context:cpp)
 
 # Updates
 
