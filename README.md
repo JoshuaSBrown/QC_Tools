@@ -4,7 +4,7 @@
 
 ## Badges
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bb8543f475c64968871b7109879b1f0a)](https://app.codacy.com/app/JoshuaSBrown/QC_Tools?utm_source=github.com&utm_medium=referral&utm_content=JoshuaSBrown/QC_Tools&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/4523458aa098452ea9a1aeea172e5b71)](https://www.codacy.com/gh/JoshuaSBrown/QC_Tools/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=JoshuaSBrown/QC_Tools&amp;utm_campaign=Badge_Grade)
 [![Join the chat at https://gitter.im/QC_Tools/Lobby](https://badges.gitter.im/QC_Tools/Lobby.svg)](https://gitter.im/QC_Tools/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Github All Releases](https://img.shields.io/github/downloads/JoshuaSBrown/QC_Tools/total.svg)]()
 [![Build Status](https://travis-ci.org/JoshuaSBrown/QC_Tools.svg?branch=master)](https://travis-ci.org/JoshuaSBrown/QC_Tools)
