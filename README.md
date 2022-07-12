@@ -13,7 +13,6 @@
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/JoshuaSBrown/QC_Tools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/JoshuaSBrown/QC_Tools/alerts/)
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/JoshuaSBrown/QC_Tools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/JoshuaSBrown/QC_Tools/context:cpp)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JoshuaSBrown_QC_Tools&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=JoshuaSBrown_QC_Tools)
-[![Known Vulnerabilities](https://snyk.io/test/github/JoshuaSBrown/QC_Tools/badge.svg)]
 
 # Updates
 
