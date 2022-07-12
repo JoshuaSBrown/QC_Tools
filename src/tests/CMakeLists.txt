@@ -6,7 +6,6 @@ list( APPEND UNIT_TEST_SOURCE_FILES
   test_argumentstring
   test_argumentswitch
   test_log
-  test_matrix
   test_parameters
   test_propertydouble
   test_propertyfileexist

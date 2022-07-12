@@ -4,6 +4,7 @@ dist: xenial
 addons:
   apt:
     update: true
+    packages: libeigen3-dev
 
 language: cpp
 
@@ -17,6 +18,7 @@ jobs:
       compiler: gcc
       script: ./scripts/deploy.bash
       apt:
+        packages: libeigen3-dev
         packages: gcov
         packages: lcov
 
