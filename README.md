@@ -18,6 +18,7 @@
 
 Message to users:
 
+0. NOTE - CATNIP is dependent on the precision of the log output of the Guassian files, if you need highly accurate calculations, this tool is probably not the best tool. It would be better to use something like NWChem that solves for the transfer integral self consistently.
 1. The wiki has been ported to github pages, I have left the documentation in the wiki but it will become deprecated in the future.
 2. Version 2.0 is in the works, will provide additional functionality.
 
