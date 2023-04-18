@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:18.04
 
 RUN apt-get update && apt-get install -y bc python curl zip unzip apt-utils ca-certificates make cmake gcc g++ git file lsb-release && apt-get clean &&  rm -rf /var/lib/apt/lists/*
 RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"                 
