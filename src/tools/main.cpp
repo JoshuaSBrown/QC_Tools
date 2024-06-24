@@ -17,11 +17,12 @@
 #include "../libcatnip/io/file_readers/punreader.hpp"
 #include "../libcatnip/io/io.hpp"
 #include "../libcatnip/log.hpp"
-#include "../libcatnip/matrix.hpp"
 #include "../libcatnip/parameters.hpp"
 #include "../libcatnip/qc_functions.hpp"
-
+#include "../libcatnip/matrix.hpp"
 #include "../libcatnip/calcJconfig.hpp"
+
+#include <eigen3/Eigen/Core>
 
 using namespace catnip;
 using namespace std;
@@ -77,23 +78,31 @@ int main(int argc, const char *argv[]) {
   // No need to worry about beta orbitals
 
   {
-    Matrix *mat_S = lr_P.getOverlapMatrix();
+    //Matrix *mat_S = lr_P.getOverlapMatrix();
+    Eigen::MatrixXd mat_S = lr_P.getOverlapMatrix();
 
-    Matrix *mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
-    auto vec_P_OE = lr_P.getOE(par->getSpinP());
-    Matrix *mat_P_OE = new Matrix(vec_P_OE);
+    //Matrix *mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
+    Eigen::MatrixXd mat_P_Coef = pr_P.getCoefsMatrix(par->getSpinP());
+    
+    //auto vec_P_OE = lr_P.getOE(par->getSpinP());
+    Eigen::VectorXd vec_P_OE = Eigen::VectorXd(lr_P.getOE(par->getSpinP()));
+    //Matrix *vec_P_OE = new Matrix(vec_P_OE);
 
     int HOMO1 = lr_1.getHOMOLevel(par->getSpin1());
     LOG("Getting " + par->getSpin1() + " of monomer 1", 2);
-    Matrix *mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
-    auto vec_1_OE = lr_1.getOE(par->getSpin1());
-    Matrix *mat_1_OE = new Matrix(vec_1_OE);
+    Eigen::MatrixXd mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
+    //Matrix *mat_1_Coef = pr_1.getCoefsMatrix(par->getSpin1());
+    Eigen::VectorXd vec_1_OE = lr_1.getOE(par->getSpin1());
+    //Matrix *mat_1_OE = new Matrix(vec_1_OE);
+    //Eigen::MatrixXd mat_1_OE = vec_1_OE.asDiagonal();
 
     int HOMO2 = lr_2.getHOMOLevel(par->getSpin2());
     LOG("Getting " + par->getSpin2() + " of monomer 2", 2);
-    Matrix *mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
-    auto vec_2_OE = lr_2.getOE(par->getSpin2());
-    Matrix *mat_2_OE = new Matrix(vec_2_OE);
+    //Matrix *mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
+    Eigen::MatrixXd mat_2_Coef = pr_2.getCoefsMatrix(par->getSpin2());
+    Eigen::VectorXd vec_2_OE = lr_2.getOE(par->getSpin2());
+    //Matrix *mat_2_OE = new Matrix(vec_2_OE);
+    //Eigen::MatrixXd mat_2_OE = vec_2_OE.asDiagonal();
 
     // Unscramble dimer coef and energies first need to see how the dimer
     // and monomer coefficients line up. To determine how the ceofficients
@@ -103,37 +112,30 @@ int main(int argc, const char *argv[]) {
     // the position of the atoms in the monomer unit and the positions of
     // the atoms in the dimer we can determine how the coefficients need
     // to be rearranged.
-    auto coord_P = lr_P.getCoords();
-    auto coord_1 = lr_1.getCoords();
-    auto coord_2 = lr_2.getCoords();
+    vector<vector<double>> coord_P = lr_P.getCoords();
+    vector<vector<double>> coord_1 = lr_1.getCoords();
+    vector<vector<double>> coord_2 = lr_2.getCoords();
 
     // Convert coords to matrices
-    Matrix coord_P_mat(coord_P);
-    Matrix coord_1_mat(coord_1);
-    Matrix coord_2_mat(coord_2);
+    Eigen::MatrixXd coord_P_mat = convert(coord_P);
+    Eigen::MatrixXd coord_1_mat = convert(coord_1);
+    Eigen::MatrixXd coord_2_mat = convert(coord_2);
 
-    auto basis_P = lr_P.getBasisFuncCount();
-    auto basis_1 = lr_1.getBasisFuncCount();
-    auto basis_2 = lr_2.getBasisFuncCount();
-
-    int MO1 = mat_1_OE->get_rows();
-    int MO2 = mat_2_OE->get_rows();
-
-    pair<int, int> Orbs1 = {MO1, HOMO1};
-    pair<int, int> Orbs2 = {MO2, HOMO2};
+    vector<int> basis_P = lr_P.getBasisFuncCount();
+    vector<int> basis_1 = lr_1.getBasisFuncCount();
+    vector<int> basis_2 = lr_2.getBasisFuncCount();
 
     LOG("Creating transfercomplex", 1);
-    TransferComplex TC(mat_1_Coef, mat_2_Coef, mat_P_Coef, Orbs1, Orbs2, mat_S,
-                       mat_P_OE, par->getCounterPoise());
+    TransferComplex TC(mat_1_Coef, mat_2_Coef, mat_P_Coef, HOMO1, HOMO2, mat_S,
+                       vec_P_OE, par->getCounterPoise());
 
     // Set the transfer complex to counterpoise if it is the case.
-
     // If the basis function search returns 0 for any of the components then
     // we cannot automatically determine what the transfer integral is
     if (basis_1.size() != 0 && basis_2.size() != 0 && basis_P.size() != 0) {
       LOG("Unscrambling matrices", 1);
       TC.unscramble(coord_1_mat, coord_2_mat, coord_P_mat, basis_P, basis_2);
-    }
+    } 
 
     cout << endl;
     cout << "Dimer     Spin " << par->getSpinP() << endl;
@@ -168,7 +170,12 @@ int main(int argc, const char *argv[]) {
     orbitalnums["mon2"] = par->getOrbNum2();
 
     LOG("Calculating transfer integral", 1);
-    TC.calcJ(orbitaltypes, orbitalnums);
+    TC.calcJ();
+    if(par->getPrintSwitch()){
+      TC.printAll();
+    }else{
+      TC.printTransferIntegral(orbitaltypes, orbitalnums);
+    }
   }
 
   return 0;

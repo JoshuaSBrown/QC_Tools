@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.12)
 project (calc_J)
 
 ##############################################################################
@@ -12,8 +12,8 @@ option(CODE_COVERAGE "Enable coverage reporting" OFF)
 ##############################################################################
 # Defining settings 
 ##############################################################################
-set(calcJ_VERSION_MAJOR 1 )
-set(calcJ_VERSION_MINOR 9 )
+set(calcJ_VERSION_MAJOR 2 )
+set(calcJ_VERSION_MINOR 0 )
 set(calcJ_YEAR_PUBLISHED 2018 )
 set(calcJ_AUTHOR_SURNAME "\"Brown\"" )
 set(calcJ_AUTHOR_INITIALS "\"J. S.\"" )
@@ -42,6 +42,10 @@ configure_file(
 # Find bash it is important for testing using scripts
 find_program (BASH_PROGRAM bash)
 find_library (GCOV gcov)
+#find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+#if (TARGET Eigen3::Eigen)
+#  message("-- Eigen found")
+#endif(TARGET Eigen3::Eigen)
 add_definitions(-DLOG_LEVEL=${LOG_LEVEL})
 
 ##############################################################################

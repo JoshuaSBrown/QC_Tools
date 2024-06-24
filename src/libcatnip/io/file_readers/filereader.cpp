@@ -24,8 +24,6 @@ void FileReader::read() {
   close();
 }
 
-// Private member functions
-
 void FileReader::open() {
   if (!fileExist_()) {
     throw invalid_argument("File " + fileName_ + " does not exist.");
@@ -39,6 +37,7 @@ void FileReader::close() {
   fileOpen_ = false;
 }
 
+// Private member functions
 void FileReader::registerSections_() { checkSections_(); }
 
 // Basically check that for a given tag both a section reader

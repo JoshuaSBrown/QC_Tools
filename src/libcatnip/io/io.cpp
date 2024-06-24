@@ -167,6 +167,12 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   desc = "Print the version";
   flag18.push_back(desc);
 
+  vector<string> flag19;
+  flag19.push_back("--all");
+  flag19.push_back("-a");
+  desc = "Print all transfer integrals, in matrix form";
+  flag19.push_back(desc);
+
   set<vector<string>> flags;
   flags.insert(flag1);
   flags.insert(flag2);
@@ -184,6 +190,7 @@ unique_ptr<ArgumentParser> prepareParser(void) {
   flags.insert(flag16);
   flags.insert(flag17);
   flags.insert(flag18);
+  flags.insert(flag19);
 
   unique_ptr<ArgumentParser> ArgPars(new ArgumentParser(flags));
 
@@ -301,6 +308,15 @@ unique_ptr<ArgumentParser> prepareParser(void) {
 
     // By default the flag counter poise is turned off
     ArgPars->setFlagDefaultValue("--counter_poise", "OFF");
+  }
+
+  // Set argument for allowing printing of all transfer integrals
+  {
+    ArgPars->setFlagArgOpt("--all", "ARGUMENT_SWITCH",
+        "PROPERTY_SWITCH", "DEFAULT", "OFF");
+
+    // By default the flag counter poise is turned off
+    ArgPars->setFlagDefaultValue("--all", "OFF");
   }
 
   {
@@ -424,6 +440,7 @@ unique_ptr<Parameters> prepareParameters(unique_ptr<ArgumentParser>& ArgParse) {
 
   // Determine if we are doing a counterpoise calculation
   Par->setCounterPoise(ArgParse->getInt("--counter_poise"));
+  Par->setPrintSwitch(ArgParse->getInt("--all"));
   Par->setCitation(ArgParse->getInt("--citation"));
   // Read Orbital related flags
   {

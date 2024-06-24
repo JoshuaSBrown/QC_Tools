@@ -1,4 +1,4 @@
-
+#pragma once
 #ifndef _CATNIP_FILEREADER_HPP_
 #define _CATNIP_FILEREADER_HPP_
 

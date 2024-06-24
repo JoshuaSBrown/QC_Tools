@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 
+#include <eigen3/Eigen/Core>
 #include "../../log.hpp"
 #include "../../string_support.hpp"
 #include "logreader.hpp"
@@ -126,6 +127,7 @@ void LogReader::AOFunctionSectionReader(void *ptr) {
     while (!iss.eof()) {
       string Tot_Alpha_Beta_Spin;
       iss >> Tot_Alpha_Beta_Spin;
+      trim(Tot_Alpha_Beta_Spin);
       orbVals.push_back(stod(Tot_Alpha_Beta_Spin));
     }
     LR_ptr->orb_[make_pair(atom_num, elemType)][orbType] = orbVals;
@@ -165,7 +167,6 @@ void LogReader::AOFunctionSectionReader(void *ptr) {
     }
 
     ++atom_num;
-    // getline(LR_ptr->fid_,line);
     if (foundSubStrInStr(line, end_pattern)) {
       sectionEnd = true;
     }
@@ -194,9 +195,12 @@ void LogReader::OverlapSectionReader(void *ptr) {
     getline(LR_ptr->fid_, line);
     istringstream iss(line);
     iss >> countC;
+    if( line.find("Kinetic")!=string::npos){
+      break;
+    }
     int countCint = stoi(countC);
     if (countCint != (countCoef + 1)) {
-      endFirstSection = true;
+      break;
     } else {
       ++countCoef;
       vector<double> row;
@@ -214,20 +218,14 @@ void LogReader::OverlapSectionReader(void *ptr) {
   }
 
   // Create a matrix and place all the current values in there
-  Matrix *mat_S = new Matrix(countCoef, countCoef);
-  for (size_t row_ind = 0; row_ind < first_coefs.size(); ++row_ind) {
-    vector<double> row = first_coefs.at(row_ind);
-    size_t col_ind = 1;
-    for (auto val : row) {
-      mat_S->set_elem(val, row_ind + 1, col_ind);
-      // Because diagonally symetric
-      if (row_ind + 1 != col_ind) {
-        mat_S->set_elem(val, col_ind, row_ind + 1);
-      }
-      ++col_ind;
-    }
-  }
+ 
+  Eigen::MatrixXd matrix_S(countCoef,countCoef);
 
+  for (size_t row_ind = 0; row_ind < first_coefs.size(); ++row_ind) {
+    Eigen::Map<Eigen::RowVectorXd> eigen_row((first_coefs.at(row_ind).data()),first_coefs.at(row_ind).size());
+    matrix_S.block(row_ind,0,1,eigen_row.size()) = eigen_row;
+    matrix_S.block(0,row_ind,eigen_row.size(),1) = eigen_row.transpose();
+  }
   int sectionReads = countCoef / 5;
   if (countCoef % 5 > 0) {
     ++sectionReads;
@@ -243,19 +241,16 @@ void LogReader::OverlapSectionReader(void *ptr) {
       istringstream iss(line);
       string dummy;
       iss >> dummy;
-      int localCoefCount = 1;
+      int localCoefCount = 0;
       while (!iss.eof()) {
         string s_coef;
         iss >> s_coef;
         string val = grabStrBeforeFirstOccurance(s_coef, "D");
         string expon = grabStrAfterFirstOccurance(s_coef, "D");
         double value = stod(val) * pow(10.0, stod(expon));
-        mat_S->set_elem(value, sectionCoef + 1,
-                        currentSectionStart + localCoefCount);
-        if ((sectionCoef + 1) != (currentSectionStart + localCoefCount)) {
-
-          mat_S->set_elem(value, currentSectionStart + localCoefCount,
-                          sectionCoef + 1);
+        matrix_S(sectionCoef,currentSectionStart + localCoefCount) = value;
+        if ((sectionCoef) != (currentSectionStart + localCoefCount)) {
+          matrix_S(currentSectionStart + localCoefCount,sectionCoef) = value;
         }
         ++localCoefCount;
       }
@@ -265,7 +260,8 @@ void LogReader::OverlapSectionReader(void *ptr) {
     currentSectionStart += 5;
     getline(LR_ptr->fid_, line);
   }
-  LR_ptr->S_ = mat_S;
+  
+  LR_ptr->S_ = matrix_S;
   LOG("Success reading Overlap coefficients from .log file", 2);
   return;
 }
@@ -291,7 +287,7 @@ void LogReader::ReadOrbEnergies(const string &orb_type) {
 
       auto vec_str = splitStEnergies(line);
       for (size_t inc = 4; inc < vec_str.size(); inc++) {
-        OREnergies[orb_type].push_back((double)atof(vec_str.at(inc).c_str()));
+        OREnergies[orb_type].push_back(stod(vec_str.at(inc)));
         if (occFound) homoLevel[orb_type]++;
       }
     } else {
